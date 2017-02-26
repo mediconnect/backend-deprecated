@@ -1,0 +1,6 @@
+git process
+
+git pull origin master !! Before start to edit, YOU NEED PULL
+git add .
+git commit -m "message"  !! resolve conflit
+git push origin master
