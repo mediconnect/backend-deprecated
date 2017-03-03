@@ -1,9 +1,13 @@
 python version: 2.7.10
 django version: 1.10.3
 
-git process
+[git process]
 
 git pull origin master !! Before start to edit, YOU NEED PULL
 git add .
 git commit -m "message"  !! resolve conflit
 git push origin master
+
+[mysql]
+start sever on localhost
+add root user in mysql specified in settings.py
