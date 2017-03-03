@@ -1,6 +1,1 @@
-git process
-
-git pull origin master !! Before start to edit, YOU NEED PULL
-git add .
-git commit -m "message"  !! resolve conflit
-git push origin master
+This is a website for medical connection. The website is built upon Python Django framework.
