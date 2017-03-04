@@ -51,10 +51,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'medi_connect_site.urls'
 
+# config templates directory here !!
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates/', 'home/templates/home'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,8 +77,11 @@ WSGI_APPLICATION = 'medi_connect_site.wsgi.application'
 
 DATABASES = {
     'default': {
+        # use mysql database
         'ENGINE': 'django.db.backends.mysql',
+        # create database named mediconnect when test on local machine
         'NAME': 'mediconnect',
+        # create user
         'USER': 'root',
         'PASSWORD': 'password',
         'HOST': '127.0.0.1',
@@ -121,4 +126,5 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
+# static files are stored at static directory
 STATIC_URL = '/static/'
