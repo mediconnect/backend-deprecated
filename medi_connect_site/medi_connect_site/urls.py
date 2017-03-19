@@ -21,9 +21,8 @@ from home import views as home_views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', home_views.home, name='home'),
-    url(r'^login/', home_views.login, name='login'),
+    url(r'^login/', home_views.log, name='login'),
     url(r'^signup/', home_views.signup, name='signup'),
-    url(r'^auth/', home_views.auth, name='auth')
 ]
 
 urlpatterns += staticfiles_urlpatterns()

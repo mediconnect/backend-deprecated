@@ -1,28 +1,44 @@
-from django.shortcuts import render_to_response, render
-from django.contrib import auth as login_auth
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from forms import SignUpForm
+from customer.models import Customer
+
 
 # Create your views here
 
 
 def home(request):
-    return render_to_response('index.html')
+    if request.user.is_authenticated():
+        # render a user specified web page
+        print "no user"
+    return render(request, 'index.html')
 
 
-def login(request):
+def log(request):
     return render(request, 'login.html')
 
 
 def signup(request):
-    return render_to_response('signup.html')
-
-
-def auth(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = login_auth.authenticate(username=username, password=password)
-        if user is not None and user.is_active:
-            login_auth.login(request, user)
-            return render_to_response('signup.html')
+        print 'POST'
+        form = SignUpForm(request.POST)
+        if not form.is_valid():
+            return render(request, 'signup.html',
+                          {'form': form})
         else:
-            return render_to_response('signup.html')
+            username = form.cleaned_data.get('username')
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+            User.objects.create_user(username=username, password=password,
+                                     email=email)
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            customer = Customer(user=user)
+            customer.save()
+            return redirect("/")
+
+    else:
+        print 'GET'
+        return render(request, 'signup.html',
+                      {'form': SignUpForm()})
