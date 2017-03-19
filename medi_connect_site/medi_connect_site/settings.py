@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'home',
+    'core',
     'customer',
 ]
 
@@ -58,7 +58,7 @@ ROOT_URLCONF = 'medi_connect_site.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates/', 'home/templates/home'],
+        'DIRS': ['templates/', 'core/templates/core'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

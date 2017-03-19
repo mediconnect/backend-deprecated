@@ -10,7 +10,7 @@ def forbidden_username_validator(value):
                            'join', 'account', 'username', 'root', 'blog',
                            'user', 'users', 'billing', 'subscribe', 'reviews',
                            'review', 'blog', 'blogs', 'edit', 'mail', 'email',
-                           'home', 'job', 'jobs', 'contribute', 'newsletter',
+                           'core', 'job', 'jobs', 'contribute', 'newsletter',
                            'shop', 'profile', 'register', 'auth',
                            'authentication', 'campaign', 'config', 'delete',
                            'remove', 'forum', 'forums', 'download',

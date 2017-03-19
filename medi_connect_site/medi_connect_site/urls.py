@@ -16,13 +16,13 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from home import views as home_views
+from core import views as core_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', home_views.home, name='home'),
-    url(r'^login/', home_views.log, name='login'),
-    url(r'^signup/', home_views.signup, name='signup'),
+    url(r'^$', core_views.home, name='core'),
+    url(r'^login/', core_views.log, name='login'),
+    url(r'^signup/', core_views.signup, name='signup'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
