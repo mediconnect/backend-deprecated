@@ -6,5 +6,5 @@ from models import Customer
 # Create your views here.
 @login_required
 def customer(request, user):
-    customer = Customer.objects.filter(user=user)
+    customer = Customer.objects.get(user=user)
     return render(request, 'customer.html', {'customer': customer})
