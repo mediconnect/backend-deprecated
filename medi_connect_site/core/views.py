@@ -27,8 +27,10 @@ def signup(request):
             username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
+            firstname = form.cleaned_data.get('first_name')
+            lastname = form.cleaned_data.get('last_name')
             User.objects.create_user(username=username, password=password,
-                                     email=email)
+                                     email=email, first_name=firstname, last_name=lastname)
             user = authenticate(username=username, password=password)
             login(request, user)
             customer = Customer(user=user)
