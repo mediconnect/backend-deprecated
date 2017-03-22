@@ -12,6 +12,7 @@ class Customer(models.Model):
         db_table = 'auth_customer'
 
     def get_name(self):
-        if self.user.get_full_name():
-            return self.user.get_full_name()
+        name = self.user.first_name + ' ' + self.user.last_name
+        if name is not None:
+            return name
         return self.user.username
