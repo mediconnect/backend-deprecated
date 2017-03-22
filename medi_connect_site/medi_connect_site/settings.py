@@ -58,7 +58,7 @@ ROOT_URLCONF = 'medi_connect_site.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates/', 'core/templates/core'],
+        'DIRS': ['templates/', 'core/templates/core', 'customer/templates/customer'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,4 +131,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static', ),
 )
+
+LOGIN_REDIRECT_URL = '/'
 

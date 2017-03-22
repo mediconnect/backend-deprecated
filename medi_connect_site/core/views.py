@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from forms import SignUpForm
 from customer.models import Customer
+from customer.views import customer
 
 
 # Create your views here
@@ -11,17 +12,13 @@ from customer.models import Customer
 def home(request):
     if request.user.is_authenticated():
         # render a user specified web page
-        print "no user"
-    return render(request, 'index.html')
-
-
-def log(request):
-    return render(request, 'login.html')
+        return customer(request, request.user)
+    else:
+        return render(request, 'index.html')
 
 
 def signup(request):
     if request.method == 'POST':
-        print 'POST'
         form = SignUpForm(request.POST)
         if not form.is_valid():
             return render(request, 'signup.html',
@@ -39,6 +36,5 @@ def signup(request):
             return redirect("/")
 
     else:
-        print 'GET'
         return render(request, 'signup.html',
                       {'form': SignUpForm()})
