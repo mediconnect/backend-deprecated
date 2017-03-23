@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 
 class Customer(models.Model):
     user = models.OneToOneField(User)
-    date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'auth_customer'
