@@ -29,11 +29,15 @@ def signup(request):
             password = form.cleaned_data.get('password')
             firstname = form.cleaned_data.get('first_name')
             lastname = form.cleaned_data.get('last_name')
+            telephone = form.cleaned_data.get('telephone')
+            address = form.cleaned_data.get('address')
+            zipcode = form.cleaned_data.get('zipcode')
             User.objects.create_user(username=username, password=password,
                                      email=email, first_name=firstname, last_name=lastname)
             user = authenticate(username=username, password=password)
             login(request, user)
             customer = Customer(user=user)
+            customer.set_attributes(telephone, address, zipcode)
             customer.save()
             return redirect("/")
 

@@ -5,20 +5,20 @@ from django.core.exceptions import ValidationError
 
 def forbidden_username_validator(value):
     forbidden_username = ['admin', 'settings', 'news', 'about', 'help',
-                           'signin', 'signup', 'signout', 'terms', 'privacy',
-                           'cookie', 'new', 'login', 'logout', 'administrator',
-                           'join', 'account', 'username', 'root', 'blog',
-                           'user', 'users', 'billing', 'subscribe', 'reviews',
-                           'review', 'blog', 'blogs', 'edit', 'mail', 'email',
-                           'core', 'job', 'jobs', 'contribute', 'newsletter',
-                           'shop', 'profile', 'register', 'auth',
-                           'authentication', 'campaign', 'config', 'delete',
-                           'remove', 'forum', 'forums', 'download',
-                           'downloads', 'contact', 'blogs', 'feed', 'feeds',
-                           'faq', 'intranet', 'log', 'registration', 'search',
-                           'explore', 'rss', 'support', 'status', 'static',
-                           'media', 'setting', 'css', 'js', 'follow',
-                           'activity', 'questions', 'articles', 'network', ]
+                          'signin', 'signup', 'signout', 'terms', 'privacy',
+                          'cookie', 'new', 'login', 'logout', 'administrator',
+                          'join', 'account', 'username', 'root', 'blog',
+                          'user', 'users', 'billing', 'subscribe', 'reviews',
+                          'review', 'blog', 'blogs', 'edit', 'mail', 'email',
+                          'core', 'job', 'jobs', 'contribute', 'newsletter',
+                          'shop', 'profile', 'register', 'auth',
+                          'authentication', 'campaign', 'config', 'delete',
+                          'remove', 'forum', 'forums', 'download',
+                          'downloads', 'contact', 'blogs', 'feed', 'feeds',
+                          'faq', 'intranet', 'log', 'registration', 'search',
+                          'explore', 'rss', 'support', 'status', 'static',
+                          'media', 'setting', 'css', 'js', 'follow',
+                          'activity', 'questions', 'articles', 'network', ]
 
     if value.lower() in forbidden_username:
         raise ValidationError('This is a reserved word.')
@@ -64,6 +64,19 @@ class SignUpForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label="Last Name",
         required=True)
+    telephone = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Telephone",
+        required=False)
+    address = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Address",
+        required=False)
+    zipcode = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Zipcode",
+        required=False)
+
 
     class Meta:
         model = User
