@@ -12,7 +12,14 @@ from customer.views import customer
 def home(request):
     if request.user.is_authenticated():
         # render a user specified web page
-        return customer(request, request.user)
+        # assign administrator as super user
+        # assign translator as staff
+        if request.user.is_superuser():
+            print "Need administration module"
+        elif request.user.is_staff():
+            print "Need translator module"
+        else:
+            return customer(request, request.user)
     else:
         return render(request, 'index.html')
 
