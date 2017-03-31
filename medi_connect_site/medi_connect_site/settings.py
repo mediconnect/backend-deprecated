@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'customer',
+    'translator',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +59,11 @@ ROOT_URLCONF = 'medi_connect_site.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates/', 'core/templates/core', 'customer/templates/customer'],
+        'DIRS': [
+            'templates/', 
+            'core/templates/core', 
+            'customer/templates/customer',
+            'translator/templates/translator'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

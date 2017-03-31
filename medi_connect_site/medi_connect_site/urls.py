@@ -17,6 +17,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from core import views as core_views
+from translator import views as trans_views
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -26,6 +27,9 @@ urlpatterns = [
         name='login'),
     url(r'^logout/', auth_views.logout, {'next_page': '/'}, name='logout'),
     url(r'^signup/', core_views.signup, name='signup'),
+    url(r'^translator/',trans_views.translator,name='translator'),
+    url(r'^translator/logout/', auth_views.logout, name='translator/logout'),
+    url(r'^translator/login',trans_views.lgin,name='translator/login')
 ]
 
 urlpatterns += staticfiles_urlpatterns()
