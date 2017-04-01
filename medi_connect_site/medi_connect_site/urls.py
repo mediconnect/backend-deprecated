@@ -27,6 +27,7 @@ urlpatterns = [
         name='login'),
     url(r'^logout/', auth_views.logout, {'next_page': '/'}, name='logout'),
     url(r'^signup/', core_views.signup, name='signup'),
+    url(r'^search/', core_views.search, name='search'),
     url(r'^customer/', include('customer.urls')),
     # put following urls under translator app (comment out for testing)
     # url(r'^translator/', trans_views.translator, name='translator'),

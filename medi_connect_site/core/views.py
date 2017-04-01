@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
+from django.db.models import Q
 from forms import SignUpForm
 from customer.models import Customer
 from customer.views import customer
+from helper.models import Hospital, Disease
 
 
 # Create your views here
@@ -51,3 +53,19 @@ def signup(request):
     else:
         return render(request, 'signup.html',
                       {'form': SignUpForm()})
+
+
+def search(request):
+    querystring = request.GET.get('query').strip()
+    results = dict()
+    results['disease'] = Disease.objects.filter(Q(keyword__icontains=querystring))
+    results['hospital'] = Hospital.objects.filter(Q(introduction__icontains=querystring))
+    if results['hospital'].count() <= 0:
+        return render(request, 'search.html', {
+            'found': False
+        })
+    else:
+        return render(request, 'search.html', {
+            'found': True,
+            'results': results
+        })
