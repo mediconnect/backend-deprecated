@@ -2,16 +2,38 @@
 
 {% block content %}
 
-<form class="form-horizontal" action="{% url 'search' %}" method="get">
+<script>
+    function search(str) {
+        if (str.length != 0) {
+            $.ajax({
+                url: {% url 'search' %},
+                method: "get",
+                data: {
+                    query: str,
+                },
+                dataType: "json",
+                success: function(response, status, xhr) {
+                    var select_tag = document.getElementById("search-options");
+                    for (var key in response) {
+                        var option_tag = document.createElement("option");
+                        option_tag.value = response[key];
+                        option_tag.innerHTML = response[key];
+                        select_tag.appendChild(option_tag);
+                    }
+                }
+            });
+        }
+    }
+</script>
+
+<form class="form-horizontal">
     {% csrf_token %}
     <div class="row">
         <div class="col-lg-6">
             <div class="input-group">
-                <input type="text" class="form-control" placeholder="search for..." name="query">
-                <span class="input-group-btn">
-                <button class="btn btn-default" type="button">Search</button>
-            </span>
+                <input type="text" class="form-control" placeholder="search for..." onkeyup="search(this.value)">
             </div><!-- /input-group -->
+            <select id="search-options"></select>
         </div><!-- /.col-lg-6 -->
     </div><!-- /.row -->
 </form>

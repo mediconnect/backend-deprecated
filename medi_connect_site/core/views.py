@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.db.models import Q
+from django.http import JsonResponse
 from forms import SignUpForm
 from customer.models import Customer
 from customer.views import customer
@@ -16,9 +17,9 @@ def home(request):
         # render a user specified web page
         # assign administrator as super user
         # assign translator as staff
-        if request.user.is_superuser():
+        if request.user.is_superuser:
             print "Need administration module"
-        elif request.user.is_staff():
+        elif request.user.is_staff:
             print "Need translator module"
         else:
             return customer(request, request.user)
@@ -56,16 +57,13 @@ def signup(request):
 
 
 def search(request):
-    querystring = request.GET.get('query').strip()
+    querystring = request.GET.get('query', None)
     results = dict()
     results['disease'] = Disease.objects.filter(Q(keyword__icontains=querystring))
     results['hospital'] = Hospital.objects.filter(Q(introduction__icontains=querystring))
     if results['hospital'].count() <= 0:
-        return render(request, 'search.html', {
-            'found': False
-        })
-    else:
-        return render(request, 'search.html', {
-            'found': True,
-            'results': results
-        })
+        return JsonResponse({'error_message': 'Not Found'})
+    result_json = {}
+    for hospital in results['hospital']:
+        result_json.update({'data': str(hospital.name)})
+    return JsonResponse(result_json)
