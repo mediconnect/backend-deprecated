@@ -57,13 +57,22 @@ def signup(request):
 
 
 def search(request):
-    querystring = request.GET.get('query', None)
-    results = dict()
-    results['disease'] = Disease.objects.filter(Q(keyword__icontains=querystring))
-    results['hospital'] = Hospital.objects.filter(Q(introduction__icontains=querystring))
-    if results['hospital'].count() <= 0:
-        return JsonResponse({'error_message': 'Not Found'})
-    result_json = {}
-    for hospital in results['hospital']:
-        result_json.update({'data': str(hospital.name)})
-    return JsonResponse(result_json)
+    # check if request is Ajax or not
+    if request.is_ajax():
+        querystring = request.GET.get('query', None)
+        if querystring is None:
+            return JsonResponse({'error_message': 'Please type correct keywords'})
+
+        results = dict()
+        results['disease'] = Disease.objects.filter(Q(keyword__icontains=querystring))
+        results['hospital'] = Hospital.objects.filter(Q(introduction__icontains=querystring))
+        if results['hospital'].count() <= 0 and results['disease'].count() <= 0:
+            print "not found"
+            return JsonResponse({'error_message': 'Not Found'})
+
+        result_json = {}
+        for hospital in results['hospital']:
+            result_json.update({'data': str(hospital.name)})
+        return JsonResponse(result_json)
+    else:
+        return render(request)
