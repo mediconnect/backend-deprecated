@@ -2,50 +2,32 @@
 
 {% block content %}
 
-<script>
-    function search(str) {
-        /*
-        This code can have optimization in the future. Currently, all the
-        instant search results are deleted from the front-end. Consider
-        to check the new instant search feedback and delete the elements
-        accordingly.
-         */
-        var select = document.getElementById("search-options");
-        for (i = 0; i < select.options.length; i++) {
-            select.remove(i);
-        }
-        if (str.length != 0) {
-            $.ajax({
-                url: {% url 'search' %},
-                method: "get",
-                data: {
-                    query: str,
-                },
-                dataType: "json",
-                success: function(response, status, xhr) {
-                    var select_tag = document.getElementById("search-options");
-                    for (var key in response) {
-                        var option_tag = document.createElement("option");
-                        option_tag.value = response[key];
-                        option_tag.innerHTML = response[key];
-                        select_tag.appendChild(option_tag);
-                    }
-                }
-            });
-        }
-    }
-</script>
-
-<form class="form-horizontal">
+<form>
     {% csrf_token %}
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="search for..." onkeyup="search(this.value)">
-            </div><!-- /input-group -->
-            <select id="search-options"></select>
-        </div><!-- /.col-lg-6 -->
-    </div><!-- /.row -->
+    <input type="text" id="typeahead"/>
 </form>
+
+<script>
+    $(function() {
+        $("#typeahead").typeahead(null, {
+            source: function(query, process) {
+                return $.ajax({
+                    url: {% url 'search' %},
+                    method: 'get',
+                    data: {
+                        query: $('#typeahead').val()
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        // var resultList = JSON.stringify(data);
+                        // console.log(resultList);
+                        // return process(resultList);
+                        return process(data);
+                    }
+                });
+            }
+        });
+    });
+</script>
 
 {% endblock %}

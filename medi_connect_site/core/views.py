@@ -71,8 +71,10 @@ def search(request):
             return JsonResponse({'error_message': 'Not Found'})
 
         result_json = {}
+        index = 1
         for hospital in results['hospital']:
-            result_json.update({'data': str(hospital.name)})
+            result_json.update({'hospital' + str(index): str(hospital.name)})
+            index += 1
         return JsonResponse(result_json)
     else:
         return render(request)
