@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.db.models import Q
 from django.http import JsonResponse
-from forms import SignUpForm
+from forms import SignUpForm, SearchForm
 from customer.models import Customer
 from customer.views import customer
 from helper.models import Hospital, Disease
@@ -49,7 +49,7 @@ def signup(request):
             customer = Customer(user=user)
             customer.set_attributes(telephone, address, zipcode)
             customer.save()
-            return redirect("/")
+            return redirect('/')
 
     else:
         return render(request, 'signup.html',
@@ -67,7 +67,6 @@ def search(request):
         results['disease'] = Disease.objects.filter(Q(keyword__icontains=querystring))
         results['hospital'] = Hospital.objects.filter(Q(introduction__icontains=querystring))
         if results['hospital'].count() <= 0 and results['disease'].count() <= 0:
-            print "not found"
             return JsonResponse({'error_message': 'Not Found'})
 
         result_json = {}
@@ -77,4 +76,29 @@ def search(request):
             index += 1
         return JsonResponse(result_json)
     else:
-        return render(request)
+        if request.method == 'POST':
+            print 2
+            return redirect('/result')
+        else:
+            return render(request, 'search.html')
+
+
+def result(request):
+    form = SearchForm(request.GET)
+    if not form.is_valid():
+        print 1
+        return redirect('/search', {'form': form})
+    else:
+        query = form.cleaned_data.get('query')
+        hospital_info = {}
+        diseases = Disease.objects.filter(Q(keyword__icontains=query))
+        for disease in diseases:
+            hospitals = Hospital.objects.filter(Q(introduction__icontains=disease.keyword))
+            for hospital in hospitals:
+                if hospital not in hospital_info:
+                    hospital_info.update({hospital: {}})
+                    hospital_info[hospital].update({'name': hospital.name})
+                    hospital_info[hospital].update({'area': hospital.area})
+                    hospital_info[hospital].update({'website': hospital.website})
+                    hospital_info[hospital].update({'introduction': hospital.introduction})
+    return render(request, 'result.html', )

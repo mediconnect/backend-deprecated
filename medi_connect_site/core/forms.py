@@ -45,7 +45,7 @@ class SignUpForm(forms.ModelForm):
         max_length=30,
         required=True,
         help_text='Usernames may contain <strong>alphanumeric</strong>, <strong>_</strong> and '
-                  '<strong>.</strong> characters')  # noqa: E261
+                  '<strong>.</strong> characters')
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     confirm_password = forms.CharField(
@@ -77,11 +77,10 @@ class SignUpForm(forms.ModelForm):
         label="Zipcode",
         required=False)
 
-
     class Meta:
         model = User
         exclude = ['last_login', 'date_joined']
-        fields = ['username', 'email', 'password', 'confirm_password', 'first_name', 'last_name']
+        fields = ['username', 'email', 'password']
 
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
@@ -99,3 +98,19 @@ class SignUpForm(forms.ModelForm):
             self._errors['password'] = self.error_class(
                 ['Passwords don\'t match'])
         return self.cleaned_data
+
+
+class SearchForm(forms.ModelForm):
+    query = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        max_length=30,
+        required=True,
+    )
+
+    class Meta:
+        model = User
+        exclude = []
+        fields = []
+
+    def __init__(self, *args, **kwargs):
+        super(SearchForm, self).__init__(*args, **kwargs)

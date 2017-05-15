@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Result{% endblock %}
+
+{% block body %}
+Result Page
+<script>
+    var jsonObject = JSON.parse('{{ hospitals | escapejs }}');
+
+</script>
+
+{% endblock %}
