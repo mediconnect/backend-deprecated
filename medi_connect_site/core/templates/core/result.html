@@ -1,12 +1,21 @@
-{% extends "base.html" %}
+{% extends "customer_header.html" %}
 
 {% block title %}Result{% endblock %}
 
-{% block body %}
-Result Page
-<script>
-    var jsonObject = JSON.parse('{{ hospitals | escapejs }}');
+{% block content %}
 
-</script>
+{% for name, dict in hospital.items %}
+    <div class="media">
+        <div class="media-left media-middle">
+            <a href="#">
+                <img class="media-object" src="..." alt="...">
+            </a>
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading">{{name}}</h4>
+            <p>{{dict.introduction}}</p>
+        </div>
+    </div>
+{% endfor %}
 
 {% endblock %}

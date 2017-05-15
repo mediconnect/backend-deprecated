@@ -7,6 +7,7 @@ from forms import SignUpForm, SearchForm
 from customer.models import Customer
 from customer.views import customer
 from helper.models import Hospital, Disease
+import json
 
 
 # Create your views here
@@ -76,29 +77,32 @@ def search(request):
             index += 1
         return JsonResponse(result_json)
     else:
-        if request.method == 'POST':
-            print 2
-            return redirect('/result')
-        else:
-            return render(request, 'search.html')
+        return render(request, 'search.html')
 
 
 def result(request):
-    form = SearchForm(request.GET)
-    if not form.is_valid():
-        print 1
-        return redirect('/search', {'form': form})
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if not form.is_valid():
+            # TODO
+            return None
+        else:
+            query = form.cleaned_data.get('query')
+            hospital_info = {}
+            diseases = Disease.objects.filter(Q(keyword__icontains=query))
+            for disease in diseases:
+                hospitals = Hospital.objects.filter(Q(introduction__icontains=disease.keyword))
+                for hospital in hospitals:
+                    if hospital not in hospital_info:
+                        hospital_info.update({str(hospital.name): {}})
+                        hospital_info[hospital.name].update({'area': str(hospital.area)})
+                        hospital_info[hospital.name].update({'website': str(hospital.website)})
+                        hospital_info[hospital.name].update({'introduction': str(hospital.introduction)})
+            if request.user.is_authenticated():
+                return render(request, 'result.html',
+                              {
+                                  'hospital': hospital_info,
+                                  'customer': Customer.objects.get(user=request.user)
+                              })
     else:
-        query = form.cleaned_data.get('query')
-        hospital_info = {}
-        diseases = Disease.objects.filter(Q(keyword__icontains=query))
-        for disease in diseases:
-            hospitals = Hospital.objects.filter(Q(introduction__icontains=disease.keyword))
-            for hospital in hospitals:
-                if hospital not in hospital_info:
-                    hospital_info.update({hospital: {}})
-                    hospital_info[hospital].update({'name': hospital.name})
-                    hospital_info[hospital].update({'area': hospital.area})
-                    hospital_info[hospital].update({'website': hospital.website})
-                    hospital_info[hospital].update({'introduction': hospital.introduction})
-    return render(request, 'result.html', )
+        return render(request, 'result.html')
