@@ -65,7 +65,8 @@ TEMPLATES = [
             'templates/',
             'core/templates/core',
             'customer/templates/customer',
-            'translator/templates/translator'
+            'translator/templates/translator',
+            'helper/templates/helper'
             ],
         'APP_DIRS': True,
         'OPTIONS': {

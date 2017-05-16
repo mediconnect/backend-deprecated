@@ -101,7 +101,7 @@ def result(request):
             if request.user.is_authenticated():
                 return render(request, 'result.html',
                               {
-                                  'hospital': hospital_info,
+                                  'hospital_list': hospital_info,
                                   'customer': Customer.objects.get(user=request.user)
                               })
     else:

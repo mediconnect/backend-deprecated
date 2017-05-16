@@ -4,18 +4,17 @@
 
 {% block content %}
 
-{% for name, dict in hospital.items %}
-    <div class="media">
+{% for name, dict in hospital_list.items %}
+<div class="media" style="border-style:solid">
+    <a href="/hospital/{{name}}">
         <div class="media-left media-middle">
-            <a href="#">
-                <img class="media-object" src="..." alt="...">
-            </a>
         </div>
         <div class="media-body">
             <h4 class="media-heading">{{name}}</h4>
             <p>{{dict.introduction}}</p>
         </div>
-    </div>
+    </a>
+</div>
 {% endfor %}
 
 {% endblock %}
