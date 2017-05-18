@@ -2,6 +2,11 @@
 
 {% block content %}
 
-{{hospital.introduction}}
+{{hospital.name}}
+
+<form action="{% url 'order_info' %}" method="post">
+    {% csrf_token %}
+    <button class="btn btn-default" type="submit">Place Order</button>
+</form>
 
 {% endblock %}
