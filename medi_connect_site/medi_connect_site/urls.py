@@ -15,7 +15,7 @@ urlpatterns = [
     url(r'^search/', core_views.search, name='search'),
     url(r'^result/', core_views.result, name='result'),
     url(r'^customer/', include('customer.urls')),
-    url(r'^hospital/', include('helper.urls')),
+    url(r'^helper/', include('helper.urls')),
     # put following urls under translator app (comment out for testing)
     # url(r'^translator/', trans_views.translator, name='translator'),
     # url(r'^translator/logout/', auth_views.logout, name='translator/logout'),

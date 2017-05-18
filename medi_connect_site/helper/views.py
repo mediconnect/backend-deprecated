@@ -1,8 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 from models import Hospital
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
 
 
 # Create your views here.
@@ -13,3 +12,6 @@ def hospital(request, name):
         'hospital': hosp,
         'customer': Customer.objects.get(user=request.user),
     })
+
+def order_info(request):
+    return HttpResponse("hello")
