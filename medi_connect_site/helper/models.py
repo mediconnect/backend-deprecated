@@ -1,6 +1,39 @@
 from __future__ import unicode_literals
 from django.db import models
-from customer.models import Customer
+#from customer.models import Customer
+
+class ListField(models.TextField):
+    __metaclass__ = models.SubfieldBase
+    description = "Stores a python list"
+
+    def __init__(self, *args, **kwargs):
+        super(ListField, self).__init__(*args, **kwargs)
+
+    def count(self):
+        return  
+
+    def to_python(self, value):
+        if not value:
+            value = []
+
+        if isinstance(value, list):
+            return value
+
+        return ast.literal_eval(value)
+
+    def get_prep_value(self, value):
+        if value is None:
+            return value
+
+        return unicode(value)
+
+    def value_to_string(self, obj):
+        value = self._get_val_from_obj(obj)
+        return self.get_db_prep_value(value)
+
+class ListModel(models.Model):
+    test_list = ListField()
+
 # from translator.models import Translator
 # Create choices
 
@@ -47,7 +80,7 @@ class Customer(models.Model):
     address = models.TextFiled()
     zipcode = models.IntegerField()
     register_time = models.DateField(auto_now_add=True)
-
+    favorite_hospitals = models.ListField()
 class Patient(models.Model):
     customer_id = models.ForeignKey('Customer', on_delete = models.CASCADE)
     name = models.CharField(max_length=50)
