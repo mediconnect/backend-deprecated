@@ -12,7 +12,7 @@ class Customer(models.Model):
     weibo = models.TextField(blank=True)
     qq = models.TextField(blank=True)
     tel = models.TextField()
-    address = models.TextFiled()
+    address = models.TextField()
     zipcode = models.IntegerField()
     register_time = models.DateField(auto_now_add=True)
 

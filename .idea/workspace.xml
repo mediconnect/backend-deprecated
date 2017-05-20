@@ -4,7 +4,8 @@
     <list default="true" id="215a8e93-aa6c-4e54-9eb2-9eda68ffc6e0" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/customer/models.py" afterPath="$PROJECT_DIR$/medi_connect_site/customer/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/helper/models.py" afterPath="$PROJECT_DIR$/medi_connect_site/helper/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/customer/templates/customer/customer_header.html" afterPath="$PROJECT_DIR$/medi_connect_site/customer/templates/customer/customer_header.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/medi_connect_site/urls.py" afterPath="$PROJECT_DIR$/medi_connect_site/medi_connect_site/urls.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -19,11 +20,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/medi_connect_site/helper/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="20" column="20" lean-forward="true" selection-start-line="20" selection-start-column="20" selection-end-line="20" selection-end-column="20" />
+            <state relative-caret-position="420">
+              <caret line="28" column="8" lean-forward="true" selection-start-line="28" selection-start-column="8" selection-end-line="28" selection-end-column="8" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
@@ -31,11 +32,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/medi_connect_site/medi_connect_site/urls.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="22" column="0" lean-forward="true" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="customer_header.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/medi_connect_site/customer/templates/customer/customer_header.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="417">
+              <caret line="33" column="72" lean-forward="true" selection-start-line="33" selection-start-column="72" selection-end-line="33" selection-end-column="72" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/medi_connect_site/customer/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="390">
-              <caret line="27" column="52" lean-forward="false" selection-start-line="27" selection-start-column="52" selection-end-line="27" selection-end-column="52" />
+            <state relative-caret-position="375">
+              <caret line="26" column="0" lean-forward="true" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -71,7 +92,6 @@
         <option value="$PROJECT_DIR$/medi_connect_site/home/templates/home/signup.html" />
         <option value="$PROJECT_DIR$/medi_connect_site/home/views.py" />
         <option value="$PROJECT_DIR$/medi_connect_site/core/templates/core/login.html" />
-        <option value="$PROJECT_DIR$/medi_connect_site/customer/templates/customer/customer_header.html" />
         <option value="$PROJECT_DIR$/medi_connect_site/customer/urls.py" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/medi_connect_site/core/templates/core/signup.html" />
@@ -84,13 +104,14 @@
         <option value="$PROJECT_DIR$/medi_connect_site/core/views.py" />
         <option value="$PROJECT_DIR$/medi_connect_site/medi_connect_site/settings.py" />
         <option value="$PROJECT_DIR$/medi_connect_site/helper/forms.py" />
-        <option value="$PROJECT_DIR$/medi_connect_site/medi_connect_site/urls.py" />
         <option value="$PROJECT_DIR$/medi_connect_site/core/templates/core/result.html" />
         <option value="$PROJECT_DIR$/medi_connect_site/helper/urls.py" />
         <option value="$PROJECT_DIR$/medi_connect_site/helper/templates/helper/hospital_order.html" />
         <option value="$PROJECT_DIR$/medi_connect_site/helper/views.py" />
         <option value="$PROJECT_DIR$/medi_connect_site/customer/models.py" />
         <option value="$PROJECT_DIR$/medi_connect_site/helper/models.py" />
+        <option value="$PROJECT_DIR$/medi_connect_site/customer/templates/customer/customer_header.html" />
+        <option value="$PROJECT_DIR$/medi_connect_site/medi_connect_site/urls.py" />
       </list>
     </option>
   </component>
@@ -138,6 +159,24 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="medi_connect_site" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="website" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="website" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="medi_connect_site" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="templates" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -562,13 +601,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/templates/base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="30" lean-forward="false" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/templates/main.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -661,13 +693,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/customer/templates/customer/customer_header.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="60" lean-forward="false" selection-start-line="17" selection-start-column="60" selection-end-line="17" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/medi_connect_site/customer/templates/customer/customer.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
@@ -696,13 +721,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/medi_connect_site/urls.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="17" column="17" lean-forward="false" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/medi_connect_site/helper/templates/helper/hospital_order.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
@@ -717,21 +735,45 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/customer/models.py">
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/templates/base.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="27" column="52" lean-forward="false" selection-start-line="27" selection-start-column="52" selection-end-line="27" selection-end-column="52" />
+        <state relative-caret-position="270">
+          <caret line="18" column="30" lean-forward="false" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/customer/templates/customer/customer_header.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="417">
+          <caret line="33" column="72" lean-forward="true" selection-start-line="33" selection-start-column="72" selection-end-line="33" selection-end-column="72" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/medi_connect_site/helper/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="20" column="20" lean-forward="true" selection-start-line="20" selection-start-column="20" selection-end-line="20" selection-end-column="20" />
+        <state relative-caret-position="420">
+          <caret line="28" column="8" lean-forward="true" selection-start-line="28" selection-start-column="8" selection-end-line="28" selection-end-column="8" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/medi_connect_site/urls.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="22" column="0" lean-forward="true" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/customer/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="26" column="0" lean-forward="true" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
