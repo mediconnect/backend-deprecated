@@ -1,8 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
-
-# Create your models here.
+#from helper.models import Hospital
 
 # Create your models here.
 class Customer(models.Model):
@@ -12,10 +10,10 @@ class Customer(models.Model):
     weibo = models.TextField(blank=True)
     qq = models.TextField(blank=True)
     tel = models.TextField()
-    address = models.TextFiled()
+    address = models.TextField()
     zipcode = models.IntegerField()
     register_time = models.DateField(auto_now_add=True)
-    favorite_hospitals = models.OneToManyField(Hospital)
+    #favorite_hospitals = models.ForeignKey(Hospital)
 
     class Meta:
         db_table = 'auth_customer'

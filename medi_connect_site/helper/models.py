@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
-#from customer.models import Customer
-
+from customer.models import Customer
+"""
 class ListField(models.TextField):
     __metaclass__ = models.SubfieldBase
     description = "Stores a python list"
@@ -36,11 +36,11 @@ class ListModel(models.Model):
 
 # from translator.models import Translator
 # Create choices
-
+"""
 #Diseases
 DISEASE_CATAGORY_CHOICES = (
-    (CANCER,'Cancer'),
-    (COLD,'Cold')
+    ('CANCER','Cancer'),
+    ('COLD','Cold')
     )
 
 #Gender
@@ -50,7 +50,7 @@ FEMALE = 'F'
 GENDER_CHOICES = (
     (MALE,'Male'),
     (FEMALE,'Female'),
-    (OTHER, 'Other')
+    ('OTHER', 'Other')
     )
 
 #Status
@@ -70,23 +70,12 @@ STATUS_CHOICES = (
 
 
 # Create your models here.
-class Customer(models.Model):
-    user = models.OneToOneField(User)
-    email = models.EmailField()
-    wechat = models.TextField(blank=True)
-    weibo = models.TextField(blank=True)
-    qq = models.TextField(blank=True)
-    tel = models.TextField()
-    address = models.TextFiled()
-    zipcode = models.IntegerField()
-    register_time = models.DateField(auto_now_add=True)
-    favorite_hospitals = models.ListField()
 class Patient(models.Model):
-    customer_id = models.ForeignKey('Customer', on_delete = models.CASCADE)
+    customer_id = models.ForeignKey(Customer, on_delete = models.CASCADE)
     name = models.CharField(max_length=50)
     age = models.IntegerField()
     gender = models.CharField(max_length=5,choices=GENDER_CHOICES)
-    catagory = models.CharField(max_length = 50,choices = DISEASE_CATAGORY_CHOICES,default = COLD)
+    catagory = models.CharField(max_length = 50,choices = DISEASE_CATAGORY_CHOICES,default = 'COLD')
     diagnose_hospital = models.TextField()
     doctor = models.TextField(blank=True)
 
@@ -122,19 +111,19 @@ class Rank(models.Model):
         db_table = 'rank'
 
 class Appointment(models.Model):
-    hospital = models.ForeignKey('Hospital',on_delete =CASCADE)
+    hospital = models.ForeignKey('Hospital',on_delete =models.CASCADE)
     week_1 = models.PositiveSmallIntegerField()
     week_2 = models.PositiveSmallIntegerField()
     week_3 = models.PositiveSmallIntegerField()
     week_4 = models.PositiveSmallIntegerField()
 
 class Order(models.Model):
-    customer = models.ForeignKey('Customer',on_delete = CASCADE)
-    patient = models.ForeignKey('Patient', on_delete = CASACADE)
-    document = models.ForeignKey('Document', on_delete= CASCADE)
-    hospital = models.ForeignKey('Hospital',on_delete= CASCADE)
-    disease = models.ForeignKey('Disease',on_delete=CASCADE)
-    translator = models.ForeignKey('Translator',on_delete = CASCADE)
+    customer = models.ForeignKey(Customer,on_delete = models.CASCADE)
+    patient = models.ForeignKey('Patient', on_delete = models.CASCADE)
+    document_id = models.ForeignKey('Document', on_delete= models.CASCADE)
+    hospital = models.ForeignKey('Hospital',on_delete= models.CASCADE)
+    disease = models.ForeignKey('Disease',on_delete=models.CASCADE)
+    #translator = models.ForeignKey('Translator',on_delete = models.CASCADE)
     order_time = models.DateField(auto_now_add = True)
     estimate_feedback = models.CharField(max_length=50)
     status = models.CharField(max_length=20,choices=STATUS_CHOICES)
@@ -145,8 +134,8 @@ class Order(models.Model):
 def order_directory_path(instance,filename):
     return 'order_{0}/{1}'.format(instance.orer.id,filename)
 class Document(models.Model):
-    order = models.ForeignKey('Order', on_delete=CASCADE)
-    case_not_trans = models.FileFiled(upload_to = order_directory_path)
-    case_trans = models.FileFiled(upload_to = order_directory_path)
-    feedback_not_trans = models.FileFiled(upload_to = order_directory_path)
-    feedback_trans = models.FileFiled(upload_to = order_directory_path)
+    order_id = models.ForeignKey('Order', on_delete=models.CASCADE)
+    case_not_trans = models.FileField(upload_to = order_directory_path)
+    case_trans = models.FileField(upload_to = order_directory_path)
+    feedback_not_trans = models.FileField(upload_to = order_directory_path)
+    feedback_trans = models.FileField(upload_to = order_directory_path)
