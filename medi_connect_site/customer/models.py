@@ -15,6 +15,7 @@ class Customer(models.Model):
     address = models.TextField()
     zipcode = models.IntegerField()
     register_time = models.DateField(auto_now_add=True)
+    favorite_hospitals = models.OneToManyField(Hospital)
 
     class Meta:
         db_table = 'auth_customer'
