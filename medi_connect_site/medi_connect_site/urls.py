@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^result/', core_views.result, name='result'),
     url(r'^customer/', include('customer.urls')),
     url(r'^helper/', include('helper.urls')),
-    url(r'^profile/', include('profile.urls')),
+    # url(r'^profile/', include('profile.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

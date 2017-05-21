@@ -4,14 +4,12 @@ from django.contrib.auth.models import User
 # Create your models here.
 class Customer(models.Model):
     user = models.OneToOneField(User)
-    email = models.EmailField()
     wechat = models.TextField(blank=True)
     weibo = models.TextField(blank=True)
     qq = models.TextField(blank=True)
     tel = models.TextField()
     address = models.TextField()
     zipcode = models.IntegerField()
-    register_time = models.DateField(auto_now_add=True)
 
     class Meta:
         db_table = 'auth_customer'
