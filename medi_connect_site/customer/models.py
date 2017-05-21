@@ -1,18 +1,20 @@
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
 #from helper.models import Hospital
 
 # Create your models here.
 class Customer(models.Model):
     user = models.OneToOneField(User)
-    email = models.EmailField()
+    email = models.EmailField(default = 'unkown')
     wechat = models.TextField(blank=True)
     weibo = models.TextField(blank=True)
     qq = models.TextField(blank=True)
-    tel = models.TextField()
-    address = models.TextField()
-    zipcode = models.IntegerField()
-    register_time = models.DateField(auto_now_add=True)
+    tel = models.TextField(default = 'unkown')
+    address = models.TextField(blank = True)
+    zipcode = models.IntegerField(default = 0)
+    register_time = models.DateField(default = datetime.date.today)
+    #register_time = models.DateField(auto_add_now = True)
     #favorite_hospitals = models.ForeignKey(Hospital)
 
     class Meta:
