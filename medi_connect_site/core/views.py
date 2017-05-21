@@ -7,7 +7,6 @@ from forms import SignUpForm, SearchForm
 from customer.models import Customer
 from customer.views import customer
 from helper.models import Hospital, Disease
-import json
 
 
 # Create your views here
