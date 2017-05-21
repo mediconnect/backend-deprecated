@@ -24,9 +24,6 @@ class Customer(models.Model):
             return name
         return self.user.username
 
-    def get_id(self):
-        return self.user.id
-
     def set_attributes(self, tel, address, zipcode):
         self.tel = tel if len(tel) < 1 else 'unknown'
         self.address = address if len(address) < 1 else 'unknown'

@@ -2,7 +2,6 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from core import views as core_views
-from translator import views as trans_views
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [

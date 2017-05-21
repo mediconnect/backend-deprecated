@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'customer',
     'translator',
     'helper',
+    'info',
 ]
 
 MIDDLEWARE = [
@@ -66,7 +67,8 @@ TEMPLATES = [
             'core/templates/core',
             'customer/templates/customer',
             'translator/templates/translator',
-            'helper/templates/helper'
+            'helper/templates/helper',
+            'info/templates/info'
             ],
         'APP_DIRS': True,
         'OPTIONS': {
