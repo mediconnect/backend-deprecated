@@ -16,10 +16,7 @@ urlpatterns = [
     url(r'^result/', core_views.result, name='result'),
     url(r'^customer/', include('customer.urls')),
     url(r'^helper/', include('helper.urls')),
-    # put following urls under translator app (comment out for testing)
-    # url(r'^translator/', trans_views.translator, name='translator'),
-    # url(r'^translator/logout/', auth_views.logout, name='translator/logout'),
-    # url(r'^translator/login', trans_views.login, name='translator/login')
+    # url(r'^profile/', include('profile.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

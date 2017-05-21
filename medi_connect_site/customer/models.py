@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+
 import datetime
 #from helper.models import Hospital
+
 
 # Create your models here.
 class Customer(models.Model):
@@ -16,6 +18,7 @@ class Customer(models.Model):
     register_time = models.DateField(default = datetime.date.today)
     #register_time = models.DateField(auto_add_now = True)
     #favorite_hospitals = models.ForeignKey(Hospital)
+
 
     class Meta:
         db_table = 'auth_customer'

@@ -39,47 +39,50 @@ class ListModel(models.Model):
 # from translator.models import Translator
 # Create choices
 """
-#Diseases
+# Diseases
 DISEASE_CATAGORY_CHOICES = (
-    ('CANCER','Cancer'),
-    ('COLD','Cold')
-    )
+    ('CANCER', 'Cancer'),
+    ('COLD', 'Cold')
+)
 
-#Gender
+# Gender
 MALE = 'M'
 FEMALE = 'F'
 
 GENDER_CHOICES = (
-    (MALE,'Male'),
-    (FEMALE,'Female'),
+    (MALE, 'Male'),
+    (FEMALE, 'Female'),
     ('OTHER', 'Other')
-    )
+)
 
-#Status
+# Status
 STARTED = 0
-SUBMITTED = 1 #only change appointment at this status
+SUBMITTED = 1  # only change appointment at this status
 RECIEVED = 2
 FEEDBACK = 3
 PAID = 4
 
 STATUS_CHOICES = (
     (STARTED, 'started'),
-    (SUBMITTED,'submitted'),
-    (RECIEVED,'recieved'),
-    (FEEDBACK,'feedback'),
-    (PAID,'paid')
-    )
+    (SUBMITTED, 'submitted'),
+    (RECIEVED, 'recieved'),
+    (FEEDBACK, 'feedback'),
+    (PAID, 'paid')
+)
 
 
 # Create your models here.
 class Patient(models.Model):
+
     customer_id = models.ForeignKey(Customer, on_delete = models.CASCADE)
     name = models.CharField(blank = True, max_length=50)
     age = models.IntegerField(blank = True)
     gender = models.CharField(max_length=5,choices=GENDER_CHOICES, default = MALE)
     catagory = models.CharField(max_length = 50,choices = DISEASE_CATAGORY_CHOICES,default = 'COLD')
     diagnose_hospital = models.TextField(blank = True)
+
     doctor = models.TextField(blank=True)
+
 
 class Hospital(models.Model):
     name = models.CharField(max_length=50)
@@ -91,6 +94,7 @@ class Hospital(models.Model):
     specialty = models.TextField(default = 'specialty')
     feedback_time = models.CharField(default = 'one week', max_length=50)
     price_range = models.CharField(default = 'unkown', max_length=50)
+
     class Meta:
         db_table = 'hospital'
     """
@@ -147,11 +151,15 @@ class Order(models.Model):
     class Meta:
         db_table = 'order'
 
-def order_directory_path(instance,filename):
-    return 'order_{0}/{1}'.format(instance.orer.id,filename)
+
+def order_directory_path(instance, filename):
+    return 'order_{0}/{1}'.format(instance.orer.id, filename)
+
+
 class Document(models.Model):
     order_id = models.ForeignKey('Order', on_delete=models.CASCADE)
     case_not_trans = models.FileField(blank = True, upload_to = order_directory_path)
     case_trans = models.FileField(blank = True, upload_to = order_directory_path)
     feedback_not_trans = models.FileField(blank = True, upload_to = order_directory_path)
     feedback_trans = models.FileField(blank = True, upload_to = order_directory_path)
+
