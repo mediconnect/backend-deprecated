@@ -37,13 +37,16 @@ STATUS_CHOICES = (
 
 # Create your models here.
 class Patient(models.Model):
-    customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     name = models.CharField(blank=True, max_length=50)
     age = models.IntegerField(blank=True)
     gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)
     category = models.CharField(max_length=50, choices=DISEASE_CATEGORY_CHOICES, default='COLD')
     diagnose_hospital = models.TextField(blank=True)
     doctor = models.TextField(blank=True)
+
+    class Meta:
+        db_table = 'patient'
 
 
 class Hospital(models.Model):
@@ -91,13 +94,16 @@ class Appointment(models.Model):
     week_3 = models.PositiveSmallIntegerField(default=0)
     week_4 = models.PositiveSmallIntegerField(default=0)
 
+    class Meta:
+        db_table = 'appointment'
+
 
 class Order(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
-    document_id = models.ForeignKey('Document', on_delete=models.CASCADE)
-    hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE)
-    disease = models.ForeignKey('Disease', on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
+    patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
+    document = models.ForeignKey('Document', on_delete=models.CASCADE, null=True)
+    hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, null=True)
+    disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
     # translator = models.ForeignKey('Translator',on_delete = models.CASCADE)
     order_time = models.DateField(default=datetime.date.today)
     estimate_feedback = models.CharField(blank=True, max_length=50)
@@ -112,8 +118,10 @@ def order_directory_path(instance, filename):
 
 
 class Document(models.Model):
-    order_id = models.ForeignKey('Order', on_delete=models.CASCADE)
     case_not_trans = models.FileField(blank=True, upload_to=order_directory_path)
     case_trans = models.FileField(blank=True, upload_to=order_directory_path)
     feedback_not_trans = models.FileField(blank=True, upload_to=order_directory_path)
     feedback_trans = models.FileField(blank=True, upload_to=order_directory_path)
+
+    class Meta:
+        db_table = 'document'

@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<form action="/helper/order/orderSubmitFirst/{{order_id}}/" method="post" role="form">
+<form action="/helper/order/orderSubmitSecond/{{order_id}}/" method="post" role="form">
     {% csrf_token %}
     {% for field in form.visible_fields %}
     <div class="form-group{% if field.errors %} has-error{% endif %}">

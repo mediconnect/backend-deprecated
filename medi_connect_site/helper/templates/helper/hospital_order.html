@@ -4,7 +4,7 @@
 
 {{hospital.name}}
 
-<form action="{% url 'order_info_first' %}" method="post">
+<form action="/helper/order/orderInfoFirst/{{order_id}}/" method="post">
     {% csrf_token %}
     <button class="btn btn-default" type="submit">Place Order</button>
 </form>
