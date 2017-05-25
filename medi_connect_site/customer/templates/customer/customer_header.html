@@ -26,8 +26,8 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="info/profile/{{customer.id}}">Profile</a></li>
-                        <li><a href="#">Appointment</a></li>
+                        <li><a href="{% url 'info_profile' id=customer.id %}">Profile</a></li>
+                        <li><a href="{% url 'info_order' id=customer.id %}">Appointment</a></li>
                         <li><a href="#">Hospital</a></li>
                         <li><a href="#">Contact Us</a></li>
                         <li role="separator" class="divider"></li>
