@@ -18,9 +18,9 @@ def home(request):
         # assign administrator as super user
         # assign translator as staff
         if request.user.is_superuser:
-            print "Need administration module"
+            return
         elif request.user.is_staff:
-            print "Need translator module"
+            return
         else:
             return customer(request, request.user)
     else:

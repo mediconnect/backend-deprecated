@@ -1,8 +1,7 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
+{% block title %}SignUp{% endblock %}
 
-{% block title %}Sign Up{% endblock %}
-
-{% block body %}
+{% block content %}
 
 <form action="{% url 'signup' %}" method="post" role="form">
     {% csrf_token %}
