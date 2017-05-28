@@ -1,4 +1,4 @@
-{% extends "customer_header.html" %}
+{% extends "index.html" %}
 
 {% block title %}Result{% endblock %}
 
@@ -6,7 +6,7 @@
 
 {% for name, dict in hospital_list.items %}
 <div class="media" style="border-style:solid">
-    <a href="{% url 'hospital_order' name=name %}">
+    <a href="{% url 'login' %}">
         <div class="media-left media-middle">
         </div>
         <div class="media-body">

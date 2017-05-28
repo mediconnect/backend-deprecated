@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.db.models import Q
-from django.http import JsonResponse
 from forms import SignUpForm, SearchForm
 from customer.models import Customer
 from customer.views import customer
@@ -24,7 +23,9 @@ def home(request):
         else:
             return customer(request, request.user)
     else:
-        return render(request, 'index.html')
+        return render(request, 'index.html', {
+            'form': SearchForm()
+        })
 
 
 def signup(request):
@@ -56,36 +57,11 @@ def signup(request):
                       {'form': SignUpForm()})
 
 
-def search(request):
-    # check if request is Ajax or not
-    # if request.is_ajax():
-    #     querystring = request.GET.get('query', None)
-    #     if querystring is None:
-    #         return JsonResponse({'error_message': 'Please type correct keywords'})
-    #
-    #     results = dict()
-    #     results['disease'] = Disease.objects.filter(Q(keyword__icontains=querystring))
-    #     results['hospital'] = Hospital.objects.filter(Q(introduction__icontains=querystring))
-    #     if results['hospital'].count() <= 0 and results['disease'].count() <= 0:
-    #         return JsonResponse({'error_message': 'Not Found'})
-    #
-    #     result_json = {}
-    #     index = 1
-    #     for hospital in results['hospital']:
-    #         result_json.update({'hospital' + str(index): str(hospital.name)})
-    #         index += 1
-    #     return JsonResponse(result_json)
-    # else:
-    #     return render(request, 'search.html')
-    return
-
-
 def result(request):
     if request.method == 'POST':
         form = SearchForm(request.POST)
         if not form.is_valid():
-            # TODO
-            return None
+            return customer(request, request.user)
         else:
             query = form.cleaned_data.get('query')
             hospital_info = {}
@@ -106,3 +82,31 @@ def result(request):
                               })
     else:
         return render(request, 'result.html')
+
+
+def result_guest(request):
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if not form.is_valid():
+            return render(request, 'index.html', {
+                'form': SearchForm()
+            })
+        else:
+            query = form.cleaned_data.get('query')
+            hospital_info = {}
+            diseases = Disease.objects.filter(Q(keyword__icontains=query))
+            for disease in diseases:
+                hospitals = Hospital.objects.filter(Q(introduction__icontains=disease.keyword))
+                for hospital in hospitals:
+                    if hospital not in hospital_info:
+                        hospital_info.update({str(hospital.name): {}})
+                        hospital_info[hospital.name].update({'area': str(hospital.area)})
+                        hospital_info[hospital.name].update({'website': str(hospital.website)})
+                        hospital_info[hospital.name].update({'introduction': str(hospital.introduction)})
+
+            return render(request, 'result_guest.html',
+                          {
+                              'hospital_list': hospital_info,
+                          })
+    else:
+        return render(request, 'result_guest.html')
