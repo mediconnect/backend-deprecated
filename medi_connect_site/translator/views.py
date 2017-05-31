@@ -14,7 +14,7 @@ def home(request):
     return render(request, 'core/home.html', { 'documents': documents })
 
 
-def simple_upload(request):
+def assign(request):
     if request.method == 'POST' and request.FILES['myfile']:
         myfile = request.FILES['myfile']
         fs = FileSystemStorage()
