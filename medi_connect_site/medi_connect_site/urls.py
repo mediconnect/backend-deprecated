@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^signup/', core_views.signup, name='signup'),
     url(r'^result/', core_views.result, name='result'),
     url(r'^result_guest/', core_views.result_guest, name='result_guest'),
+    url(r'^translator/',include('translator.urls')),
     url(r'^customer/', include('customer.urls')),
     url(r'^helper/', include('helper.urls')),
     url(r'^info/', include('info.urls')),
