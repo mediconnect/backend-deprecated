@@ -19,7 +19,7 @@ def home(request):
         if request.user.is_superuser:
             return
         elif request.user.is_staff:
-            return
+            return translator(request,request.user)
         else:
             return customer(request, request.user)
     else:

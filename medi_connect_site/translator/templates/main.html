@@ -41,11 +41,14 @@ nav ul {
 
 <table>
 	<tr>
-		<th>Text</th>
-		<th>Hospital</th>
-		<th>Customer</th>
-		<th>Uploaded Time</th>
+		<th>Assignment</th>
+		{% for key, value in assignment_dict.items%}
+			{{key }}
+		{% endfor %}
 		<th>Deadline</th>
+		{% for key, value in assignment_dict.items%}
+			{{value }}
+		{% endfor %}
 	</tr>
 	<tr></tr>
 	<tr></tr>
