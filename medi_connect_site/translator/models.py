@@ -11,5 +11,7 @@ class Translator(models.Model):
 	user = models.OneToOneField(User)
 	email = models.EmailFiled(default = 'unknown')
 	status = models.BooleanField(default = INACTIVE)
+	supervisor = models.ForienKey(Supervisor)
 
-
+class Supervisor(models.Model):
+	user = models.OneToOneField(User)

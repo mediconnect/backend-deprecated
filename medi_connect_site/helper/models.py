@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from customer.models import Customer
+from translator.models import Translator, Supervisor
 import datetime
 
 # Diseases
@@ -122,6 +123,10 @@ class Document(models.Model):
     case_trans = models.FileField(blank=True, upload_to=order_directory_path)
     feedback_not_trans = models.FileField(blank=True, upload_to=order_directory_path)
     feedback_trans = models.FileField(blank=True, upload_to=order_directory_path)
+    approved = models.BooleanField(default = False)
 
     class Meta:
         db_table = 'document'
+
+    def approve(self):
+        self.approved = True

@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from translator.models import Translator
 from helper.models import Document,Order
+from translator.forms import CheckForm, DocumentForm
 
 
 
@@ -9,14 +10,14 @@ from helper.models import Document,Order
 @login_required
 def translator(request,user):
 	translator = Translator.objects.get(user = user)
-	return home(request,translator)
-	
-
-def home(request,translator):
-    documents = Document.objects.all()
-    assignemnt_dict = assign(request,translator)
+	assignemnt_dict = assign(request,translator)
     return render(request, "translator/main.html",{'assignment_dict':assignment_dict})
-
+	
+@login_required
+def supervisor(request,user):
+    supervisor = supervisor.objects.get(user = user)
+    documents = Document.objects.getAll()
+    return render(request,"translator/home.html",{'documents':documents})
 
 def assign(request,translator):
 	assignments = {}
@@ -25,6 +26,18 @@ def assign(request,translator):
 	document = Document.objects.get(id = order.document)
 	assignment[document] = latest
 	return assignemnt
+
+@login_required
+def approve(request,supervisor):
+	if request.method == 'POST':
+		form = CheckForm(request.POST)
+		approval = form.cleaned_data['approved']
+		if approval:
+			document.approve()
+	else:
+        return render(request, 'check.html',
+                      {'form': CehckForm(document)})
+
 
 def model_form_upload(request,translator):
     if request.method == 'POST':
