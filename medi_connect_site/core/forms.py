@@ -64,18 +64,6 @@ class SignUpForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
-        self.field_order = [
-            'username',
-            'password',
-            'confirm_password',
-            'first_name',
-            'last_name',
-            'email',
-            'telephone',
-            'address',
-            'zipcode'
-        ]
-        self.order_fields(self.field_order)
         self.fields['username'].validators.append(forbidden_username_validator)
         self.fields['username'].validators.append(invalid_username_validator)
         self.fields['username'].validators.append(
