@@ -1,7 +1,7 @@
-from __future__ import unicode_literals
-
-from django.apps import AppConfig
-
-
-class TranslatorConfig(AppConfig):
-    name = 'translator'
+# from __future__ import unicode_literals
+#
+# from django.apps import AppConfig
+#
+#
+# class TranslatorConfig(AppConfig):
+#     name = 'translator'

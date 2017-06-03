@@ -19,10 +19,11 @@ def home(request):
         if request.user.is_superuser:
             return
         elif request.user.is_staff:
-            return translator(request,request.user)
+            # return translator(request,request.user)
+            return None
         else:
             return customer(request, request.user)
-    else:
+    # else:
         return render(request, 'index.html', {
             'form': SearchForm()
         })
