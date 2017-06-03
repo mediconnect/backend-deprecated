@@ -23,7 +23,7 @@ def home(request):
             return None
         else:
             return customer(request, request.user)
-    # else:
+    else:
         return render(request, 'index.html', {
             'form': SearchForm()
         })
@@ -39,13 +39,13 @@ def signup(request):
             username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            firstname = form.cleaned_data.get('first_name')
-            lastname = form.cleaned_data.get('last_name')
+            firs_tname = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
             telephone = form.cleaned_data.get('telephone')
             address = form.cleaned_data.get('address')
             zipcode = form.cleaned_data.get('zipcode')
             User.objects.create_user(username=username, password=password,
-                                     email=email, first_name=firstname, last_name=lastname)
+                                     email=email, first_name=first_name, last_name=last_name)
             user = authenticate(username=username, password=password)
             login(request, user)
             customer = Customer(user=user)
