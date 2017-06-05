@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from customer.models import Customer
-from translator.models import Translator, Supervisor
+# from translator.models import Translator, Supervisor
 import datetime
 
 # Diseases

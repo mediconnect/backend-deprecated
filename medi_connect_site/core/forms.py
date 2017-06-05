@@ -78,9 +78,14 @@ class SignUpForm(forms.ModelForm):
         self.order_fields(self.field_order)
         self.fields['username'].validators.append(forbidden_username_validator)
         self.fields['username'].validators.append(invalid_username_validator)
-        self.fields['username'].validators.append(
-            unique_email_validator)
+        self.fields['username'].validators.append(unique_email_validator)
         self.fields['email'].validators.append(unique_email_validator)
+        self.fields['password'].widget = forms.PasswordInput()
+        self.fields['password'].required = True
+        self.fields['username'].required = True
+        self.fields['email'].required = True
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
 
     def clean(self):
         super(SignUpForm, self).clean()
@@ -88,7 +93,11 @@ class SignUpForm(forms.ModelForm):
         confirm_password = self.cleaned_data.get('confirm_password')
         if password and password != confirm_password:
             self._errors['password'] = self.error_class(
-                ['Passwords don\'t match'])
+                ['Passwords don\'t match']
+            )
+            self._errors['confirm_password'] = self.error_class(
+                ['Passwords don\'t match']
+            )
         return self.cleaned_data
 
 
