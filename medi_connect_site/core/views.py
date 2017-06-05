@@ -5,6 +5,7 @@ from django.db.models import Q
 from forms import SignUpForm, SearchForm
 from customer.models import Customer
 from customer.views import customer
+from translator.views import translator, supervisor
 from helper.models import Hospital, Disease
 
 
@@ -17,7 +18,7 @@ def home(request):
         # assign administrator as super user
         # assign translator as staff
         if request.user.is_superuser:
-            return
+            return 
         elif request.user.is_staff:
             return translator(request,request.user)
         else:
