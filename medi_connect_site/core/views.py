@@ -39,7 +39,7 @@ def signup(request):
             username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            firs_tname = form.cleaned_data.get('first_name')
+            first_name = form.cleaned_data.get('first_name')
             last_name = form.cleaned_data.get('last_name')
             telephone = form.cleaned_data.get('telephone')
             address = form.cleaned_data.get('address')
