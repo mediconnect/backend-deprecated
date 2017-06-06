@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from customer.models import Customer
-# from translator.models import Translator, Supervisor
+# from translator.models import Translator
 import datetime
 
 # Diseases
@@ -55,6 +55,7 @@ class Hospital(models.Model):
     email = models.EmailField(blank=True)
     area = models.CharField(blank=True, max_length=50)
     slots_open = models.IntegerField(default=20)
+    overall_rank = models.IntegerField(default = 0)
     website = models.URLField(blank=True)
     introduction = models.TextField(default='intro')
     specialty = models.TextField(default='specialty')
@@ -102,7 +103,6 @@ class Appointment(models.Model):
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
-    document = models.ForeignKey('Document', on_delete=models.CASCADE, null=True)
     hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, null=True)
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
     # translator = models.ForeignKey('Translator',on_delete = models.CASCADE)
@@ -115,14 +115,16 @@ class Order(models.Model):
 
 
 def order_directory_path(instance, filename):
-    return 'order_{0}/{1}'.format(instance.orer.id, filename)
+    return 'order_{0}/{1}/{2}'.format(instance.order.customer, instance.order.id, filename)
 
 
 class Document(models.Model):
-    case_not_trans = models.FileField(blank=True, upload_to=order_directory_path)
-    case_trans = models.FileField(blank=True, upload_to=order_directory_path)
-    feedback_not_trans = models.FileField(blank=True, upload_to=order_directory_path)
-    feedback_trans = models.FileField(blank=True, upload_to=order_directory_path)
+
+    order = models.ForeignKey(Order,on_delete = models.CASCADE,null= True)
+    description = models.CharField(max_length = 255, blank = True)
+    required = models.BooleanField(default= False)
+    document = models.FileField(upload_to = order_directory_path, null = True)
+    document_trans = models.FileField(upload_to = order_directory_path, null = True)
     approved = models.BooleanField(default = False)
 
     class Meta:
