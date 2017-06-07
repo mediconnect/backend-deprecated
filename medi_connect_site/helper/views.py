@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from models import Hospital, Patient, Disease, Order
+from models import Hospital, Patient, Disease, Order, Document
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
-from helper.forms import OrderFormFirst, OrderFormSecond
+from helper.forms import OrderFormFirst, OrderFormSecond, DocumentForm
 
 
 # Create your views here.
@@ -33,7 +33,7 @@ def order_info_first(request, order_id):
             'hospital': order.hospital,
             'customer': customer,
             'order_id': order.id,
-            'error': "There is no available slots"
+            'error': "There is no available spot"
         })
     order.customer = customer
     order.status = 0
@@ -102,18 +102,50 @@ def order_submit_second(request, order_id):
             disease = Disease(category=category)
             disease.save()
             order.disease = disease
+            order.save()
+            return render(request, 'document_submit.html', {
+                'customer': customer,
+                'form': DocumentForm(),
+                'order_id': order_id,
+            })
+    else:
+        customer = Customer.objects.get(user=request.user)
+        return render(request, 'document_submit.html', {
+            'customer': customer,
+            'form': DocumentForm(),
+            'order_id': order_id,
+        })
+
+
+@login_required
+def document_submit(request, order_id):
+    order = Order.objects.get(id=order_id)
+    customer = Customer.objects.get(user=request.user)
+    if request.method == 'POST':
+        form = DocumentForm(request.POST)
+        if not form.is_valid():
+            return render(request, 'document_submit.html', {
+                'form': form,
+                'order_id': order.id,
+                'customer': customer,
+            })
+        else:
+            document = form.cleaned_data.get('document')
+            document_trans = form.cleaned_data.get('document_trans')
+            doc = Document(document=document, document_trans=document_trans)
+            doc.order = order
+            doc.save()
             order.hospital.slots_open -= 1
             order.hospital.save()
             order.status = 1
             order.save()
             return render(request, 'order_review.html', {
-                'order': order,
                 'customer': customer,
+                'order': order,
             })
     else:
-        order = Order.objects.get(id=order_id)
         customer = Customer.objects.get(user=request.user)
         return render(request, 'order_review.html', {
-            'order': order,
             'customer': customer,
+            'order': order,
         })
