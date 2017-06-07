@@ -5,7 +5,7 @@ from django.db.models import Q
 from forms import SignUpForm, SearchForm
 from customer.models import Customer
 from customer.views import customer
-from translator.views import translator, supervisor
+# from translator.views import translator, supervisor
 from helper.models import Hospital, Disease
 
 
