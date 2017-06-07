@@ -28,6 +28,13 @@ def hospital(request, name):
 def order_info_first(request, order_id):
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
+    if order.hospital.slots_open < 1:
+        return render(request, "hospital_order.html", {
+            'hospital': order.hospital,
+            'customer': customer,
+            'order_id': order.id,
+            'error': "There is no available slots"
+        })
     order.customer = customer
     order.status = 0
     order.save()
@@ -95,6 +102,8 @@ def order_submit_second(request, order_id):
             disease = Disease(category=category)
             disease.save()
             order.disease = disease
+            order.hospital.slots_open -= 1
+            order.hospital.save()
             order.status = 1
             order.save()
             return render(request, 'order_review.html', {
