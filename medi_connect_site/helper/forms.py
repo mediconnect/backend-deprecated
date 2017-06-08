@@ -1,5 +1,5 @@
 from django import forms
-from helper.models import Order, Patient, Disease
+from helper.models import Order, Patient, Disease, Document
 from django.core.exceptions import ValidationError
 
 
@@ -41,3 +41,10 @@ class OrderFormSecond(forms.ModelForm):
         if category is None or len(category) == 0:
             raise ValidationError('category cannot be None')
         return category
+
+
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        exclude = []
+        fields = ['document', 'extra_document']
