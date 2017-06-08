@@ -27,7 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'django-env.78qmfbrhvc.us-west-2.elasticbeanstalk.com',
-    'localhost'
+    'localhost',
+    '127.0.0.1'
 ]
 
 
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'core',
     'customer',
     'translator',
+    'supervisor',
     'helper',
     'info',
 ]
@@ -107,7 +109,7 @@ else:
             # create database named mediconnect when test on local machine
             'NAME': 'mediconnect',
             # create user
-            'USER': 'root',
+            'USER': 'mediconnect',
             'PASSWORD': 'password',
             'HOST': '127.0.0.1',
             'PORT': '3306',

@@ -1,61 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-<style>
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
-}
+{% extends 'base.html' %}
 
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
+{% block title %}{{translator.get_name}} {% endblock %}
 
-nav {
-    float: left;
-    max-width: 160px;
-    margin: 0;
-    padding: 1em;
-}
+{% block content %}
+  <h2>Main</h2>
 
-nav ul {
-    list-style-type: none;
-    padding: 0;
-}
-</style>
-</head>
-<body>
-
-
-
-<nav>
-	<ul>
-		<li>Translated</li>
-		<li>Translating</li>
-		<li>Pending</li>
-	</ul>
-</nav>
-
-<table>
-	<tr>
-		<th>Assignment</th>
-		{% for key, value in assignment_dict.items%}
-			{{key }}
-		{% endfor %}
-		<th>Deadline</th>
-		{% for key, value in assignment_dict.items%}
-			{{value }}
-		{% endfor %}
-	</tr>
-	<tr></tr>
-	<tr></tr>
-</table>
-
-
-
-
-</body>
-</html>
+{% endblock %}

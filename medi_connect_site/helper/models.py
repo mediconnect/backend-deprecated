@@ -1,14 +1,10 @@
 from __future__ import unicode_literals
 from django.db import models
 from customer.models import Customer
-# from translator.models import Translator
+from translator.models import Translator
+from supervisor.models import Supervisor
 import datetime
 
-# Diseases
-DISEASE_CATEGORY_CHOICES = (
-    ('CANCER', 'Cancer'),
-    ('COLD', 'Cold')
-)
 
 # Gender
 MALE = 'M'
@@ -23,16 +19,18 @@ GENDER_CHOICES = (
 # Status
 STARTED = 0
 SUBMITTED = 1  # only change appointment at this status
-RECEIVED = 2
-FEEDBACK = 3
-PAID = 4
+RECEIVED = 2   # translator finish translating case and submit to hospitals
+FEEDBACK = 3    # recieve feedback from hospital 
+APPROVED = 4    # supervisor aprove translated feedback
+FINISHED = 5    # all steps finished
 
 STATUS_CHOICES = (
     (STARTED, 'started'),
     (SUBMITTED, 'submitted'),
     (RECEIVED, 'received'),
     (FEEDBACK, 'feedback'),
-    (PAID, 'paid')
+    (APPROVED,'approved'),
+    (FINISHED, 'finished')
 )
 
 
@@ -42,7 +40,7 @@ class Patient(models.Model):
     name = models.CharField(blank=True, max_length=50)
     age = models.IntegerField(blank=True)
     gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)
-    category = models.CharField(max_length=50, choices=DISEASE_CATEGORY_CHOICES, default='COLD')
+    category = models.CharField(max_length=50, default='COLD')
     diagnose_hospital = models.TextField(blank=True)
     doctor = models.TextField(blank=True)
 
@@ -105,7 +103,6 @@ class Order(models.Model):
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
     hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, null=True)
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
-    # translator = models.ForeignKey('Translator',on_delete = models.CASCADE)
     order_time = models.DateField(default=datetime.date.today)
     estimate_feedback = models.CharField(blank=True, max_length=50)
     status = models.CharField(blank=True, max_length=20, choices=STATUS_CHOICES)
@@ -121,6 +118,9 @@ def order_directory_path(instance, filename):
 class Document(models.Model):
 
     order = models.ForeignKey(Order,on_delete = models.CASCADE,null= True)
+    translator = models.ForeignKey(Translator,on_delete = models.CASCADE, null = True)
+    supervisor = models.ForeignKey(Supervisor, on_delete = models.CASCADE, null = True)
+    assign_time = models.DateTimeField(default=datetime.date.today)
     description = models.CharField(max_length = 255, blank = True)
     required = models.BooleanField(default= False)
     document = models.FileField(upload_to = order_directory_path, null = True)
