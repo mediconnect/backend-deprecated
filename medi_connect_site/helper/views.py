@@ -122,7 +122,7 @@ def document_submit(request, order_id):
     order = Order.objects.get(id=order_id)
     customer = Customer.objects.get(user=request.user)
     if request.method == 'POST':
-        form = DocumentForm(request.POST)
+        form = DocumentForm(request.POST, request.FILES)
         if not form.is_valid():
             return render(request, 'document_submit.html', {
                 'form': form,
@@ -131,12 +131,13 @@ def document_submit(request, order_id):
             })
         else:
             document = form.cleaned_data.get('document')
-            document_trans = form.cleaned_data.get('document_trans')
-            doc = Document(document=document, document_trans=document_trans)
+            extra_document = form.cleaned_data.get('extra_document')
+            doc = Document(document=document, extra_document=extra_document)
             doc.order = order
             doc.save()
-            order.hospital.slots_open -= 1
-            order.hospital.save()
+            hosp = order.hospital
+            hosp.slots_open -= 1
+            hosp.save()
             order.status = 1
             order.save()
             return render(request, 'order_review.html', {

@@ -55,7 +55,7 @@ class Hospital(models.Model):
     email = models.EmailField(blank=True)
     area = models.CharField(blank=True, max_length=50)
     slots_open = models.IntegerField(default=20)
-    overall_rank = models.IntegerField(default = 0)
+    overall_rank = models.IntegerField(default=0)
     website = models.URLField(blank=True)
     introduction = models.TextField(default='intro')
     specialty = models.TextField(default='specialty')
@@ -119,13 +119,12 @@ def order_directory_path(instance, filename):
 
 
 class Document(models.Model):
-
-    order = models.ForeignKey(Order,on_delete = models.CASCADE,null= True)
-    description = models.CharField(max_length = 255, blank = True)
-    required = models.BooleanField(default= False)
-    document = models.FileField(upload_to = order_directory_path, null = True)
-    document_trans = models.FileField(upload_to = order_directory_path, null = True)
-    approved = models.BooleanField(default = False)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
+    description = models.CharField(max_length=255, blank=True)
+    required = models.BooleanField(default=False)
+    document = models.FileField(upload_to=order_directory_path, null=True)
+    extra_document = models.FileField(upload_to=order_directory_path, null=True)
+    approved = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'document'

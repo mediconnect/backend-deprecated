@@ -47,4 +47,4 @@ class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
         exclude = []
-        fields = ['document', 'document_trans']
+        fields = ['document', 'extra_document']

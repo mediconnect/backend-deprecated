@@ -2,10 +2,21 @@
 
 {% block content %}
 
-{{customer.get_name}}
-{{customer.email}}
-{{customer.wechat}}
-{{customer.weibo}}
-{{customer.qq}}
+<form action="{% url 'info_profile' id=customer.id %}" method="post" role="form">
+    {% csrf_token %}
+    {% for field in form.visible_fields %}
+    <div class="form-group{% if field.errors %} has-error{% endif %}">
+        <label for="{{ field.label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+        <span class="help-block">{{ field.help_text|safe }}</span>
+        {% endif %}
+        {% for error in field.errors %}
+        <label class="control-label">{{ error }}</label>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-default">Save</button>
+</form>
 
 {% endblock %}
