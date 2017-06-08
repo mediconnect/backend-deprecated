@@ -1,0 +1,30 @@
+{% extends 'index.html' %}
+{% block title %}Supervisor Home{% endblock %}
+
+{% block content %}
+  
+  <p>Uploaded files:</p>
+  <ul>
+    {% for obj in documents %}
+      <li>
+        <a href="{{ obj.document.url }}">{{ obj.document.name }}</a>
+        <small>(Translator: {{ obj.document.translator }})</small>
+      </li>
+    {% endfor %}
+  </ul>
+  <p>Active Translators:</p>
+  <ul>
+    {% for obj in translators %}
+        <li>
+          <li>{{ obj.translator.name }}</li>
+        </li>
+      {% endfor %}
+  </ul>
+
+
+
+<p><a href="{% url 'trans_signup' %}">Add a translator</a></p>
+<p><a href="{% url 'approve' %}">Approve a document</a></p> 
+<p><a href="{% url 'assign' %}">Assign a document</a></p>
+
+{% endblock %}
