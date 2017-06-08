@@ -43,7 +43,7 @@ class TransSignUpForm(forms.ModelForm):
 		self.order_fields(self.field_order)
 		self.fields['password'].widget = forms.PasswordInput()
 
-    def clean(slef):
+    def clean(self):
     	super(TransSignUpForm, self).clean()
     	password = self.cleaned_data.get('password')
     	confirm_password = self.cleaned_data.get('confirm_password')

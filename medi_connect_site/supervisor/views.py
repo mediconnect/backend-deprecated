@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 from translator.models import Translator
 from supervisor.models import Supervisor
 from helper.models import Document,Order
@@ -59,7 +61,7 @@ def trans_signup(request):
             first_name = form.cleaned_data.get('first_name')
             last_name = form.cleaned_data.get('last_name')
             User.objects.create_user(username=username, password=password,
-                                     email=email, first_name=first_name, last_name=last_name)
+                                     email=email, first_name=first_name, last_name=last_name,is_staff = True)
             user = authenticate(username=username, password=password)
             login(request, user)
             translator = Translator(user=user)
