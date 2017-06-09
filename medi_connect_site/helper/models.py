@@ -121,17 +121,36 @@ class Document(models.Model):
     order = models.ForeignKey(Order,on_delete = models.CASCADE,null= True)
     translator = models.ForeignKey(Translator,on_delete = models.CASCADE, null = True)
     supervisor = models.ForeignKey(Supervisor, on_delete = models.CASCADE, null = True)
-    assign_time = models.DateTimeField(default=datetime.date.today)
+    submit = models.DateField(default = datetime.date.today)
+    assign = models.DateTimeField(blank = True, null = True)
+    upload= models.DateTimeField(blank = True, null = True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
     description = models.CharField(max_length=255, blank=True)
     required = models.BooleanField(default=False)
     document = models.FileField(upload_to=order_directory_path, null=True)
     extra_document = models.FileField(upload_to=order_directory_path, null=True)
     approved = models.BooleanField(default=False)
+    comment = models.CharField(max_length=255,blank = True)
 
 
     class Meta:
         db_table = 'document'
 
-    def approve(self):
+    @classmethod
+    def customer_create(cls,order_id,description,file):
+        customer_document = cls(order = order_id,description = description, document = file)
+        return customer_document
+
+    def assign(self,translator_id,assign_time):
+        self.assign = assign_time
+        self.translator = translator_id
+
+    def sup_approve(self,supervisor_id,comment):
         self.approved = True
+        self.supervisor = supervisor_id
+        self.comment = comment
+
+    def trans_upload(self,order_id,translator_id,upload_time):
+        self.order = order_id
+        self.translator = translator_id
+        self.upload= upload_time
