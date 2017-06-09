@@ -41,7 +41,7 @@ class TransSignUpForm(forms.ModelForm):
 		super(TransSignUpForm, self).__init__(*args, **kwargs)
 		self.field_order = ['username','password','confirm_password','first_name','last_name','email']
 		self.order_fields(self.field_order)
-		self.fields['password'].widget = forms.PasswordInput()
+		self.fields['password'].widget = forms.PasswordInput(attrs={'class': 'form-control'},required = True)
 
     def clean(self):
     	super(TransSignUpForm, self).clean()
