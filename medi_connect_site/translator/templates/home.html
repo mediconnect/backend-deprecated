@@ -1,0 +1,17 @@
+{% extends 'index.html' %}
+
+{% block title %}Translator{% endblock %}
+
+{% block content %}
+  <p>Assignments</p>
+  <ul>
+  	{%for obj in assignments%}
+  		<li>
+  			<a href = '{{obj.document.url}}'>{{obj.document.assign_time}}</a>
+  			<small>{{obj.document.approved}}</small>
+  		</li>
+  	{%endfor%}
+  	</ul>
+  <p><a href="{% url 'translator_home' %}">Return to home</a></p>
+
+{% endblock %}

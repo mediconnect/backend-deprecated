@@ -5,8 +5,9 @@ from helper.models import Document
 from translator.models import Translator
 APPROVAL_OPTIONS = ('APPROVE','DISAPPROVE')
 
-class DocumentForm(forms.ModelForm):
+class TransUploadForm(forms.ModelForm):
+
     class Meta:
         model = Document
-        fields = ( 'document')
+        fields = ('document','description')
 
