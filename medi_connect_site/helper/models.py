@@ -142,6 +142,8 @@ class Document(models.Model):
         return customer_document
 
     def assign(self,translator_id,assign_time):
+    	#find translator
+    	
         self.assign = assign_time
         self.translator = translator_id
 
