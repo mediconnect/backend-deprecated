@@ -10,22 +10,38 @@ from helper.models import Document,Order
 from supervisor.forms import TransSignUpForm, AssignForm, ApproveForm
 # Create your views here.
 @login_required
+def supervisor_id(request,id):
+	supervisor = Supervisor.objects.get(id = id)
+	documents = Document.objects.all()
+	translators = Translator.objects.all()
+	return render(request, 'supervisor_home.html',{
+		'documents': documents,
+		'translators': translators,
+		'supervisor': supervisor
+		})
+
+@login_required
 def supervisor(request,user):
 	#supervisor = Supervisor.objects.get(user = user)
 	documents = Document.objects.all()
 	translators = Translator.objects.all()
 	return render(request, 'supervisor_home.html',{
 		'documents': documents,
-		'translators': translators
+		'translators': translators,
+		'supervisor': supervisor
 		})
 
 @login_required
 def assign(request):
+	#supervisor = Supervisor.objects.get(id = id)
 	if request.method == 'POST':
 		form = AssignForm(request.POST)
 		if not form.is_valid():
 			return render(request, 'assign.html',
-							{'form':form})
+							{
+							'form':form,
+							'supervisor':supervisor
+							})
 		else:
 			document = form.cleaned_data.get('document')
 			trnaslator = form.cleaned_data.get('translator')
@@ -35,6 +51,7 @@ def assign(request):
 
 @login_required
 def approve(request):
+	#supervisor = Supervisor.objects.get(id = id)
 	if request.method == 'POST':
 		form = ApproveForm(request.POST)
 		if not form.is_valid():
@@ -47,27 +64,18 @@ def approve(request):
 		return render(request,'approve.html',
 						{'form': ApproveForm()})
 
+
 @login_required
 def trans_signup(request):
     if request.method == 'POST':
         form = TransSignUpForm(request.POST)
-        if not form.is_valid():
-            return render(request, 'trans_signup.html',
-                          {'form': form})
-        else:
+        if form.is_valid():
+            form.save()
             username = form.cleaned_data.get('username')
-            email = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            first_name = form.cleaned_data.get('first_name')
-            last_name = form.cleaned_data.get('last_name')
-            User.objects.create_user(username=username, password=password,
-                                     email=email, first_name=first_name, last_name=last_name,is_staff = True)
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            translator = Translator(user=user)
-            translator.save()
-            return redirect('/translator/login')
-
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password,is_staff = True)
+            translator = Translator(User = user)
+            return redirect('supervisor_home')
     else:
-        return render(request, 'trans_signup.html',
-                      {'form': TransSignUpForm()})
+        form = TransSignUpForm()
+    return render(request, 'trans_signup.html', {'form': form})

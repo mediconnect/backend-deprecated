@@ -6,7 +6,7 @@ from forms import SignUpForm, SearchForm
 from customer.models import Customer
 from customer.views import customer
 from translator.views import translator
-from supervisor.views import trans_signup,supervisor
+from supervisor.views import trans_signup, supervisor
 from helper.models import Hospital, Disease
 
 
@@ -19,9 +19,9 @@ def home(request):
         # assign administrator as super user
         # assign translator as staff
         if request.user.is_superuser:
-            return supervisor(request,request.user)
+            return supervisor(request, request.user)
         elif request.user.is_staff:
-            return translator(request,request.user)
+            return translator(request, request.user)
         else:
             return customer(request, request.user)
     else:

@@ -4,26 +4,29 @@ from supervisor.models import Supervisor
 from translator.models import Translator
 from helper.models import Document, Order
 
-class AssignForm(forms.ModelForm):
 
-    document = forms.ModelChoiceField(queryset = Document.objects.all())
-    translator = forms.ModelChoiceField(queryset = Translator.objects.all())
+class AssignForm(forms.ModelForm):
+    document = forms.ModelChoiceField(queryset=Document.objects.all())
+    translator = forms.ModelChoiceField(queryset=Translator.objects.all())
 
     class Meta:
         model = Document
-        fields = ['id','translator']
+        fields = ['id', 'translator']
 
     def __init__(self, *args, **kwargs):
-        super(AssignForm,self).__init__(*args,**kwargs)
-        #self.fields['id'].widget = forms.Select(choices = Document.objects.all())
-        #self.fields['translator'].widget = forms.Select(choices = Translator.objects.all())
+        super(AssignForm, self).__init__(*args, **kwargs)
+        # self.fields['id'].widget = forms.Select(choices = Document.objects.all())
+        # self.fields['translator'].widget = forms.Select(choices = Translator.objects.all())
+
 
 class ApproveForm(forms.ModelForm):
-    document = forms.ModelChoiceField(queryset = Document.objects.all())
-    comment = forms.CharField(label = 'Please comment on the document if not approved')
+    document = forms.ModelChoiceField(queryset=Document.objects.all())
+    comment = forms.CharField(label='Please comment on the document if not approved')
+
     class Meta:
         model = Document
         fields = ['approved']
+
 
 class TransSignUpForm(forms.ModelForm):
     confirm_password = forms.CharField(
@@ -35,7 +38,7 @@ class TransSignUpForm(forms.ModelForm):
         model = User
         exclude = ['last_login', 'date_joined']
         fields = ['username', 'email', 'password', 'first_name', 'last_name']
-
+        
 	def __init__(self, *args, **kwargs):
 		
 		super(TransSignUpForm, self).__init__(*args, **kwargs)

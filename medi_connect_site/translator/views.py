@@ -12,24 +12,45 @@ from forms import TransUploadForm
 
 @login_required
 
-def translator(request,user):
-    translator = Translator.objects.get(user = user)
-    assignments = Document.objects.filter(translator_id = translator)
+def translator_id(request,id):
+    translator = Translator.objects.get(id= id)
+    assignments = Document.objects.filter(translator_id = id)
     assignments.order_by('assign_time')
-    return render(request,'home.html',
+    return render(request,'trans_home.html',
     	{
-    		'assignments': assignments
+    		'assignments': assignments,
+    		'translator': translator
 
     	})
 
-def upload(request):
+@login_required
+def translator(request,user):
+    translator = Translator.objects.get(user= user)
+    assignments = Document.objects.filter(translator_id = translator.id)
+    assignments.order_by('assign_time')
+    return render(request,'trans_home.html',
+    	{
+    		'assignments': assignments,
+    		'translator': translator
+
+    	})
+
+@login_required
+def upload(request,id):
+	translator = Translator.objects.get(id = id)
 	if request.method == 'POST':
 		form = TransUploadForm(request.POST,request.FILES)
 		if form.is_valid():
-			form.save()
+			order_id = form.cleaned_data.get('order_id')
+			file = form.cleaned_data.get('document')
+			translator_id = translator.id
+			document = Document
 			return redirect ('translator_home')
-		else:
-			form = TransUploadForm()
-		return render(request,'upload.html',{
-			'form':form
-			})
+	else:
+		form = TransUploadForm()
+	return render(request,'upload.html',
+		{
+			'form':form,
+			'translator':translator
+
+		})

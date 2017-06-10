@@ -6,7 +6,7 @@ book = xlrd.open_workbook("SampleData.xlsx")
 sheet = book.sheet_by_name(sheet_name)
 
 # Establish a MySQL connection
-database = MySQLdb.connect (host="localhost", user = "root", passwd = "password", db = "mediconnect")
+database = MySQLdb.connect (host="localhost", user = "mediconnect", passwd = "password", db = "mediconnect")
 
 # Get the cursor, which is used to traverse the database, line by line
 cursor = database.cursor()
