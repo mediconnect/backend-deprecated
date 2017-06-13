@@ -1,8 +1,10 @@
 from django.shortcuts import render
+from django.http import HttpRequest
 from customer.models import Customer
 from helper.models import Order
 from django.contrib.auth.decorators import login_required
-from forms import ProfileForm
+from forms import ProfileForm, PasswordResetForm
+from django.contrib.auth.hashers import check_password, make_password
 
 
 # Create your views here.
@@ -34,6 +36,34 @@ def profile(request, id):
     return render(request, 'info_profile.html', {
         'customer': customer,
         'form': form,
+    })
+
+
+@login_required
+def profile_password(request, id):
+    customer = Customer.objects.get(id=id)
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if not form.is_valid():
+            return render(request, 'info_profile_password.html', {
+                'customer': customer,
+                'form': form
+            })
+        old_password = form.cleaned_data.get('old_password')
+        user = customer.user
+        if not check_password(old_password, user.password, preferred='default'):
+            form.add_error('old_password', 'password doesn\'t match with previous password')
+            return render(request, 'info_profile_password.html', {
+                'customer': customer,
+                'form': form
+            })
+        password = form.cleaned_data.get('password')
+        user.password = make_password(password)
+        user.save()
+        customer.save()
+    return render(request, 'info_profile_password.html', {
+        'customer': customer,
+        'form': PasswordResetForm()
     })
 
 
