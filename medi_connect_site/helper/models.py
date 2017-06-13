@@ -33,6 +33,11 @@ STATUS_CHOICES = (
     (FINISHED, 'finished')
 )
 
+#Translator Sequence
+trans_list = Translator.objects.all().values_list('id',flat = True)
+def move(translator_id,new_position):
+    old_position = trans_list.index(translator_id)
+    trans_list.insert(new_position,trans_list.pop(old_position))
 
 # Create your models here.
 class Patient(models.Model):
@@ -141,7 +146,16 @@ class Document(models.Model):
         customer_document = cls(order = order_id,description = description, document = file)
         return customer_document
 
-    def assign(self,translator_id,assign_time):
+    def assign(self):
+    	#find translator
+        assign_time = datetime.date.today
+        self.assign = assign_time
+        translator_id = trans_list[0]
+        self.translator = translator_id
+        move(translator_id,-1)
+
+
+    	
         self.assign = assign_time
         self.translator = translator_id
 

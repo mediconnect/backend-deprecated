@@ -10,11 +10,10 @@ database = MySQLdb.connect (host="localhost", user = "root", passwd = "password"
 
 # Get the cursor, which is used to traverse the database, line by line
 cursor = database.cursor()
-
 # Create the INSERT INTO sql query
 def create_query(table):
 	if table == 'Rank' :
-		query = """INSERT INTO rank (hospital_id,disease_id,rank ) VALUES (%s, %s, %s)"""
+		query = """INSERT INTO rank (hospital,disease,rank ) VALUES (%s, %s, %s)"""
 	if table == 'Hospital':
 		query = """INSERT INTO hospital(name,overall_rank,email,area,website,introduction,feedback_time,price_range,slots_open,specialty) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
 	if table == 'Disease':
@@ -27,11 +26,9 @@ def create_values(table):
 	if table == 'Rank':
 		query = create_query('Rank')
 		for r in range(1, sheet.nrows):
-		      hospital     = sheet.cell(r,0).value
-		      disease      = sheet.cell(r,1).value
+		      hospital_name     = sheet.cell(r,0).value
+		      disease_name      = sheet.cell(r,1).value
 		      rank 		   = sheet.cell(r,2).value
-		      hospital_id  = "SELECT id FROM hospital WHERE name is %s" %(hospital)
-		      disease_id = "SELECT id FROM disease WHERE name is %s" %(disease)
 		      # Assign values from each row
 		      values = (hospital_id,disease_id,rank)
 		      cursor.execute(query,values)
@@ -57,7 +54,6 @@ def create_values(table):
 		for r in range(1,sheet.nrows):
 			name = sheet.cell(r,0).value
 			keyword = sheet.cell(r,1).value
-
 			values = (name,keyword)
 			cursor.execute(query,values)
 
