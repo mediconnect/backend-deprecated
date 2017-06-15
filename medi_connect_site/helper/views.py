@@ -7,8 +7,8 @@ from helper.forms import OrderFormFirst, OrderFormSecond, DocumentForm
 
 # Create your views here.
 @login_required
-def hospital(request, name):
-    hosp = Hospital.objects.get(name=name)
+def hospital(request, id):
+    hosp = Hospital.objects.get(id=id)
     customer = Customer.objects.get(user=request.user)
     order_list = Order.objects.filter(customer=customer)
     order = None

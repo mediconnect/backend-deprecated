@@ -70,7 +70,15 @@ def profile_password(request, id):
 @login_required
 def order(request, id):
     customer = Customer.objects.get(id=id)
-    order_list = Order.objects.filter(customer=customer)
+    orders = Order.objects.filter(customer=customer)
+    order_list = []
+    for od in orders:
+        order_list.append(od) if od not in order_list else None
+    print order_list
+    for od in order_list:
+        print od.disease.name
+        print od.patient.name
+        print od.hospital.name
     return render(request, 'info_order.html', {
         'order_list': order_list,
         'customer': customer,

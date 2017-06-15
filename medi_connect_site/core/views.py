@@ -66,16 +66,13 @@ def result(request):
             return customer(request, request.user)
         else:
             query = form.cleaned_data.get('query')
-            hospital_info = {}
+            hospital_info = []
             diseases = Disease.objects.filter(Q(keyword__icontains=query))
             for disease in diseases:
-                hospitals = Hospital.objects.filter(Q(introduction__icontains=disease.keyword))
+                hospitals = Hospital.objects.filter(Q(specialty__icontains='ear'))
                 for hospital in hospitals:
-                    if hospital not in hospital_info:
-                        hospital_info.update({str(hospital.name): {}})
-                        hospital_info[hospital.name].update({'area': str(hospital.area)})
-                        hospital_info[hospital.name].update({'website': str(hospital.website)})
-                        hospital_info[hospital.name].update({'introduction': str(hospital.introduction)})
+                    hospital_info.append(hospital) if hospital not in hospital_info else None
+            print hospital_info
             if request.user.is_authenticated():
                 return render(request, 'result.html',
                               {
@@ -98,13 +95,9 @@ def result_guest(request):
             hospital_info = {}
             diseases = Disease.objects.filter(Q(keyword__icontains=query))
             for disease in diseases:
-                hospitals = Hospital.objects.filter(Q(introduction__icontains=disease.keyword))
+                hospitals = Hospital.objects.filter(Q(specialty__icontains='ear'))
                 for hospital in hospitals:
-                    if hospital not in hospital_info:
-                        hospital_info.update({str(hospital.name): {}})
-                        hospital_info[hospital.name].update({'area': str(hospital.area)})
-                        hospital_info[hospital.name].update({'website': str(hospital.website)})
-                        hospital_info[hospital.name].update({'introduction': str(hospital.introduction)})
+                    hospital_info.append(hospital) if hospital not in hospital_info else None
 
             return render(request, 'result_guest.html',
                           {
