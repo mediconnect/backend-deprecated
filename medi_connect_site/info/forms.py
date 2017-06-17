@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from customer.models import Customer
+from helper.models import Patient
 from django.core.exceptions import ValidationError
 
 
@@ -50,3 +50,10 @@ class PasswordResetForm(forms.ModelForm):
                 ['Passwords don\'t match']
             )
         return self.cleaned_data
+
+
+class PatientAddForm(forms.ModelForm):
+    class Meta:
+        model = Patient
+        exclude = []
+        fields = ['name', 'age', 'gender']

@@ -1,9 +1,8 @@
 from django.shortcuts import render
-from django.http import HttpRequest
 from customer.models import Customer
-from helper.models import Order
+from helper.models import Order, Patient
 from django.contrib.auth.decorators import login_required
-from forms import ProfileForm, PasswordResetForm
+from forms import ProfileForm, PasswordResetForm, PatientAddForm
 from django.contrib.auth.hashers import check_password, make_password
 
 
@@ -68,17 +67,37 @@ def profile_password(request, id):
 
 
 @login_required
+def profile_patient(request, id):
+    customer = Customer.objects.get(id=id)
+    patients = Patient.objects.filter(customer=customer)
+    if request.method == 'POST':
+        form = PatientAddForm(request.POST)
+        if not form.is_valid():
+            return render(request, 'info_profile_patient.html', {
+                'customer': customer,
+                'form': form,
+                'patients': patients,
+            })
+        name = form.cleaned_data.get('name')
+        age = form.cleaned_data.get('age')
+        gender = form.cleaned_data.get('gender')
+        patient = Patient.objects.create(name=name, age=age, gender=gender, customer=customer)
+        patient.save()
+    patients = Patient.objects.filter(customer=customer)
+    return render(request, 'info_profile_patient.html', {
+        'customer': customer,
+        'patients': patients,
+        'form': PatientAddForm()
+    })
+
+
+@login_required
 def order(request, id):
     customer = Customer.objects.get(id=id)
     orders = Order.objects.filter(customer=customer)
     order_list = []
     for od in orders:
         order_list.append(od) if od not in order_list else None
-    print order_list
-    for od in order_list:
-        print od.disease.name
-        print od.patient.name
-        print od.hospital.name
     return render(request, 'info_order.html', {
         'order_list': order_list,
         'customer': customer,
