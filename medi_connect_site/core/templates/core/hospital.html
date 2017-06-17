@@ -1,0 +1,19 @@
+{% extends "index.html" %}
+{% block title %}Hospital{% endblock %}
+
+{% block content %}
+
+{% for hospital in hospitals %}
+<div class="media" style="border-style:solid">
+    <a href="{% url 'hospital_order' id=hospital.id %}">
+        <div class="media-left media-middle">
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading">{{hospital.name}}</h4>
+            <p>{{hospital.introduction}}</p>
+        </div>
+    </a>
+</div>
+{% endfor %}
+
+{% endblock %}

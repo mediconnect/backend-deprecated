@@ -48,3 +48,8 @@ class DocumentForm(forms.ModelForm):
         model = Document
         exclude = []
         fields = ['document', 'extra_document']
+
+    def __init__(self, *args, **kwargs):
+        super(DocumentForm, self).__init__(*args, **kwargs)
+        self.fields['extra_document'].widget = forms.ClearableFileInput(attrs={'multiple': True})
+        self.fields['extra_document'].required = False

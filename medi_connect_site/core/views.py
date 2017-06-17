@@ -68,11 +68,10 @@ def result(request):
             query = form.cleaned_data.get('query')
             hospital_info = []
             diseases = Disease.objects.filter(Q(keyword__icontains=query))
-            for disease in diseases:
-                hospitals = Hospital.objects.filter(Q(specialty__icontains='ear'))
-                for hospital in hospitals:
-                    hospital_info.append(hospital) if hospital not in hospital_info else None
-            print hospital_info
+            for dis in diseases:
+                hospitals = Hospital.objects.filter(Q(specialty__icontains=dis.keyword))
+                for hosp in hospitals:
+                    hospital_info.append(hosp) if hosp not in hospital_info else None
             if request.user.is_authenticated():
                 return render(request, 'result.html',
                               {
@@ -92,12 +91,12 @@ def result_guest(request):
             })
         else:
             query = form.cleaned_data.get('query')
-            hospital_info = {}
+            hospital_info = []
             diseases = Disease.objects.filter(Q(keyword__icontains=query))
-            for disease in diseases:
-                hospitals = Hospital.objects.filter(Q(specialty__icontains='ear'))
-                for hospital in hospitals:
-                    hospital_info.append(hospital) if hospital not in hospital_info else None
+            for dis in diseases:
+                hospitals = Hospital.objects.filter(Q(specialty__icontains=dis.keyword))
+                for hosp in hospitals:
+                    hospital_info.append(hosp) if hosp not in hospital_info else None
 
             return render(request, 'result_guest.html',
                           {
@@ -105,3 +104,19 @@ def result_guest(request):
                           })
     else:
         return render(request, 'result_guest.html')
+
+
+def disease(request):
+    diseases = Disease.objects.all()
+    return render(request, 'disease.html', {
+        'diseases': diseases,
+        'customer': Customer.objects.get(user=request.user)
+    })
+
+
+def hospital(request):
+    hospitals = Hospital.objects.order_by('rank')[0:20]
+    return render(request, 'hospital.html', {
+        'hospitals': hospitals,
+        'customer': Customer.objects.get(user=request.user)
+    })
