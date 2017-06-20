@@ -3,6 +3,7 @@ from models import Hospital, Patient, Disease, Order, Document
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from helper.forms import OrderFormFirst, OrderFormSecond, DocumentForm
+from django.utils.http import urlquote
 
 
 # Create your views here.
@@ -130,8 +131,8 @@ def document_submit(request, order_id):
                 'customer': customer,
             })
         else:
-            document = form.cleaned_data.get('document')
-            extra_document = form.cleaned_data.get('extra_document')
+            document = urlquote(form.cleaned_data.get('document'))
+            extra_document = urlquote(form.cleaned_data.get('extra_document'))
             doc = Document(document=document, extra_document=extra_document)
             doc.order = order
             doc.save()
