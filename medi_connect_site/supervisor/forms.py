@@ -38,18 +38,17 @@ class TransSignUpForm(forms.ModelForm):
         model = User
         exclude = ['last_login', 'date_joined']
         fields = ['username', 'email', 'password', 'first_name', 'last_name']
-        
-	def __init__(self, *args, **kwargs):
-		
-		super(TransSignUpForm, self).__init__(*args, **kwargs)
-		self.field_order = ['username','password','confirm_password','first_name','last_name','email']
-		self.order_fields(self.field_order)
-		self.fields['password'].widget = forms.PasswordInput(attrs={'class': 'form-control'},required = True)
+
+    def __init__(self, *args, **kwargs):
+        super(TransSignUpForm, self).__init__(*args, **kwargs)
+        self.field_order = ['username', 'password', 'confirm_password', 'first_name', 'last_name', 'email']
+        self.order_fields(self.field_order)
+        self.fields['password'].widget = forms.PasswordInput(attrs={'class': 'form-control'}, required=True)
 
     def clean(self):
-    	super(TransSignUpForm, self).clean()
-    	password = self.cleaned_data.get('password')
-    	confirm_password = self.cleaned_data.get('confirm_password')
+        super(TransSignUpForm, self).clean()
+        password = self.cleaned_data.get('password')
+        confirm_password = self.cleaned_data.get('confirm_password')
         if password and password != confirm_password:
             self._errors['password'] = self.error_class(
                 ['Passwords don\'t match']
