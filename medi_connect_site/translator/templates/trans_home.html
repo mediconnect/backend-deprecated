@@ -1,19 +1,13 @@
-{% extends 'staff_index.html' %}
+{% extends 'trans_base.html' %}
 
-{% block title %}Translator{% endblock %}
+{% block title %}{{translator.get_name}}{% endblock %}
 
 {% block content %}
   <p>Assignments</p>
-  <ul>
   	{%for obj in assignments%}
-  		<li>
-  			<a href = '{{obj.document.url}}'>{{obj.document.assign_time}}</a>
-  			<small>{{obj.document.approved}}</small>
-  		</li>
+		<a href="{%url 'assignment_summary%}">{{obj.get_info}}</a>
   	{%endfor%}
-  	</ul>
 
-  <p><a href="{% url 'trans_home' id=translator.id %}">Return to home</a></p>
-  <p><a href="{% url 'upload' id=translator.id %}">Upload a file</a></p>
+  <p><a href="{% url 'trans_home' user=translator %}">Return to home</a></p>
 
 {% endblock %}

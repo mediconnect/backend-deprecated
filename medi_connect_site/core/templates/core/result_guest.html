@@ -4,14 +4,14 @@
 
 {% block content %}
 
-{% for hospital in hospital_list %}
+{% for name, dict in hospital_list.items %}
 <div class="media" style="border-style:solid">
     <a href="{% url 'login' %}">
         <div class="media-left media-middle">
         </div>
         <div class="media-body">
-            <h4 class="media-heading">{{hospital.name}}</h4>
-            <p>{{hospital.introduction}}</p>
+            <h4 class="media-heading">{{name}}</h4>
+            <p>{{dict.introduction}}</p>
         </div>
     </a>
 </div>

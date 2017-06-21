@@ -6,7 +6,7 @@ book = xlrd.open_workbook("SampleData.xlsx")
 sheet = book.sheet_by_name(sheet_name)
 
 # Establish a MySQL connection
-database = MySQLdb.connect (host="localhost", user = "root", passwd = "password", db = "mediconnect")
+database = MySQLdb.connect (host="localhost", user = "mediconnect", passwd = "password", db = "mediconnect")
 
 # Get the cursor, which is used to traverse the database, line by line
 cursor = database.cursor()
@@ -29,6 +29,10 @@ def create_values(table):
 		      hospital_name     = sheet.cell(r,0).value
 		      disease_name      = sheet.cell(r,1).value
 		      rank 		   = sheet.cell(r,2).value
+		      cursor.execute("SELECT hospital.id FROM hospital WHERE name = '%s'" %(hospital_name))
+		      hospital_id = cursor.fetchone()
+		      cursor.execute("SELECT disease.id FROM disease WHERE name = '%s'" %(disease_name))
+		      disease_id = cursor.fetchone()	
 		      # Assign values from each row
 		      values = (hospital_id,disease_id,rank)
 		      cursor.execute(query,values)

@@ -1,0 +1,9 @@
+{% extends 'supervisor_base.html' %}
+
+{% block content %}
+    {%for obj in translators%}
+		<l>{obj.Translator.get_name}</l>
+  	{%endfor%}}
+
+  <p><a href="{% url 'supervisor_home', user = supervisor %}">Return to home</a></p>
+{% endblock %}

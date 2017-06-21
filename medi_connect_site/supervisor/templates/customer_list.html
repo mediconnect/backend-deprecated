@@ -1,0 +1,9 @@
+{% extends 'supervisor_base.html' %}
+
+{% block content %}
+    {%for obj in customers%}
+		<l>{obj.Customer.get_name}</l>
+  	{%endfor%}}
+
+  <p><a href="{% url 'supervisor_home', user = supervisor %}">Return to home</a></p>
+{% endblock %}

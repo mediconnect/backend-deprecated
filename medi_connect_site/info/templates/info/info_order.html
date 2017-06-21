@@ -1,11 +1,5 @@
 {% extends "customer_header.html" %}
-{% block title %}Appointment{% endblock %}
 
-{% block content %}
-<ul class="list-group">
-    {% for order in order_list %}
-         <li class="list-group-item">Name: {{order.patient.name}}, Hospital: {{order.hospital.name}}
-         , Disease: {{order.disease.name}}</li>
-    {% endfor %}
-</ul>
-{% endblock %}
+{% for order in order_list %}
+    {{ order }}
+{% endfor %}
