@@ -67,11 +67,9 @@ def result(request):
         else:
             query = form.cleaned_data.get('query')
             hospital_info = []
-            diseases = Disease.objects.filter(Q(keyword__icontains=query))
-            for dis in diseases:
-                hospitals = Hospital.objects.filter(Q(specialty__icontains=dis.keyword))
-                for hosp in hospitals:
-                    hospital_info.append(hosp) if hosp not in hospital_info else None
+            hospitals = Hospital.objects.filter(Q(specialty__icontains=query))
+            for hosp in hospitals:
+                hospital_info.append(hosp) if hosp not in hospital_info else None
             if request.user.is_authenticated():
                 return render(request, 'result.html',
                               {
@@ -92,11 +90,9 @@ def result_guest(request):
         else:
             query = form.cleaned_data.get('query')
             hospital_info = []
-            diseases = Disease.objects.filter(Q(keyword__icontains=query))
-            for dis in diseases:
-                hospitals = Hospital.objects.filter(Q(specialty__icontains=dis.keyword))
-                for hosp in hospitals:
-                    hospital_info.append(hosp) if hosp not in hospital_info else None
+            hospitals = Hospital.objects.filter(Q(specialty__icontains=query))
+            for hosp in hospitals:
+                hospital_info.append(hosp) if hosp not in hospital_info else None
 
             return render(request, 'result_guest.html',
                           {

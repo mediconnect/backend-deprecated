@@ -132,8 +132,7 @@ def document_submit(request, order_id):
             })
         else:
             document = urlquote(form.cleaned_data.get('document'))
-            extra_document = urlquote(form.cleaned_data.get('extra_document'))
-            doc = Document(document=document, extra_document=extra_document)
+            doc = Document(document=document)
             doc.order = order
             doc.save()
             hosp = order.hospital
