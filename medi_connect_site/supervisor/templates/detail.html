@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+
+{% block content %}
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type='submit',name = 'assign'>Assign</button>
+    <button type = 'submit', name='approve'>Submit Approval</button>
+    <button type = 'submit', name='upload'> Upload Feedback</button>
+  </form>
+
+  <p><a href="{% url 'supervisor_home', user = supervisor %}">Return to home</a></p>
+{% endblock %}
