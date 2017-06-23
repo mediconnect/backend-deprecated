@@ -5,8 +5,8 @@ from django.db.models import Q
 from forms import SignUpForm, SearchForm
 from customer.models import Customer
 from customer.views import customer
-from translator.views import translator
-from supervisor.views import trans_signup, supervisor
+# from translator.views import translator
+# from supervisor.views import trans_signup, supervisor
 from helper.models import Hospital, Disease
 
 
@@ -66,16 +66,10 @@ def result(request):
             return customer(request, request.user)
         else:
             query = form.cleaned_data.get('query')
-            hospital_info = {}
-            diseases = Disease.objects.filter(Q(keyword__icontains=query))
-            for disease in diseases:
-                hospitals = Hospital.objects.filter(Q(introduction__icontains=disease.keyword))
-                for hospital in hospitals:
-                    if hospital not in hospital_info:
-                        hospital_info.update({str(hospital.name): {}})
-                        hospital_info[hospital.name].update({'area': str(hospital.area)})
-                        hospital_info[hospital.name].update({'website': str(hospital.website)})
-                        hospital_info[hospital.name].update({'introduction': str(hospital.introduction)})
+            hospital_info = []
+            hospitals = Hospital.objects.filter(Q(specialty__icontains=query))
+            for hosp in hospitals:
+                hospital_info.append(hosp) if hosp not in hospital_info else None
             if request.user.is_authenticated():
                 return render(request, 'result.html',
                               {
@@ -95,16 +89,10 @@ def result_guest(request):
             })
         else:
             query = form.cleaned_data.get('query')
-            hospital_info = {}
-            diseases = Disease.objects.filter(Q(keyword__icontains=query))
-            for disease in diseases:
-                hospitals = Hospital.objects.filter(Q(introduction__icontains=disease.keyword))
-                for hospital in hospitals:
-                    if hospital not in hospital_info:
-                        hospital_info.update({str(hospital.name): {}})
-                        hospital_info[hospital.name].update({'area': str(hospital.area)})
-                        hospital_info[hospital.name].update({'website': str(hospital.website)})
-                        hospital_info[hospital.name].update({'introduction': str(hospital.introduction)})
+            hospital_info = []
+            hospitals = Hospital.objects.filter(Q(specialty__icontains=query))
+            for hosp in hospitals:
+                hospital_info.append(hosp) if hosp not in hospital_info else None
 
             return render(request, 'result_guest.html',
                           {
@@ -112,3 +100,19 @@ def result_guest(request):
                           })
     else:
         return render(request, 'result_guest.html')
+
+
+def disease(request):
+    diseases = Disease.objects.all()
+    return render(request, 'disease.html', {
+        'diseases': diseases,
+        'customer': Customer.objects.get(user=request.user)
+    })
+
+
+def hospital(request):
+    hospitals = Hospital.objects.order_by('rank')[0:20]
+    return render(request, 'hospital.html', {
+        'hospitals': hospitals,
+        'customer': Customer.objects.get(user=request.user)
+    })

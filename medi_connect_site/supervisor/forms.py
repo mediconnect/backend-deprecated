@@ -4,29 +4,7 @@ from supervisor.models import Supervisor
 from translator.models import Translator
 from helper.models import Document, Order
 import random
-"""
-class AssignForm(forms.ModelForm):
-    assignments = forms.ModelChoiceField(queryset=Order.objects.all())
-    translator = forms.ModelChoiceField(queryset=Translator.objects.all())
 
-    class Meta:
-        model = Document
-        fields = ['id', 'translator']
-
-    def __init__(self, *args, **kwargs):
-        super(AssignForm, self).__init__(*args, **kwargs)
-        # self.fields['id'].widget = forms.Select(choices = Document.objects.all())
-        # self.fields['translator'].widget = forms.Select(choices = Translator.objects.all())
-
-
-class ApproveForm(forms.ModelForm):
-    orders = forms.ModelChoiceField(queryset=Order.objects.all())
-    comment = forms.CharField(label='Please comment on the document if not approved')
-
-    class Meta:
-        model = Order
-        fields = ['status']
-"""
 
 class DetailForm(forms.ModelForm):
     approval = forms.TypedChoiceField(

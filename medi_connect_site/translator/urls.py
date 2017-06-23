@@ -10,3 +10,4 @@ urlpatterns = [
     url(r'^login/$', auth_views.login, {'template_name': 'trans_login.html'},name='translator/login'),
     url(r'^logout/', auth_views.logout, {'next_page': '/'}, name='logout'),
 ] 
+

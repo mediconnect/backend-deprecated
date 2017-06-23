@@ -145,5 +145,3 @@ def customer_list(request,user):
 			'customers':customers
 		})
 
-
-

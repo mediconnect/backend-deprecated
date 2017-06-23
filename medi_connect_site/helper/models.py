@@ -20,53 +20,55 @@ GENDER_CHOICES = (
 # Status
 STARTED = 0
 SUBMITTED = 1  # deposit paid, only change appointment at this status
-TRANSLATING_ORIGIN = 2 #translator starts translating origin documents
-RECEIVED = 3   # origin documents translated, approved and submitted to hospitals
-RETURN = 4    # hospital returns feedback
-TRANSLATING_FEEDBACK = 5 # translator starts translating feedback documents
-FEEDBACK = 6    # feedback documents translated, approved, and feedback to customer
-PAID = 7    # remaining amount paid
+TRANSLATING_ORIGIN = 2  # translator starts translating origin documents
+RECEIVED = 3  # origin documents translated, approved and submitted to hospitals
+RETURN = 4  # hospital returns feedback
+TRANSLATING_FEEDBACK = 5  # translator starts translating feedback documents
+FEEDBACK = 6  # feedback documents translated, approved, and feedback to customer
+PAID = 7  # remaining amount paid
 
 
 STATUS_CHOICES = (
     (STARTED, 'started'),
     (SUBMITTED, 'submitted'),
-    (TRANSLATING_ORIGIN,'translating_origin'),
+    (TRANSLATING_ORIGIN, 'translating_origin'),
     (RECEIVED, 'received'),
-    (RETURN,'return'),
-    (TRANSLATING_FEEDBACK,'translating_feedback'),
+    (RETURN, 'return'),
+    (TRANSLATING_FEEDBACK, 'translating_feedback'),
     (FEEDBACK, 'feedback'),
-    (PAID,'PAID'),
+    (PAID, 'PAID'),
 )
 
-#Trans_status
+# Trans_status
 
-NOT_STARTED = 0 #assignment not started yet
-ONGOING = 1  #assignment started not submitted to supervisor
-APPROVING = 2 #assignment submitted to supervisor for approval
-APPROVED = 3 #assignment approved, to status 5
-DISAPPROVED = 4 #assignment disapproved, return to status 1
-FINISHED = 5 #assignment approved and finished
+NOT_STARTED = 0  # assignment not started yet
+ONGOING = 1  # assignment started not submitted to supervisor
+APPROVING = 2  # assignment submitted to supervisor for approval
+APPROVED = 3  # assignment approved, to status 5
+DISAPPROVED = 4  # assignment disapproved, return to status 1
+FINISHED = 5  # assignment approved and finished
 
-TRANS_STATUS_CHOICE =(
-    NOT_STARTED, 'not_started',
-    ONGOING, 'ongoing',
-    APPROVING, 'approving',
-    APPROVED, 'approved',
-    DISAPPROVED, 'disapproved',
-    FINISHED,'finished'
+TRANS_STATUS_CHOICE = (
+    (NOT_STARTED, 'not_started'),
+    (ONGOING, 'ongoing'),
+    (APPROVING, 'approving'),
+    (APPROVED, 'approved'),
+    (DISAPPROVED, 'disapproved'),
+    (FINISHED, 'finished'),
 )
-#Translator Sequence Chinese to English
-trans_list_1 = random.shuffle(Translator.objects.all().values_list('id',flat = True))
+# Translator Sequence Chinese to English
+trans_list_C2E = random.shuffle(Translator.objects.all().values_list('id', flat=True))
 
-#Translator Sequence English to Chinese
-trans_list_2 = random.shuffle(Translator.objects.all().values_list('id',flat = True))
+# Translator Sequence English to Chinese
+trans_list_E2C = random.shuffle(Translator.objects.all().values_list('id', flat=True))
 
-#Function to move the position of a translator in sequence
-def move(trans_list, translator_id,new_position):
+
+# Function to move the position of a translator in sequence
+def move(trans_list, translator_id, new_position):
     old_position = trans_list.index(translator_id)
-    trans_list.insert(new_position,trans_list.pop(old_position))
+    trans_list.insert(new_position, trans_list.pop(old_position))
     return trans_list
+
 
 # Create your models here.
 class Patient(models.Model):
@@ -133,69 +135,75 @@ class Appointment(models.Model):
 
 
 class Order(models.Model):
-
-    customer = models.ForeignKey(Customer, on_delete = models.CASCADE, null=True)
-    patient = models.ForeignKey('Patient', on_delete = models.CASCADE, null=True)
-    translator_1 = models.ForeignKey(Translator,on_delete = models.CASCADE, null = True) #translator Chinese to English
-    translator_2 = models.ForeignKey(Translator, on_delete= models.CASACADE, null = True)#translator English to Chinese
-    #supervisor = models.ForeignKey(Supervisor, on_delete = models.CASCADE, null = True)
-    #only one supervisor for now, no need to keep this info
-    hospital = models.ForeignKey('Hospital', on_delete = models.CASCADE, null=True)
-    disease = models.ForeignKey('Disease', on_delete = models.CASCADE, null=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
+    patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
+    # translator Chinese to English
+    translator_C2E = models.ForeignKey(Translator, on_delete=models.CASCADE, null=True,
+                                       related_name='chinese_translator')
+    # translator English to Chinese
+    translator_E2C = models.ForeignKey(Translator, on_delete=models.CASCADE, null=True,
+                                       related_name='english_translator')
+    # supervisor = models.ForeignKey(Supervisor, on_delete = models.CASCADE, null = True)
+    # only one supervisor for now, no need to keep this info
+    hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, null=True)
+    disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
     submit = models.DateField(default=datetime.date.today)
-    origin = models.ManyToManyField('Document') #all origin document uploaded by customer
-    feedback = models.ManyToManyField('Document') #all feedback document TRANSLATED and APPROVED
-    pending = models.ManyToManyField('Document') #all pending document, make sure this NOT VISIBLE to customers
-    receive = models.DateField(default = None)
-    status = models.CharField(blank = True, max_length=20, choices=STATUS_CHOICES)
-    trans_status = models.CharField(blank = True, max_length = 20, choices =TRANS_STATUS_CHOICE)
+    # all origin document uploaded by customer
+    origin = models.ManyToManyField('Document', related_name='original_file')
+    # all feedback document TRANSLATED and APPROVED
+    feedback = models.ManyToManyField('Document', related_name='feedback_file')
+    # all pending document, make sure this NOT VISIBLE to customers
+    pending = models.ManyToManyField('Document', related_name='pending_file')
+    receive = models.DateField(default=datetime.date.today)
+    status = models.CharField(blank=True, max_length=20, choices=STATUS_CHOICES)
+    trans_status = models.CharField(blank=True, max_length=20, choices=TRANS_STATUS_CHOICE)
 
     class Meta:
         db_table = 'order'
 
     def get_info(self):
-        return 'Order id is'+ self.id +'\n'+ 'Deadline is :'+ self.get_deadline()
+        return 'Order id is' + self.id + '\n' + 'Deadline is :' + self.get_deadline()
 
-    def get_deadline(self):  #default deadline 2 days after submit
-        return self.submit - datetime.timedelta(days = 2) # date time algebra
+    def get_deadline(self):  # default deadline 2 days after submit
+        return self.submit - datetime.timedelta(days=2)  # date time algebra
 
     def get_status(self):
         return self.status
 
-    def change_status(self,status):
+    def change_status(self, status):
         self.status = status
 
-    def assign(self,trans_list):  #call this function with trans_list_1 when customer submit order, trans_list_2 when supervisor upload feedback
+    # call this function with trans_list_1 when customer submit order, trans_list_2 when supervisor upload feedback
+    def assign(self, trans_list):
         assign_time = datetime.date.today
-        self.assign = assign_time
+        # self.assign = assign_time
         translator_id = trans_list[0]
-        #self.translator = translator_id
-        #The above line should be called manually when assign translator to specify translator_1 or translator_2
-        trans_list = move(translator_id,-1)
+        # self.translator = translator_id
+        # The above line should be called manually when assign translator to specify translator_1 or translator_2
+        trans_list = move(translator_id, -1)
         return translator_id
 
-    def assign(self,translator_id): #manually assign order to a translator
+    # manually assign order to a translator
+    def assign(self, translator_id):
         assign_time = datetime.date.today
-        self.assign = assign_time
-        self.translator = translator_id
+        # self.assign = assign_time
+        # self.translator = translator_id
+
+
 
 def order_directory_path(instance, filename):
     return 'order_{0}/{1}/{2}'.format(instance.order.customer, instance.order.id, filename)
 
 
 class Document(models.Model):
-
-    order = models.ForeignKey(Order,on_delete = models.CASCADE,null= True)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
     description = models.CharField(max_length=255, blank=True)
     required = models.BooleanField(default=False)
-    is_origin = models.BooleanField(default = True)
-    is_translated = models.BooleanField(default = False)
+    is_origin = models.BooleanField(default=True)
+    is_translated = models.BooleanField(default=False)
     upload_at = models.DateTimeField(auto_now_add=True)
-    comment = models.CharField(max_length=255, blank = True)
+    comment = models.CharField(max_length=255, blank=True)
     document = models.FileField(upload_to=order_directory_path, null=True)
-
 
     class Meta:
         db_table = 'document'
-
-

@@ -13,3 +13,4 @@ urlpatterns = [
     url(r'^customer_list',supervisor_views.cutomer_list,name = 'customer_list'),
     url(r'^translator_list',supervisor_views.translator_list,name = 'translator_list')
 ]
+

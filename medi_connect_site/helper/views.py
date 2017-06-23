@@ -3,12 +3,13 @@ from models import Hospital, Patient, Disease, Order, Document
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from helper.forms import OrderFormFirst, OrderFormSecond, DocumentForm
+from django.utils.http import urlquote
 
 
 # Create your views here.
 @login_required
-def hospital(request, name):
-    hosp = Hospital.objects.get(name=name)
+def hospital(request, id):
+    hosp = Hospital.objects.get(id=id)
     customer = Customer.objects.get(user=request.user)
     order_list = Order.objects.filter(customer=customer)
     order = None
@@ -130,9 +131,8 @@ def document_submit(request, order_id):
                 'customer': customer,
             })
         else:
-            document = form.cleaned_data.get('document')
-            extra_document = form.cleaned_data.get('extra_document')
-            doc = Document(document=document, extra_document=extra_document)
+            document = urlquote(form.cleaned_data.get('document'))
+            doc = Document(document=document)
             doc.order = order
             doc.save()
             hosp = order.hospital
