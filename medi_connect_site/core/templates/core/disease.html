@@ -1,0 +1,19 @@
+{% extends "index.html" %}
+{% block title %}Disease{% endblock %}
+
+{% block content %}
+
+{% for disease in diseases %}
+<div class="media" style="border-style:solid">
+    <a href="#">
+        <div class="media-left media-middle">
+        </div>
+        <div class="media-body">
+            <h4 class="media-heading">{{disease.name}}</h4>
+            <p>{{disease.introduction}}</p>
+        </div>
+    </a>
+</div>
+{% endfor %}
+
+{% endblock %}
