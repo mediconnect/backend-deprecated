@@ -76,7 +76,7 @@ class Patient(models.Model):
     age = models.IntegerField(blank=True)
     gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)
     category = models.CharField(max_length=50, default='COLD')
-    diagnose_hospital = models.TextField(blank=True)
+    diagnose_hospital = models.CharField(max_length=50, blank=True)
     doctor = models.TextField(blank=True)
 
     class Meta:
@@ -102,7 +102,6 @@ class Hospital(models.Model):
 class Disease(models.Model):
     name = models.CharField(default='unknown', max_length=50)
     keyword = models.CharField(default='unknown', max_length=150)
-    category = models.CharField(default='unknown', max_length=50)
 
     class Meta:
         db_table = 'disease'
@@ -195,7 +194,7 @@ def order_directory_path(instance, filename):
 
 class Document(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
-    description = models.CharField(max_length=255, blank=True)
+    description = models.CharField(max_length=50, blank=True)
     required = models.BooleanField(default=False)
     is_origin = models.BooleanField(default=True)
     is_translated = models.BooleanField(default=False)

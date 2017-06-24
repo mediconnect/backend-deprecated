@@ -7,9 +7,9 @@
 <div class="navbar navbar-inverse navbar-fixed-left">
   <a class="navbar-brand" href="#">{{translator.get_name}}</a>
   <ul class="nav navbar-nav">
-   <li><a href="{% url 'supervisor_home', user = supervisor %}">Assignments</a></li>
-   <li><a href="{% url 'customer_list', user = supervisor %}">Customers</a></li>
-   <li><a href="{% url 'translator_list', user = supervisor %}">Translators</a></li>
+   <li><a href="{% url 'supervisor_home' id=supervisor.id %}">Home</a></li>
+   <li><a href="#">Customers</a></li>
+   <li><a href= '#' >Translators</a></li>
   </ul>
 </div>
 {% block content %}

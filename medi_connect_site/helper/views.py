@@ -8,15 +8,16 @@ from django.utils.http import urlquote
 
 # Create your views here.
 @login_required
-def hospital(request, id):
-    hosp = Hospital.objects.get(id=id)
+def hospital(request, hospital_id, disease_id):
+    hosp = Hospital.objects.get(id=hospital_id)
+    dis = Disease.objects.get(id=disease_id)
     customer = Customer.objects.get(user=request.user)
     order_list = Order.objects.filter(customer=customer)
     order = None
     for each in order_list:
         if hosp == each.hospital and each.status == str(0):
             order = each
-    order = Order(hospital=hosp, status=0) if order is None else order
+    order = Order(hospital=hosp, status=0, disease=dis) if order is None else order
     order.save()
     return render(request, "hospital_order.html", {
         'hospital': hosp,
@@ -42,13 +43,13 @@ def order_info_first(request, order_id):
     if order.patient is None or order.patient.name is None or len(order.patient.name) == 0:
         return render(request, 'order_info_first.html', {
             'customer': customer,
-            'form': OrderFormFirst(),
+            'form': OrderFormFirst(instance=request.user, initial={
+                'diagnose_hospital': order.hospital.name
+            }),
             'order_id': order.id,
         })
-    elif order.disease is None or order.disease.category is None or len(order.disease.category) == 0:
-        return redirect('order_submit_first', order_id=order_id)
     else:
-        return redirect('order_submit_second', order_id=order_id)
+        return redirect('order_submit_first', order_id=order_id)
 
 
 @login_required
@@ -58,6 +59,7 @@ def order_submit_first(request, order_id):
         order = Order.objects.get(id=order_id)
         customer = Customer.objects.get(user=request.user)
         if not form.is_valid():
+            form.fields['diagnose_hospital'] = order.hospital.name
             return render(request, 'order_info_first.html', {
                 'form': form,
                 'order_id': order.id,
@@ -74,14 +76,19 @@ def order_submit_first(request, order_id):
             order.save()
             return render(request, 'order_info_second.html', {
                 'customer': customer,
-                'form': OrderFormSecond(),
+                'form': OrderFormSecond(instance=request.user, initial={
+                    'name': order.disease.name
+                }),
                 'order_id': order.id,
             })
     else:
         customer = Customer.objects.get(user=request.user)
+        order = Order.objects.get(id=order_id)
         return render(request, 'order_info_second.html', {
             'customer': customer,
-            'form': OrderFormSecond(),
+            'form': OrderFormSecond(instance=request.user, initial={
+                'name': order.disease.name
+            }),
             'order_id': order_id,
         })
 
@@ -93,17 +100,13 @@ def order_submit_second(request, order_id):
         order = Order.objects.get(id=order_id)
         customer = Customer.objects.get(user=request.user)
         if not form.is_valid():
+            form.fields['name'] = order.disease.name
             return render(request, 'order_info_second.html', {
                 'form': form,
                 'order_id': order.id,
                 'customer': customer,
             })
         else:
-            category = form.cleaned_data.get('category')
-            disease = Disease(category=category)
-            disease.save()
-            order.disease = disease
-            order.save()
             return render(request, 'document_submit.html', {
                 'customer': customer,
                 'form': DocumentForm(),
@@ -123,7 +126,7 @@ def document_submit(request, order_id):
     order = Order.objects.get(id=order_id)
     customer = Customer.objects.get(user=request.user)
     if request.method == 'POST':
-        form = DocumentForm(request.POST, request.FILES)
+        form = DocumentForm(request.POST, request.FILES, instance=customer)
         if not form.is_valid():
             return render(request, 'document_submit.html', {
                 'form': form,
@@ -132,8 +135,16 @@ def document_submit(request, order_id):
             })
         else:
             document = urlquote(form.cleaned_data.get('document'))
-            doc = Document(document=document)
-            doc.order = order
+            extra_document = urlquote(form.cleaned_data.get('extra_document'))
+            if extra_document is not None:
+                extra_doc_comment = form.cleaned_data.get('extra_document_comment')
+                extra_doc_description = form.cleaned_data.get('extra_document_description')
+                extra_doc = Document(document=extra_document, comment=extra_doc_comment,
+                                     description=extra_doc_description, order=order)
+                extra_doc.save()
+            doc_comment = form.cleaned_data.get('document_comment')
+            doc_description = form.cleaned_data.get('document_description')
+            doc = Document(document=document, comment=doc_comment, description=doc_description, order=order)
             doc.save()
             hosp = order.hospital
             hosp.slots_open -= 1

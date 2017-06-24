@@ -6,7 +6,7 @@
 
 {% for hospital in hospital_list %}
 <div class="media" style="border-style:solid">
-    <a href="{% url 'hospital_order' id=hospital.id %}">
+    <a href="{% url 'hospital_order' hospital_id=hospital.id disease_id=disease.id%}">
         <div class="media-left media-middle">
         </div>
         <div class="media-body">

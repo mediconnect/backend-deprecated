@@ -5,9 +5,10 @@ from django.db.models import Q
 from forms import SignUpForm, SearchForm
 from customer.models import Customer
 from customer.views import customer
-# from translator.views import translator
-# from supervisor.views import trans_signup, supervisor
-from helper.models import Hospital, Disease
+from translator.models import Translator
+from translator.views import translator
+from supervisor.views import trans_signup, supervisor
+from helper.models import Hospital, Disease, Order
 
 
 # Create your views here
@@ -21,7 +22,7 @@ def home(request):
         if request.user.is_superuser:
             return supervisor(request, request.user)
         elif request.user.is_staff:
-            return translator(request, request.user)
+            return translator(request, request.user.id)
         else:
             return customer(request, request.user)
     else:
@@ -66,14 +67,25 @@ def result(request):
             return customer(request, request.user)
         else:
             query = form.cleaned_data.get('query')
+            dis = Disease.objects.filter(Q(keyword__icontains=query))
+            for unit in dis:
+                keywords = set(unit.keyword.split(','))
+                if query in keywords:
+                    dis = unit
+                    break
+
             hospital_info = []
             hospitals = Hospital.objects.filter(Q(specialty__icontains=query))
             for hosp in hospitals:
-                hospital_info.append(hosp) if hosp not in hospital_info else None
+                specialities = set(hosp.specialty.split(','))
+                if query in specialities:
+                    hospital_info.append(hosp)
+
             if request.user.is_authenticated():
                 return render(request, 'result.html',
                               {
                                   'hospital_list': hospital_info,
+                                  'disease': dis,
                                   'customer': Customer.objects.get(user=request.user)
                               })
     else:
@@ -106,7 +118,6 @@ def disease(request):
     diseases = Disease.objects.all()
     return render(request, 'disease.html', {
         'diseases': diseases,
-        'customer': Customer.objects.get(user=request.user)
     })
 
 
@@ -114,5 +125,4 @@ def hospital(request):
     hospitals = Hospital.objects.order_by('rank')[0:20]
     return render(request, 'hospital.html', {
         'hospitals': hospitals,
-        'customer': Customer.objects.get(user=request.user)
     })

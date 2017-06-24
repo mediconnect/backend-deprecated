@@ -5,5 +5,5 @@
 		<l>{obj.Customer.get_name}</l>
   	{%endfor%}}
 
-  <p><a href="{% url 'supervisor_home', user = supervisor %}">Return to home</a></p>
+  <li><a href="{% url 'supervisor_home' id=supervisor.id %}">Home</a></li>
 {% endblock %}
