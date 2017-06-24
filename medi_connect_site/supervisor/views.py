@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login
 from customer.models import Customer
 from translator.models import Translator
 from supervisor.models import Supervisor
-from helper.models import Document,Order, trans_list_1, trans_list_2
+from helper.models import Document,Order, trans_list_C2E, trans_list_E2C
 from supervisor.forms import TransSignUpForm,DetailForm,ResetPasswordForm
 import random
 # Create your views here.
@@ -26,10 +26,23 @@ def supervisor(request,user):
 		'supervisor': supervisor,
 
 		})
+@login_required
+def supervisor(request,id):
+	supervisor = Supervisor.objects.get(id = id)
+	orders = Order.objects.all()
+	translators = Translator.objects.all()
+	customers = Customer.objects.all()
+	return render(request, 'supervisor_home.html',{
+		'orders': orders,
+		'translators': translators,
+		'customers': customers,
+		'supervisor': supervisor,
+
+		})
 
 @login_required
-def trans_signup(request,user):
-    supervisor = Supervisor.objects.get(user = user)
+def trans_signup(request,id):
+    supervisor = Supervisor.objects.get(id = id)
     if request.method == 'POST':
         form = TransSignUpForm(request.POST)
         if not form.is_valid():
@@ -53,8 +66,8 @@ def trans_signup(request,user):
                        'supervisor':supervisor}
                       )
 @login_required
-def detail(request,user,assignment):
-	supervisor = Supervisor.objects.get(user = user)
+def detail(request,id,assignment):
+	supervisor = Supervisor.objects.get(id = id)
 	translator = Translator.objects.get(id = assignment.translator)
 	if request.method == 'POST':
 		form = DetailForm(request.POST)
@@ -69,9 +82,9 @@ def detail(request,user,assignment):
 				translator_id = form.cleaned_data.get('new_assignee')
 				assignment.assign(translator_id)
 				if assignment.get_status() <= 3: #can reassign to a new translator before submitted to hospital
-					assignment.translator_1 = translator_id
+					assignment.translator_C2E = translator_id
 				else:
-					assignment.translator_2 = translator_id
+					assignment.translator_E2C = translator_id
 
 		if 'approve' in request.POST:
 			if not form.is_valid():
@@ -110,7 +123,7 @@ def detail(request,user,assignment):
 					'supervisor': supervisor
 				})
 			else:
-				assignment.translator_2 = assignment.assign(trans_list_2)
+				assignment.translator_E2C = assignment.assign(trans_list_E2C)
 				files = request.FILES['document']
 				for f in files:
 					instance = Document(document = f, is_origin = True)
@@ -125,8 +138,8 @@ def detail(request,user,assignment):
 			})
 
 @login_required
-def customer_list(request,user):
-	supervisor = Supervisor.objects.get(user = user )
+def customer_list(request,id):
+	supervisor = Supervisor.objects.get(id = id )
 	customers = Customer.objects.all()
 	if request.method == 'POST':
 		form = ResetPasswordForm(request.POST)
@@ -141,7 +154,7 @@ def customer_list(request,user):
 			customer = form.cleaned_data.get('customer')
 			#implement reset password function
 	else:
-		return render(request,'customer_list',{
+		return render(request,'customer_list.html',{
 			'customers':customers
 		})
 

@@ -5,9 +5,10 @@ from django.db.models import Q
 from forms import SignUpForm, SearchForm
 from customer.models import Customer
 from customer.views import customer
-# from translator.views import translator
-# from supervisor.views import trans_signup, supervisor
-from helper.models import Hospital, Disease
+from translator.models import Translator
+from translator.views import translator
+from supervisor.views import trans_signup, supervisor
+from helper.models import Hospital, Disease, Order
 
 
 # Create your views here
@@ -21,7 +22,7 @@ def home(request):
         if request.user.is_superuser:
             return supervisor(request, request.user)
         elif request.user.is_staff:
-            return translator(request, request.user)
+            return translator(request, request.user.id)
         else:
             return customer(request, request.user)
     else:

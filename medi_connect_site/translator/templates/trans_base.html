@@ -7,9 +7,10 @@
 <div class="navbar navbar-inverse navbar-fixed-left">
   <a class="navbar-brand" href="#">{{translator.get_name}}</a>
   <ul class="nav navbar-nav">
-   <li><a href="{% url 'trans_home', user = translator %}">Assignments</a></li>
-   <li><a href="{% url 'trans_home', user = translator, assignments = translator.get_ongoing_assignments %}">Ongoing</a></li>
-   <li><a href="{% url 'trans_home', user = translator, assignments = translator.get_approving assignments %}">Approving</a></li>
+   <li><a href="#">Assignments</a></li>
+   <
+   <li><a href="#">Ongoing</a></li>
+   <li><a href="#">Approving</a></li>
   </ul>
 </div>
 {% block content %}

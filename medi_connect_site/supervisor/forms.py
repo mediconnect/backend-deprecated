@@ -15,10 +15,10 @@ class DetailForm(forms.ModelForm):
     new_assignee = forms.ModelChoiceField(queryset=Translator.objects.all())
     class Meta:
         model = Order
-        fields = ['new_assignee','approval','comment','feedback']
+        fields = ['new_assignee','approval','feedback']
 
 class ResetPasswordForm(forms.Form):
-    password = forms.PasswordInput(lable = 'Implement reset password method')
+    password = forms.PasswordInput()
 
 class TransSignUpForm(forms.ModelForm):
     confirm_password = forms.CharField(

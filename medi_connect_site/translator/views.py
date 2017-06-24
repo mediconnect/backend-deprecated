@@ -10,11 +10,11 @@ from forms import AssignmentSummaryForm
 
 #Create your views here.
 
-
+"""
 @login_required
 def translator(request,user):
     translator = Translator.objects.get(user = user)
-    assignments = Document.objects.filter(translator_id = translator.id)
+    assignments = Order.objects.filter(translator = translator.id)
     return render(request,'trans_home.html',
     	{
     		'assignments': assignments,
@@ -23,8 +23,31 @@ def translator(request,user):
     	})
 
 @login_required
-def translator(request,user,assignments):
-	translator = Translator.objects.get(user = user)
+def translator(request,user,assignments = None):
+	translator = Translator.objects.get(user_id = user.id)
+	if assignments is None:
+		assignments = Order.objects.filter(translator = translator.id)
+	return render(request, 'trans_home.html',
+				  {
+					  'assignments' : assignments,
+					  'translator' : translator
+				  })
+"""
+@login_required
+def translator(request,id,assignments = None):
+	translator = Translator.objects.get(id = id)
+	if assignments is None:
+		assignments = Order.objects.filter(translator = translator.id)
+	return render(request, 'trans_home.html',
+				  {
+					  'assignments' : assignments,
+					  'translator' : translator
+				  })
+@login_required
+def translator(request,id,assignments = None):
+	translator = Translator.objects.get(user_id = id)
+	if assignments is None:
+		assignments = Order.objects.filter(translator = translator.id)
 	return render(request, 'trans_home.html',
 				  {
 					  'assignments' : assignments,
@@ -32,8 +55,8 @@ def translator(request,user,assignments):
 				  })
 
 @login_required
-def assignment_summary(request,user,assignment):
-	translator = Translator.object.get(user = user)
+def assignment_summary(request,id,assignment):
+	translator = Translator.object.get(user_id = id)
 	if assignment.get_status <= 3:
 		document_list = assignment.origin.all()
 	else :
