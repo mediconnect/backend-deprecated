@@ -34,8 +34,8 @@ def translator(request,user,assignments = None):
 				  })
 """
 @login_required
-def translator(request,id,assignments = None):
-	translator = Translator.objects.get(id = id)
+def translator(request,user,assignments = None):
+	translator = user.objects.get(user = user)
 	if assignments is None:
 		assignments = Order.objects.filter(translator = translator.id)
 	return render(request, 'trans_home.html',
