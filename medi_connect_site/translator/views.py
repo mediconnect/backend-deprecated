@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 
 @login_required
 def translator(request, id, assignments=None):
-    translator = User.objects.get(id=id)
+    translator = Translator.objects.get(id=id)
     assignments = Order.objects.all()
     if assignments is None:
         assignments = Order.objects.filter(Q(translator_C2E=translator)|Q(translator_E2C=translator))
