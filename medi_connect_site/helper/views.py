@@ -150,6 +150,7 @@ def document_submit(request, order_id):
             hosp.slots_open -= 1
             hosp.save()
             order.status = 1
+            order.assign()
             order.save()
             return render(request, 'order_review.html', {
                 'customer': customer,
