@@ -24,6 +24,10 @@ class DetailForm(forms.ModelForm):
 class ResetPasswordForm(forms.Form):
     password = forms.PasswordInput()
 
+class FeedbackUploadForm(forms.Form):
+    file_field = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+
+
 class TransSignUpForm(forms.ModelForm):
     confirm_password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),

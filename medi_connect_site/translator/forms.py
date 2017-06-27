@@ -6,5 +6,5 @@ from translator.models import Translator
 
 class AssignmentSummaryForm(forms.ModelForm):
 	class Meta:
-		model = Order
-		fields = ['pending']
+		model = Document
+		fields = ['document']

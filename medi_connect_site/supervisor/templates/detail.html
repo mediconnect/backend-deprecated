@@ -30,7 +30,7 @@
     {{ form.as_p }}
     <button type='submit',name = 'assign'>Assign</button>
     <button type = 'submit', name='approve'>Submit Approval</button>
-    <button type = 'submit', name='upload'> Upload Feedback</button>
+      <a href="{% url 'feedback_upload' id=supervisor.id order_id=assignment.id %}"> Upload Feedback</a>
   </form>
 
   <p><a href="{% url 'supervisor_home' id=supervisor.id %}">Return to home</a></p>
