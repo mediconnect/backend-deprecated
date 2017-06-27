@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.views.generic.edit import FormView
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
@@ -8,7 +9,7 @@ from customer.models import Customer
 from translator.models import Translator
 from supervisor.models import Supervisor
 from helper.models import Document,Order, trans_list_C2E, trans_list_E2C
-from supervisor.forms import TransSignUpForm,DetailForm,ResetPasswordForm
+from supervisor.forms import TransSignUpForm,DetailForm,ResetPasswordForm,FeedbackUploadForm
 import random
 # Create your views here.
 
@@ -156,6 +157,45 @@ def detail(request,id,order_id):
 			'supervisor':supervisor,
 			'assignment':assignment
 		})
+
+@login_required
+def feedback_upload(request,id,order_id):
+	assignment = Order.objects.get(id = order_id)
+	supervisor = User.objects.get(id = id)
+	if request.method == 'POST':
+		form = FeedbackUploadForm(request.POST,request.FILES)
+		if not form.is_valid():
+			return render(request,'feedback_upload.html',{
+				'assignment':assignment,
+				'supervisor':supervisor
+			})
+		else:
+			assignment.assign()
+			files = request.FILES['feedback_files']
+			for f in files:
+				instance = Document(document=f, is_origin=True)
+				instance.save()
+				# assignment.pending.add(instance)
+				assignment.feedback.add(instance)
+	else:
+		return render(request, 'feedback_upload.html', {
+			'assignment': assignment,
+			'supervisor': supervisor
+		})
+
+class FileFieldView(FormView):
+    form_class = FeedbackUploadForm
+    template_name = 'feedback_upload.html'  # Replace with your template.
+    success_url = 'supervisor_home'  # Replace with your URL or reverse().
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        files = request.FILES.getlist('file_field')
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
 
 @login_required
 def customer_list(request,id):

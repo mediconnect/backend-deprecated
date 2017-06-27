@@ -4,51 +4,19 @@ from models import Translator
 from helper.models import Document, Order
 from django.core.files.storage import FileSystemStorage
 from forms import AssignmentSummaryForm
+from django.db.models import Q
+from django.contrib.auth.models import User
 
 # Create your views here.
-
-"""
-@login_required
-def translator(request,user):
-    translator = Translator.objects.get(user = user)
-    assignments = Order.objects.filter(translator = translator.id)
-    return render(request,'trans_home.html',
-    	{
-    		'assignments': assignments,
-    		'translator': translator
-
-    	})
-
-@login_required
-def translator(request,user,assignments = None):
-	translator = Translator.objects.get(user_id = user.id)
-	if assignments is None:
-		assignments = Order.objects.filter(translator = translator.id)
-	return render(request, 'trans_home.html',
-				  {
-					  'assignments' : assignments,
-					  'translator' : translator
-				  })
-"""
-
-
-@login_required
-def translator(request, user, assignments=None):
-    translator = user.objects.get(user=user)
-    if assignments is None:
-        assignments = Order.objects.filter(translator=translator.id)
-    return render(request, 'trans_home.html',
-                  {
-                      'assignments': assignments,
-                      'translator': translator
-                  })
 
 
 @login_required
 def translator(request, id, assignments=None):
-    translator = Translator.objects.get(user_id=id)
+    translator = User.objects.get(id=id)
+    assignments = Order.objects.all()
     if assignments is None:
-        assignments = Order.objects.filter(translator=translator.id)
+        assignments = Order.objects.filter(Q(translator_C2E=translator)|Q(translator_E2C=translator))
+
     return render(request, 'trans_home.html',
                   {
                       'assignments': assignments,
@@ -57,8 +25,9 @@ def translator(request, id, assignments=None):
 
 
 @login_required
-def assignment_summary(request, id, assignment):
-    translator = Translator.object.get(user_id=id)
+def assignment_summary(request, id, order_id):
+    translator = User.objects.get(id=id)
+    assignment = Order.objects.get(id=order_id)
     if assignment.get_status <= 3:
         document_list = assignment.origin.all()
     else:

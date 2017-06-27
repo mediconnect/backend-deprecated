@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^trans_signup/(?P<id>\d+)/$',supervisor_views.trans_signup ,name = 'trans_signup'),
     url(r'^detail/(?P<id>\d+)/(?P<order_id>\d+)/$',supervisor_views.detail ,name = 'detail'),
     url(r'^customer_list/(?P<id>\d+)/$',supervisor_views.customer_list,name = 'customer_list'),
-    #url(r'^translator_list/(?P<id>\d+)/$',supervisor_views.translator_list,name = 'translator_list')
+    #url(r'^translator_list/(?P<id>\d+)/$',supervisor_views.translator_list,name = 'translator_list'),
+    url(r'^feedback_upload/(?P<id>\d+)/(?P<order_id>\d+)/$',supervisor_views.feedback_upload ,name = 'feedback_upload'),
 ]
 

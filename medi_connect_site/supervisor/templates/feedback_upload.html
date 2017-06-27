@@ -1,0 +1,13 @@
+{% extends 'supervisor_base.html' %}
+
+{%block title%}Upload File{%endblock%}
+{% block content %}
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="feedback_files">
+    <button type="submit">Upload</button>
+  </form>
+
+
+ <p><a href="{% url 'supervisor_home' id=supervisor.id %}">Return to home</a></p>
+{% endblock %}
