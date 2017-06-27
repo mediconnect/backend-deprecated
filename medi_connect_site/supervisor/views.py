@@ -12,10 +12,14 @@ from supervisor.forms import TransSignUpForm,DetailForm,ResetPasswordForm
 import random
 # Create your views here.
 
+# Translator Sequence Chinese to English
+trans_list_C2E = random.shuffle(list(Translator.objects.all()))
 
+# Translator Sequence English to Chinese
+trans_list_E2C = random.shuffle(list(Translator.objects.all()))
 @login_required
-def supervisor(request,user):
-	supervisor = Supervisor.objects.get(user = user)
+def supervisor(request,id):
+	supervisor = User.objects.get(id = id)
 	orders = Order.objects.all()
 	translators = Translator.objects.all()
 	customers = Customer.objects.all()
@@ -26,6 +30,7 @@ def supervisor(request,user):
 		'supervisor': supervisor,
 
 		})
+"""
 @login_required
 def supervisor(request,id):
 	supervisor = Supervisor.objects.get(id = id)
@@ -39,10 +44,10 @@ def supervisor(request,id):
 		'supervisor': supervisor,
 
 		})
-
+"""
 @login_required
 def trans_signup(request,id):
-    supervisor = Supervisor.objects.get(id = id)
+    supervisor = User.objects.get(id = id)
     if request.method == 'POST':
         form = TransSignUpForm(request.POST)
         if not form.is_valid():
@@ -66,9 +71,12 @@ def trans_signup(request,id):
                        'supervisor':supervisor}
                       )
 @login_required
-def detail(request,id,assignment):
-	supervisor = Supervisor.objects.get(id = id)
-	translator = Translator.objects.get(id = assignment.translator)
+def detail(request,id,order_id):
+	assignment = Order.objects.get(id = order_id)
+	supervisor = User.objects.get(id = id)
+	C2E_translator = User.objects.get(id = 11)
+	E2C_translator = User.objects.get(id = 11)
+	translator = C2E_translator if assignment.get_status() <=3 else E2C_translator
 	if request.method == 'POST':
 		form = DetailForm(request.POST)
 		if 'assign' in request.POST:
@@ -110,11 +118,12 @@ def detail(request,id,assignment):
 				if not approval:
 					assignment.change_status(4)
 					translator.change_trans_status(assignment,1)
-					for document in assignment.pending:
+					for document in assignment.pending.all():
 						if document.is_origin:
 							assignment.origin.add(document)
 						if document.is_feedback:
 							assignment.feedback.add(document)
+
 		if 'upload' in request.POST: #upload feedback documents from hospital
 			if not form.is_valid():
 				return render(request, 'detail.html', {
@@ -123,19 +132,30 @@ def detail(request,id,assignment):
 					'supervisor': supervisor
 				})
 			else:
-				assignment.translator_E2C = assignment.assign(trans_list_E2C)
-				files = request.FILES['document']
+				assignment.assign()
+				files = request.FILES['feedback_files']
 				for f in files:
 					instance = Document(document = f, is_origin = True)
 					instance.save()
 					#assignment.pending.add(instance)
 					assignment.feedback.add(instance)
-		else:
-			return render(request,'detail.html',{
-				'form':DetailForm(),
-				'supervisor':supervisor,
-				'assignment':assignment
-			})
+		orders = Order.objects.all()
+		translators = Translator.objects.all()
+		customers = Customer.objects.all()
+		return render(request, 'supervisor_home.html', {
+			'orders': orders,
+			'translators': translators,
+			'customers': customers,
+			'supervisor': supervisor,
+
+		})
+
+	else:
+		return render(request,'detail.html',{
+			'form':DetailForm(),
+			'supervisor':supervisor,
+			'assignment':assignment
+		})
 
 @login_required
 def customer_list(request,id):

@@ -5,17 +5,21 @@ from translator.models import Translator
 from helper.models import Document, Order
 import random
 
-
+assignee_choice = []
+for e in Translator.objects.all():
+    assignee_choice.append((e,e.get_name()))
 class DetailForm(forms.ModelForm):
     approval = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
         choices=((False, 'DISAPPROVE'), (True, 'APRROVE')),
-        widget=forms.RadioSelect
+        widget=forms.RadioSelect,
+        required= False
     )
-    new_assignee = forms.ModelChoiceField(queryset=Translator.objects.all())
+    new_assignee = forms.ChoiceField(choices = assignee_choice,required= False)
+    feedback_documents = forms.FileField(required= False)
     class Meta:
         model = Order
-        fields = ['new_assignee','approval','feedback']
+        fields = ['new_assignee','approval','feedback_documents']
 
 class ResetPasswordForm(forms.Form):
     password = forms.PasswordInput()

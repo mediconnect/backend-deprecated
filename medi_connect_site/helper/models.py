@@ -22,6 +22,8 @@ STARTED = 0
 SUBMITTED = 1  # deposit paid, only change appointment at this status
 TRANSLATING_ORIGIN = 2  # translator starts translating origin documents
 RECEIVED = 3  # origin documents translated, approved and submitted to hospitals
+#============ Above is C2E status =============#
+#============Below is E2C status ==============#
 RETURN = 4  # hospital returns feedback
 TRANSLATING_FEEDBACK = 5  # translator starts translating feedback documents
 FEEDBACK = 6  # feedback documents translated, approved, and feedback to customer
@@ -56,10 +58,12 @@ TRANS_STATUS_CHOICE = (
     (FINISHED, 'finished'),
 )
 # Translator Sequence Chinese to English
-trans_list_C2E = random.shuffle(Translator.objects.all().values_list('id', flat=True))
+trans_list_C2E = list(User.objects.filter(is_staff = True))
 
 # Translator Sequence English to Chinese
-trans_list_E2C = random.shuffle(Translator.objects.all().values_list('id', flat=True))
+trans_list_E2C = list(User.objects.filter(is_staff = True))
+
+
 
 
 # Function to move the position of a translator in sequence
@@ -136,10 +140,10 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
     # translator Chinese to English
-    translator_C2E = models.ForeignKey(Translator, on_delete=models.CASCADE, null=True,
+    translator_C2E = models.ForeignKey(User, on_delete=models.CASCADE, null=True,
                                        related_name='chinese_translator')
     # translator English to Chinese
-    translator_E2C = models.ForeignKey(Translator, on_delete=models.CASCADE, null=True,
+    translator_E2C = models.ForeignKey(User, on_delete=models.CASCADE, null=True,
                                        related_name='english_translator')
     # supervisor = models.ForeignKey(Supervisor, on_delete = models.CASCADE, null = True)
     # only one supervisor for now, no need to keep this info
@@ -160,10 +164,11 @@ class Order(models.Model):
         db_table = 'order'
 
     def get_info(self):
-        return 'Order id is' + self.id + '\n' + 'Deadline is :' + self.get_deadline()
+        #return 'Order id is' + self.id + '\n' + 'Deadline is :' + self.get_deadline()
+        return 'Order 1'
 
     def get_deadline(self):  # default deadline 2 days after submit
-        return self.submit - datetime.timedelta(days=2)  # date time algebra
+        return str(self.submit - datetime.timedelta(days=2))  # date time algebra
 
     def get_status(self):
         return self.status
@@ -171,22 +176,30 @@ class Order(models.Model):
     def change_status(self, status):
         self.status = status
 
-    # call this function with trans_list_1 when customer submit order, trans_list_2 when supervisor upload feedback
-    def assign(self, trans_list):
-        assign_time = datetime.date.today
-        # self.assign = assign_time
-        translator_id = trans_list[0]
-        # self.translator = translator_id
-        # The above line should be called manually when assign translator to specify translator_1 or translator_2
-        trans_list = move(translator_id, -1)
-        return translator_id
+    # New assign function: take out the parameter, check status in method and return translator id
+    def assign(self):
+        is_C2E = True if self.status <= 3 else False
+        if is_C2E:
+            translator = trans_list_C2E[0]
+            move(trans_list_C2E,translator,-1)
+            self.translator_C2E = translator
+            self.change_status(TRANSLATING_ORIGIN)
+        else:
+            translator = trans_list_E2C[0]
+            move(trans_list_E2C,translator,-1)
+            self.translator_E2C = translator
+            self.change_status(TRANSLATING_FEEDBACK)
+
 
     # manually assign order to a translator
-    def assign(self, translator_id):
-        assign_time = datetime.date.today
-        # self.assign = assign_time
-        # self.translator = translator_id
-
+    def assign_manually(self, translator):
+        is_C2E = True if self.status <= 3 else False
+        if is_C2E:
+            self.translator_C2E = translator
+            self.change_status(TRANSLATING_ORIGIN)
+        else:
+            self.translator_E2C = translator
+            self.change_status(TRANSLATING_FEEDBACK)
 
 def order_directory_path(instance, filename):
     return 'order_{0}/{1}/{2}'.format(instance.order.customer, instance.order.id, filename)

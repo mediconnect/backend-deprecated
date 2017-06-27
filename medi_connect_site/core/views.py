@@ -20,7 +20,7 @@ def home(request):
         # assign administrator as super user
         # assign translator as staff
         if request.user.is_superuser:
-            return supervisor(request, request.user)
+            return supervisor(request, request.user.id)
         elif request.user.is_staff:
             return translator(request, request.user.id)
         else:

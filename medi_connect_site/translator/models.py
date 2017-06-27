@@ -29,7 +29,6 @@ TRANS_STATUS_CHOICE = (
 class Translator(models.Model):
     user = models.OneToOneField(User)
     assignments = models.ManyToManyField('helper.Order')
-    active = models.BooleanField(default=INACTIVE)
 
     class Meta:
         db_table = 'auth_translator'
@@ -56,7 +55,4 @@ class Translator(models.Model):
         return orders
 
     def change_trans_status(self, assignment, status):  # assignment is order
-        if status == 3 or 4 or 5:
-            raise ValueError('Only supervisor can make this change.')
-        else:
-            assignment.trans_status = status
+        assignment.trans_status = status
