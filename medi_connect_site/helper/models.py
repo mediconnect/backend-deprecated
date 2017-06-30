@@ -70,7 +70,6 @@ def move(trans_list, translator_id, new_position):
     trans_list.insert(new_position, trans_list.pop(old_position))
     return trans_list
 
-
 # Create your models here.
 class Patient(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)

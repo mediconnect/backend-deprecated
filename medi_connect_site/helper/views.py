@@ -135,22 +135,22 @@ def document_submit(request, order_id):
             })
         else:
             document = urlquote(form.cleaned_data.get('document'))
-            extra_document = urlquote(form.cleaned_data.get('extra_document'))
+            extra_document = form.cleaned_data.get('extra_document')
             if extra_document is not None:
                 extra_doc_comment = form.cleaned_data.get('extra_document_comment')
                 extra_doc_description = form.cleaned_data.get('extra_document_description')
-                extra_doc = Document(document=extra_document, comment=extra_doc_comment,
+                extra_doc = Document(document=urlquote(extra_document), comment=extra_doc_comment,
                                      description=extra_doc_description, order=order)
                 extra_doc.save()
+                order.origin.add(extra_doc)
             doc_comment = form.cleaned_data.get('document_comment')
             doc_description = form.cleaned_data.get('document_description')
             doc = Document(document=document, comment=doc_comment, description=doc_description, order=order)
             doc.save()
+            order.origin.add(doc)
             hosp = order.hospital
             hosp.slots_open -= 1
             hosp.save()
-            order.status = 1
-            order.assign()
             order.save()
             return render(request, 'order_review.html', {
                 'customer': customer,
@@ -161,4 +161,22 @@ def document_submit(request, order_id):
         return render(request, 'order_review.html', {
             'customer': customer,
             'order': order,
+        })
+
+
+@login_required
+def finish(request, order_id):
+    order = Order.objects.get(id=order_id)
+    customer = Customer.objects.get(user=request.user)
+    if request.method == 'POST':
+        order.status = 1
+        order.assign()
+        order.save()
+        return render(request, 'finish.html', {
+            'customer': customer,
+        })
+    else:
+        customer = Customer.objects.get(user=request.user)
+        return render(request, 'finish.html', {
+            'customer': customer,
         })

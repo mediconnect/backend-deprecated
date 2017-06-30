@@ -26,15 +26,13 @@ TRANS_STATUS_CHOICE = (
 )
 
 
-class Translator(models.Model):
-    user = models.OneToOneField(User)
-    assignments = models.ManyToManyField('helper.Order')
+class Translator(User):
 
     class Meta:
-        db_table = 'auth_translator'
+        proxy = True
 
     def get_name(self):
-        name = self.user.first_name + ' ' + self.user.last_name
+        name = self.first_name + ' ' + self.last_name
         if name is not ' ':
             return name
         return self.user.username

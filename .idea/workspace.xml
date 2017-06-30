@@ -2,16 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="215a8e93-aa6c-4e54-9eb2-9eda68ffc6e0" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/supervisor/templates/approve.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/supervisor/templates/assign.html" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/supervisor/forms.py" afterPath="$PROJECT_DIR$/medi_connect_site/supervisor/forms.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/supervisor/templates/detail.html" afterPath="$PROJECT_DIR$/medi_connect_site/supervisor/templates/detail.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/supervisor/urls.py" afterPath="$PROJECT_DIR$/medi_connect_site/supervisor/urls.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/supervisor/views.py" afterPath="$PROJECT_DIR$/medi_connect_site/supervisor/views.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/translator/forms.py" afterPath="$PROJECT_DIR$/medi_connect_site/translator/forms.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/translator/templates/assignment_summary.html" afterPath="$PROJECT_DIR$/medi_connect_site/translator/templates/assignment_summary.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/translator/templates/trans_home.html" afterPath="$PROJECT_DIR$/medi_connect_site/translator/templates/trans_home.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/translator/urls.py" afterPath="$PROJECT_DIR$/medi_connect_site/translator/urls.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/customer/migrations/0001_initial.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/customer/migrations/__init__.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/helper/migrations/0001_initial.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/helper/migrations/0002_auto_20170622_0217.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/helper/migrations/0003_order_comment.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/helper/migrations/0004_remove_order_comment.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/helper/migrations/0005_auto_20170624_1512.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/helper/migrations/__init__.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/supervisor/migrations/0001_initial.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/supervisor/migrations/__init__.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/translator/migrations/0001_initial.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/translator/migrations/0002_auto_20170622_0119.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/medi_connect_site/translator/migrations/__init__.py" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/helper/models.py" afterPath="$PROJECT_DIR$/medi_connect_site/helper/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/supervisor/models.py" afterPath="$PROJECT_DIR$/medi_connect_site/supervisor/models.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/translator/models.py" afterPath="$PROJECT_DIR$/medi_connect_site/translator/models.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/medi_connect_site/translator/views.py" afterPath="$PROJECT_DIR$/medi_connect_site/translator/views.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -33,8 +40,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="312">
-              <caret line="28" column="34" lean-forward="false" selection-start-line="28" selection-start-column="34" selection-end-line="28" selection-end-column="34" />
+            <state relative-caret-position="210">
+              <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
               <folding>
                 <element signature="e#0#57#0" expanded="true" />
               </folding>
@@ -42,74 +49,60 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="assignment_summary.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/templates/assignment_summary.html">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/medi_connect_site/helper/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="10" column="40" lean-forward="false" selection-start-line="10" selection-start-column="40" selection-end-line="10" selection-end-column="40" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="forms.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/forms.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="322">
-              <caret line="27" column="4" lean-forward="true" selection-start-line="27" selection-start-column="4" selection-end-line="27" selection-end-column="91" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="forms.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/forms.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
-              <caret line="9" column="19" lean-forward="false" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
+            <state relative-caret-position="1323">
+              <caret line="63" column="0" lean-forward="false" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
               <folding>
-                <element signature="e#0#24#0" expanded="true" />
+                <element signature="e#0#39#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="trans_base.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/templates/trans_base.html">
+      <file leaf-file-name="settings.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/medi_connect_site/medi_connect_site/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="17" column="14" lean-forward="true" selection-start-line="17" selection-start-column="14" selection-end-line="17" selection-end-column="14" />
+            <state relative-caret-position="364">
+              <caret line="107" column="25" lean-forward="true" selection-start-line="107" selection-start-column="25" selection-end-line="107" selection-end-column="25" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="detail.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/templates/detail.html">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="609">
-              <caret line="29" column="4" lean-forward="false" selection-start-line="29" selection-start-column="4" selection-end-line="29" selection-end-column="19" />
-              <folding />
+            <state relative-caret-position="714">
+              <caret line="34" column="44" lean-forward="false" selection-start-line="34" selection-start-column="44" selection-end-line="34" selection-end-column="44" />
+              <folding>
+                <element signature="e#0#43#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="trans_home.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/templates/trans_home.html">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="231">
-              <caret line="11" column="39" lean-forward="true" selection-start-line="11" selection-start-column="39" selection-end-line="11" selection-end-column="39" />
-              <folding />
+            <state relative-caret-position="147">
+              <caret line="7" column="20" lean-forward="false" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
+              <folding>
+                <element signature="e#0#43#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/urls.py">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="9" column="55" lean-forward="false" selection-start-line="9" selection-start-column="55" selection-end-line="9" selection-end-column="55" />
-              <folding />
+            <state relative-caret-position="2583">
+              <caret line="186" column="35" lean-forward="false" selection-start-line="186" selection-start-column="35" selection-end-line="186" selection-end-column="35" />
+              <folding>
+                <element signature="e#24#63#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -161,7 +154,6 @@
         <option value="$PROJECT_DIR$/medi_connect_site/translator/templates/trans_base.html" />
         <option value="$PROJECT_DIR$/medi_connect_site/translator/templates/trans_upload.html" />
         <option value="$PROJECT_DIR$/medi_connect_site/helper/forms.py" />
-        <option value="$PROJECT_DIR$/medi_connect_site/supervisor/models.py" />
         <option value="$PROJECT_DIR$/medi_connect_site/supervisor/templates/trans_signup.html" />
         <option value="$PROJECT_DIR$/medi_connect_site/supervisor/templates/assign.html" />
         <option value="$PROJECT_DIR$/medi_connect_site/supervisor/templates/supervisor_base.html" />
@@ -169,25 +161,26 @@
         <option value="$PROJECT_DIR$/medi_connect_site/supervisor/templates/translator_list.html" />
         <option value="$PROJECT_DIR$/medi_connect_site/core/views.py" />
         <option value="$PROJECT_DIR$/medi_connect_site/supervisor/templates/supervisor_home.html" />
-        <option value="$PROJECT_DIR$/medi_connect_site/translator/models.py" />
-        <option value="$PROJECT_DIR$/medi_connect_site/helper/models.py" />
-        <option value="$PROJECT_DIR$/medi_connect_site/supervisor/views.py" />
         <option value="$PROJECT_DIR$/medi_connect_site/supervisor/urls.py" />
         <option value="$PROJECT_DIR$/medi_connect_site/supervisor/templates/detail.html" />
         <option value="$PROJECT_DIR$/medi_connect_site/supervisor/forms.py" />
         <option value="$PROJECT_DIR$/medi_connect_site/supervisor/templates/feedback_upload.html" />
         <option value="$PROJECT_DIR$/medi_connect_site/translator/urls.py" />
         <option value="$PROJECT_DIR$/medi_connect_site/translator/templates/trans_home.html" />
-        <option value="$PROJECT_DIR$/medi_connect_site/translator/views.py" />
         <option value="$PROJECT_DIR$/medi_connect_site/translator/templates/assignment_summary.html" />
         <option value="$PROJECT_DIR$/medi_connect_site/translator/forms.py" />
+        <option value="$PROJECT_DIR$/medi_connect_site/supervisor/models.py" />
+        <option value="$PROJECT_DIR$/medi_connect_site/translator/models.py" />
+        <option value="$PROJECT_DIR$/medi_connect_site/translator/views.py" />
+        <option value="$PROJECT_DIR$/medi_connect_site/supervisor/views.py" />
+        <option value="$PROJECT_DIR$/medi_connect_site/helper/models.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="-9" />
     <option name="y" value="-9" />
-    <option name="width" value="1938" />
+    <option name="width" value="1924" />
     <option name="height" value="1048" />
   </component>
   <component name="ProjectLevelVcsManager">
@@ -609,10 +602,10 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
+    <frame x="-9" y="-9" width="1924" height="1048" extended-state="1" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15989584" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15949632" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -663,13 +656,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
           <caret line="22" column="14" lean-forward="false" selection-start-line="22" selection-start-column="14" selection-end-line="22" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/medi_connect_site/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="651">
-          <caret line="142" column="0" lean-forward="false" selection-start-line="142" selection-start-column="0" selection-end-line="142" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -853,15 +839,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="189">
           <caret line="9" column="81" lean-forward="true" selection-start-line="9" selection-start-column="81" selection-end-line="9" selection-end-column="81" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="8" column="29" lean-forward="false" selection-start-line="8" selection-start-column="29" selection-end-line="8" selection-end-column="29" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -869,7 +846,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="588">
           <caret line="28" column="21" lean-forward="true" selection-start-line="28" selection-start-column="21" selection-end-line="28" selection-end-column="21" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -877,7 +853,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="231">
           <caret line="14" column="20" lean-forward="true" selection-start-line="14" selection-start-column="20" selection-end-line="14" selection-end-column="20" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -885,49 +860,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="836">
           <caret line="134" column="14" lean-forward="true" selection-start-line="134" selection-start-column="14" selection-end-line="134" selection-end-column="14" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="567">
-          <caret line="30" column="56" lean-forward="false" selection-start-line="30" selection-start-column="56" selection-end-line="30" selection-end-column="56" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/helper/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="945">
-          <caret line="145" column="43" lean-forward="false" selection-start-line="145" selection-start-column="43" selection-end-line="145" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/templates/approve.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="2" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/templates/approve.html" />
     <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
           <caret line="15" column="1" lean-forward="true" selection-start-line="15" selection-start-column="1" selection-end-line="15" selection-end-column="1" />
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="43" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -935,6 +875,27 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
           <caret line="22" column="54" lean-forward="false" selection-start-line="22" selection-start-column="54" selection-end-line="22" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/templates/feedback_upload.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="12" column="14" lean-forward="true" selection-start-line="12" selection-start-column="14" selection-end-line="12" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/templates/supervisor_home.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="9" column="26" lean-forward="false" selection-start-line="9" selection-start-column="26" selection-end-line="9" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/templates/trans_home.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="11" column="39" lean-forward="false" selection-start-line="11" selection-start-column="39" selection-end-line="11" selection-end-column="39" />
           <folding />
         </state>
       </provider>
@@ -947,35 +908,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/templates/feedback_upload.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="12" column="14" lean-forward="true" selection-start-line="12" selection-start-column="14" selection-end-line="12" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/templates/supervisor_home.html">
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/forms.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="189">
-          <caret line="9" column="26" lean-forward="false" selection-start-line="9" selection-start-column="26" selection-end-line="9" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/templates/trans_home.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="231">
-          <caret line="11" column="39" lean-forward="true" selection-start-line="11" selection-start-column="39" selection-end-line="11" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/templates/trans_base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="17" column="14" lean-forward="true" selection-start-line="17" selection-start-column="14" selection-end-line="17" selection-end-column="14" />
-          <folding />
+          <caret line="9" column="19" lean-forward="false" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#24#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -983,6 +922,22 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="609">
           <caret line="29" column="4" lean-forward="false" selection-start-line="29" selection-start-column="4" selection-end-line="29" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/templates/trans_base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="17" column="14" lean-forward="false" selection-start-line="17" selection-start-column="14" selection-end-line="17" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="322">
+          <caret line="27" column="4" lean-forward="false" selection-start-line="27" selection-start-column="4" selection-end-line="27" selection-end-column="91" />
           <folding />
         </state>
       </provider>
@@ -997,29 +952,59 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="312">
-          <caret line="28" column="34" lean-forward="false" selection-start-line="28" selection-start-column="34" selection-end-line="28" selection-end-column="34" />
+        <state relative-caret-position="210">
+          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
           <folding>
             <element signature="e#0#57#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/forms.py">
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="27" column="4" lean-forward="true" selection-start-line="27" selection-start-column="4" selection-end-line="27" selection-end-column="91" />
-          <folding />
+        <state relative-caret-position="714">
+          <caret line="34" column="44" lean-forward="false" selection-start-line="34" selection-start-column="44" selection-end-line="34" selection-end-column="44" />
+          <folding>
+            <element signature="e#0#43#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/medi_connect_site/translator/forms.py">
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="9" column="19" lean-forward="false" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
+        <state relative-caret-position="147">
+          <caret line="7" column="20" lean-forward="false" selection-start-line="7" selection-start-column="20" selection-end-line="7" selection-end-column="20" />
           <folding>
-            <element signature="e#0#24#0" expanded="true" />
+            <element signature="e#0#43#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/supervisor/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2583">
+          <caret line="186" column="35" lean-forward="false" selection-start-line="186" selection-start-column="35" selection-end-line="186" selection-end-column="35" />
+          <folding>
+            <element signature="e#24#63#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/helper/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1323">
+          <caret line="63" column="0" lean-forward="false" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#39#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/medi_connect_site/medi_connect_site/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="364">
+          <caret line="107" column="25" lean-forward="true" selection-start-line="107" selection-start-column="25" selection-end-line="107" selection-end-column="25" />
+          <folding />
         </state>
       </provider>
     </entry>
