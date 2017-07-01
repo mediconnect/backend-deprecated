@@ -1,9 +1,14 @@
-from django.contrib.auth.models import User
 from django.db import models
+from __future__ import unicode_literals
+from django.contrib.auth.models import User
 
-
-class Supervisor(models.Model):
-    user = models.OneToOneField(User)
-
+class Supervisor(User):
     class Meta:
-        db_table = 'auth_supervisor'
+        proxy = True
+
+    def get_name(self):
+        name = self.first_name + ' ' + self.last_name
+        if name is not ' ':
+            return name
+        return self.user.username
+
