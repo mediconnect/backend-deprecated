@@ -56,11 +56,20 @@ TRANS_STATUS_CHOICE = (
     (FINISHED, 'finished'),
 )
 
+# Translator Sequence Chinese to English
+trans_list_C2E = list(User.objects.filter(is_staff=True))
+
+# Translator Sequence English to Chinese
+trans_list_E2C = list(User.objects.filter(is_staff=True))
 
 
+# Function to move the position of a translator in sequence
+def move(trans_list, translator_id, new_position):
+    old_position = trans_list.index(translator_id)
+    trans_list.insert(new_position, trans_list.pop(old_position))
+    return trans_list
 
 
-# Create your models here.
 class Patient(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     name = models.CharField(blank=True, max_length=50)
@@ -162,8 +171,32 @@ class Order(models.Model):
     def change_status(self, status):
         self.status = status
 
+"""
 
+    # New assign function: take out the parameter, check status in method and return translator id
+    def assign(self):
+        is_C2E = True if self.status <= 3 else False
+        if is_C2E:
+            translator = trans_list_C2E[0]
+            move(trans_list_C2E, translator, -1)
+            self.translator_C2E = translator
+            self.change_status(TRANSLATING_ORIGIN)
+        else:
+            translator = trans_list_E2C[0]
+            move(trans_list_E2C, translator, -1)
+            self.translator_E2C = translator
+            self.change_status(TRANSLATING_FEEDBACK)
 
+    # manually assign order to a translator
+    def assign_manually(self, translator):
+        is_C2E = True if self.status <= 3 else False
+        if is_C2E:
+            self.translator_C2E = translator
+            self.change_status(TRANSLATING_ORIGIN)
+        else:
+            self.translator_E2C = translator
+            self.change_status(TRANSLATING_FEEDBACK)
+"""
 
 def order_directory_path(instance, filename):
     return 'order_{0}/{1}/{2}'.format(instance.order.customer, instance.order.id, filename)

@@ -8,4 +8,9 @@ Review:
 {{order.hospital.name}}
 {{order.disease.name}}
 
+<form action="{% url 'order_finish' order_id=order.id %}" method="post" role="form">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
 {% endblock %}

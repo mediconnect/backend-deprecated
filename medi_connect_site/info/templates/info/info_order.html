@@ -2,10 +2,30 @@
 {% block title %}Appointment{% endblock %}
 
 {% block content %}
-<ul class="list-group">
-    {% for order in order_list %}
-         <li class="list-group-item">Name: {{order.patient.name}}, Hospital: {{order.hospital.name}}
-         , Disease: {{order.disease.name}}</li>
-    {% endfor %}
-</ul>
+<ul class="list-group" id="order"></ul>
+
+<script type="text/javascript">
+    var ul = document.getElementById("order");
+    var order_list = {{order_list|safe}};
+    for (var order_id in order_list) {
+      var order = order_list[order_id];
+      var li = document.createElement("li");
+      li.className += "list-group-item";
+      var text = document.createTextNode("".concat("ID: ", order_id, ";Patient",order.patient, ";Hospital: ",order.hospital,";Disease: ",order.disease));
+      li.appendChild(text);
+      var form = document.createElement("form");
+      var button = document.createElement("button");
+      form.appendChild(button);
+      if (order.status != 3) {
+        var button_text = document.createTextNode("Cannot Pay Now");
+        button.appendChild(button_text);
+        button.disabled = true;
+      } else {
+        var button_text = document.createTextNode("Pay");
+        button.appendChild(button_text);
+      }
+      li.appendChild(form);
+      ul.appendChild(li);
+    }
+</script>
 {% endblock %}

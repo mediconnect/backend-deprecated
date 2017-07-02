@@ -4,6 +4,7 @@ from helper.models import Order, Patient
 from django.contrib.auth.decorators import login_required
 from forms import ProfileForm, PasswordResetForm, PatientAddForm
 from django.contrib.auth.hashers import check_password, make_password
+import json
 
 
 # Create your views here.
@@ -96,9 +97,13 @@ def order(request, id):
     customer = Customer.objects.get(id=id)
     orders = Order.objects.filter(customer=customer)
     order_list = []
-    for od in orders:
-        order_list.append(od) if od not in order_list else None
+    for order in orders:
+        order_dict = dict()
+        order_dict['hospital'] = order.hospital.name
+        order_dict['disease'] = order.disease.name
+        order_dict['patient'] = order.patient.name
+        order_list.append(order_dict)
     return render(request, 'info_order.html', {
-        'order_list': order_list,
+        'order_list': json.dumps(order_list),
         'customer': customer,
     })

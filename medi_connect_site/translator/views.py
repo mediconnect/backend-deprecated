@@ -14,6 +14,15 @@ Document = apps.get_model('helper','Document')
 # Create your views here.
 
 
+<<<<<<< HEAD
+=======
+@login_required
+def translator(request, id, assignments=None):
+    translator = Translator.objects.get(id=id)
+    assignments = Order.objects.all()
+    if assignments is None:
+        assignments = Order.objects.filter(Q(translator_C2E=translator)|Q(translator_E2C=translator))
+>>>>>>> 30da62cc0b7892ecb223af46ba4595cb6a6bb074
 
 def get_assignments(translator):  # return order of all assignments
     assignments = []
