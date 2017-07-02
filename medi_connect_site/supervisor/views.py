@@ -10,6 +10,7 @@ from django.apps import apps
 from supervisor.models import Supervisor
 from translator.models import Translator
 from supervisor.forms import TransSignUpForm,DetailForm,ResetPasswordForm,FeedbackUploadForm
+from helper.models import trans_list_C2E, trans_list_E2C
 
 Order = apps.get_model('helper','Order')
 Document = apps.get_model('helper','Document')
@@ -37,70 +38,46 @@ STATUS_CHOICES = (
     (PAID, 'PAID'),
 )
 
-# Trans_status
-
-NOT_STARTED = 0  # assignment not started yet
-ONGOING = 1  # assignment started not submitted to supervisor
-APPROVING = 2  # assignment submitted to supervisor for approval
-APPROVED = 3  # assignment approved, to status 5
-DISAPPROVED = 4  # assignment disapproved, return to status 1
-FINISHED = 5  # assignment approved and finished
-
-TRANS_STATUS_CHOICE = (
-    (NOT_STARTED, 'not_started'),
-    (ONGOING, 'ongoing'),
-    (APPROVING, 'approving'),
-    (APPROVED, 'approved'),
-    (DISAPPROVED, 'disapproved'),
-    (FINISHED, 'finished'),
-)
 
 
-
-# Translator Sequence Chinese to English
-trans_list_C2E = list(User.objects.filter(is_staff = 1).values('id'))
-
-# Translator Sequence English to Chinese
-trans_list_E2C = list(User.objects.filter(is_staff = 1).values('id'))
-
-# Function to move the position of a translator in sequence
-def move(trans_list, translator_id, new_position):
+def move(trans_list,translator_id,new_position):
     old_position = trans_list.index(translator_id)
     trans_list.insert(new_position, trans_list.pop(old_position))
     return trans_list
 
 
-# New assign function: take out the parameter, check status in method and return translator id
-def assign(self):
-	is_C2E = True if self.status <= 3 else False
-	if is_C2E:
-		translator_id = (id for id in trans_list_C2E if len(User.objects.filter(id=id)) != 0)
-		move(trans_list_C2E, translator_id, -1)
-		translator = User.objects.get(id=translator_id)
-		self.translator_C2E = translator
-		self.change_status(TRANSLATING_ORIGIN)
-	else:
-		translator_id = (id for id in trans_list_E2C if len(User.objects.filter(id=id)) != 0)
-		move(trans_list_E2C, translator_id, -1)
-		translator = User.objects.get(id=translator_id)
-		self.translator_E2C = translator
-		self.change_status(TRANSLATING_FEEDBACK)
+def assign(order):
+    is_C2E = True if order.status <= 3 else False
+    if is_C2E:
+        while User.objects.filter(id = trans_list_C2E[0]).count() == 0:
+            trans_list_C2E.pop()
+        translator = User.objects.filter(id=trans_list_C2E[0])
+        move(trans_list_C2E, translator.id, -1)
+        order.translator_C2E = translator
+        order.change_status(TRANSLATING_ORIGIN)
+    else:
+        while User.objects.filter(id = trans_list_E2C[0]).count() == 0:
+            trans_list_C2E.pop()
+        translator = User.objects.filter(id=trans_list_E2C[0])
+        move(trans_list_E2C, translator.id, -1)
+        order.translator_E2C = translator
+        order.change_status(TRANSLATING_FEEDBACK)
 
-
-# manually assign order to a translator
 def assign_manually(self, translator):
-	is_C2E = True if self.status <= 3 else False
-	if is_C2E:
-		self.translator_C2E = translator
-		self.change_status(TRANSLATING_ORIGIN)
-	else:
-		self.translator_E2C = translator
-		self.change_status(TRANSLATING_FEEDBACK)
+    is_C2E = True if self.status <= 3 else False
+    if is_C2E:
+        self.translator_C2E = translator
+        move(trans_list_C2E,translator.id,-1)
+        self.change_status(TRANSLATING_ORIGIN)
+    else:
+        self.translator_E2C = translator
+        move(trans_list_C2E, translator.id, -1)
+        self.change_status(TRANSLATING_FEEDBACK)
 @login_required
 def supervisor(request,id):
-	supervisor = User.objects.get(id = id)
+	supervisor = Supervisor.objects.get(id = id)
 	orders = Order.objects.all()
-	translators = User.objects.filter(is_staff = 1)
+	translators = Translator.objects.filter(is_staff = 1)
 	customers = Customer.objects.all()
 	return render(request, 'supervisor_home.html',{
 		'orders': orders,

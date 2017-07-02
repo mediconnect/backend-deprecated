@@ -1,22 +1,69 @@
 from django.shortcuts import render, redirect
-from models import Hospital, Patient, Disease, Order, Document
+from models import Hospital, Patient, Disease, Order, Document, trans_list_C2E,trans_list_E2C
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from helper.forms import OrderFormFirst, OrderFormSecond, DocumentForm
 from django.utils.http import urlquote
+
+# Status
+STARTED = 0
+SUBMITTED = 1  # deposit paid, only change appointment at this status
+TRANSLATING_ORIGIN = 2  # translator starts translating origin documents
+RECEIVED = 3  # origin documents translated, approved and submitted to hospitals
+# ============ Above is C2E status =============#
+# ============Below is E2C status ==============#
+RETURN = 4  # hospital returns feedback
+TRANSLATING_FEEDBACK = 5  # translator starts translating feedback documents
+FEEDBACK = 6  # feedback documents translated, approved, and feedback to customer
+PAID = 7  # remaining amount paid
+
+STATUS_CHOICES = (
+    (STARTED, 'started'),
+    (SUBMITTED, 'submitted'),
+    (TRANSLATING_ORIGIN, 'translating_origin'),
+    (RECEIVED, 'received'),
+    (RETURN, 'return'),
+    (TRANSLATING_FEEDBACK, 'translating_feedback'),
+    (FEEDBACK, 'feedback'),
+    (PAID, 'PAID'),
+)
+
+
+
+def move(trans_list,translator_id,new_position):
+    old_position = trans_list.index(translator_id)
+    trans_list.insert(new_position, trans_list.pop(old_position))
+    return trans_list
+
 
 def assign(order):
     is_C2E = True if order.status <= 3 else False
     if is_C2E:
-        translator = trans_list_C2E[0]
-        move(trans_list_C2E, translator, -1)
+        while User.objects.filter(id = trans_list_C2E[0]).count() == 0:
+            trans_list_C2E.pop()
+        translator = User.objects.filter(id=trans_list_C2E[0])
+        move(trans_list_C2E, translator.id, -1)
         order.translator_C2E = translator
         order.change_status(TRANSLATING_ORIGIN)
     else:
-        translator = trans_list_E2C[0]
-        move(trans_list_E2C, translator, -1)
+        while User.objects.filter(id = trans_list_E2C[0]).count() == 0:
+            trans_list_C2E.pop()
+        translator = User.objects.filter(id=trans_list_E2C[0])
+        move(trans_list_E2C, translator.id, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)
+
+def assign_manually(self, translator):
+    is_C2E = True if self.status <= 3 else False
+    if is_C2E:
+        self.translator_C2E = translator
+        move(trans_list_C2E,translator.id,-1)
+        self.change_status(TRANSLATING_ORIGIN)
+    else:
+        self.translator_E2C = translator
+        move(trans_list_C2E, translator.id, -1)
+        self.change_status(TRANSLATING_FEEDBACK)
 
 # Create your views here.
 @login_required

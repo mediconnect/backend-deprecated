@@ -7,6 +7,7 @@ import random
 assignee_choice = []
 for e in Translator.objects.filter(is_staff = 1):
     assignee_choice.append((e,e.get_name()))
+
 class DetailForm(forms.ModelForm):
     approval = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
