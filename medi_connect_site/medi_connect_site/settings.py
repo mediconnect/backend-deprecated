@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'supervisor',
     'helper',
     'info',
+    'django_js_reverse',
 ]
 
 MIDDLEWARE = [
@@ -152,3 +153,4 @@ STATICFILES_DIRS = (
 )
 
 LOGIN_REDIRECT_URL = '/'
+STATIC_ROOT = '/'
