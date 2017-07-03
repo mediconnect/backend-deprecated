@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.views.generic.edit import FormView
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
@@ -9,7 +11,7 @@ from customer.models import Customer
 from django.apps import apps
 from supervisor.models import Supervisor
 from translator.models import Translator
-from supervisor.forms import TransSignUpForm,DetailForm,ResetPasswordForm,FeedbackUploadForm
+from supervisor.forms import TransSignUpForm,DetailForm,ResetPasswordForm
 from helper.models import trans_list_C2E, trans_list_E2C
 
 Order = apps.get_model('helper','Order')
@@ -120,7 +122,7 @@ def trans_signup(request,id):
                       {'form':TransSignUpForm(),
                        'supervisor':supervisor}
                       )
-"""
+
 @login_required
 def detail(request,id,order_id):
 	assignment = Order.objects.get(id = order_id)
@@ -211,77 +213,29 @@ def detail(request,id,order_id):
 			'assignment':assignment
 		})
 
-"""
 
-@login_required
-def detail(request,id,order_id):
-	assignment = Order.objects.get(id=order_id)
-	supervisor = User.objects.get(id=id)
-	status = assignment.get_status()
-	transltor = assignment.translator_C2E if status <= 3 else assignment.translator_E2C
-	translators = Translator.objects.all()
-	customers = Customer.objects.all()
-	orders = Order.objects.all()
-	if request.method == 'POST':
-		form = DetailForm(request.POST)
-		if form.is_valid():
-			print 'valid;;;;;;'
-			return render(request, 'supervisor_home.html', {
-				'orders': orders,
-				'translators': translators,
-				'customers': customers,
-				'supervisor': supervisor,
 
-			})
-	else:
-		print 'oooooo'
-		form = DetailForm()
-
-	return render(request, 'supervisor_home.html', {
-		'orders': orders,
-		'translators': translators,
-		'customers': customers,
-		'supervisor': supervisor,
-
-	})
 @login_required
 def feedback_upload(request,id,order_id):
 	assignment = Order.objects.get(id = order_id)
 	supervisor = User.objects.get(id = id)
-	if request.method == 'POST':
-		form = FeedbackUploadForm(request.POST,request.FILES)
-		if not form.is_valid():
-			return render(request,'feedback_upload.html',{
-				'assignment':assignment,
-				'supervisor':supervisor
-			})
-		else:
-			assignment.assign()
-			files = request.FILES['feedback_files']
-			for f in files:
-				instance = Document(document=f, is_origin=True)
-				instance.save()
-				# assignment.pending.add(instance)
-				assignment.feedback.add(instance)
-	else:
-		return render(request, 'feedback_upload.html', {
-			'assignment': assignment,
-			'supervisor': supervisor
+	if request.method == 'POST' and request.FILES['feedback_files']:
+		print assignment.customer.id
+		file = request.FILES['feedback_files']
+		fs = FileSystemStorage()
+		filename = fs.save(file.name,file)
+		document = Document(order = assignment,document = file,is_origin = True)
+		document.save()
+		assignment.feedback.add(document)
+		assignment.save()
+		return render(request,'feedback_upload.html',{
+			'supervisor':supervisor,
+			'assignment':assignment
 		})
-
-class FileFieldView(FormView):
-    form_class = FeedbackUploadForm
-    template_name = 'feedback_upload.html'  # Replace with your template.
-    success_url = 'supervisor_home'  # Replace with your URL or reverse().
-
-    def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        files = request.FILES.getlist('file_field')
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+	return render(request,'feedback_upload.html',{
+			'supervisor':supervisor,
+			'assignment':assignment
+		})
 
 @login_required
 def customer_list(request,id):
