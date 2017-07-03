@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from core import views as core_views
 from django.contrib.auth import views as auth_views
+from django_js_reverse import views as js_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -20,6 +21,8 @@ urlpatterns = [
     url(r'^customer/', include('customer.urls')),
     url(r'^helper/', include('helper.urls')),
     url(r'^info/', include('info.urls')),
+    # javascript plugin reverse look up url
+    url(r'^jsreverse/$', js_views.urls_js, name='js_reverse'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

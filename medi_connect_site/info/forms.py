@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from helper.models import Patient
+from helper.models import Patient, Document
 from django.core.exceptions import ValidationError
 
 
@@ -57,3 +57,19 @@ class PatientAddForm(forms.ModelForm):
         model = Patient
         exclude = []
         fields = ['name', 'age', 'gender']
+
+
+class DocAddForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        exclude = []
+        fields = ['description', 'comment', 'document']
+
+    def __init__(self, *args, **kwargs):
+        super(DocAddForm, self).__init__(*args, **kwargs)
+        self.field_order = [
+            'description',
+            'document',
+            'comment'
+        ]
+        self.order_fields(self.field_order)
