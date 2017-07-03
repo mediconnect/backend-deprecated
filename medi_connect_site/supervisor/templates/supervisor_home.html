@@ -8,8 +8,8 @@
     {% for obj in orders %}
       <li>
         {{ obj.get_info }}
-        <small>(C2E Assigned to : {{ obj.translator_C2E.get_name }})</small>
-        <small>(E2C Assigned to : {{ obj.translator_E2C.get_name }})</small>
+        <small>(C2E Assigned to : {{ obj.translator_C2E}})</small>
+        <small>(E2C Assigned to : {{ obj.translator_E2C}})</small>
         <a href="{% url 'detail' id=supervisor.id order_id=obj.id %}">Detail</a>
       </li>
     {% endfor %}

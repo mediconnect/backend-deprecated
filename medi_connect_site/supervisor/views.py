@@ -6,37 +6,78 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from customer.models import Customer
-from translator.models import Translator
+from django.apps import apps
 from supervisor.models import Supervisor
-from helper.models import Document,Order, trans_list_C2E, trans_list_E2C
+from translator.models import Translator
 from supervisor.forms import TransSignUpForm,DetailForm,ResetPasswordForm,FeedbackUploadForm
-import random
+from helper.models import trans_list_C2E, trans_list_E2C
+
+Order = apps.get_model('helper','Order')
+Document = apps.get_model('helper','Document')
 # Create your views here.
+# Status
+STARTED = 0
+SUBMITTED = 1  # deposit paid, only change appointment at this status
+TRANSLATING_ORIGIN = 2  # translator starts translating origin documents
+RECEIVED = 3  # origin documents translated, approved and submitted to hospitals
+# ============ Above is C2E status =============#
+# ============Below is E2C status ==============#
+RETURN = 4  # hospital returns feedback
+TRANSLATING_FEEDBACK = 5  # translator starts translating feedback documents
+FEEDBACK = 6  # feedback documents translated, approved, and feedback to customer
+PAID = 7  # remaining amount paid
 
-# Translator Sequence Chinese to English
-trans_list_C2E = random.shuffle(list(Translator.objects.all()))
+STATUS_CHOICES = (
+    (STARTED, 'started'),
+    (SUBMITTED, 'submitted'),
+    (TRANSLATING_ORIGIN, 'translating_origin'),
+    (RECEIVED, 'received'),
+    (RETURN, 'return'),
+    (TRANSLATING_FEEDBACK, 'translating_feedback'),
+    (FEEDBACK, 'feedback'),
+    (PAID, 'PAID'),
+)
 
-# Translator Sequence English to Chinese
-trans_list_E2C = random.shuffle(list(Translator.objects.all()))
-@login_required
-def supervisor(request,id):
-	supervisor = User.objects.get(id = id)
-	orders = Order.objects.all()
-	translators = Translator.objects.all()
-	customers = Customer.objects.all()
-	return render(request, 'supervisor_home.html',{
-		'orders': orders,
-		'translators': translators,
-		'customers': customers,
-		'supervisor': supervisor,
 
-		})
-"""
+
+def move(trans_list,translator_id,new_position):
+    old_position = trans_list.index(translator_id)
+    trans_list.insert(new_position, trans_list.pop(old_position))
+    return trans_list
+
+
+def assign(order):
+    is_C2E = True if order.status <= 3 else False
+    if is_C2E:
+        while User.objects.filter(id = trans_list_C2E[0]).count() == 0:
+            trans_list_C2E.pop()
+        translator = User.objects.filter(id=trans_list_C2E[0])
+        move(trans_list_C2E, translator.id, -1)
+        order.translator_C2E = translator
+        order.change_status(TRANSLATING_ORIGIN)
+    else:
+        while User.objects.filter(id = trans_list_E2C[0]).count() == 0:
+            trans_list_C2E.pop()
+        translator = User.objects.filter(id=trans_list_E2C[0])
+        move(trans_list_E2C, translator.id, -1)
+        order.translator_E2C = translator
+        order.change_status(TRANSLATING_FEEDBACK)
+
+def assign_manually(self, translator):
+    is_C2E = True if self.status <= 3 else False
+    if is_C2E:
+        self.translator_C2E = translator
+        move(trans_list_C2E,translator.id,-1)
+        self.change_status(TRANSLATING_ORIGIN)
+    else:
+        self.translator_E2C = translator
+        move(trans_list_C2E, translator.id, -1)
+        self.change_status(TRANSLATING_FEEDBACK)
 @login_required
 def supervisor(request,id):
 	supervisor = Supervisor.objects.get(id = id)
 	orders = Order.objects.all()
-	translators = Translator.objects.all()
+	translators = Translator.objects.filter(is_staff = 1)
 	customers = Customer.objects.all()
 	return render(request, 'supervisor_home.html',{
 		'orders': orders,
@@ -45,7 +86,7 @@ def supervisor(request,id):
 		'supervisor': supervisor,
 
 		})
-"""
+
 @login_required
 def trans_signup(request,id):
     supervisor = User.objects.get(id = id)
@@ -61,7 +102,7 @@ def trans_signup(request,id):
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password')
             user = authenticate(username=username,password = raw_password,is_staff = True)
-            translator = Translator(user=user)
+            translator = User(user=user)
             return render(request,'trans_signup.html',
 						  {	'form':form,
 							'supervisor':supervisor
@@ -75,9 +116,7 @@ def trans_signup(request,id):
 def detail(request,id,order_id):
 	assignment = Order.objects.get(id = order_id)
 	supervisor = User.objects.get(id = id)
-	C2E_translator = User.objects.get(id = 11)
-	E2C_translator = User.objects.get(id = 11)
-	translator = C2E_translator if assignment.get_status() <=3 else E2C_translator
+	translaotr = assignment.translator_C2E if assignment.get_status() <=3 else assignment.translator_E2C
 	if request.method == 'POST':
 		form = DetailForm(request.POST)
 		if 'assign' in request.POST:

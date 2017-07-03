@@ -1,13 +1,13 @@
 from django import forms
 from django.contrib.auth.models import User
-from supervisor.models import Supervisor
-from translator.models import Translator
 from helper.models import Document, Order
+from translator.models import Translator
 import random
 
 assignee_choice = []
-for e in Translator.objects.all():
+for e in Translator.objects.filter(is_staff = 1):
     assignee_choice.append((e,e.get_name()))
+
 class DetailForm(forms.ModelForm):
     approval = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',

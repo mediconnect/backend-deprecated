@@ -1,22 +1,40 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from models import Translator
-from helper.models import Document, Order
 from django.core.files.storage import FileSystemStorage
 from forms import AssignmentSummaryForm
 from django.db.models import Q
 from django.contrib.auth.models import User
+from django.apps import apps
+from translator.models import Translator
 
+# Create your models here.
+#Get Order and Document Model from helper.models
+Order = apps.get_model('helper','Order')
+Document = apps.get_model('helper','Document')
 # Create your views here.
 
 
-@login_required
-def translator(request, id, assignments=None):
-    translator = Translator.objects.get(id=id)
-    assignments = Order.objects.all()
-    if assignments is None:
-        assignments = Order.objects.filter(Q(translator_C2E=translator)|Q(translator_E2C=translator))
+def get_assignments(translator):  # return order of all assignments
+    assignments = []
+    for order in Order.objects.filter(Q(translator_C2E=translator.id) | Q(translator_E2C=translator.id)).order_by('submit'):
+        assignments.append(order)
+    return assignments
 
+
+def get_assignments_status(translator, trans_status):  # return order of all ongoing assignments
+    assignments = []
+    for assignment in translator.get_assignments():
+        if assignment.trans_status == trans_status:
+            assignments.append(assignment)
+    return assignments
+
+@login_required
+def translator(request, id, assignments_status=None):
+    translator = Translator.objects.get(id=id)
+    if assignments_status is None:
+        assignments = get_assignments(translator)
+    else:
+        assignments = get_assignments_status(translator,assignments_status)
     return render(request, 'trans_home.html',
                   {
                       'assignments': assignments,
@@ -26,7 +44,7 @@ def translator(request, id, assignments=None):
 
 @login_required
 def assignment_summary(request, id, order_id):
-    translator = User.objects.get(id=id)
+    translator = Translator.objects.get(id=id)
     assignment = Order.objects.get(id=order_id)
     if assignment.get_status <= 3:
         document_list = assignment.origin.all()
@@ -36,9 +54,9 @@ def assignment_summary(request, id, order_id):
         form = AssignmentSummaryForm(request.POST, request.FILES)
         if form.is_valid():
             if assignment.get_status < 2:
-                translator.change_status(assignment, 2)
+                assignment.change_status(2)
             else:
-                translator.change_status(assignment, 5)
+                assignment.change_status(5)
             files = request.FILES['pending']
             for f in files:
                 instance = Document(document=f, is_translated=True)

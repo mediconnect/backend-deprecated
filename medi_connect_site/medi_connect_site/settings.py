@@ -107,7 +107,7 @@ else:
             # create database named mediconnect when test on local machine
             'NAME': 'mediconnect',
             # create user
-            'USER': 'root',
+            'USER': 'mediconnect',
             'PASSWORD': 'password',
             'HOST': '127.0.0.1',
             'PORT': '3306',
