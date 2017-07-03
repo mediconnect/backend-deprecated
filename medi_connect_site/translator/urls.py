@@ -8,5 +8,5 @@ urlpatterns = [
     url(r'^home/(?P<id>\d+)/', trans_views.translator, name='trans_home'),
     url(r'^assignment/(?P<id>\d+)/(?P<order_id>\d+)/$', trans_views.assignment_summary, name='assignment_summary'),
     url(r'^login/$', auth_views.login, {'template_name': 'trans_login.html'}, name='translator/login'),
-    url(r'^logout/', auth_views.logout, {'next_page': '/translator/login'}, name='logout'),
+    url(r'^logout/', auth_views.logout, {'next_page': '/translator/login'}, name='translator_logout'),
 ]

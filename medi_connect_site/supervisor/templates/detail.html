@@ -25,11 +25,11 @@
    </li>
    {% endfor %}
  </ul>
-  <form method="post">
+  <form action= "{% url 'supervisor_home' id=supervisor.id %}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type='submit',name = 'assign'>Assign</button>
-    <button type = 'submit', name='approve'>Submit Approval</button>
+    <input type="submit",name = 'assign', value = 'Assign'/>
+    <input type ="submit", name='approve', value = 'Approve'/>
       <a href="{% url 'feedback_upload' id=supervisor.id order_id=assignment.id %}"> Upload Feedback</a>
   </form>
 
