@@ -84,7 +84,11 @@ class Hospital(models.Model):
     name = models.CharField(max_length=50)
     email = models.EmailField(blank=True)
     area = models.CharField(blank=True, max_length=50)
-    slots_open = models.IntegerField(default=20)
+    default_slots = models.IntegerField(default = 20)
+    slots_open_0 = models.IntegerField(default=20)
+    slots_open_1 = models.IntegerField(default = 20)
+    slots_open_2 = models.IntegerField(default=20)
+    slots_open_3 = models.IntegerField(default=20)
     overall_rank = models.IntegerField(default=0)
     website = models.URLField(blank=True)
     introduction = models.TextField(default='intro')
@@ -94,6 +98,21 @@ class Hospital(models.Model):
 
     class Meta:
         db_table = 'hospital'
+
+    def reset_slot(self):
+        self.slots_open_0 = self.slots_open_1
+        self.slots_open_1 = self.slots_open_2
+        self.slots_open_2 = self.slots_open_3
+        self.slots_open_3 = self.default_slots
+        self.save()
+        print self.slots_open_0
+
+    def set_default_slots(self,slot):
+        self.default_slots = slot
+        self.slots_open_0 = self.default_slots
+        self.slots_open_1 = self.default_slots
+        self.slots_open_2 = self.default_slots
+        self.slots_open_3 = self.default_slots
 
 
 class Disease(models.Model):

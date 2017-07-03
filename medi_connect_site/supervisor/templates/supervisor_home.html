@@ -27,6 +27,23 @@
     {% endfor %}
   </ul>
 
+  <p>Hospitals:</p>
+  <ul>
+    {% for obj in hospitals %}
+      <form action="#" method="get">
+        <input style="border:none" type = 'text' name = 'hospital' value = '{{obj.name}}' size="30px" readonly><br>
+        <ul>
+          <li>Default: {{obj.default_slots}}</li>
+          <li>Week 1: {{obj.slots_open_0}}</li>
+          <li>Week 2: {{obj.slots_open_1}}</li>
+          <li>Week 3: {{obj.slots_open_2}}</li>
+          <li>Week 4: {{obj.slots_open_3}}</li>
+        </ul>
+        <input type="submit" class="btn" value="Reset Slots" name="mybtn"/>
+      </form>
+    {% endfor %}
+  </ul>
+
 
 
 <p><a href="{% url 'trans_signup' id=supervisor.id %}">Add a translator</a></p>
