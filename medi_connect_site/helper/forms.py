@@ -54,10 +54,12 @@ class OrderFormSecond(forms.ModelForm):
 class DocumentForm(forms.ModelForm):
     document = forms.FileField(
         label="Choose required document",
+        widget=forms.ClearableFileInput(attrs={'multiple': True}),
         required=True,
     )
     extra_document = forms.FileField(
         label="Choose optional document",
+        widget=forms.ClearableFileInput(attrs={'multiple': True}),
         required=False,
     )
     document_comment = forms.CharField(
