@@ -161,7 +161,9 @@ class Order(models.Model):
     # only one supervisor for now, no need to keep this info
     hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, null=True)
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
-    submit = models.DateField(default=datetime.date.today)
+    #week_number_at_submit = models.IntegerField(default = 0)
+    #use week_number_at_submit to hold the week number and calculate the submit deadline
+    submit = models.DateField(default=datetime.date.today) #datetime of receiving the order
     # all origin document uploaded by customer
     origin = models.ManyToManyField('Document', related_name='original_file')
     # all feedback document TRANSLATED and APPROVED
@@ -178,8 +180,15 @@ class Order(models.Model):
     def get_info(self):
         return 'Order id is ' + str(self.id) + ' Deadline is :' + self.get_deadline()
 
+    def get_week(self):
+        return self.weeknumber_at_submit - (datetime.today.isocalendar()[1]-self.submit.isocalendar()[1])
+
     def get_deadline(self):  # default deadline 2 days after submit
         return str(self.submit + datetime.timedelta(days=2))  # date time algebra
+
+    def get_submit_deadline(self):
+        d = "%s-W%s"%(self.submit.isocalendar()[0],self.submit.isocalendar()[1])
+        return datetime.datetime.strptime(d + '-0', "%Y-W%W-%w")
 
     def get_status(self):
         return self.status

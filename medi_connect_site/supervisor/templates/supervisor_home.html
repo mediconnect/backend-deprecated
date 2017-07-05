@@ -10,6 +10,7 @@
         {{ obj.get_info }}
         <small>(C2E Assigned to : {{ obj.translator_C2E}})</small>
         <small>(E2C Assigned to : {{ obj.translator_E2C}})</small>
+        <small>(Submit to hospital deadline :{{obj.get_submit_deadline}}</small>
         <a href="{% url 'detail' id=supervisor.id order_id=obj.id %}">Detail</a>
       </li>
     {% endfor %}
