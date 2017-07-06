@@ -118,6 +118,13 @@ def order_info_first(request, order_id, slot_num):
         2: hosp.slots_open_2,
         3: hosp.slots_open_3,
     }[slot_num]
+    if avail_slot < 1:
+        return render(request, "hospital_order.html", {
+            'hospital': hosp,
+            'customer': customer,
+            'order_id': order.id,
+            'error': 'the hospital does not have available slot'
+        })
     _ = {
         0: slot_0(hosp),
         1: slot_1(hosp),

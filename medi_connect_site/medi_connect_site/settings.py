@@ -69,7 +69,8 @@ TEMPLATES = [
             'customer/templates/customer',
             'translator/templates/translator',
             'helper/templates/helper',
-            'info/templates/info'
+            'info/templates/info',
+            'core/templates/registration',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -158,3 +159,4 @@ STATIC_ROOT = '/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
