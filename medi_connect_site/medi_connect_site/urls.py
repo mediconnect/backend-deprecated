@@ -8,7 +8,7 @@ from django_js_reverse import views as js_views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', core_views.home, name='home'),
-    url(r'^login/', auth_views.login, {'template_name': 'core/login.html'},
+    url(r'^login/', auth_views.login, {'template_name': 'login.html'},
         name='login'),
     url(r'^logout/', auth_views.logout, {'next_page': '/'}, name='logout'),
     url(r'^signup/', core_views.signup, name='signup'),
@@ -23,6 +23,17 @@ urlpatterns = [
     url(r'^info/', include('info.urls')),
     # javascript plugin reverse look up url
     url(r'^jsreverse/$', js_views.urls_js, name='js_reverse'),
+    # password reset url routers
+    url(r'^password_reset/$', auth_views.password_reset,
+        {'template_name': 'password_reset_form.html'},
+        name='password_reset'),
+    url(r'^password_reset/done/$', auth_views.password_reset_done, {'template_name': 'password_reset_done.html'},
+        name='password_reset_done'),
+    url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        auth_views.password_reset_confirm, {'template_name': 'password_reset_confirm.html'},
+        name='password_reset_confirm'),
+    url(r'^reset/done/$', auth_views.password_reset_complete, {'template_name': 'password_reset_complete.html'},
+        name='password_reset_complete'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

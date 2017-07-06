@@ -69,7 +69,8 @@ TEMPLATES = [
             'customer/templates/customer',
             'translator/templates/translator',
             'helper/templates/helper',
-            'info/templates/info'
+            'info/templates/info',
+            'core/templates/registration',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -154,3 +155,5 @@ STATICFILES_DIRS = (
 
 LOGIN_REDIRECT_URL = '/'
 STATIC_ROOT = '/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
