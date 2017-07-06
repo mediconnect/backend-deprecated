@@ -78,6 +78,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -107,7 +108,7 @@ else:
             # create database named mediconnect when test on local machine
             'NAME': 'mediconnect',
             # create user
-            'USER': 'root',
+            'USER': 'mediconnect',
             'PASSWORD': 'password',
             'HOST': '127.0.0.1',
             'PORT': '3306',
@@ -154,3 +155,6 @@ STATICFILES_DIRS = (
 
 LOGIN_REDIRECT_URL = '/'
 STATIC_ROOT = '/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

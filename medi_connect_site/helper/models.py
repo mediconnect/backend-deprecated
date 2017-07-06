@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from customer.models import Customer
 from django.contrib.auth.models import User
+from translator.models import Translator
 import datetime
 import random
 
@@ -56,8 +57,8 @@ TRANS_STATUS_CHOICE = (
     (FINISHED, 'finished'),
 )
 
-trans_list_C2E = list(User.objects.filter(is_staff = True).values('id'))
-trans_list_E2C = list(User.objects.filter(is_staff = True).values('id'))
+trans_list_C2E = list(User.objects.filter(is_staff = True).values_list('id',flat=True))
+trans_list_E2C = list(User.objects.filter(is_staff = True).values_list('id',flat=True))
 
 
 # Function to move the position of a translator in sequence
@@ -152,16 +153,16 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
     # translator Chinese to English
-    translator_C2E = models.ForeignKey(User, on_delete=models.CASCADE, null=True,
+    translator_C2E = models.ForeignKey(Translator, on_delete=models.CASCADE, null=True,
                                        related_name='chinese_translator')
     # translator English to Chinese
-    translator_E2C = models.ForeignKey(User, on_delete=models.CASCADE, null=True,
+    translator_E2C = models.ForeignKey(Translator, on_delete=models.CASCADE, null=True,
                                        related_name='english_translator')
     # supervisor = models.ForeignKey(Supervisor, on_delete = models.CASCADE, null = True)
     # only one supervisor for now, no need to keep this info
     hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, null=True)
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
-    #week_number_at_submit = models.IntegerField(default = 0)
+    week_number_at_submit = models.IntegerField(default = 0)
     #use week_number_at_submit to hold the week number and calculate the submit deadline
     submit = models.DateField(default=datetime.date.today) #datetime of receiving the order
     # all origin document uploaded by customer
@@ -200,7 +201,7 @@ class Order(models.Model):
         self.trans_status = status
 
 def order_directory_path(instance, filename):
-    return 'order_{0}/{1}/{2}'.format(instance.order.customer, instance.order.id, filename)
+    return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name(), instance.order.id, filename)
 
 
 class Document(models.Model):
