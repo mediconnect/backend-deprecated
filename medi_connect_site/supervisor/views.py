@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.utils.encoding import uri_to_iri
 from django.views.generic.edit import FormView
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
@@ -11,7 +12,7 @@ from customer.models import Customer
 from django.apps import apps
 from supervisor.models import Supervisor
 from translator.models import Translator
-from supervisor.forms import TransSignUpForm,DetailForm,ResetPasswordForm
+from supervisor.forms import TransSignUpForm,AssignForm,ApproveForm
 from helper.models import trans_list_C2E, trans_list_E2C
 
 Order = apps.get_model('helper','Order')
@@ -40,16 +41,16 @@ STATUS_CHOICES = (
     (FEEDBACK, 'feedback'),
     (PAID, 'PAID'),
 )
-
+status_dict = ['STARTED','SUBMITTED','TRANSLATING_ORIGIN','RECEIVED','RETURN','TRANSLATING_FEEDBACK','FEEDBACK,PAID']
 
 
 def move(trans_list,translator_id,new_position):
-    old_position = trans_list.index(translator_id)
+    old_position = trans_list.index(int(translator_id))
     trans_list.insert(new_position, trans_list.pop(old_position))
     return trans_list
 
 
-def assign(order):
+def assign_auto(order):
     is_C2E = True if order.status <= 3 else False
     if is_C2E:
         while User.objects.filter(id = trans_list_C2E[0]).count() == 0:
@@ -65,17 +66,19 @@ def assign(order):
         move(trans_list_E2C, translator.id, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)
+	order.save()
 
-def assign_manually(self, translator):
-    is_C2E = True if self.status <= 3 else False
+def assign_manually(order, translator):
+    is_C2E = True if order.status <= 3 else False
     if is_C2E:
-        self.translator_C2E = translator
+        order.translator_C2E = translator
         move(trans_list_C2E,translator.id,-1)
-        self.change_status(TRANSLATING_ORIGIN)
+        order.change_status(TRANSLATING_ORIGIN)
     else:
-        self.translator_E2C = translator
+        order.translator_E2C = translator
         move(trans_list_C2E, translator.id, -1)
-        self.change_status(TRANSLATING_FEEDBACK)
+        order.change_status(TRANSLATING_FEEDBACK)
+	order.save()
 
 
 @login_required
@@ -124,103 +127,124 @@ def trans_signup(request,id):
                       )
 
 @login_required
-def detail(request,id,order_id):
+def assign(request,id,order_id):
 	assignment = Order.objects.get(id = order_id)
 	supervisor = User.objects.get(id = id)
-	translator = assignment.translator_C2E if assignment.get_status() <=3 else assignment.translator_E2C
+	customer = Customer.objects.get(id=assignment.customer_id)
+	status = status_dict[int(assignment.status)]
 	if request.method == 'POST':
-		form = DetailForm(request.POST)
+		form = AssignForm(request.POST)
 		if not form.is_valid():
+			return render(request,'assign.html',{
+				'form':form,
+				'assignment':assignment,
+				'supervisor':supervisor
+			})
+		else:
+			translator_id = form.cleaned_data.get('new_assignee')
+			assign_manually(assignment,Translator.objects.get(id = translator_id))
+			trans_C2E = assignment.translator_C2E.get_name()
+			trans_E2C = assignment.translator_E2C.get_name()
 			return render(request, 'detail.html', {
+				'assignment': assignment,
+				'supervisor': supervisor,
+				'status': status,
+				'customer': customer,
+				'trans_C2E': trans_C2E,
+				'trans_E2C': trans_E2C
+
+			})
+	else:
+		form = AssignForm()
+		return render(request, 'assign.html', {
+			'form': form,
+			'supervisor': supervisor,
+			'assignment': assignment
+		})
+def detail(request,id,order_id):
+	assignment = Order.objects.get(id=order_id)
+	supervisor = User.objects.get(id=id)
+	customer = Customer.objects.get(id = assignment.customer_id)
+	status = status_dict[int(assignment.status)]
+	trans_C2E =  assignment.translator_C2E.get_name()
+	trans_E2C = assignment.translator_E2C.get_name()
+	return render(request, 'detail.html', {
+		'assignment': assignment,
+		'supervisor': supervisor,
+		'status':status,
+		'customer':customer,
+		'trans_C2E':trans_C2E,
+		'trans_E2C':trans_E2C
+
+	})
+
+@login_required
+def approve(request,id,order_id):
+	assignment = Order.objects.get(id = order_id)
+	supervisor = Supervisor.objects.get(id = id)
+	trans_C2E = assignment.translator_C2E
+	trans_E2C = assignment.translator_E2C
+	customer = Customer.objects.get(id=assignment.customer_id)
+	status = status_dict[int(assignment.status)]
+	if request.method == 'POST':
+		form = ApproveForm(request.POST)
+		if not form.is_valid():
+			return render(request, 'approve.html', {
 				'form': form,
 				'assignment': assignment,
 				'supervisor': supervisor
 			})
 		else:
-			if 'assign' in request.POST:
-					translator_id = form.cleaned_data.get('new_assignee')
-					print translator_id
-					#assignment.assign(translator_id)
-					if assignment.get_status() <= 3: #can reassign to a new translator before submitted to hospital
-						assignment.translator_C2E = translator_id
-						print assignment.translator_C2E
-					else:
-						assignment.translator_E2C = translator_id
-						print assignment.translator_E2C
+			approval = form.cleaned_data.get('approval')
+			if approval:
+				if assignment.status == 2:
+					assignment.change_status(3)
+					for document in assignment.pending.all():
+						assignment.origin.add(document)
+				if assignment.status == 5:
+					assignment.change_status(6)
+					for document in assignment.pending.all():
+						assignment.feedback.add(document)
+				assignment.pending.clear()
+			if not approval:
+				assignment.change_status(4)
+				for document in assignment.pending.all():
+					if document.is_origin:
+						assignment.origin.add(document)
+					if document.is_feedback:
+						assignment.feedback.add(document)
 
-			if 'approve' in request.POST:
-				if not form.is_valid():
-					return render(request, 'detail.html', {
-						'form': form,
-						'assignment': assignment,
-						'supervisor': supervisor
-					})
-				else:
-					approval = form.cleaned_data.get('approval')
-					if approval :
-						if assignment.status == 2:
-							assignment.change_status(3)
-							translator.change_trans_status(assignment,5)
-							for document in assignment.pending.all():
-								assignment.origin.add(document)
-						if assignment.status == 5:
-							assignment.change_status(6)
-							translator.change_trans_status(assignment,5)
-							for document in assignment.pending.all():
-								assignment.feedback.add(document)
-						assignment.pending.clear()
-					if not approval:
-						assignment.change_status(4)
-						translator.change_trans_status(assignment,1)
-						for document in assignment.pending.all():
-							if document.is_origin:
-								assignment.origin.add(document)
-							if document.is_feedback:
-								assignment.feedback.add(document)
-	
-			if 'upload' in request.POST: #upload feedback documents from hospital
-				if not form.is_valid():
-					return render(request, 'detail.html', {
-						'form': form,
-						'assignment': assignment,
-						'supervisor': supervisor
-					})
-				else:
-					assignment.assign()
-					files = request.FILES['feedback_files']
-					for f in files:
-						instance = Document(document = f, is_origin = True)
-						instance.save()
-						#assignment.pending.add(instance)
-						assignment.feedback.add(instance)
-			assignment.save()
-			orders = Order.objects.all()
-			translators = Translator.objects.all()
-			customers = Customer.objects.all()
 
-		return render(request, 'supervisor_home.html', {
-			'orders': orders,
-			'translators': translators,
-			'customers': customers,
-			'supervisor': supervisor,
+			return render(request, 'detail.html', {
+				'assignment': assignment,
+				'supervisor': supervisor,
+				'status': status,
+				'customer': customer,
+				'trans_C2E': trans_C2E,
+				'trans_E2C': trans_E2C
 
-		})
-
+			})
 	else:
-		return render(request,'detail.html',{
-			'form':DetailForm(),
-			'supervisor':supervisor,
-			'assignment':assignment
+		form = ApproveForm()
+		return render(request, 'approve.html', {
+			'form': form,
+			'assignment': assignment,
+			'supervisor': supervisor
 		})
-
 
 
 @login_required
-def feedback_upload(request,id,order_id):
+def manage_files(request,id,order_id):
 	assignment = Order.objects.get(id = order_id)
 	supervisor = User.objects.get(id = id)
+	if (request.GET.get('delete')):
+		document = Document.objects.get(document=request.GET.get('document'))
+		document.delete()
+		return render(request, 'manage_files.html', {
+			'supervisor': supervisor,
+			'assignment': assignment
+		})
 	if request.method == 'POST' and request.FILES['feedback_files']:
-		print assignment.customer.id
 		file = request.FILES['feedback_files']
 		fs = FileSystemStorage()
 		filename = fs.save(file.name,file)
@@ -228,14 +252,16 @@ def feedback_upload(request,id,order_id):
 		document.save()
 		assignment.feedback.add(document)
 		assignment.save()
-		return render(request,'feedback_upload.html',{
-			'supervisor':supervisor,
-			'assignment':assignment
+		return render(request, 'manage_files.html', {
+			'supervisor': supervisor,
+			'assignment': assignment
 		})
-	return render(request,'feedback_upload.html',{
-			'supervisor':supervisor,
-			'assignment':assignment
-		})
+	else:
+
+		return render(request,'manage_files.html',{
+				'supervisor':supervisor,
+				'assignment':assignment
+			})
 
 @login_required
 def customer_list(request,id):

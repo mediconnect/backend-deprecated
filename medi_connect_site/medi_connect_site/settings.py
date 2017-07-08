@@ -79,6 +79,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -156,9 +157,14 @@ STATICFILES_DIRS = (
 LOGIN_REDIRECT_URL = '/'
 STATIC_ROOT = '/'
 
-EMAIL_HOST = 'smtp.sendgrid.net'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = 'abcdefgdontreplyme@outlook.com'
+SERVER_EMAIL = 'abcdefgdontreplyme@outlook.com'
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_HOST_USER = 'abcdefgdontreplyme@outlook.com'
+EMAIL_HOST_PASSWORD = 'passwordABC'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'caojiashen24@gmail.com'
-EMAIL_HOST_PASSWORD = '0809kbLAMB'
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'Mediconnect <noreply@me.com>'

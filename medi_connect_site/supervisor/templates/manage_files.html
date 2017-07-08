@@ -1,0 +1,44 @@
+{% extends 'supervisor_base.html' %}
+
+{%block title%}Manage File{%endblock%}
+{% block content %}
+<p>Origin Files</p>
+ <ul>
+   {% for obj in assignment.origin.all %}
+   <li>
+     <a href="obj.url">{{obj.document}}</a>
+   </li>
+   {% endfor %}
+ </ul>
+<p>Feedback Files</p>
+ <ul>
+   {% for obj in assignment.feedback.all %}
+     <form method = 'get'>
+         <li>
+             <input style="border:none" type = 'text' name = 'document' value = '{{obj.document}}' size="30px" readonly><br>
+            <a href="obj.url" class="btn">Download</a>
+            <input type="submit" class="btn" value="Delete" name="delete"/>
+         </li>
+
+     </form>
+   {% endfor %}
+ </ul>
+<p>Pending Files</p>
+ <ul>
+   {% for obj in assignment.pending.all %}
+   <li>
+     <a href="obj.url">{{obj.document}}</a>
+   </li>
+   {% endfor %}
+ </ul>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="feedback_files">
+    <button type="submit">Upload</button>
+  </form>
+
+
+ <p><a href="{% url 'supervisor_home' id=supervisor.id %}">Return to home</a></p>
+ <p><a href="{% url 'detail' id=supervisor.id order_id=assignment.id %}">Return to detail</a></p>
+{% endblock %}

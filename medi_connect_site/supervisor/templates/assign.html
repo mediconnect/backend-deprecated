@@ -1,0 +1,18 @@
+{% extends 'supervisor_base.html' %}
+{% block title %}Assign New Translator{% endblock %}
+
+{% block content %}
+  {% if assignment.status >= 3 %}
+  <p>Assign E2C translator</p>
+  {% else %}
+  <p>Assign C2E translator</p>
+{% endif %}
+  <form action= "{% url 'assign' id=supervisor.id order_id=assignment.id %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit",name = 'assign', value = 'Assign'/>
+  </form>
+
+  <p><a href="{% url 'supervisor_home' id=supervisor.id %}">Return to home</a></p>
+  <p><a href="{% url 'detail' id=supervisor.id order_id=assignment.id %}">Return to detail</a></p>
+{% endblock %}

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.db.models import Q
@@ -8,6 +8,8 @@ from customer.views import customer
 from translator.views import translator
 from supervisor.views import supervisor
 from helper.models import Hospital, Disease, Order
+from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.forms import PasswordResetForm
 
 
 # Create your views here
@@ -125,3 +127,6 @@ def hospital(request):
     return render(request, 'hospital.html', {
         'hospitals': hospitals,
     })
+
+
+
