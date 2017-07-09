@@ -12,9 +12,15 @@
       </li>
     {% endfor %}
   </ul>
-  <p>Active Translators:</p>
+  <p>Active Translators E2C:</p>
   <ul>
-    {% for obj in translators %}
+    {% for obj in translators_E2C %}
+      <li>{{ obj.get_name }}</li>
+    {% endfor %}
+  </ul>
+  <p>Active Translators C2E:</p>
+  <ul>
+    {% for obj in translators_C2E %}
       <li>{{ obj.get_name }}</li>
     {% endfor %}
   </ul>
@@ -28,7 +34,9 @@
   <p>Hospitals:</p>
   <ul>
     {% for obj in hospitals %}
-      <form method="get">
+      <form method="post">
+        {% csrf_token %}
+        {{ form }}
         <input style="border:none" type = 'text' name = 'hospital' value = '{{obj.name}}' size="30px" readonly><br>
         <ul>
           <li>Default: {{obj.default_slots}}</li>
@@ -37,7 +45,7 @@
           <li>Week 3: {{obj.slots_open_2}}</li>
           <li>Week 4: {{obj.slots_open_3}}</li>
         </ul>
-        <input type="submit" class="btn" value="Reset Slots" name="mybtn"/>
+        <input type="submit" class="btn" value="Reset Slots" name="hospital_btn"/>
       </form>
     {% endfor %}
   </ul>

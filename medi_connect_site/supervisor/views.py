@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate, login
 from customer.models import Customer
 from django.apps import apps
 from supervisor.models import Supervisor
-from translator.models import Translator
+from translator.models import Translator_C2E, Translator_E2C
 from supervisor.forms import TransSignUpForm,AssignForm,ApproveForm
 from helper.models import trans_list_C2E, trans_list_E2C
 
@@ -55,14 +55,14 @@ def assign_auto(order):
     if is_C2E:
         while User.objects.filter(id = trans_list_C2E[0]).count() == 0:
             trans_list_C2E.pop()
-        translator = User.objects.filter(id=trans_list_C2E[0])
+        translator = Translator_C2E.objects.filter(id=trans_list_C2E[0])
         move(trans_list_C2E, translator.id, -1)
         order.translator_C2E = translator
         order.change_status(TRANSLATING_ORIGIN)
     else:
         while User.objects.filter(id = trans_list_E2C[0]).count() == 0:
             trans_list_C2E.pop()
-        translator = User.objects.filter(id=trans_list_E2C[0])
+        translator = Translator_E2C.objects.filter(id=trans_list_E2C[0])
         move(trans_list_E2C, translator.id, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)
@@ -85,15 +85,17 @@ def assign_manually(order, translator):
 def supervisor(request,id):
 	supervisor = Supervisor.objects.get(id = id)
 	orders = Order.objects.all()
-	translators = Translator.objects.filter(is_staff = 1)
+	translators_E2C = Translator_E2C.objects.filter(is_staff = 1)
+	translators_C2E = Translator_C2E.objects.filter(is_staff = 1)
 	customers = Customer.objects.all()
 	hospitals = Hospital.objects.all()
-	if (request.GET.get('mybtn')):
-		hospital = Hospital.objects.get(name = request.GET.get('hospital'))
+	if (request.POST.get('hospital_btn')):
+		hospital = Hospital.objects.get(name = request.POST.get('hospital'))
 		hospital.reset_slot()
 	return render(request, 'supervisor_home.html',{
 		'orders': orders,
-		'translators': translators,
+		'translators_E2C': translators_E2C,
+		'translators_C2E':translators_C2E,
 		'customers': customers,
 		'supervisor': supervisor,
 		'hospitals': hospitals,
@@ -142,7 +144,10 @@ def assign(request,id,order_id):
 			})
 		else:
 			translator_id = form.cleaned_data.get('new_assignee')
-			assign_manually(assignment,Translator.objects.get(id = translator_id))
+			if assignment.get_status() <= 3:
+				assign_manually(assignment,Translator_C2E.objects.get(id = translator_id))
+			else:
+				assign_manually(assignment, Translator_C2E.objects.get(id=translator_id))
 			trans_C2E = assignment.translator_C2E.get_name()
 			trans_E2C = assignment.translator_E2C.get_name()
 			return render(request, 'detail.html', {
@@ -237,7 +242,7 @@ def approve(request,id,order_id):
 def manage_files(request,id,order_id):
 	assignment = Order.objects.get(id = order_id)
 	supervisor = User.objects.get(id = id)
-	if (request.GET.get('delete')):
+	if (request.POST.get('delete')):
 		document = Document.objects.get(document=request.GET.get('document'))
 		document.delete()
 		return render(request, 'manage_files.html', {

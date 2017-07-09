@@ -5,7 +5,7 @@ from forms import AssignmentSummaryForm
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.apps import apps
-from translator.models import Translator
+from translator.models import Translator_C2E, Translator_E2C
 
 # Create your models here.
 #Get Order and Document Model from helper.models
@@ -16,21 +16,32 @@ Document = apps.get_model('helper','Document')
 
 def get_assignments(translator):  # return order of all assignments
     assignments = []
-    for order in Order.objects.filter(Q(translator_C2E=translator.id) | Q(translator_E2C=translator.id)).order_by('submit'):
-        assignments.append(order)
-    return assignments
+    if translator.get_role() == 1: #if translator_C2E
+        print '1'
+        for order in Order.objects.filter(Q(translator_C2E=translator.id)).order_by('submit'):
+            assignments.append(order)
+        return assignments
+    if translator.get_role() == 2: #if translator_E2C
+        print '2'
+        for order in Order.objects.filter(Q(translator_C2E=translator.id)).order_by('submit'):
+            assignments.append(order)
+        return assignments
 
 
 def get_assignments_status(translator, trans_status):  # return order of all ongoing assignments
     assignments = []
     for assignment in translator.get_assignments():
-        if assignment.trans_status == trans_status:
+        if assignment.get_trans_status() == trans_status:
             assignments.append(assignment)
     return assignments
 
 @login_required
 def translator(request, id, assignments_status=None):
-    translator = Translator.objects.get(id=id)
+    if Translator_C2E.objects.filter(id = id).exists():
+        translator = Translator_C2E.objects.get(id = id)
+    else:
+        translator = Translator_E2C.objects.get(id = id)
+
     if assignments_status is None:
         assignments = get_assignments(translator)
     else:
@@ -44,7 +55,10 @@ def translator(request, id, assignments_status=None):
 
 @login_required
 def assignment_summary(request, id, order_id):
-    translator = Translator.objects.get(id=id)
+    if Translator_C2E.objects.get(id = id).exists():
+        translator = Translator_C2E.get(id = id)
+    else:
+        translator = Translator_E2C.get(id = id)
     assignment = Order.objects.get(id=order_id)
     if assignment.get_status <= 3:
         document_list = assignment.origin.all()

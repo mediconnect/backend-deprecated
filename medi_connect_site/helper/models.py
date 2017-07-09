@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from customer.models import Customer
 from django.contrib.auth.models import User
-from translator.models import Translator
+from translator.models import Translator_C2E, Translator_E2C
 import datetime
 import random
 
@@ -57,8 +57,8 @@ TRANS_STATUS_CHOICE = (
     (FINISHED, 'finished'),
 )
 
-trans_list_C2E = list(User.objects.filter(is_staff = True).values_list('id',flat=True))
-trans_list_E2C = list(User.objects.filter(is_staff = True).values_list('id',flat=True))
+trans_list_C2E = list(Translator_C2E.objects.filter(is_staff = True).values_list('id',flat=True))
+trans_list_E2C = list(Translator_E2C.objects.filter(is_staff = True).values_list('id',flat=True))
 
 
 # Function to move the position of a translator in sequence
@@ -153,10 +153,10 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
     # translator Chinese to English
-    translator_C2E = models.ForeignKey(Translator, on_delete=models.CASCADE, null=True,
+    translator_C2E = models.ForeignKey(Translator_C2E, on_delete=models.CASCADE, null=True,
                                        related_name='chinese_translator')
     # translator English to Chinese
-    translator_E2C = models.ForeignKey(Translator, on_delete=models.CASCADE, null=True,
+    translator_E2C = models.ForeignKey(Translator_E2C, on_delete=models.CASCADE, null=True,
                                        related_name='english_translator')
     # supervisor = models.ForeignKey(Supervisor, on_delete = models.CASCADE, null = True)
     # only one supervisor for now, no need to keep this info
@@ -193,6 +193,9 @@ class Order(models.Model):
 
     def get_status(self):
         return self.status
+
+    def get_trans_status(self):
+        return self.trans_status
 
     def change_status(self, status):
         self.status = status
