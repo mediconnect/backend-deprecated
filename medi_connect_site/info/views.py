@@ -99,6 +99,8 @@ def order(request, id):
     orders = Order.objects.filter(customer=customer)
     order_list = []
     for order in orders:
+        if order.status == 0:
+            continue
         order_dict = dict()
         order_dict['hospital'] = order.hospital.name
         order_dict['disease'] = order.disease.name
