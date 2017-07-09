@@ -1,19 +1,24 @@
 from django import forms
 from django.contrib.auth.models import User
 from helper.models import Document, Order
-from translator.models import Translator
+from translator.models import Translator_C2E,Translator_E2C
 import random
 
-assignee_choice = []
-for e in Translator.objects.filter(is_staff = 1):
-    assignee_choice.append((e.id,e.get_name()))
+C2E_assignee_choice = []
+for e in Translator_C2E.objects.all():
+    C2E_assignee_choice.append((e.id,e.get_name()))
+
+E2C_assignee_choice = []
+for e in Translator_E2C.objects.all():
+    E2C_assignee_choice.append((e.id,e.get_name()))
 
 class AssignForm(forms.ModelForm):
-    new_assignee = forms.ChoiceField(choices=assignee_choice, required=True)
-
+    C2E_new_assignee = forms.ChoiceField(choices=C2E_assignee_choice)
+    E2C_new_assignee = forms.ChoiceField(choices=C2E_assignee_choice)
     class Meta:
         model = Order
-        fields = ['new_assignee']
+        fields = ['C2E_new_assignee','E2C_new_assignee']
+
 class ApproveForm(forms.ModelForm):
     approval = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',

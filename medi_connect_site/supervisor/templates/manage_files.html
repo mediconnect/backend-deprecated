@@ -13,7 +13,9 @@
 <p>Feedback Files</p>
  <ul>
    {% for obj in assignment.feedback.all %}
-     <form method = 'get'>
+     <form method = 'post'>
+         {% csrf_token %}
+         {{ form }}
          <li>
              <input style="border:none" type = 'text' name = 'document' value = '{{obj.document}}' size="30px" readonly><br>
             <a href="obj.url" class="btn">Download</a>
