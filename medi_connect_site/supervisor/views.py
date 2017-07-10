@@ -41,7 +41,7 @@ STATUS_CHOICES = (
     (FEEDBACK, 'feedback'),
     (PAID, 'PAID'),
 )
-status_dict = ['STARTED','SUBMITTED','TRANSLATING_ORIGIN','RECEIVED','RETURN','TRANSLATING_FEEDBACK','FEEDBACK,PAID']
+status_dict = ['STARTED','SUBMITTED','TRANSLATING_ORIGIN','RECEIVED','RETURN','TRANSLATING_FEEDBACK','FEEDBACK','PAID']
 
 
 def move(trans_list,translator_id,new_position):
