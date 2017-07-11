@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponseRedirect
+from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.db.models import Q
@@ -129,4 +130,10 @@ def hospital(request):
     })
 
 
+def username_check(request):
+    name = request.GET.get('username', None)
+    users = User.objects.filter(username=name)
+    if len(users) > 0:
+        return JsonResponse({'exist': True})
+    return JsonResponse({'exist': False})
 

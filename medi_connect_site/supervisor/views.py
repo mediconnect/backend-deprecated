@@ -288,4 +288,3 @@ def customer_list(request,id):
 		return render(request,'customer_list.html',{
 			'customers':customers
 		})
-

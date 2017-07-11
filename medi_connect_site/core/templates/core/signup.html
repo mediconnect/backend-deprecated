@@ -20,4 +20,34 @@
     <button type="submit" class="btn btn-default">Sign Up</button>
 </form>
 
+<script>
+    var timer;
+    var doneInterval = 500;
+
+    $("input[name='username']").on('keyup', function() {
+        $("#username-error").remove();
+        clearTimeout(timer);
+        if ($("input[name='username']").val()) {
+            timer = setTimeout(check, doneInterval);
+        }
+    });
+
+    function check() {
+        var username = $("input[name='username']").val();
+        $.ajax({
+            url: '{% url "username_check" %}',
+            data: {
+                'username': username
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data.exist) {
+                    $("input[name='username']").after("<label id='username-error' class='control-label'>User already exists</label>");
+                }
+            }
+        });
+    }
+    
+</script>
+
 {% endblock %}

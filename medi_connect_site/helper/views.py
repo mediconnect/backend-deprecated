@@ -259,6 +259,7 @@ def finish(request, order_id):
     if request.method == 'POST':
         order.status = 1
         order.save()
+        assign(order)
         return render(request, 'finish.html', {
             'customer': customer,
         })
