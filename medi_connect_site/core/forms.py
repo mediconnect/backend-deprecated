@@ -47,7 +47,7 @@ class SignUpForm(forms.ModelForm):
     telephone = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label="Telephone",
-        required=False)
+        required=True)
     address = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label="Address",

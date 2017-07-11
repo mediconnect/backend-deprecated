@@ -137,3 +137,9 @@ def username_check(request):
         return JsonResponse({'exist': True})
     return JsonResponse({'exist': False})
 
+def email_check(request):
+    name = request.GET.get('email', None)
+    users = User.objects.filter(email=name)
+    if len(users) > 0:
+        return JsonResponse({'exist': True})
+    return JsonResponse({'exist': False})
