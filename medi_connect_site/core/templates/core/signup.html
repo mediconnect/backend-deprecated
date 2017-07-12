@@ -21,57 +21,40 @@
 </form>
 
 <script>
-    var timer;
-    var doneInterval = 500;
-
-    $("input[name='username']").on('keyup', function() {
-        $("#username-error").remove();
-        clearTimeout(timer);
-        if ($("input[name='username']").val()) {
-            timer = setTimeout(check_username, doneInterval);
+$("input[name='username']").change(function() {
+    $("#username-error").remove();
+    var username = $("input[name='username']").val();
+    $.ajax({
+        url: "{% url 'username_check' %}",
+        data: {
+            'username': username
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.exist) {
+                $("input[name='username']").after("<label id='username-error' class='control-label'>User already exists</label>");
+            }
         }
     });
- 
-    $("input[name='email']").on('keyup', function() {
-        $("#email-error").remove();
-        clearTimeout(timer);
-        if ($("input[name='email']").val()) {
-            timer = setTimeout(check_email, doneInterval);
+});
+
+
+$("input[name='email']").change(function() {
+    $("#email-error").remove();
+    var email = $("input[name='email']").val();
+    $.ajax({
+        url: "{% url 'email_check' %}",
+        data: {
+            'email': email
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.exist) {
+                $("input[name='email']").after("<label id='email-error' class='control-label'>Email is being used</label>");
+            }
         }
     });
-
-    function check_username() {
-        var username = $("input[name='username']").val();
-        $.ajax({
-            url: '{% url "username_check" %}',
-            data: {
-                'username': username
-            },
-            dataType: 'json',
-            success: function(data) {
-                if (data.exist) {
-                    $("input[name='username']").after("<label id='username-error' class='control-label'>User already exists</label>");
-                }
-            }
-        });
-    }
-
-    function check_email() {
-        var email = $("input[name='email']").val();
-        $.ajax({
-            url: '{% url "email_check" %}',
-            data: {
-                'email': email
-            },
-            dataType: 'json',
-            success: function(data) {
-                if (data.exist) {
-                    $("input[name='email']").after("<label id='email-error' class='control-label'>Email is being used</label>");
-                }
-            }
-        });
-    }
-    
+});
 </script>
 
 {% endblock %}
