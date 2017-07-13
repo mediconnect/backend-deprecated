@@ -3,24 +3,30 @@
 {% block title %}Assignment Summary {% endblock %}
 {% block content %}
 <p>{{assignment.get_info}}</p>
-<h2>Origin Files:</h2>
-
-
-<h2>Translated Files Uploaded</h2>
+<p>Assignment Files</p>
+{%if translator.get_role == 1%}
 <ul>
-    {% for obj in assignment.pending.all %}
-        <li>
-            <a href = "{{obj.document.url}}">{{obj.document.name}}</a>
-            <small>{{obj.description}} and is uploaded at {{obj.upload_at}}</small>
-        </li>
-    {% endfor %}
+    {%for document in assignment.origin.all%}
+    <li>{{document.url}}</li>
+    {%endfor%}
 </ul>
-<form method="post" role="form", enctype="multipart/form-data">
+{%endif%}
+{%if translator.get_role == 2%}
+<ul>
+    {%for document in assignment.feedback.all%}
+    <li>{{document.url}}</li>
+    {%endfor%}
+</ul>
+{%endif%}
+<p>Upload Translated Files</p>
+<ul>
+    {%for document in assignment.pending.all%}
+    <li><a href ="document.url">{{document.document}}</a></li>
+    {%endfor%}
+</ul>
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-default">Upload and submit to approve</button>
+    <input type="file" name="trans_files">
+    <button type="submit">Upload</button>
 </form>
-
- <p><a href="{% url 'trans_home' id=translator.id %}">Return to home</a></p>
-
 {% endblock %}

@@ -1,15 +1,14 @@
 from django import forms
 from django.contrib.auth.models import User
-from helper.models import Document, Order
-from translator.models import Translator_C2E,Translator_E2C
+from helper.models import Document, Order, Staff
 import random
 
 C2E_assignee_choice = []
-for e in Translator_C2E.objects.all():
+for e in Staff.objects.filter(role = 1):
     C2E_assignee_choice.append((e.id,e.get_name()))
 
 E2C_assignee_choice = []
-for e in Translator_E2C.objects.all():
+for e in Staff.objects.filter(role = 2):
     E2C_assignee_choice.append((e.id,e.get_name()))
 
 class AssignForm(forms.ModelForm):

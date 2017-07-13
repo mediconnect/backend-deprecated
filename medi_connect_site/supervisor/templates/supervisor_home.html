@@ -2,56 +2,47 @@
 {% block title %}Supervisor Home{% endblock %}
 
 {% block content %}
-  
+  <style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+  </style>
+
   <p>Orders:</p>
-  <ul>
-    {% for obj in orders %}
-      <li>
-        {{ obj.get_info }}
-        <a href="{% url 'detail' id=supervisor.id order_id=obj.id %}">Detail</a>
-      </li>
-    {% endfor %}
-  </ul>
-  <p>Active Translators E2C:</p>
-  <ul>
-    {% for obj in translators_E2C %}
-      <li>{{ obj.get_name }}</li>
-    {% endfor %}
-  </ul>
-  <p>Active Translators C2E:</p>
-  <ul>
-    {% for obj in translators_C2E %}
-      <li>{{ obj.get_name }}</li>
-    {% endfor %}
-  </ul>
-  <p>Customers:</p>
-  <ul>
-    {% for obj in customers %}
-      <li>{{ obj.get_name }}</li>
-    {% endfor %}
-  </ul>
 
-  <p>Hospitals:</p>
-  <ul>
-    {% for obj in hospitals %}
-      <form method="post">
-        {% csrf_token %}
-        {{ form }}
-        <input style="border:none" type = 'text' name = 'hospital' value = '{{obj.name}}' size="30px" readonly><br>
-        <ul>
-          <li>Default: {{obj.default_slots}}</li>
-          <li>Week 1: {{obj.slots_open_0}}</li>
-          <li>Week 2: {{obj.slots_open_1}}</li>
-          <li>Week 3: {{obj.slots_open_2}}</li>
-          <li>Week 4: {{obj.slots_open_3}}</li>
-        </ul>
-        <input type="submit" class="btn" value="Reset Slots" name="hospital_btn"/>
-      </form>
-    {% endfor %}
-  </ul>
+  <table style="width:80%">
+    <tr>
+        <th>Order Id</th>
+        <th>Customer</th>
+        <th>Hospital</th>
+        <th>Disease</th>
+        <th>Translator_C2E </th>
+        <th>Translator_E2C</th>
+        <th>Status</th>
+        <th>Translator Status</th>
+        <th>Deadline</th>
+        <th>Submit Deadline</th>
+        <th>Detail</th>
+    </tr>
+    {%for obj in orders%}
+
+      <tr>
+        <td>{{obj.id}}</td>
+        <td>{{obj.customer_id}}</td>
+        <td>{{obj.hospital.name}}</td>
+        <td>{{obj.disease.name}}</td>
+        <td>{{obj.translator_C2E.get_name}}</td>
+        <td>{{obj.translator_E2C.get_name}}</td>
+        <td>{{obj.get_status}}</td>
+        <td>{{obj.get_trans_status}}</td>
+        <td>{{obj.get_deadline}}</td>
+        <td>{{obj.get_submit_deadline}}</td>
+        <td><a href = "{% url 'detail' id=supervisor.id order_id=obj.id %}">Detail</a></td>
+      </tr>
+    {%endfor%}
+  </table>
 
 
-
-<p><a href="{% url 'trans_signup' id=supervisor.id %}">Add a translator</a></p>
 
 {% endblock %}

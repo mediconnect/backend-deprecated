@@ -10,10 +10,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from customer.models import Customer
 from django.apps import apps
-from supervisor.models import Supervisor
-from translator.models import Translator_C2E, Translator_E2C
 from supervisor.forms import TransSignUpForm,AssignForm,ApproveForm
-from helper.models import trans_list_C2E, trans_list_E2C
+from helper.models import trans_list_C2E, trans_list_E2C, Staff
 
 Order = apps.get_model('helper','Order')
 Document = apps.get_model('helper','Document')
@@ -53,16 +51,12 @@ def move(trans_list,translator_id,new_position):
 def assign_auto(order):
     is_C2E = True if order.status <= 3 else False
     if is_C2E:
-        while User.objects.filter(id = trans_list_C2E[0]).count() == 0:
-            trans_list_C2E.pop()
-        translator = Translator_C2E.objects.filter(id=trans_list_C2E[0])
+        translator = Staff.objects.filter(id=trans_list_C2E[0])
         move(trans_list_C2E, translator.id, -1)
         order.translator_C2E = translator
         order.change_status(TRANSLATING_ORIGIN)
     else:
-        while User.objects.filter(id = trans_list_E2C[0]).count() == 0:
-            trans_list_C2E.pop()
-        translator = Translator_E2C.objects.filter(id=trans_list_E2C[0])
+        translator = Staff.objects.filter(id=trans_list_E2C[0])
         move(trans_list_E2C, translator.id, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)
@@ -83,28 +77,16 @@ def assign_manually(order, translator):
 
 @login_required
 def supervisor(request,id):
-	supervisor = Supervisor.objects.get(id = id)
+	supervisor = Staff.objects.get(user_id = id)
 	orders = Order.objects.all()
-	translators_E2C = Translator_E2C.objects.filter(is_staff = 1)
-	translators_C2E = Translator_C2E.objects.filter(is_staff = 1)
-	customers = Customer.objects.all()
-	hospitals = Hospital.objects.all()
-	if (request.POST.get('hospital_btn')):
-		hospital = Hospital.objects.get(name = request.POST.get('hospital'))
-		hospital.reset_slot()
 	return render(request, 'supervisor_home.html',{
 		'orders': orders,
-		'translators_E2C': translators_E2C,
-		'translators_C2E':translators_C2E,
-		'customers': customers,
 		'supervisor': supervisor,
-		'hospitals': hospitals,
-
 		})
 
 @login_required
 def trans_signup(request,id):
-    supervisor = User.objects.get(id = id)
+    supervisor = Staff.objects.get(user_id = id)
     if request.method == 'POST':
         form = TransSignUpForm(request.POST)
         if not form.is_valid():
@@ -131,7 +113,7 @@ def trans_signup(request,id):
 @login_required
 def assign(request,id,order_id):
 	assignment = Order.objects.get(id = order_id)
-	supervisor = User.objects.get(id = id)
+	supervisor = Staff.objects.get(id = id)
 	customer = Customer.objects.get(id=assignment.customer_id)
 	status = status_dict[int(assignment.status)]
 	if request.method == 'POST':
@@ -145,9 +127,9 @@ def assign(request,id,order_id):
 		else:
 			translator_id = form.cleaned_data.get('new_assignee')
 			if assignment.get_status() <= 3:
-				assign_manually(assignment,Translator_C2E.objects.get(id = translator_id))
+				assign_manually(assignment,Staff.objects.get(id = translator_id))
 			else:
-				assign_manually(assignment, Translator_C2E.objects.get(id=translator_id))
+				assign_manually(assignment, Staff.objects.get(id=translator_id))
 			trans_C2E = assignment.translator_C2E.get_name()
 			trans_E2C = assignment.translator_E2C.get_name()
 			return render(request, 'detail.html', {
@@ -168,25 +150,16 @@ def assign(request,id,order_id):
 		})
 def detail(request,id,order_id):
 	assignment = Order.objects.get(id=order_id)
-	supervisor = User.objects.get(id=id)
-	customer = Customer.objects.get(id = assignment.customer_id)
-	status = status_dict[int(assignment.status)]
-	trans_C2E =  assignment.translator_C2E.get_name()
-	trans_E2C = assignment.translator_E2C.get_name()
+	supervisor = Staff.objects.get(id=id)
 	return render(request, 'detail.html', {
 		'assignment': assignment,
 		'supervisor': supervisor,
-		'status':status,
-		'customer':customer,
-		'trans_C2E':trans_C2E,
-		'trans_E2C':trans_E2C
-
 	})
 
 @login_required
 def approve(request,id,order_id):
 	assignment = Order.objects.get(id = order_id)
-	supervisor = Supervisor.objects.get(id = id)
+	supervisor = Staff.objects.get(id = id)
 	trans_C2E = assignment.translator_C2E
 	trans_E2C = assignment.translator_E2C
 	customer = Customer.objects.get(id=assignment.customer_id)
@@ -241,7 +214,7 @@ def approve(request,id,order_id):
 @login_required
 def manage_files(request,id,order_id):
 	assignment = Order.objects.get(id = order_id)
-	supervisor = User.objects.get(id = id)
+	supervisor = Staff.objects.get(id = id)
 	if (request.POST.get('delete')):
 		document = Document.objects.get(document=request.GET.get('document'))
 		document.delete()
@@ -270,21 +243,32 @@ def manage_files(request,id,order_id):
 
 @login_required
 def customer_list(request,id):
-	supervisor = Supervisor.objects.get(id = id )
+	supervisor = Staff.objects.get(user_id = id )
 	customers = Customer.objects.all()
-	if request.method == 'POST':
-		form = ResetPasswordForm(request.POST)
-		if not form.is_valid():
-			return render(request,'customer_list.html'),
-			{
-				'form': form,
-				'supervisor':supervisor,
-				'customers':customers
-			}
-		else:
-			customer = form.cleaned_data.get('customer')
-			#implement reset password function
-	else:
-		return render(request,'customer_list.html',{
-			'customers':customers
-		})
+	return render(request,'customer_list.html',{
+		'customers':customers,
+		'supervisor':supervisor
+	})
+
+@login_required
+def translator_list(request,id):
+	supervisor = Staff.objects.get(user_id = id )
+	translators_C2E = Staff.objects.filter(role = 1)
+	translators_E2C = Staff.objects.filter(role = 2)
+	translators = translators_C2E.union(translators_E2C)
+	return render(request,'translator_list.html',{
+		'translators_C2E':translators_C2E,
+		'translators_E2C':translators_E2C,
+		'supervisor':supervisor,
+	})
+@login_required
+def hospital_list(request,id):
+	supervisor = Staff.objects.get(user_id = id )
+	hospitals = Hospital.objects.all()
+	if (request.POST.get('hospital_btn')):
+		hospital = Hospital.objects.get(name=request.POST.get('hospital'))
+		hospital.reset_slot()
+	return render(request,'hospital_list.html',{
+		'hospitals': hospitals,
+		'supervisor':supervisor,
+	})

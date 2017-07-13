@@ -8,7 +8,7 @@ from customer.models import Customer
 from customer.views import customer
 from translator.views import translator
 from supervisor.views import supervisor
-from helper.models import Hospital, Disease, Order
+from helper.models import Hospital, Disease, Order, Staff
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.forms import PasswordResetForm
 
@@ -19,12 +19,14 @@ from django.contrib.auth.forms import PasswordResetForm
 def home(request):
     if request.user.is_authenticated():
         # render a user specified web page
-        # assign administrator as super user
-        # assign translator as staff
-        if request.user.is_superuser:
-            return supervisor(request, request.user.id)
-        elif request.user.is_staff:
-            return translator(request, request.user.id)
+        #role: supervisor = 0, trans_C2E = 1, trnas_E2C = 2
+        if request.user.is_staff:
+            staff = Staff.objects.get(user_id = request.user.id)
+            print staff.get_role()
+            if staff.get_role() == 0:
+                return supervisor(request, request.user.id)
+            else:
+                return translator(request,request.user.id)
         else:
             return customer(request, request.user)
     else:

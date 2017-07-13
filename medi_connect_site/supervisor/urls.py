@@ -11,7 +11,8 @@ urlpatterns = [
     url(r'^assign/(?P<id>\d+)/(?P<order_id>\d+)/$',supervisor_views.assign ,name = 'assign'),
     url(r'^approve/(?P<id>\d+)/(?P<order_id>\d+)/$',supervisor_views.approve ,name = 'approve'),
     url(r'^manage_files/(?P<id>\d+)/(?P<order_id>\d+)/$',supervisor_views.manage_files ,name = 'manage_files'),
-    #url(r'^customer_list/(?P<id>\d+)/$',supervisor_views.customer_list,name = 'customer_list'),
-    #url(r'^translator_list/(?P<id>\d+)/$',supervisor_views.translator_list,name = 'translator_list'),
+    url(r'^customer_list/(?P<id>\d+)/$',supervisor_views.customer_list,name = 'customer_list'),
+    url(r'^translator_list/(?P<id>\d+)/$',supervisor_views.translator_list,name = 'translator_list'),
+    url(r'^hospital_list/(?P<id>\d+)/$',supervisor_views.hospital_list,name = 'hospital_list'),
 ]
 

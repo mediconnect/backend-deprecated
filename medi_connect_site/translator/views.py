@@ -5,7 +5,7 @@ from forms import AssignmentSummaryForm
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.apps import apps
-from translator.models import Translator_C2E, Translator_E2C
+from helper.models import Staff
 
 # Create your models here.
 #Get Order and Document Model from helper.models
@@ -23,7 +23,7 @@ def get_assignments(translator):  # return order of all assignments
         return assignments
     if translator.get_role() == 2: #if translator_E2C
         print '2'
-        for order in Order.objects.filter(Q(translator_C2E=translator.id)).order_by('submit'):
+        for order in Order.objects.filter(Q(translator_E2C =translator.id)).order_by('submit'):
             assignments.append(order)
         return assignments
 
@@ -37,10 +37,7 @@ def get_assignments_status(translator, trans_status):  # return order of all ong
 
 @login_required
 def translator(request, id, assignments_status=None):
-    if Translator_C2E.objects.filter(id = id).exists():
-        translator = Translator_C2E.objects.get(id = id)
-    else:
-        translator = Translator_E2C.objects.get(id = id)
+    translator = Staff.objects.get(user_id = id)
 
     if assignments_status is None:
         assignments = get_assignments(translator)
@@ -55,37 +52,21 @@ def translator(request, id, assignments_status=None):
 
 @login_required
 def assignment_summary(request, id, order_id):
-    if Translator_C2E.objects.get(id = id).exists():
-        translator = Translator_C2E.get(id = id)
-    else:
-        translator = Translator_E2C.get(id = id)
+    translator = Staff.objects.get(id = id)
     assignment = Order.objects.get(id=order_id)
-    if assignment.get_status <= 3:
-        document_list = assignment.origin.all()
-    else:
-        document_list = assignment.feedback.all()
-    if request.method == 'POST':
-        form = AssignmentSummaryForm(request.POST, request.FILES)
-        if form.is_valid():
-            if assignment.get_status < 2:
-                assignment.change_status(2)
-            else:
-                assignment.change_status(5)
-            files = request.FILES['pending']
-            for f in files:
-                instance = Document(document=f, is_translated=True)
-                instance.save()
-                assignment.pending.add(instance)
-            return render(request, 'trans_home.html',
-                          {
-                              'translator': translator
-                          })
-    else:
-        form = AssignmentSummaryForm()
-    return render(request, 'assignment_summary.html',
-                  {
-                      'translator': translator,
-                      'assignment': assignment,
-                      'document_list': document_list,
-                      'form': form
-                  })
+    if request.method == 'POST' and request.FILES['trans_files']:
+        file = request.FILES['trans_files']
+        fs = FileSystemStorage()
+        filename = fs.save(file.name, file)
+        document = Document(order=assignment, document=file, is_origin=True)
+        document.save()
+        assignment.pending.add(document)
+        assignment.save()
+        return render(request, 'assignment_summary.html', {
+            'translator': translator,
+            'assignment': assignment
+        })
+    return render(request,'assignment_summary.html',{
+        'assignment':assignment,
+        'translator':translator
+    })

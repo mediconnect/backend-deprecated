@@ -6,9 +6,7 @@
   <p>Assignments</p>
   	{%for obj in assignments%}
 		<a href="{% url 'assignment_summary' id=translator.id order_id=obj.id %}">{{obj.get_info}}</a>
-		<small>(Status:{{obj.get_status}})</small>
+		<small>(Status:{{obj.get_status}})</small><br>
   	{%endfor%}
-
-  <p><a href="#">Return to home</a></p>
 
 {% endblock %}

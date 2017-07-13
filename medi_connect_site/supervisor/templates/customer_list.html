@@ -1,9 +1,29 @@
 {% extends 'supervisor_base.html' %}
 
 {% block content %}
-    {%for obj in customers%}
-		<l>{obj.Customer.get_name}</l>
-  	{%endfor%}}
+    <style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    </style>
+    <table style="width:30%">
+    <p>Customer</p>
+        <tr>
+            <th>Customer Name</th>
+            <th>Email</th>
+            <th>Order Info</th>
+        </tr>
 
-  <li><a href="{% url 'supervisor_home' id=supervisor.id %}">Home</a></li>
+        {%for obj in customers%}
+            <tr>
+		    <td>{{obj.get_name}}</td>
+            <td>{{obj.user.email}}</td>
+            <td>{{obj.get_order}}</td>
+            </tr>
+  	    {%endfor%}
+
+
+
+    </table>
 {% endblock %}

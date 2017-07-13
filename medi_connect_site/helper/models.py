@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from django.db import models
 from customer.models import Customer
 from django.contrib.auth.models import User
-from translator.models import Translator_C2E, Translator_E2C
+from django.db.models import Q
 import datetime
 import random
 
@@ -57,8 +57,7 @@ TRANS_STATUS_CHOICE = (
     (FINISHED, 'finished'),
 )
 
-trans_list_C2E = list(Translator_C2E.objects.filter(is_staff = True).values_list('id',flat=True))
-trans_list_E2C = list(Translator_E2C.objects.filter(is_staff = True).values_list('id',flat=True))
+
 
 
 # Function to move the position of a translator in sequence
@@ -153,10 +152,10 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
     # translator Chinese to English
-    translator_C2E = models.ForeignKey(Translator_C2E, on_delete=models.CASCADE, null=True,
+    translator_C2E = models.ForeignKey('Staff', on_delete=models.CASCADE, null=True,
                                        related_name='chinese_translator')
     # translator English to Chinese
-    translator_E2C = models.ForeignKey(Translator_E2C, on_delete=models.CASCADE, null=True,
+    translator_E2C = models.ForeignKey('Staff', on_delete=models.CASCADE, null=True,
                                        related_name='english_translator')
     # supervisor = models.ForeignKey(Supervisor, on_delete = models.CASCADE, null = True)
     # only one supervisor for now, no need to keep this info
@@ -185,7 +184,7 @@ class Order(models.Model):
         return self.weeknumber_at_submit - (datetime.today.isocalendar()[1]-self.submit.isocalendar()[1])
 
     def get_deadline(self):  # default deadline 2 days after submit
-        return str(self.submit + datetime.timedelta(days=2))  # date time algebra
+        return str(self.submit + datetime.timedelta(days=2)) # date time algebra
 
     def get_submit_deadline(self):
         d = "%s-W%s"%(self.submit.isocalendar()[0],self.submit.isocalendar()[1])
@@ -219,3 +218,44 @@ class Document(models.Model):
 
     class Meta:
         db_table = 'document'
+
+class Staff(models.Model):
+    user = models.OneToOneField(User)
+    role = models.IntegerField(default = 0)
+
+    class Meta:
+        db_table = 'auth_staff'
+
+    def get_role(self):
+        return self.role
+
+    def get_name(self):
+        name = self.user.first_name + ' ' + self.user.last_name
+        if name is not ' ':
+            return name
+        return self.user.username
+
+    def get_assignments(self):  # return order of all assignments
+        assignments = []
+        if self.get_role() == 1:  # if translator_C2E
+            for order in Order.objects.filter(Q(translator_C2E=self.id)).order_by('submit'):
+                assignments.append(order)
+            return assignments
+        if self.get_role() == 2:  # if translator_E2C
+            for order in Order.objects.filter(Q(translator_C2E=self.id)).order_by('submit'):
+                assignments.append(order)
+            return assignments
+
+    def get_document_number(self):
+        count = 0
+        if self.get_role() == 1:  # if translator_C2E
+            for e in self.get_assignments():
+                count += Order.origin.all.count()
+        if self.get_role() == 2:
+            for e in self.get_assignments():
+                count += Order.feedback.all.count()
+        return count
+
+
+trans_list_C2E = list(Staff.objects.filter(role=1).values_list('id', flat=True))
+trans_list_E2C = list(Staff.objects.filter(role=2).values_list('id', flat=True))
