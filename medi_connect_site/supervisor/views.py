@@ -82,8 +82,6 @@ def supervisor(request,id):
 	return render(request, 'supervisor_home.html',{
 		'orders': orders,
 		'supervisor': supervisor,
-
-
 		})
 
 @login_required
@@ -115,7 +113,7 @@ def trans_signup(request,id):
 @login_required
 def assign(request,id,order_id):
 	assignment = Order.objects.get(id = order_id)
-	supervisor = Staff.objects.get(user_id = id)
+	supervisor = Staff.objects.get(id = id)
 	customer = Customer.objects.get(id=assignment.customer_id)
 	status = status_dict[int(assignment.status)]
 	if request.method == 'POST':
@@ -161,7 +159,7 @@ def detail(request,id,order_id):
 @login_required
 def approve(request,id,order_id):
 	assignment = Order.objects.get(id = order_id)
-	supervisor = Staff.objects.get(user_id = id)
+	supervisor = Staff.objects.get(id = id)
 	trans_C2E = assignment.translator_C2E
 	trans_E2C = assignment.translator_E2C
 	customer = Customer.objects.get(id=assignment.customer_id)
@@ -216,7 +214,7 @@ def approve(request,id,order_id):
 @login_required
 def manage_files(request,id,order_id):
 	assignment = Order.objects.get(id = order_id)
-	supervisor = User.objects.get(user_id = id)
+	supervisor = Staff.objects.get(id = id)
 	if (request.POST.get('delete')):
 		document = Document.objects.get(document=request.GET.get('document'))
 		document.delete()

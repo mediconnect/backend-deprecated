@@ -1,11 +1,6 @@
 {% extends 'supervisor_base.html' %}
 {% block title %}Order Detail{% endblock %}
 {% block content %}
-<p>Customer : {{customer.get_name}} </p>
-<p>Chinese to English Assigned to : {{ trans_C2E}}</p>
-<p>English to Chinese Assigned to : {{ trans_E2C}}</p>
-<p>Submit to hospital deadline :{{assignment.get_submit_deadline}}</p>
-<p>Status: {{status}}</p>
 <p>Origin Files</p>
  <ul>
    {% for obj in assignment.origin.all %}
