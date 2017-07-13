@@ -1,0 +1,14 @@
+{% extends 'trans_base.html' %}
+
+{% block title %}{{translator.get_name}}{% endblock %}
+
+{% block content %}
+  <p>Assignments</p>
+  	{%for obj in assignments%}
+		<a href="{% url 'assignment_summary' id=translator.id order_id=obj.id %}">{{obj.get_info}}</a>
+		<small>(Status:{{obj.get_status}})</small>
+  	{%endfor%}
+
+  <p><a href="#">Return to home</a></p>
+
+{% endblock %}

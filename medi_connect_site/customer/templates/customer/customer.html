@@ -1,0 +1,48 @@
+{% extends "customer_header.html" %}
+
+{% block content %}
+
+<form action="{% url 'result' %}" method="post" role="form">
+    {% csrf_token %}
+    {% for field in form.visible_fields %}
+    <div class="form-group{% if field.errors %} has-error{% endif %}">
+        <label for="{{ field.label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+        <span class="help-block">{{ field.help_text|safe }}</span>
+        {% endif %}
+        {% for error in field.errors %}
+        <label class="control-label">{{ error }}</label>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-default">Search</button>
+    <!--comment out Ajax instant search-->
+    <!--<input type="text" id="typeahead"/>-->
+</form>
+
+<!--comment out Javascript support for Ajax search-->
+<!--<script>-->
+    <!--$(function() {-->
+        <!--$("#typeahead").typeahead(null, {-->
+            <!--source: function(query, process) {-->
+                <!--return $.ajax({-->
+                    <!--url:,-->
+                    <!--method: 'get',-->
+                    <!--data: {-->
+                        <!--query: $('#typeahead').val()-->
+                    <!--},-->
+                    <!--dataType: 'json',-->
+                    <!--success: function(data) {-->
+                        <!--// var resultList = JSON.stringify(data);-->
+                        <!--// console.log(resultList);-->
+                        <!--// return process(resultList);-->
+                        <!--return process(data);-->
+                    <!--}-->
+                <!--});-->
+            <!--}-->
+        <!--});-->
+    <!--});-->
+<!--</script>-->
+
+{% endblock %}

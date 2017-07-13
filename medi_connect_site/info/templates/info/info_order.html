@@ -1,0 +1,57 @@
+{% extends "customer_header.html" %}
+{% block title %}Appointment{% endblock %}
+
+{% block content %}
+<ul class="list-group" id="order"></ul>
+<script type="text/javascript">
+var ul = document.getElementById("order");
+var order_list = {{order_list | safe}};
+for (var order_i in order_list) {
+    var order = order_list[order_i];
+    var li = document.createElement("li");
+    li.className += "list-group-item";
+    var text = document.createTextNode("".concat("ID: ", order_i, ";Patient", order.patient, ";Hospital: ", order.hospital, ";Disease: ", order.disease));
+    li.appendChild(text);
+    // reverse look up url
+    var paymentform = document.createElement("form");
+    paymentform.action = Urls.info_order_pay(order.order_id);
+    paymentform.method = "POST";
+    // append crsf token
+    var inputElem = document.createElement('input');
+    inputElem.type = 'hidden';
+    inputElem.name = 'csrfmiddlewaretoken';
+    inputElem.value = '{{ csrf_token }}';
+    paymentform.appendChild(inputElem);
+    // appnend button
+    var button = document.createElement("button");
+    paymentform.appendChild(button);
+    // disable button accordingly
+    if (order.status == 7) {
+        var button_text = document.createTextNode("Already Paid");
+        button.appendChild(button_text);
+        button.disabled = true;
+    } else {
+        var button_text = document.createTextNode("Pay");
+        button.appendChild(button_text);
+    }
+    li.appendChild(paymentform);
+    // add document form
+    var docform = document.createElement("form");
+    docform.appendChild((function() {
+        var button = document.createElement("button");
+        button.appendChild(document.createTextNode("Add Extra Doc"));
+        return button;
+    })());
+    docform.appendChild((function() {
+        var inputElem = document.createElement('input');
+        inputElem.type = 'hidden';
+        inputElem.name = 'csrfmiddlewaretoken';
+        inputElem.value = '{{ csrf_token }}';
+        return inputElem;
+    })());
+    docform.action = Urls.add_doc(order.order_id);
+    li.appendChild(docform);
+    ul.appendChild(li);
+}
+</script>
+{% endblock %}

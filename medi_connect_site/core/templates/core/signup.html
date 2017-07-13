@@ -1,0 +1,60 @@
+{% extends "index.html" %}
+{% block title %}SignUp{% endblock %}
+
+{% block content %}
+
+<form action="{% url 'signup' %}" method="post" role="form">
+    {% csrf_token %}
+    {% for field in form.visible_fields %}
+    <div class="form-group{% if field.errors %} has-error{% endif %}">
+        <label for="{{ field.label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+        <span class="help-block">{{ field.help_text|safe }}</span>
+        {% endif %}
+        {% for error in field.errors %}
+        <label class="control-label">{{ error }}</label>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-default">Sign Up</button>
+</form>
+
+<script>
+$("input[name='username']").change(function() {
+    $("#username-error").remove();
+    var username = $("input[name='username']").val();
+    $.ajax({
+        url: "{% url 'username_check' %}",
+        data: {
+            'username': username
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.exist) {
+                $("input[name='username']").after("<label id='username-error' class='control-label'>User already exists</label>");
+            }
+        }
+    });
+});
+
+
+$("input[name='email']").change(function() {
+    $("#email-error").remove();
+    var email = $("input[name='email']").val();
+    $.ajax({
+        url: "{% url 'email_check' %}",
+        data: {
+            'email': email
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.exist) {
+                $("input[name='email']").after("<label id='email-error' class='control-label'>Email is being used</label>");
+            }
+        }
+    });
+});
+</script>
+
+{% endblock %}

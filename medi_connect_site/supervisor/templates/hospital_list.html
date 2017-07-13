@@ -1,0 +1,22 @@
+{% extends 'supervisor_base.html' %}
+
+{% block content %}
+<p>Hospitals:</p>
+  <ul>
+    {% for obj in hospitals %}
+      <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input style="border:none" type = 'text' name = 'hospital' value = '{{obj.name}}' size="30px" readonly><br>
+        <ul>
+          <li>Default: {{obj.default_slots}}</li>
+          <li>Week 1: {{obj.slots_open_0}}</li>
+          <li>Week 2: {{obj.slots_open_1}}</li>
+          <li>Week 3: {{obj.slots_open_2}}</li>
+          <li>Week 4: {{obj.slots_open_3}}</li>
+        </ul>
+        <input type="submit" class="btn" value="Reset Slots" name="hospital_btn"/>
+      </form>
+    {% endfor %}
+  </ul>
+{% endblock %}

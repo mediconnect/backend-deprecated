@@ -1,0 +1,6 @@
+.DS_STORE
+
+# ignore python compiler files
+*.pyc
+*.xml
+*.iml

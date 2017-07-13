@@ -1,0 +1,46 @@
+{% extends 'supervisor_base.html' %}
+
+{% block content %}
+    <style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    </style>
+    <table style="width:30%">
+    <p>Translator_C2E</p>
+        <tr>
+            <th>Translator Name</th>
+            <th>Email</th>
+            <th>Document Number</th>
+        </tr>
+
+    {%for obj in translators_C2E%}
+        <tr>
+            <td>{{obj.get_name}}</td>
+            <td>{{obj.user.email}}</td>
+            <td>{{obj.get_document_number}}</td>
+        </tr>
+
+  	{%endfor%}
+
+    </table><br>
+
+    <table style="width:30%">
+    <p>Translator_E2C</p>
+        <tr>
+            <th>Translator Name</th>
+            <th>Email</th>
+            <th>Document Number</th>
+        </tr>
+
+    {%for obj in translators_E2C%}
+		<tr>
+            <td>{{obj.get_name}}</td>
+            <td>{{obj.user.email}}</td>
+            <td>{{obj.get_document_number}}</td>
+        </tr>
+  	{%endfor%}
+    </table>
+<p><a href="{% url 'trans_signup' id=supervisor.id %}">Add a translator</a></p>
+{% endblock %}
