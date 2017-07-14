@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
-from models import Hospital, Patient, Disease, Order, Document, trans_list_C2E, trans_list_E2C
+from models import Hospital, Patient, Disease, Order, Document, Staff
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from helper.forms import OrderFormFirst, OrderFormSecond, DocumentForm
 from django.utils.http import urlquote
+from django.core.files.storage import FileSystemStorage
 
 # Status
 STARTED = 0
@@ -30,6 +31,9 @@ STATUS_CHOICES = (
 )
 
 
+trans_list_C2E = list(Staff.objects.filter(role=1).values_list('id', flat=True))
+trans_list_E2C = list(Staff.objects.filter(role=2).values_list('id', flat=True))
+
 def move(trans_list, translator_id, new_position):
     old_position = trans_list.index(translator_id)
     trans_list.insert(new_position, trans_list.pop(old_position))
@@ -38,18 +42,16 @@ def move(trans_list, translator_id, new_position):
 
 def assign(order):
     is_C2E = True if order.status <= 3 else False
+    print trans_list_C2E[0]
+    print len(trans_list_C2E)
     if is_C2E:
-        while User.objects.filter(id=trans_list_C2E[0]).count() == 0:
-            trans_list_C2E.pop()
-        translator = User.objects.filter(id=trans_list_C2E[0])
-        move(trans_list_C2E, translator.id, -1)
+        translator = Staff.objects.get(id=trans_list_C2E[0])
+        # move(trans_list_C2E, translator.id, -1)
         order.translator_C2E = translator
         order.change_status(TRANSLATING_ORIGIN)
     else:
-        while User.objects.filter(id=trans_list_E2C[0]).count() == 0:
-            trans_list_C2E.pop()
-        translator = User.objects.filter(id=trans_list_E2C[0])
-        move(trans_list_E2C, translator.id, -1)
+        translator = Staff.objects.get(id=trans_list_E2C[0])
+        # move(trans_list_E2C, translator.id, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)
 
@@ -229,14 +231,18 @@ def document_submit(request, order_id):
             extra_doc_comment = form.cleaned_data.get('extra_document_comment')
             extra_doc_description = form.cleaned_data.get('extra_document_description')
             for f in request.FILES.getlist('extra_document'):
-                extra_doc = Document(document=urlquote(f), comment=extra_doc_comment,
+                fs = FileSystemStorage()
+                fs.save(f.name, f)
+                extra_doc = Document(document=f, comment=extra_doc_comment,
                                      description=extra_doc_description, order=order)
                 extra_doc.save()
                 order.origin.add(extra_doc)
             doc_comment = form.cleaned_data.get('document_comment')
             doc_description = form.cleaned_data.get('document_description')
             for f in request.FILES.getlist('document'):
-                doc = Document(document=urlquote(f), comment=doc_comment, description=doc_description, order=order)
+                fs = FileSystemStorage()
+                fs.save(f.name, f)
+                doc = Document(document=f, comment=doc_comment, description=doc_description, order=order)
                 doc.save()
                 order.origin.add(doc)
             order.save()
@@ -259,6 +265,7 @@ def finish(request, order_id):
     if request.method == 'POST':
         order.status = 1
         order.save()
+        assign(order)
         return render(request, 'finish.html', {
             'customer': customer,
         })
