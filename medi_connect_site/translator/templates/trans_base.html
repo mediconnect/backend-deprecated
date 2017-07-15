@@ -5,10 +5,9 @@
 {% block body %}
 
 <div class="navbar navbar-inverse navbar-fixed-left">
-  <a class="navbar-brand" href="#">{{translator.get_name}}</a>
+  <a class="navbar-brand" href="{% url 'trans_home' id=translator.id%}">{{translator.get_name}}</a>
   <ul class="nav navbar-nav">
    <li><a href="#">Assignments</a></li>
-   <
    <li><a href="#">Ongoing</a></li>
    <li><a href="#">Approving</a></li>
       <li><a href="{% url 'translator_logout' %}">Logout</a></li>

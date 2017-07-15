@@ -36,20 +36,24 @@ def get_assignments_status(translator, trans_status):  # return order of all ong
     return assignments
 
 @login_required
-def translator(request, id, assignments_status=None):
+def translator(request, id):
     translator = Staff.objects.get(user_id = id)
-
-    if assignments_status is None:
-        assignments = get_assignments(translator)
-    else:
-        assignments = get_assignments_status(translator,assignments_status)
+    assignments = get_assignments(translator)
     return render(request, 'trans_home.html',
                   {
                       'assignments': assignments,
-                      'translator': translator
+                      'translator': translator,
                   })
 
-
+@login_required
+def translator_status(request,id,status):
+    translator = Staff.objects.get(id = id)
+    assignments = get_assignments_status(translator,status)
+    return render(request,'trans_home.html',
+                  {
+                      'assignments':assignments,
+                      'translator':translator
+                  })
 @login_required
 def assignment_summary(request, id, order_id):
     translator = Staff.objects.get(id = id)

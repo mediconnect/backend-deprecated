@@ -51,12 +51,12 @@ def move(trans_list,translator_id,new_position):
 def assign_auto(order):
     is_C2E = True if order.status <= 3 else False
     if is_C2E:
-        translator = Staff.objects.filter(id=trans_list_C2E[0])
+        translator = Staff.objects.get(id=trans_list_C2E[0])
         move(trans_list_C2E, translator.id, -1)
         order.translator_C2E = translator
         order.change_status(TRANSLATING_ORIGIN)
     else:
-        translator = Staff.objects.filter(id=trans_list_E2C[0])
+        translator = Staff.objects.get(id=trans_list_E2C[0])
         move(trans_list_E2C, translator.id, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)

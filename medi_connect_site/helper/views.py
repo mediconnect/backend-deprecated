@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from models import Hospital, Patient, Disease, Order, Document, trans_list_C2E, trans_list_E2C
+from models import Hospital, Patient, Disease, Order, Document, trans_list_C2E, trans_list_E2C,Staff
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -36,34 +36,20 @@ def move(trans_list, translator_id, new_position):
     return trans_list
 
 
-def assign(order):
+def assign_auto(order):
     is_C2E = True if order.status <= 3 else False
     if is_C2E:
-        while User.objects.filter(id=trans_list_C2E[0]).count() == 0:
-            trans_list_C2E.pop()
-        translator = User.objects.filter(id=trans_list_C2E[0])
+        translator = Staff.objects.filter(id=trans_list_C2E[0])
         move(trans_list_C2E, translator.id, -1)
         order.translator_C2E = translator
         order.change_status(TRANSLATING_ORIGIN)
     else:
-        while User.objects.filter(id=trans_list_E2C[0]).count() == 0:
-            trans_list_C2E.pop()
-        translator = User.objects.filter(id=trans_list_E2C[0])
+        translator = Staff.objects.filter(id=trans_list_E2C[0])
         move(trans_list_E2C, translator.id, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)
+	order.save()
 
-
-def assign_manually(self, translator):
-    is_C2E = True if self.status <= 3 else False
-    if is_C2E:
-        self.translator_C2E = translator
-        move(trans_list_C2E, translator.id, -1)
-        self.change_status(TRANSLATING_ORIGIN)
-    else:
-        self.translator_E2C = translator
-        move(trans_list_C2E, translator.id, -1)
-        self.change_status(TRANSLATING_FEEDBACK)
 
 
 # Create your views here.

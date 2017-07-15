@@ -38,7 +38,7 @@ STATUS_CHOICES = (
     (FEEDBACK, 'feedback'),
     (PAID, 'PAID'),
 )
-
+status_dict = ['STARTED','SUBMITTED','TRANSLATING_ORIGIN','RECEIVED','RETURN','TRANSLATING_FEEDBACK','FEEDBACK','PAID']
 # Trans_status
 
 NOT_STARTED = 0  # assignment not started yet
@@ -191,7 +191,7 @@ class Order(models.Model):
         return datetime.datetime.strptime(d + '-0', "%Y-W%W-%w")
 
     def get_status(self):
-        return self.status
+        return status_dict[int(self.status)]
 
     def get_trans_status(self):
         return self.trans_status
