@@ -173,6 +173,7 @@ class Order(models.Model):
     receive = models.DateField(default=datetime.date.today)
     status = models.CharField(blank=True, max_length=20, choices=STATUS_CHOICES)
     trans_status = models.CharField(blank=True, max_length=20, choices=TRANS_STATUS_CHOICE)
+    auto_assigned = models.BooleanField(default = False)
 
     class Meta:
         db_table = 'order'

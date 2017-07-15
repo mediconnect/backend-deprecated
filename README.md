@@ -1,7 +1,7 @@
 # Mediconnect
 Mediconnect is a website built with [Python][0] using the [Django Web Framework][1].
 
-## The project has two basic apps:
+## The project apps:
 * Core(website administration)
 * Customer(customer profiles and records)
 

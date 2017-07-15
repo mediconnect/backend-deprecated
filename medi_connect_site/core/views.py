@@ -19,14 +19,14 @@ from django.contrib.auth.forms import PasswordResetForm
 def home(request):
     if request.user.is_authenticated():
         # render a user specified web page
-        #role: supervisor = 0, trans_C2E = 1, trnas_E2C = 2
+        # role: supervisor = 0, trans_C2E = 1, trnas_E2C = 2
         if request.user.is_staff:
-            staff = Staff.objects.get(user_id = request.user.id)
+            staff = Staff.objects.get(user_id=request.user.id)
             print staff.get_role()
             if staff.get_role() == 0:
                 return supervisor(request, request.user.id)
             else:
-                return translator(request,request.user.id)
+                return translator(request, request.user.id)
         else:
             return customer(request, request.user)
     else:
@@ -138,6 +138,7 @@ def username_check(request):
     if len(users) > 0:
         return JsonResponse({'exist': True})
     return JsonResponse({'exist': False})
+
 
 def email_check(request):
     name = request.GET.get('email', None)

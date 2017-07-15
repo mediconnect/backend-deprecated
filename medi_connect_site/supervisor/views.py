@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate, login
 from customer.models import Customer
 from django.apps import apps
 from supervisor.forms import TransSignUpForm,AssignForm,ApproveForm
-from helper.models import trans_list_C2E, trans_list_E2C, Staff
+from helper.models import Staff
 
 Order = apps.get_model('helper','Order')
 Document = apps.get_model('helper','Document')
@@ -42,22 +42,27 @@ STATUS_CHOICES = (
 status_dict = ['STARTED','SUBMITTED','TRANSLATING_ORIGIN','RECEIVED','RETURN','TRANSLATING_FEEDBACK','FEEDBACK','PAID']
 
 
-def move(trans_list,translator_id,new_position):
-    old_position = trans_list.index(int(translator_id))
+trans_list_C2E = list(Staff.objects.filter(role=1).values_list('id', flat=True))
+trans_list_E2C = list(Staff.objects.filter(role=2).values_list('id', flat=True))
+
+def move(trans_list, translator, new_position):
+    old_position = trans_list.index(translator)
     trans_list.insert(new_position, trans_list.pop(old_position))
     return trans_list
 
 
 def assign_auto(order):
     is_C2E = True if order.status <= 3 else False
+    print trans_list_C2E[0]
+    print len(trans_list_C2E)
     if is_C2E:
         translator = Staff.objects.get(id=trans_list_C2E[0])
-        move(trans_list_C2E, translator.id, -1)
+        move(trans_list_C2E, translator, -1)
         order.translator_C2E = translator
         order.change_status(TRANSLATING_ORIGIN)
     else:
         translator = Staff.objects.get(id=trans_list_E2C[0])
-        move(trans_list_E2C, translator.id, -1)
+        move(trans_list_E2C, translator, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)
 	order.save()
@@ -66,11 +71,11 @@ def assign_manually(order, translator):
     is_C2E = True if order.status <= 3 else False
     if is_C2E:
         order.translator_C2E = translator
-        move(trans_list_C2E,translator.id,-1)
+        move(trans_list_C2E,translator,-1)
         order.change_status(TRANSLATING_ORIGIN)
     else:
         order.translator_E2C = translator
-        move(trans_list_C2E, translator.id, -1)
+        move(trans_list_C2E, translator, -1)
         order.change_status(TRANSLATING_FEEDBACK)
 	order.save()
 
@@ -229,6 +234,8 @@ def manage_files(request,id,order_id):
 		document = Document(order = assignment,document = file,is_origin = True)
 		document.save()
 		assignment.feedback.add(document)
+		if not assignment.auto_assigned:
+			assign_auto(assignment)
 		assignment.save()
 		return render(request, 'manage_files.html', {
 			'supervisor': supervisor,
