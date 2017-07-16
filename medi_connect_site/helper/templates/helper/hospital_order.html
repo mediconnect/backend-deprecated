@@ -3,6 +3,12 @@
 {% block content %}
 
 {{error}}
+<button type="button" class="btn btn-default" id="like-button">
+    <span  style="font-size:1.5em;" class="glyphicon glyphicon-star"></span>
+</button>
+<p id="like-statement">Bookmark this Hospital</p>
+
+<br>
 
 {{hospital.name}}
 <p> 1st week: {{hospital.slots_open_0}} <input id="radio0" type="radio" name="slots" checked>Choose 1st W<br></p>
@@ -19,15 +25,62 @@
 </form>
 
 <script type="text/javascript">
-    var id = order_id;
-    document.getElementById("radio0").addEventListener("click", url_generator(id, 0));
-    document.getElementById("radio1").addEventListener("click", url_generator(id, 1));
-    document.getElementById("radio2").addEventListener("click", url_generator(id, 2));
-    document.getElementById("radio3").addEventListener("click", url_generator(id, 3));
+    $(function() {
+        like(false);
+    });
+    $("#like-button").click(function() {
+        like(true);
+    });
 
-    function url_generator(order, num) {
-        var form = document.getElementById("order_placement_form");
-        form.action = Urls.order_info_first(order, num);
+    function like(mark) {
+        var hosp_id = {{hospital.id}};
+        $.ajax({
+            url: "{% url 'like_hospital' %}",
+            data: {
+                "hospital_id": hosp_id,
+                "mark": mark
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data.status == "liked") {
+                    $("#like-statement").text("You have MARKED this hospital, Click to unMark");
+                    $("#like-button span").attr("class", "glyphicon glyphicon-star-empty");
+                } else {
+                    $("#like-statement").text("Bookmark this Hospital");
+                    $("#like-button span").attr("class", "glyphicon glyphicon-star");
+                }
+            }
+        });
     }
+
+    var id = {{order_id}};
+    $("#radio0").change(function() {
+        if ( this.checked ) {
+            url_generator(id, 0);
+        }
+    });
+    $("#radio1").change(function() {
+        if ( this.checked ) {
+            url_generator(id, 1);
+        }
+    });
+    $("#radio2").change(function() {
+        if ( this.checked ) {
+            url_generator(id, 2);
+        }
+    });
+    $("#radio3").change(function() {
+        if ( this.checked ) {
+            url_generator(id, 3);
+        }
+    });
+    function url_generator(order, num) {
+        console.log(Urls.order_info_first(order, num));
+        $("#order_placement_form").attr("action", Urls.order_info_first(order, num));
+    }
+
+
+
+
 </script>
 {% endblock %}

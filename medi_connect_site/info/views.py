@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from customer.models import Customer
-from helper.models import Order, Patient, Document
+from helper.models import Order, Patient, Document, LikeHospital, Hospital
 from django.contrib.auth.decorators import login_required
 from forms import ProfileForm, PasswordResetForm, PatientAddForm, DocAddForm
 from django.contrib.auth.hashers import check_password, make_password
@@ -10,8 +10,8 @@ from django.utils.http import urlquote
 
 # Create your views here.
 @login_required
-def profile(request, id):
-    customer = Customer.objects.get(id=id)
+def profile(request):
+    customer = Customer.objects.get(user=request.user)
     if request.method == 'POST':
         form = ProfileForm(request.POST)
         if not form.is_valid():
@@ -41,8 +41,8 @@ def profile(request, id):
 
 
 @login_required
-def profile_password(request, id):
-    customer = Customer.objects.get(id=id)
+def profile_password(request):
+    customer = Customer.objects.get(user=request.user)
     if request.method == 'POST':
         form = PasswordResetForm(request.POST)
         if not form.is_valid():
@@ -69,8 +69,8 @@ def profile_password(request, id):
 
 
 @login_required
-def profile_patient(request, id):
-    customer = Customer.objects.get(id=id)
+def profile_patient(request):
+    customer = Customer.objects.get(user=request.user)
     patients = Patient.objects.filter(customer=customer)
     if request.method == 'POST':
         form = PatientAddForm(request.POST)
@@ -94,8 +94,8 @@ def profile_patient(request, id):
 
 
 @login_required
-def order(request, id):
-    customer = Customer.objects.get(id=id)
+def order(request):
+    customer = Customer.objects.get(user=request.user)
     orders = Order.objects.filter(customer=customer)
     order_list = []
     for order in orders:
@@ -115,9 +115,9 @@ def order(request, id):
 
 
 @login_required
-def order_pay(request, id):
+def order_pay(request, order_id):
     customer = Customer.objects.get(user=request.user)
-    order = Order.objects.get(id=id)
+    order = Order.objects.get(id=order_id)
     return render(request, 'order_pay.html', {
         'order': order,
         'customer': customer,
@@ -125,17 +125,17 @@ def order_pay(request, id):
 
 
 @login_required
-def process_order(request, id):
+def process_order(request, order_id):
     customer = Customer.objects.get(user=request.user)
-    order = Order.objects.get(id=id)
+    order = Order.objects.get(id=order_id)
     order.status = 7
     order.save()
     return redirect('info_order', customer.id)
 
 
-def add_doc(request, id):
+def add_doc(request, order_id):
     customer = Customer.objects.get(user=request.user)
-    order = Order.objects.get(id=id)
+    order = Order.objects.get(id=order_id)
     if request.method == 'POST':
         form = DocAddForm(request.POST, request.FILES, instance=customer)
         if not form.is_valid():
@@ -157,3 +157,26 @@ def add_doc(request, id):
         'customer': customer,
         'order': order,
     })
+
+
+@login_required
+def bookmark(request):
+    customer = Customer.objects.get(user=request.user)
+    liked_hospital = LikeHospital.objects.filter(customer=customer)
+    hospitals = []
+    for h in liked_hospital:
+        hospitals.append(h.hospital)
+    return render(request, 'bookmark.html', {
+        'hospitals': hospitals,
+        'customer': customer,
+    })
+
+
+@login_required
+def unmark(request, hospital_id):
+    customer = Customer.objects.get(user=request.user)
+    hosp = Hospital.objects.get(id=hospital_id)
+    liked_hospital = LikeHospital.objects.filter(customer=customer, hospital=hosp)
+    for item in liked_hospital:
+        item.delete()
+    return redirect('info_bookmark')
