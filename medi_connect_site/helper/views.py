@@ -65,7 +65,7 @@ def hospital(request, hospital_id, disease_id):
     for each in order_list:
         if hosp == each.hospital and each.status == str(0):
             order = each
-    order = Order(hospital=hosp, status=0, disease=dis) if order is None else order
+    order = Order(hospital=hosp, status=0, disease=dis, customer=customer) if order is None else order
     order.save()
     return render(request, "hospital_order.html", {
         'hospital': hosp,
@@ -97,6 +97,7 @@ def order_info_first(request, order_id, slot_num):
     order = Order.objects.get(id=order_id)
     order.customer = customer
     order.status = 0
+    order.week_number_at_submit = slot_num
     order.save()
     hosp = order.hospital
     slot_num = int(slot_num)
