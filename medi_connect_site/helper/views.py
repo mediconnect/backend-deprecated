@@ -31,8 +31,8 @@ STATUS_CHOICES = (
 )
 
 
-trans_list_C2E = list(Staff.objects.filter(role=1).values_list('id', flat=True))
-trans_list_E2C = list(Staff.objects.filter(role=2).values_list('id', flat=True))
+trans_list_C2E = list(Staff.objects.filter(role=1))
+trans_list_E2C = list(Staff.objects.filter(role=2))
 
 def move(trans_list, translator, new_position):
     old_position = trans_list.index(translator)
