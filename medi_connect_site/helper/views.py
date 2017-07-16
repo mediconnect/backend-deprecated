@@ -262,6 +262,7 @@ def finish(request, order_id):
             'customer': customer,
         })
 
+
 @login_required
 def like_hospital(request):
     customer = Customer.objects.get(user=request.user)
