@@ -102,9 +102,9 @@ def order(request):
         if order.status == 0:
             continue
         order_dict = dict()
-        order_dict['hospital'] = order.hospital.name
-        order_dict['disease'] = order.disease.name
-        order_dict['patient'] = order.patient.name
+        order_dict['hospital'] = order.hospital.name if order.hospital is not None else 'unknown'
+        order_dict['disease'] = order.disease.name if order.disease is not None else 'unknown'
+        order_dict['patient'] = order.patient.name if order.patient is not None else 'unknown'
         order_dict['order_id'] = order.id
         order_dict['status'] = order.status
         order_list.append(order_dict)

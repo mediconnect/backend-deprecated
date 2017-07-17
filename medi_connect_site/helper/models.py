@@ -249,8 +249,8 @@ class Patient(models.Model):
 
 
 class LikeHospital(models.Model):
-    customer = models.OneToOneField(Customer)
-    hospital = models.OneToOneField(Hospital)
+    customer = models.ForeignKey(Customer)
+    hospital = models.ForeignKey(Hospital)
 
     class Meta:
         db_table = 'like_hospital'
