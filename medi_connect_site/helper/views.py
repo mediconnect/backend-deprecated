@@ -1,10 +1,9 @@
 from django.shortcuts import render, redirect
-from models import Hospital, Patient, Disease, Order, Document, Staff
+from django.http import JsonResponse
+from models import Hospital, Patient, Disease, Order, Document, Staff, LikeHospital
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from helper.forms import OrderFormFirst, OrderFormSecond, DocumentForm
-from django.utils.http import urlquote
 from django.core.files.storage import FileSystemStorage
 
 # Status
@@ -34,6 +33,8 @@ STATUS_CHOICES = (
 trans_list_C2E = list(Staff.objects.filter(role=1))
 trans_list_E2C = list(Staff.objects.filter(role=2))
 
+
+
 def move(trans_list, translator, new_position):
     old_position = trans_list.index(translator)
     trans_list.insert(new_position, trans_list.pop(old_position))
@@ -42,8 +43,6 @@ def move(trans_list, translator, new_position):
 
 def assign_auto(order):
     is_C2E = True if order.status <= 3 else False
-    print trans_list_C2E[0]
-    print len(trans_list_C2E)
     if is_C2E:
         translator = Staff.objects.get(id=trans_list_C2E[0])
         move(trans_list_C2E, translator, -1)
@@ -54,8 +53,7 @@ def assign_auto(order):
         move(trans_list_E2C, translator, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)
-	order.save()
-
+        order.save()
 
 
 # Create your views here.
@@ -69,7 +67,7 @@ def hospital(request, hospital_id, disease_id):
     for each in order_list:
         if hosp == each.hospital and each.status == str(0):
             order = each
-    order = Order(hospital=hosp, status=0, disease=dis) if order is None else order
+    order = Order(hospital=hosp, status=0, disease=dis, customer=customer) if order is None else order
     order.save()
     return render(request, "hospital_order.html", {
         'hospital': hosp,
@@ -101,6 +99,7 @@ def order_info_first(request, order_id, slot_num):
     order = Order.objects.get(id=order_id)
     order.customer = customer
     order.status = 0
+    order.week_number_at_submit = slot_num
     order.save()
     hosp = order.hospital
     slot_num = int(slot_num)
@@ -255,7 +254,7 @@ def finish(request, order_id):
     if request.method == 'POST':
         order.status = 1
         order.save()
-        assign_auto(order)
+        # assign_auto(order)
         return render(request, 'finish.html', {
             'customer': customer,
         })
@@ -264,3 +263,23 @@ def finish(request, order_id):
         return render(request, 'finish.html', {
             'customer': customer,
         })
+
+@login_required
+def like_hospital(request):
+    customer = Customer.objects.get(user=request.user)
+    hospital_id = int(request.GET.get('hospital_id', None))
+    mark = True if request.GET.get('mark', 'false') == 'true' else False
+    hosp = Hospital.objects.get(id=hospital_id)
+    data = LikeHospital.objects.filter(customer=customer, hospital=hosp)
+
+    if not mark:
+        return JsonResponse({'status': "liked"}) if len(data) > 0 else JsonResponse({'status': 'no'})
+
+    if len(data) > 0:
+        for item in data:
+            item.delete()
+        return JsonResponse({'status': 'no'})
+
+    add = LikeHospital(customer=customer, hospital=hosp)
+    add.save()
+    return JsonResponse({'status': 'liked'})

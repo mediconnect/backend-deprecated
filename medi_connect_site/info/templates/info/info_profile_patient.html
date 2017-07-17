@@ -3,9 +3,9 @@
 {% block content %}
 
 <ul class="nav nav-pills nav-stacked">
-    <li role="presentation"><a href="{% url 'info_profile' id=customer.id %}">Profile</a></li>
-    <li role="presentation"><a href="{% url 'info_profile_password' id=customer.id %}">Password</a></li>
-    <li role="presentation" class="active"><a href="{% url 'info_profile_password' id=customer.id %}">Add Patient</a></li>
+    <li role="presentation"><a href="{% url 'info_profile' %}">Profile</a></li>
+    <li role="presentation"><a href="{% url 'info_profile_password' %}">Password</a></li>
+    <li role="presentation" class="active"><a href="{% url 'info_profile_password' %}">Add Patient</a></li>
 </ul>
 
 
@@ -15,7 +15,7 @@
     {% endfor %}
 </ul>
 
-<form action="{% url 'info_profile_patient' id=customer.id %}" method="post" role="form">
+<form action="{% url 'info_profile_patient' %}" method="post" role="form">
     {% csrf_token %}
     {% for field in form.visible_fields %}
     <div class="form-group{% if field.errors %} has-error{% endif %}">
