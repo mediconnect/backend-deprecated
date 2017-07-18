@@ -51,6 +51,25 @@ for (var order_i in order_list) {
     })());
     docform.action = Urls.add_doc(order.order_id);
     li.appendChild(docform);
+
+    // give document url for files
+    if (order.trans_status >= 6) {
+        for (doc in order.documents) {    
+            li.appendChild((function() {
+                var link = document.createElement("a");
+                link.href = doc;
+                link.appendChild(document.createTextNode("Click to download the feedback file"));
+                return link;
+            })());
+        }
+    } else {
+        li.appendChild((function() {
+            var link = document.createElement("a");
+            link.appendChild(document.createTextNode("Feedback is not available yet"));
+            return link;
+        })());
+    }
+
     ul.appendChild(li);
 }
 </script>

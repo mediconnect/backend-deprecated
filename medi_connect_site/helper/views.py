@@ -85,7 +85,7 @@ def hospital(request, hospital_id, disease_id):
     order_list = Order.objects.filter(customer=customer)
     order = None
     for each in order_list:
-        if hosp == each.hospital and each.status == str(0):
+        if hosp == each.hospital and each.status == 0:
             order = each
     order = Order(hospital=hosp, status=0, disease=dis, customer=customer) if order is None else order
     order.save()
