@@ -249,8 +249,8 @@ class Patient(models.Model):
 
 
 class LikeHospital(models.Model):
-    customer = models.ForeignKey(Customer)
-    hospital = models.ForeignKey(Hospital)
+    customer = models.ForeignKey(Customer, unique=False, default=None, related_name='like_customer')
+    hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='like_hospital')
 
     class Meta:
         db_table = 'like_hospital'

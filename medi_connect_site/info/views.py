@@ -107,6 +107,10 @@ def order(request):
         order_dict['patient'] = order.patient.name if order.patient is not None else 'unknown'
         order_dict['order_id'] = order.id
         order_dict['status'] = order.status
+        order_dict['trans_status'] = order.trans_status if order.trans_status is not None else 'unknown'
+        order_dict['documents'] = []
+        for item in order.feedback.all():
+            order_dict['documents'].append(item.document.url)
         order_list.append(order_dict)
     return render(request, 'info_order.html', {
         'order_list': json.dumps(order_list),
