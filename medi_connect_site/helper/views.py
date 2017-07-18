@@ -29,6 +29,24 @@ STATUS_CHOICES = (
     (PAID, 'PAID'),
 )
 
+# Trans_status
+
+NOT_STARTED = 0  # assignment not started yet
+ONGOING = 1  # assignment started not submitted to supervisor
+APPROVING = 2  # assignment submitted to supervisor for approval
+APPROVED = 3  # assignment approved, to status 5
+DISAPPROVED = 4  # assignment disapproved, return to status 1
+FINISHED = 5  # assignment approved and finished
+
+TRANS_STATUS_CHOICE = (
+    (NOT_STARTED, 'not_started'),
+    (ONGOING, 'ongoing'),
+    (APPROVING, 'approving'),
+    (APPROVED, 'approved'),
+    (DISAPPROVED, 'disapproved'),
+    (FINISHED, 'finished'),
+)
+
 trans_list_C2E = list(Staff.objects.filter(role=1).values_list('id', flat=True))
 trans_list_E2C = list(Staff.objects.filter(role=2).values_list('id', flat=True))
 
@@ -43,14 +61,18 @@ def assign_auto(order):
     is_C2E = True if order.status <= 3 else False
     if is_C2E:
         translator = Staff.objects.get(id=trans_list_C2E[0])
-        move(trans_list_C2E, translator, -1)
+        move(trans_list_C2E, translator.id, -1)
         order.translator_C2E = translator
+        print translator.get_name()
         order.change_status(TRANSLATING_ORIGIN)
+        order.change_trans_status(NOT_STARTED)
+        order.save()
     else:
         translator = Staff.objects.get(id=trans_list_E2C[0])
-        move(trans_list_E2C, translator, -1)
+        move(trans_list_E2C, translator.id, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)
+        order.change_trans_status(NOT_STARTED)
         order.save()
 
 
@@ -63,7 +85,7 @@ def hospital(request, hospital_id, disease_id):
     order_list = Order.objects.filter(customer=customer)
     order = None
     for each in order_list:
-        if hosp == each.hospital and each.status == str(0):
+        if hosp == each.hospital and each.status == 0:
             order = each
     order = Order(hospital=hosp, status=0, disease=dis, customer=customer) if order is None else order
     order.save()
@@ -252,7 +274,7 @@ def finish(request, order_id):
     if request.method == 'POST':
         order.status = 1
         order.save()
-        # assign_auto(order)
+        assign_auto(order)
         return render(request, 'finish.html', {
             'customer': customer,
         })

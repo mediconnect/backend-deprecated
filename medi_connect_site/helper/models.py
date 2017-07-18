@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Q
 import datetime
+import django
 from customer.models import Customer
 
 
@@ -67,15 +68,16 @@ class Rank(models.Model):
 
 # Status
 STARTED = 0
-SUBMITTED = 1  # deposit paid, only change appointment at this status
-TRANSLATING_ORIGIN = 2  # translator starts translating origin documents
-RECEIVED = 3  # origin documents translated, approved and submitted to hospitals
+PAID = 1  # paid
+RECEIVED = 2  # order received
+TRANSLATING_ORIGIN = 3  # translator starts translating origin documents
+SUBMITTED = 4  # origin documents translated, approved and submitted to hospitals
 # ============ Above is C2E status =============#
 # ============Below is E2C status ==============#
-RETURN = 4  # hospital returns feedback
-TRANSLATING_FEEDBACK = 5  # translator starts translating feedback documents
-FEEDBACK = 6  # feedback documents translated, approved, and feedback to customer
-PAID = 7  # remaining amount paid
+RETURN = 5  # hospital returns feedback
+TRANSLATING_FEEDBACK = 6  # translator starts translating feedback documents
+FEEDBACK = 7  # feedback documents translated, approved, and feedback to customer
+
 
 STATUS_CHOICES = (
     (STARTED, 'started'),
@@ -88,7 +90,7 @@ STATUS_CHOICES = (
     (PAID, 'PAID'),
 )
 
-status_dict = ['STARTED', 'SUBMITTED', 'TRANSLATING_ORIGIN', 'RECEIVED', 'RETURN', 'TRANSLATING_FEEDBACK', 'FEEDBACK',
+status_dict = ['STARTED', 'RECEIVED', 'TRANSLATING_ORIGIN', 'SUBMITTED', 'RETURN', 'TRANSLATING_FEEDBACK', 'FEEDBACK',
                'PAID']
 # Trans_status
 
@@ -108,7 +110,18 @@ TRANS_STATUS_CHOICE = (
     (FINISHED, 'finished'),
 )
 
+trans_status_dict = ['NOT_STARTED','ONGOING','APPROVING','APPROVED','FINISHED']
+EIGHT = datetime.timedelta(hours = 8)
 
+class UTC_8(datetime.tzinfo):
+  def utcoffset(self, dt):
+    return EIGHT
+  def tzname(self, dt):
+    return "UTC-8"
+  def dst(self, dt):
+    return EIGHT
+
+utc_8 = UTC_8()
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
@@ -124,7 +137,7 @@ class Order(models.Model):
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
     week_number_at_submit = models.IntegerField(default=0)
     # use week_number_at_submit to hold the week number and calculate the submit deadline
-    submit = models.DateField(default=datetime.date.today)  # datetime of receiving the order
+    submit = models.DateTimeField(default=django.utils.timezone.now)  # datetime of receiving the order
     # all origin document uploaded by customer
     origin = models.ManyToManyField('Document', related_name='original_file')
     # all feedback document TRANSLATED and APPROVED
@@ -133,7 +146,7 @@ class Order(models.Model):
     pending = models.ManyToManyField('Document', related_name='pending_file')
     receive = models.DateField(default=datetime.date.today)
     status = models.CharField(blank=True, max_length=20, choices=STATUS_CHOICES)
-    trans_status = models.CharField(blank=True, max_length=20, choices=TRANS_STATUS_CHOICE)
+    trans_status = models.CharField(default = 0, max_length=20, choices=TRANS_STATUS_CHOICE)
     auto_assigned = models.BooleanField(default=False)
 
     class Meta:
@@ -146,17 +159,17 @@ class Order(models.Model):
         return self.weeknumber_at_submit - (datetime.today.isocalendar()[1] - self.submit.isocalendar()[1])
 
     def get_deadline(self):  # default deadline 2 days after submit
-        return str(self.submit + datetime.timedelta(days=2))  # date time algebra
+        return self.submit+datetime.timedelta(days=2)-datetime.datetime.now(utc_8)
+
 
     def get_submit_deadline(self):
-        d = "%s-W%s" % (self.submit.isocalendar()[0], self.submit.isocalendar()[1])
-        return datetime.datetime.strptime(d + '-0', "%Y-W%W-%w")
+        return self.submit+datetime.timedelta(days=5)-datetime.datetime.now(utc_8)
 
     def get_status(self):
         return status_dict[int(self.status)]
 
     def get_trans_status(self):
-        return self.trans_status
+        return trans_status_dict[int(self.trans_status)]
 
     def change_status(self, status):
         self.status = status
@@ -186,6 +199,7 @@ class Document(models.Model):
 class Staff(models.Model):
     user = models.OneToOneField(User)
     role = models.IntegerField(default=0)
+    #sequence = models.IntegerField(unique=True)
 
     class Meta:
         db_table = 'auth_staff'
@@ -249,8 +263,8 @@ class Patient(models.Model):
 
 
 class LikeHospital(models.Model):
-    customer = models.ForeignKey(Customer, unique=False, default=None, related_name='like_customer')
-    hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='like_hospital')
+    customer = models.ForeignKey(Customer, unique=False, default=None, related_name='customer_liked')
+    hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_liked')
 
     class Meta:
         db_table = 'like_hospital'

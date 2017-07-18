@@ -7,11 +7,15 @@
         border: 1px solid black;
         border-collapse: collapse;
     }
+    table.fixed {table-layout:fixed; width:90px;}/*Setting the table width is important!*/
+    table.fixed td {overflow:hidden;}/*Hide text outside the cell.*/
+    table.fixed td:nth-of-type(1) {width:20px;}/*Setting the width of column 1.*/
+    table.fixed td:nth-of-type(2) {width:30px;}/*Setting the width of column 2.*/
+    table.fixed td:nth-of-type(3) {width:40px;}/*Setting the width of column 3.*/
   </style>
-
   <p>Orders:</p>
 
-  <table style="width:80%">
+  <table class= 'fixed' id = 'table', style="width:100%">
     <tr>
         <th>Order Id</th>
         <th>Customer</th>
@@ -25,11 +29,24 @@
         <th>Submit Deadline</th>
         <th>Detail</th>
     </tr>
+
+    <tr>
+        <th><input type="text" id="searchInput0" onkeyup="search(0)" placeholder="Search"></th>
+        <th><input type="text" id="searchInput1" onkeyup="search(1)" placeholder="Search"></th>
+        <th><input type="text" id="searchInput2" onkeyup="search(2)" placeholder="Search"></th>
+        <th><input type="text" id="searchInput3" onkeyup="search(3)" placeholder="Search"></th>
+        <th><input type="text" id="searchInput4" onkeyup="search(4)" placeholder="Search"></th>
+        <th><input type="text" id="searchInput5" onkeyup="search(5)" placeholder="Search"></th>
+        <th><input type="text" id="searchInput6" onkeyup="search(6)" placeholder="Search"></th>
+        <th><input type="text" id="searchInput7" onkeyup="search(7)" placeholder="Search"></th>
+        <th><input type="text" id="searchInput8" onkeyup="search(8)" placeholder="Search"></th>
+        <th><input type="text" id="searchInput9" onkeyup="search(9)" placeholder="Search"></th>
+    </tr>
     {%for obj in orders%}
 
       <tr>
         <td>{{obj.id}}</td>
-        <td>{{obj.customer_id}}</td>
+        <td>{{obj.customer.get_name}}</td>
         <td>{{obj.hospital.name}}</td>
         <td>{{obj.disease.name}}</td>
         <td>{{obj.translator_C2E.get_name}}</td>
@@ -40,8 +57,33 @@
         <td>{{obj.get_submit_deadline}}</td>
         <td><a href = "{% url 'detail' id=supervisor.id order_id=obj.id %}">Detail</a></td>
       </tr>
+
     {%endfor%}
-  </table>
+  </table>  
+
+
+  <script>
+    function search(x) {
+      // Declare variables
+      var input, filter, table, tr, td, i;
+      input = document.getElementById("searchInput"+x.toString());
+      filter = input.value.toUpperCase();
+      table = document.getElementById("table");
+      tr = table.getElementsByTagName("tr");
+
+      // Loop through all table rows, and hide those who don't match the search query
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[x];
+        if (td) {
+          if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+</script>
 
 
 
