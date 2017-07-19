@@ -59,12 +59,12 @@ def assign_auto(order):
     print len(trans_list_C2E)
     if is_C2E:
         translator = Staff.objects.get(id=trans_list_C2E[0])
-        move(trans_list_C2E, translator, -1)
+        move(trans_list_C2E, translator.id, -1)
         order.translator_C2E = translator
         order.change_status(TRANSLATING_ORIGIN)
     else:
         translator = Staff.objects.get(id=trans_list_E2C[0])
-        move(trans_list_E2C, translator, -1)
+        move(trans_list_E2C, translator.id, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)
         order.save()

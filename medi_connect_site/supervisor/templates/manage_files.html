@@ -6,7 +6,7 @@
  <ul>
    {% for obj in assignment.origin.all %}
    <li>
-     <a href="obj.url">{{obj.document}}</a>
+     <a href="{{obj.document.url}}">{{obj.document}}</a>
    </li>
    {% endfor %}
  </ul>
@@ -18,7 +18,7 @@
          {{ form }}
          <li>
              <input style="border:none" type = 'text' name = 'document' value = '{{obj.document}}' size="30px" readonly><br>
-            <a href="obj.url" class="btn">Download</a>
+            <a href="{{obj.document.url}}" class="btn">Download</a>
             <input type="submit" class="btn" value="Delete" name="delete"/>
          </li>
 
@@ -29,7 +29,7 @@
  <ul>
    {% for obj in assignment.pending.all %}
    <li>
-     <a href="obj.url">{{obj.document}}</a>
+     <a href="{{obj.document.url}}">{{obj.document}}</a>
    </li>
    {% endfor %}
  </ul>

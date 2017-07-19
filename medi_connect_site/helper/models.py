@@ -155,15 +155,13 @@ class Order(models.Model):
     def get_info(self):
         return 'Order id is ' + str(self.id) + ' Deadline is :' + self.get_deadline()
 
-    def get_week(self):
-        return self.weeknumber_at_submit - (datetime.today.isocalendar()[1] - self.submit.isocalendar()[1])
 
     def get_deadline(self):  # default deadline 2 days after submit
         return self.submit+datetime.timedelta(days=2)-datetime.datetime.now(utc_8)
 
 
     def get_submit_deadline(self):
-        return self.submit+datetime.timedelta(days=5)-datetime.datetime.now(utc_8)
+        return self.submit+datetime.timedelta(days=7*self.week_number_at_submit)-datetime.datetime.now(utc_8)
 
     def get_status(self):
         return status_dict[int(self.status)]
