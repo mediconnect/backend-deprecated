@@ -13,6 +13,7 @@
             <th>Customer Name</th>
             <th>Email</th>
             <th>Order Info</th>
+            <th>Reset Password</th>
         </tr>
 
         {%for obj in customers%}
@@ -20,6 +21,12 @@
 		    <td>{{obj.get_name}}</td>
             <td>{{obj.user.email}}</td>
             <td>{{obj.get_order}}</td>
+            <td>
+                <form action="{% url 'reset_password' customer_id=obj.id %}">
+                    {% csrf_token %}
+                    <input type="submit" value="Reset Password" />
+                </form>
+            </td>
             </tr>
   	    {%endfor%}
 

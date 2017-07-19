@@ -4,13 +4,14 @@ from django.utils.encoding import uri_to_iri
 from django.views.generic.edit import FormView
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from customer.models import Customer
 from django.apps import apps
-from supervisor.forms import TransSignUpForm, AssignForm, ApproveForm
+from supervisor.forms import TransSignUpForm, AssignForm, ApproveForm,PasswordResetForm
 from helper.models import Staff
 
 Order = apps.get_model('helper', 'Order')
@@ -58,12 +59,12 @@ def assign_auto(order):
     print len(trans_list_C2E)
     if is_C2E:
         translator = Staff.objects.get(id=trans_list_C2E[0])
-        move(trans_list_C2E, translator, -1)
+        move(trans_list_C2E, translator.id, -1)
         order.translator_C2E = translator
         order.change_status(TRANSLATING_ORIGIN)
     else:
         translator = Staff.objects.get(id=trans_list_E2C[0])
-        move(trans_list_E2C, translator, -1)
+        move(trans_list_E2C, translator.id, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)
         order.save()
@@ -264,6 +265,36 @@ def customer_list(request, id):
         'supervisor': supervisor
     })
 
+@login_required
+def reset_password(request,customer_id):
+    supervisor = Staff.objects.get(user=request.user)
+    customer = Customer.objects.get(id=customer_id)
+    if request.method == 'POST':
+        form = PasswordResetForm(request.POST)
+        if not form.is_valid():
+            return render(request, 'reset_password.html', {
+                'supervisor':supervisor,
+                'customer': customer,
+                'form': form
+            })
+        old_password = form.cleaned_data.get('old_password')
+        user = customer.user
+        if not check_password(old_password, user.password, preferred='default'):
+            form.add_error('old_password', 'password doesn\'t match with previous password')
+            return render(request, 'reset_password.html', {
+                'supervisor': supervisor,
+                'customer': customer,
+                'form': form
+            })
+        password = form.cleaned_data.get('password')
+        user.password = make_password(password)
+        user.save()
+        customer.save()
+    return render(request, 'reset_password.html', {
+        'supervisor': supervisor,
+        'customer': customer,
+        'form': PasswordResetForm()
+    })
 
 @login_required
 def translator_list(request, id):
