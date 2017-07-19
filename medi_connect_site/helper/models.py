@@ -228,10 +228,10 @@ class Staff(models.Model):
         count = 0
         if self.get_role() == 1:  # if translator_C2E
             for e in self.get_assignments():
-                count += Order.origin.all.count()
+                count += e.origin.count()
         if self.get_role() == 2:
             for e in self.get_assignments():
-                count += Order.feedback.all.count()
+                count += e.feedback.count()
         return count
 
 
