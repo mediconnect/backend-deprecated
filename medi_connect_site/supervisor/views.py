@@ -17,6 +17,7 @@ from helper.models import Staff
 Order = apps.get_model('helper', 'Order')
 Document = apps.get_model('helper', 'Document')
 Hospital = apps.get_model('helper', 'Hospital')
+Disease = apps.get_model('helper','Disease')
 # Create your views here.
 # Status
 STARTED = 0
@@ -42,6 +43,8 @@ STATUS_CHOICES = (
 )
 status_dict = ['STARTED', 'SUBMITTED', 'TRANSLATING_ORIGIN', 'RECEIVED', 'RETURN', 'TRANSLATING_FEEDBACK', 'FEEDBACK',
                'PAID']
+
+trans_status_dict = ['NOT_STARTED','ONGOING','APPROVING','APPROVED','FINISHED']
 
 trans_list_C2E = list(Staff.objects.filter(role=1).values_list('id', flat=True))
 trans_list_E2C = list(Staff.objects.filter(role=2).values_list('id', flat=True))
@@ -87,7 +90,27 @@ def assign_manually(order, translator):
 def supervisor(request, id):
     supervisor = Staff.objects.get(user_id=id)
     orders = Order.objects.all()
+    """
+    customer_choice = []
+    hospital_choice = []
+    for c_id in list(Order.objects.values_list('customer',flat=True).distinct()):
+        customer_choice.append(Customer.objects.get(id=c_id))
+    for c_id in list(Order.objects.values_list('hospital',flat=True).distinct()):
+        hospital_choice.append(Hospital.objects.get(id=h_id))
+    """
+    customer_choice = list(Customer.objects.all().distinct())
+    hospital_choice = list(Hospital.objects.all().distinct())
+    disease_choice = list(Disease.objects.all().distinct())
+    translator_C2E_choice = list(Staff.objects.filter(role=1).distinct())
+    translator_E2C_choice = list(Staff.objects.filter(role=2).distinct())
     return render(request, 'supervisor_home.html', {
+        'customer_choice':customer_choice,
+        'hospital_choice':hospital_choice,
+        'disease_choice':disease_choice,
+        'translator_C2E_choice':translator_C2E_choice,
+        'translator_E2C_choice':translator_E2C_choice,
+        'status_choice':status_dict,
+        'trans_status_choice':trans_status_dict,
         'orders': orders,
         'supervisor': supervisor,
     })
