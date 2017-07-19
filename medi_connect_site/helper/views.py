@@ -91,6 +91,7 @@ def hospital(request, hospital_id, disease_id):
     order.save()
     return render(request, "hospital_order.html", {
         'hospital': hosp,
+        'disease': dis,
         'customer': customer,
         'order_id': order.id,
     })
@@ -289,9 +290,11 @@ def finish(request, order_id):
 def like_hospital(request):
     customer = Customer.objects.get(user=request.user)
     hospital_id = int(request.GET.get('hospital_id', None))
+    disease_id = int(request.GET.get('disease_id', None))
     mark = True if request.GET.get('mark', 'false') == 'true' else False
     hosp = Hospital.objects.get(id=hospital_id)
-    data = LikeHospital.objects.filter(customer=customer, hospital=hosp)
+    dis = Disease.objects.get(id=disease_id)
+    data = LikeHospital.objects.filter(customer=customer, hospital=hosp, disease=dis)
 
     if not mark:
         return JsonResponse({'status': "liked"}) if len(data) > 0 else JsonResponse({'status': 'no'})
@@ -301,6 +304,6 @@ def like_hospital(request):
             item.delete()
         return JsonResponse({'status': 'no'})
 
-    add = LikeHospital(customer=customer, hospital=hosp)
+    add = LikeHospital(customer=customer, hospital=hosp, disease=dis)
     add.save()
     return JsonResponse({'status': 'liked'})

@@ -6,6 +6,7 @@ from forms import ProfileForm, PasswordResetForm, PatientAddForm, DocAddForm
 from django.contrib.auth.hashers import check_password, make_password
 import json
 from django.utils.http import urlquote
+from django.template.defaultfilters import register
 
 
 # Create your views here.
@@ -168,10 +169,13 @@ def bookmark(request):
     customer = Customer.objects.get(user=request.user)
     liked_hospital = LikeHospital.objects.filter(customer=customer)
     hospitals = []
+    diseases = dict()
     for h in liked_hospital:
         hospitals.append(h.hospital)
+        diseases[h.hospital.id] = h.disease.id
     return render(request, 'bookmark.html', {
         'hospitals': hospitals,
+        'diseases': diseases,
         'customer': customer,
     })
 
@@ -184,3 +188,8 @@ def unmark(request, hospital_id):
     for item in liked_hospital:
         item.delete()
     return redirect('info_bookmark')
+
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
