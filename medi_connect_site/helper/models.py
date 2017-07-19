@@ -78,7 +78,6 @@ RETURN = 5  # hospital returns feedback
 TRANSLATING_FEEDBACK = 6  # translator starts translating feedback documents
 FEEDBACK = 7  # feedback documents translated, approved, and feedback to customer
 
-
 STATUS_CHOICES = (
     (STARTED, 'started'),
     (SUBMITTED, 'submitted'),
@@ -110,18 +109,24 @@ TRANS_STATUS_CHOICE = (
     (FINISHED, 'finished'),
 )
 
-trans_status_dict = ['NOT_STARTED','ONGOING','APPROVING','APPROVED','FINISHED']
-EIGHT = datetime.timedelta(hours = 8)
+trans_status_dict = ['NOT_STARTED', 'ONGOING', 'APPROVING', 'APPROVED', 'FINISHED']
+EIGHT = datetime.timedelta(hours=8)
+
 
 class UTC_8(datetime.tzinfo):
-  def utcoffset(self, dt):
-    return EIGHT
-  def tzname(self, dt):
-    return "UTC-8"
-  def dst(self, dt):
-    return EIGHT
+    def utcoffset(self, dt):
+        return EIGHT
+
+    def tzname(self, dt):
+        return "UTC-8"
+
+    def dst(self, dt):
+        return EIGHT
+
 
 utc_8 = UTC_8()
+
+
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
@@ -146,7 +151,7 @@ class Order(models.Model):
     pending = models.ManyToManyField('Document', related_name='pending_file')
     receive = models.DateField(default=datetime.date.today)
     status = models.CharField(blank=True, max_length=20, choices=STATUS_CHOICES)
-    trans_status = models.CharField(default = 0, max_length=20, choices=TRANS_STATUS_CHOICE)
+    trans_status = models.CharField(default=0, max_length=20, choices=TRANS_STATUS_CHOICE)
     auto_assigned = models.BooleanField(default=False)
 
     class Meta:
@@ -210,7 +215,8 @@ class Document(models.Model):
 class Staff(models.Model):
     user = models.OneToOneField(User)
     role = models.IntegerField(default=0)
-    #sequence = models.IntegerField(unique=True)
+
+    # sequence = models.IntegerField(unique=True)
 
     class Meta:
         db_table = 'auth_staff'
@@ -276,6 +282,7 @@ class Patient(models.Model):
 class LikeHospital(models.Model):
     customer = models.ForeignKey(Customer, unique=False, default=None, related_name='customer_liked')
     hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_liked')
+    disease = models.ForeignKey(Disease, unique=False, default=None, related_name='disease_liked')
 
     class Meta:
         db_table = 'like_hospital'

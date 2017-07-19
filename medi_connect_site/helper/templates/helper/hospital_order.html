@@ -34,11 +34,13 @@
 
     function like(mark) {
         var hosp_id = {{hospital.id}};
+        var dis_id = {{disease.id}};
         $.ajax({
             url: "{% url 'like_hospital' %}",
             data: {
                 "hospital_id": hosp_id,
-                "mark": mark
+                "disease_id": dis_id,
+                "mark": mark,
             },
             dataType: 'json',
             success: function(data) {
