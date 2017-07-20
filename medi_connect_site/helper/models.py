@@ -162,10 +162,24 @@ class Order(models.Model):
 
 
     def get_deadline(self):  # default deadline 2 days after submit
-        return self.submit + datetime.timedelta(days=2) - datetime.datetime.now(utc_8)
+        total_sec = (self.submit+datetime.timedelta(days=2)-datetime.datetime.now(utc_8)).total_seconds()
+        days = int(total_sec/(3600*24))
+        hours = int((total_sec-3600*24*days)/3600)
+        deadline= str(days) +'  days,  '+str(hours)+'  hours'
+        if hours < 0:
+            deadline+=( '  (passdue)  ')
+        return deadline
+
+
 
     def get_submit_deadline(self):
-        return self.submit+datetime.timedelta(days=7*self.week_number_at_submit)-datetime.datetime.now(utc_8)
+        total_sec = (self.submit+datetime.timedelta(days=7*(self.week_number_at_submit+1))-datetime.datetime.now(utc_8)).total_seconds()
+        days = int(total_sec / (3600 * 24))
+        hours = int((total_sec - 3600 * 24 * days) / 3600)
+        submit_deadline= str(days) + '  days,  ' + str(hours) + '  hours'
+        if hours < 0:
+            submit_deadline+=( '  (passdue)  ')
+        return submit_deadline
 
     def get_status(self):
         return status_dict[int(self.status)]
