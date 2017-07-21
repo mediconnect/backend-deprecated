@@ -83,6 +83,13 @@ def assignment_summary(request, id, order_id):
             'translator': translator,
             'assignment': assignment
         })
+    if(request.POST.get('approval')):
+        assignment.change_trans_status(APPROVING)
+        assignment.save()
+        return render(request, 'assignment_summary.html', {
+            'translator': translator,
+            'assignment': assignment
+        })
 
     if request.method == 'POST' and request.FILES.get('trans_files',False):
         file = request.FILES['trans_files']
