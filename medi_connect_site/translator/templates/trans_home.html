@@ -4,9 +4,16 @@
 
 {% block content %}
   <p>Assignments</p>
-  	{%for obj in assignments%}
-		<a href="{% url 'assignment_summary' id=translator.id order_id=obj.id %}">{{obj.get_info}}</a>
-		<small>(Status:{{obj.get_status}})</small><br>
-  	{%endfor%}
+	<ul>
+		{%for obj in assignments%}
+		<li>
+			<p>Order:{{obj.id}}</p>
+			<a href="{% url 'assignment_summary' id=translator.id order_id=obj.id %}" class = "button">View Summary</a>
+			<p>(Status:{{obj.get_trans_status}})</p>
+		</li>
+
+	{%endfor%}
+	</ul>
+
 
 {% endblock %}

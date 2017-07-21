@@ -287,7 +287,7 @@ def customer_list(request, id):
         'customers': customers,
         'supervisor': supervisor
     })
-
+"""
 @login_required
 def reset_password(request,customer_id):
     supervisor = Staff.objects.get(user=request.user)
@@ -318,6 +318,8 @@ def reset_password(request,customer_id):
         'customer': customer,
         'form': PasswordResetForm()
     })
+"""
+
 
 @login_required
 def translator_list(request, id):
