@@ -14,6 +14,5 @@ urlpatterns = [
     url(r'^customer_list/(?P<id>\d+)/$',supervisor_views.customer_list,name = 'customer_list'),
     url(r'^translator_list/(?P<id>\d+)/$',supervisor_views.translator_list,name = 'translator_list'),
     url(r'^hospital_list/(?P<id>\d+)/$',supervisor_views.hospital_list,name = 'hospital_list'),
-    url(r'^profile/password/(?P<customer_id>\d+)/$', supervisor_views.reset_password, name="reset_password"),
 ]
 

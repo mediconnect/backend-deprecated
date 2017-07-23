@@ -3,11 +3,18 @@
 {% block title %}Assignment Summary {% endblock %}
 {% block content %}
 <p>{{assignment.get_info}}</p>
+{%if assignment.get_trans_status == 'NOT_STARTED'%}
+    <form  method = 'post'>
+        {% csrf_token %}
+        {{form}}
+        <input type="submit" class="btn" value="Accept" name="accept"/>
+    </form>
+{%endif%}
 <p>Assignment Files</p>
 {%if translator.get_role == 1%}
 <ul>
-    {%for document in assignment.origin.all%}
-    <li>{{document.url}}</li>
+    {%for obj in assignment.origin.all%}
+    <li><a href = {{obj.document.url}}>{{obj.document}}</a></li>
     {%endfor%}
 </ul>
 {%endif%}
@@ -18,15 +25,21 @@
     {%endfor%}
 </ul>
 {%endif%}
-<p>Upload Translated Files</p>
-<ul>
-    {%for document in assignment.pending.all%}
-    <li><a href ="document.url">{{document.document}}</a></li>
-    {%endfor%}
-</ul>
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="trans_files">
-    <button type="submit">Upload</button>
-</form>
+
+{%if assignment.get_trans_status != 'NOT_STARTED'%}
+    <p>Upload Translated Files</p>
+    <ul>
+        {%for obj in assignment.pending.all%}
+        <li><a href ="{{obj.document.url}}">{{obj.document}}</a></li>
+        {%endfor%}
+    </ul>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="trans_files">
+        <button type="submit">Upload</button><br>
+        <input type="submit" class="btn" value="Submit to Approval" name="approval"/>
+    </form>
+{%endif%}
+
 {% endblock %}

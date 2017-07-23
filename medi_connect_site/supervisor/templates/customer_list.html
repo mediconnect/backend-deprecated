@@ -22,7 +22,7 @@
             <td>{{obj.user.email}}</td>
             <td>{{obj.get_order}}</td>
             <td>
-                <form action="{% url 'reset_password' customer_id=obj.id %}">
+                <form action="{% url 'password_reset' %}">
                     {% csrf_token %}
                     <input type="submit" value="Reset Password" />
                 </form>

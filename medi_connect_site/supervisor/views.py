@@ -211,15 +211,17 @@ def approve(request, id, order_id):
         else:
             approval = form.cleaned_data.get('approval')
             if approval:
-                if assignment.status == 2:
-                    assignment.change_status(3)
+
+                if assignment.get_status() == 'TRANSLATING_ORIGIN':
+                    assignment.change_status(RECEIVED)
                     for document in assignment.pending.all():
                         assignment.origin.add(document)
-                if assignment.status == 5:
-                    assignment.change_status(6)
+                if assignment.get_status() == 'TRANSLATING_FEEDBACK':
+                    assignment.change_status(FEEDBACK)
                     for document in assignment.pending.all():
                         assignment.feedback.add(document)
                 assignment.pending.clear()
+                assignment.save()
             if not approval:
                 assignment.change_status(4)
                 for document in assignment.pending.all():
@@ -227,7 +229,7 @@ def approve(request, id, order_id):
                         assignment.origin.add(document)
                     if document.is_feedback:
                         assignment.feedback.add(document)
-
+                assignment.save()
             return render(request, 'detail.html', {
                 'assignment': assignment,
                 'supervisor': supervisor,
@@ -287,7 +289,7 @@ def customer_list(request, id):
         'customers': customers,
         'supervisor': supervisor
     })
-
+"""
 @login_required
 def reset_password(request,customer_id):
     supervisor = Staff.objects.get(user=request.user)
@@ -318,6 +320,8 @@ def reset_password(request,customer_id):
         'customer': customer,
         'form': PasswordResetForm()
     })
+"""
+
 
 @login_required
 def translator_list(request, id):

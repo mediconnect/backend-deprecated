@@ -13,16 +13,33 @@ Order = apps.get_model('helper','Order')
 Document = apps.get_model('helper','Document')
 # Create your views here.
 
+# Trans_status
+
+NOT_STARTED = 0  # assignment not started yet
+ONGOING = 1  # assignment started not submitted to supervisor
+APPROVING = 2  # assignment submitted to supervisor for approval
+APPROVED = 3  # assignment approved, to status 5
+DISAPPROVED = 4  # assignment disapproved, return to status 1
+FINISHED = 5  # assignment approved and finished
+
+TRANS_STATUS_CHOICE = (
+    (NOT_STARTED, 'not_started'),
+    (ONGOING, 'ongoing'),
+    (APPROVING, 'approving'),
+    (APPROVED, 'approved'),
+    (DISAPPROVED, 'disapproved'),
+    (FINISHED, 'finished'),
+)
+
+trans_status_dict = ['NOT_STARTED', 'ONGOING', 'APPROVING', 'APPROVED', 'FINISHED']
 
 def get_assignments(translator):  # return order of all assignments
     assignments = []
     if translator.get_role() == 1: #if translator_C2E
-        print '1'
         for order in Order.objects.filter(Q(translator_C2E=translator.id)).order_by('submit'):
             assignments.append(order)
         return assignments
     if translator.get_role() == 2: #if translator_E2C
-        print '2'
         for order in Order.objects.filter(Q(translator_E2C =translator.id)).order_by('submit'):
             assignments.append(order)
         return assignments
@@ -37,7 +54,7 @@ def get_assignments_status(translator, trans_status):  # return order of all ong
 
 @login_required
 def translator(request, id):
-    translator = Staff.objects.get(user_id = id)
+    translator = Staff.objects.get(id = id)
     assignments = get_assignments(translator)
     return render(request, 'trans_home.html',
                   {
@@ -49,6 +66,7 @@ def translator(request, id):
 def translator_status(request,id,status):
     translator = Staff.objects.get(id = id)
     assignments = get_assignments_status(translator,status)
+
     return render(request,'trans_home.html',
                   {
                       'assignments':assignments,
@@ -58,11 +76,26 @@ def translator_status(request,id,status):
 def assignment_summary(request, id, order_id):
     translator = Staff.objects.get(id = id)
     assignment = Order.objects.get(id=order_id)
-    if request.method == 'POST' and request.FILES['trans_files']:
+    if (request.POST.get('accept')):
+        assignment.change_trans_status(ONGOING)
+        assignment.save()
+        return render(request, 'assignment_summary.html', {
+            'translator': translator,
+            'assignment': assignment
+        })
+    if(request.POST.get('approval')):
+        assignment.change_trans_status(APPROVING)
+        assignment.save()
+        return render(request, 'assignment_summary.html', {
+            'translator': translator,
+            'assignment': assignment
+        })
+
+    if request.method == 'POST' and request.FILES.get('trans_files',False):
         file = request.FILES['trans_files']
         fs = FileSystemStorage()
         filename = fs.save(file.name, file)
-        document = Document(order=assignment, document=file, is_origin=True)
+        document = Document(order=assignment, document=file, is_origin=False)
         document.save()
         assignment.pending.add(document)
         assignment.save()
@@ -70,7 +103,10 @@ def assignment_summary(request, id, order_id):
             'translator': translator,
             'assignment': assignment
         })
-    return render(request,'assignment_summary.html',{
-        'assignment':assignment,
-        'translator':translator
-    })
+
+    else:
+
+        return render(request, 'assignment_summary.html', {
+            'translator': translator,
+            'assignment': assignment
+        })
