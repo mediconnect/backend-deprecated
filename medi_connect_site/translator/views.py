@@ -54,7 +54,7 @@ def get_assignments_status(translator, trans_status):  # return order of all ong
 
 @login_required
 def translator(request, id):
-    translator = Staff.objects.get(id = id)
+    translator = Staff.objects.get(user_id = id)
     assignments = get_assignments(translator)
     return render(request, 'trans_home.html',
                   {
@@ -64,7 +64,7 @@ def translator(request, id):
 
 @login_required
 def translator_status(request,id,status):
-    translator = Staff.objects.get(id = id)
+    translator = Staff.objects.get(user_id = id)
     assignments = get_assignments_status(translator,status)
 
     return render(request,'trans_home.html',
