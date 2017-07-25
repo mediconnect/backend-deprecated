@@ -8,7 +8,7 @@
 		{%for obj in assignments%}
 		<li>
 			<p>Order:{{obj.id}}</p>
-			<a href="{% url 'assignment_summary' id=translator.id order_id=obj.id %}" class = "button">View Summary</a>
+			<a href="{% url 'assignment_summary' id=translator.user.id order_id=obj.id %}" class = "button">View Summary</a>
 			<p>(Status:{{obj.get_trans_status}})</p>
 		</li>
 
