@@ -21,15 +21,15 @@ Disease = apps.get_model('helper','Disease')
 # Create your views here.
 # Status
 STARTED = 0
-PAID = 1  # paid
-RECEIVED = 2  # order received
-TRANSLATING_ORIGIN = 3  # translator starts translating origin documents
-SUBMITTED = 4  # origin documents translated, approved and submitted to hospitals
+SUBMITTED = 1  # deposit paid, only change appointment at this status
+TRANSLATING_ORIGIN = 2  # translator starts translating origin documents
+RECEIVED = 3  # origin documents translated, approved and submitted to hospitals
 # ============ Above is C2E status =============#
 # ============Below is E2C status ==============#
-RETURN = 5  # hospital returns feedback
-TRANSLATING_FEEDBACK = 6  # translator starts translating feedback documents
-FEEDBACK = 7  # feedback documents translated, approved, and feedback to customer
+RETURN = 4  # hospital returns feedback
+TRANSLATING_FEEDBACK = 5  # translator starts translating feedback documents
+FEEDBACK = 6  # feedback documents translated, approved, and feedback to customer
+PAID = 7  # remaining amount paid
 
 STATUS_CHOICES = (
     (STARTED, 'started'),
@@ -41,6 +41,7 @@ STATUS_CHOICES = (
     (FEEDBACK, 'feedback'),
     (PAID, 'PAID'),
 )
+
 
 status_dict = ['STARTED', 'RECEIVED', 'TRANSLATING_ORIGIN', 'SUBMITTED', 'RETURN', 'TRANSLATING_FEEDBACK', 'FEEDBACK',
                'PAID']

@@ -38,6 +38,7 @@ def get_assignments(translator):  # return order of all assignments
     if translator.get_role() == 1: #if translator_C2E
         for order in Order.objects.filter(Q(translator_C2E=translator.id)).order_by('submit'):
             assignments.append(order)
+            print order.get_trans_status()
         return assignments
     if translator.get_role() == 2: #if translator_E2C
         for order in Order.objects.filter(Q(translator_E2C =translator.id)).order_by('submit'):
@@ -57,7 +58,6 @@ def get_assignments_status(translator, trans_status):  # return order of all ong
 def translator(request, id):
 
     translator = Staff.objects.get(user_id = id)
-    print get_assignments_status(translator,'ONGOING')
     assignments = get_assignments(translator)
     return render(request, 'trans_home.html',
                   {
@@ -69,7 +69,7 @@ def translator(request, id):
 def translator_status(request,id,status):
     translator = Staff.objects.get(user_id = id)
     assignments = get_assignments_status(translator,status)
-
+    print assignments
     return render(request,'trans_home.html',
                   {
                       'assignments':assignments,
