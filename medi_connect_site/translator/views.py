@@ -31,7 +31,7 @@ TRANS_STATUS_CHOICE = (
     (FINISHED, 'finished'),
 )
 
-trans_status_dict = ['NOT_STARTED', 'ONGOING', 'APPROVING', 'APPROVED', 'FINISHED']
+trans_status_dict = ['NOT_STARTED', 'ONGOING', 'APPROVING', 'APPROVED', 'DISAPPROVED','FINISHED']
 
 def get_assignments(translator):  # return order of all assignments
     assignments = []
@@ -70,7 +70,7 @@ def translator_status(request,id,status):
     translator = Staff.objects.get(user_id = id)
     assignments = get_assignments_status(translator,status)
     print assignments
-    return render(request,'trans_home.html',
+    return render(request,'trans_home_status.html',
                   {
                       'assignments':assignments,
                       'translator':translator

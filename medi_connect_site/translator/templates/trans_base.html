@@ -10,7 +10,8 @@
    <li><a href="{% url 'trans_home' id=translator.user.id%}">Assignments</a></li>
    <li><a href="{% url 'trans_home_status' id=translator.user.id status='ONGOING'%}" >Ongoing</a></li>
    <li><a href="{% url 'trans_home_status' id=translator.user.id status='APPROVING'%}">Approving</a></li>
-      <li><a href="{% url 'translator_logout' %}">Logout</a></li>
+   <li><a href="{% url 'trans_home_status' id=translator.user.id status='FINISHED'%}">Finished</a></li>
+   <li><a href="{% url 'translator_logout' %}">Logout</a></li>
   </ul>
 </div>
 {% block content %}

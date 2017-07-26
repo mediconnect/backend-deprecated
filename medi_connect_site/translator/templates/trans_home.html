@@ -6,13 +6,16 @@
   <p>Assignments</p>
 	<ul>
 		{%for obj in assignments%}
-		<li>
-			<p>Order:{{obj.id}}</p>
-			<a href="{% url 'assignment_summary' id=translator.user.id order_id=obj.id %}" class = "button">View Summary</a>
-			<p>(Status:{{obj.get_trans_status}})</p>
-		</li>
 
-	{%endfor%}
+			{% if obj.get_trans_status != 'FINISHED' %}
+				<li>
+					<p>Order:{{obj.id}}</p>
+					<a href="{% url 'assignment_summary' id=translator.user.id order_id=obj.id %}" class = "button">View Summary</a>
+					<p>(Status:{{obj.get_trans_status}})</p>
+				</li>
+			{% endif %}
+
+		{%endfor%}
 	</ul>
 
 
