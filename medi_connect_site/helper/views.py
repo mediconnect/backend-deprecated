@@ -79,10 +79,20 @@ def assign_auto(order):
 # Create your views here.
 @login_required
 def hospital(request, hospital_id, disease_id):
+    """
+    :param request:
+    :param hospital_id: Hospital of the order
+    :param disease_id: Disease of the order
+    :return:
+    this function takes two parameters to record the hospital customer chooses and
+    the disease customer searches. it will create order or fetch an order from database
+    if previous order is not done. it will then pass the data to front end of hospital order
+    placement page.
+    """
     hosp = Hospital.objects.get(id=hospital_id)
     dis = Disease.objects.get(id=disease_id)
     customer = Customer.objects.get(user=request.user)
-    order_list = Order.objects.filter(customer=customer)
+    order_list = Order.objects.filter(customer=customer, hospital=hosp, disease=dis)
     order = None
     for each in order_list:
         if hosp == each.hospital and each.status == 0:
@@ -97,7 +107,12 @@ def hospital(request, hospital_id, disease_id):
     })
 
 
-# those are helper methods for reducing too many if conditions
+"""
+for the sake of sanity of code style, which caused by multiple if conditions, create
+multiple functions calls here. and insert key to dictionary, and let value be the function
+header. the concept works like callback function.
+"""
+
 def slot_0(hosp):
     hosp.slots_open_0 -= 1
 
@@ -116,6 +131,15 @@ def slot_3(hosp):
 
 @login_required
 def order_info_first(request, order_id, slot_num):
+    """
+    :param request:
+    :param order_id: Order
+    :param slot_num: Hospital slot customer chooses
+    :return:
+    this function takes request from the hospital order placement page. the function has two jobs.
+    1. check the available slot of hospital, and return error if there is not available slot.
+    2. redirect to specific function according to the order status.
+    """
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
     order.customer = customer
