@@ -21,15 +21,15 @@ Disease = apps.get_model('helper','Disease')
 # Create your views here.
 # Status
 STARTED = 0
-SUBMITTED = 1  # deposit paid, only change appointment at this status
-TRANSLATING_ORIGIN = 2  # translator starts translating origin documents
-RECEIVED = 3  # origin documents translated, approved and submitted to hospitals
+PAID = 1  # paid
+RECEIVED = 2  # order received
+TRANSLATING_ORIGIN = 3  # translator starts translating origin documents
+SUBMITTED = 4  # origin documents translated, approved and submitted to hospitals
 # ============ Above is C2E status =============#
 # ============Below is E2C status ==============#
-RETURN = 4  # hospital returns feedback
-TRANSLATING_FEEDBACK = 5  # translator starts translating feedback documents
-FEEDBACK = 6  # feedback documents translated, approved, and feedback to customer
-PAID = 7  # remaining amount paid
+RETURN = 5  # hospital returns feedback
+TRANSLATING_FEEDBACK = 6  # translator starts translating feedback documents
+FEEDBACK = 7  # feedback documents translated, approved, and feedback to customer
 
 STATUS_CHOICES = (
     (STARTED, 'started'),
@@ -41,9 +41,25 @@ STATUS_CHOICES = (
     (FEEDBACK, 'feedback'),
     (PAID, 'PAID'),
 )
-status_dict = ['STARTED', 'SUBMITTED', 'TRANSLATING_ORIGIN', 'RECEIVED', 'RETURN', 'TRANSLATING_FEEDBACK', 'FEEDBACK',
-               'PAID']
 
+status_dict = ['STARTED', 'PAID','RECEIVED', 'TRANSLATING_ORIGIN', 'SUBMITTED', 'RETURN', 'TRANSLATING_FEEDBACK', 'FEEDBACK']
+# Trans_status
+
+NOT_STARTED = 0  # assignment not started yet
+ONGOING = 1  # assignment started not submitted to supervisor
+APPROVING = 2  # assignment submitted to supervisor for approval
+APPROVED = 3  # assignment approved, to status 5
+DISAPPROVED = 4  # assignment disapproved, return to status 1
+FINISHED = 5  # assignment approved and finished
+
+TRANS_STATUS_CHOICE = (
+    (NOT_STARTED, 'not_started'),
+    (ONGOING, 'ongoing'),
+    (APPROVING, 'approving'),
+    (APPROVED, 'approved'),
+    (DISAPPROVED, 'disapproved'),
+    (FINISHED, 'finished'),
+)
 trans_status_dict = ['NOT_STARTED','ONGOING','APPROVING','APPROVED','FINISHED']
 
 trans_list_C2E = list(Staff.objects.filter(role=1).values_list('id', flat=True))
@@ -90,20 +106,32 @@ def assign_manually(order, translator):
 def supervisor(request, id):
     supervisor = Staff.objects.get(user_id=id)
     orders = Order.objects.all()
-    """
-    customer_choice = []
-    hospital_choice = []
-    for c_id in list(Order.objects.values_list('customer',flat=True).distinct()):
-        customer_choice.append(Customer.objects.get(id=c_id))
-    for c_id in list(Order.objects.values_list('hospital',flat=True).distinct()):
-        hospital_choice.append(Hospital.objects.get(id=h_id))
-    """
     customer_choice = list(Customer.objects.all().distinct())
     hospital_choice = list(Hospital.objects.all().distinct())
     disease_choice = list(Disease.objects.all().distinct())
     translator_C2E_choice = list(Staff.objects.filter(role=1).distinct())
     translator_E2C_choice = list(Staff.objects.filter(role=2).distinct())
     return render(request, 'supervisor_home.html', {
+        'customer_choice':customer_choice,
+        'hospital_choice':hospital_choice,
+        'disease_choice':disease_choice,
+        'translator_C2E_choice':translator_C2E_choice,
+        'translator_E2C_choice':translator_E2C_choice,
+        'status_choice':status_dict,
+        'trans_status_choice':trans_status_dict,
+        'orders': orders,
+        'supervisor': supervisor,
+    })
+
+def order_status(request, id,status):
+    supervisor = Staff.objects.get(user_id=id)
+    orders = Order.objects.filter(trans_status = status)
+    customer_choice = list(Customer.objects.all().distinct())
+    hospital_choice = list(Hospital.objects.all().distinct())
+    disease_choice = list(Disease.objects.all().distinct())
+    translator_C2E_choice = list(Staff.objects.filter(role=1).distinct())
+    translator_E2C_choice = list(Staff.objects.filter(role=2).distinct())
+    return render(request, 'supervisor_order_status.html', {
         'customer_choice':customer_choice,
         'hospital_choice':hospital_choice,
         'disease_choice':disease_choice,
@@ -210,10 +238,11 @@ def approve(request, id, order_id):
             })
         else:
             approval = form.cleaned_data.get('approval')
+            print approval
             if approval:
-
                 if assignment.get_status() == 'TRANSLATING_ORIGIN':
                     assignment.change_status(RECEIVED)
+
                     for document in assignment.pending.all():
                         assignment.origin.add(document)
                 if assignment.get_status() == 'TRANSLATING_FEEDBACK':
@@ -221,14 +250,15 @@ def approve(request, id, order_id):
                     for document in assignment.pending.all():
                         assignment.feedback.add(document)
                 assignment.pending.clear()
+                assignment.change_trans_status(APPROVED)
                 assignment.save()
             if not approval:
-                assignment.change_status(4)
                 for document in assignment.pending.all():
                     if document.is_origin:
                         assignment.origin.add(document)
                     if document.is_feedback:
                         assignment.feedback.add(document)
+                assignment.change_trans_status(ONGOING)
                 assignment.save()
             return render(request, 'detail.html', {
                 'assignment': assignment,

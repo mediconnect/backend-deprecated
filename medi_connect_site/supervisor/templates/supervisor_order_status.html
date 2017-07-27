@@ -135,22 +135,21 @@
         </th>
     </tr>
     {%for obj in orders%}
-      {%if obj.get_status != 'DONE'%}
-          <tr>
-            <td>{{obj.id}}</td>
-            <td>{{obj.customer.get_name}}</td>
-            <td>{{obj.patient.name}}</td>
-            <td>{{obj.hospital.name}}</td>
-            <td>{{obj.disease.name}}</td>
-            <td>{{obj.translator_C2E.get_name}}</td>
-            <td>{{obj.translator_E2C.get_name}}</td>
-            <td>{{obj.get_status}}</td>
-            <td>{{obj.get_trans_status}}</td>
-            <td>{{obj.get_deadline}}</td>
-            <td>{{obj.get_submit_deadline}}</td>
-            <td><a href = "{% url 'detail' id=supervisor.id order_id=obj.id %}">Detail</a></td>
-          </tr>
-      {% endif %}
+
+      <tr>
+        <td>{{obj.id}}</td>
+        <td>{{obj.customer.get_name}}</td>
+        <td>{{obj.patient.name}}</td>
+        <td>{{obj.hospital.name}}</td>
+        <td>{{obj.disease.name}}</td>
+        <td>{{obj.translator_C2E.get_name}}</td>
+        <td>{{obj.translator_E2C.get_name}}</td>
+        <td>{{obj.get_status}}</td>
+        <td>{{obj.get_trans_status}}</td>
+        <td>{{obj.get_deadline}}</td>
+        <td>{{obj.get_submit_deadline}}</td>
+        <td><a href = "{% url 'detail' id=supervisor.id order_id=obj.id %}">Detail</a></td>
+      </tr>
 
     {%endfor%}
   </table>
@@ -226,7 +225,7 @@
 
       // Loop through all table rows, and hide those who don't match the search query
       for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[7];
+        td = tr[i].getElementsByTagName("td")[6];
         if (td) {
           if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
             if(tr[i].style.display == "none"){

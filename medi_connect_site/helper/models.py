@@ -77,6 +77,7 @@ SUBMITTED = 4  # origin documents translated, approved and submitted to hospital
 RETURN = 5  # hospital returns feedback
 TRANSLATING_FEEDBACK = 6  # translator starts translating feedback documents
 FEEDBACK = 7  # feedback documents translated, approved, and feedback to customer
+DONE = 8 #customer confirm all process done
 
 STATUS_CHOICES = (
     (STARTED, 'started'),
@@ -89,8 +90,7 @@ STATUS_CHOICES = (
     (PAID, 'PAID'),
 )
 
-status_dict = ['STARTED', 'RECEIVED', 'TRANSLATING_ORIGIN', 'SUBMITTED', 'RETURN', 'TRANSLATING_FEEDBACK', 'FEEDBACK',
-               'PAID']
+status_dict = ['STARTED', 'PAID','RECEIVED', 'TRANSLATING_ORIGIN', 'SUBMITTED', 'RETURN', 'TRANSLATING_FEEDBACK', 'FEEDBACK','DONE']
 # Trans_status
 
 NOT_STARTED = 0  # assignment not started yet
@@ -109,7 +109,7 @@ TRANS_STATUS_CHOICE = (
     (FINISHED, 'finished'),
 )
 
-trans_status_dict = ['NOT_STARTED', 'ONGOING', 'APPROVING', 'APPROVED', 'FINISHED']
+trans_status_dict = ['NOT_STARTED', 'ONGOING', 'APPROVING', 'APPROVED', 'DISAPPROVED','FINISHED']
 EIGHT = datetime.timedelta(hours=8)
 
 

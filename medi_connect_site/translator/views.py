@@ -5,12 +5,12 @@ from forms import AssignmentSummaryForm
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.apps import apps
-from helper.models import Staff
 
 # Create your models here.
 #Get Order and Document Model from helper.models
 Order = apps.get_model('helper','Order')
 Document = apps.get_model('helper','Document')
+Staff = apps.get_model('helper','Staff')
 # Create your views here.
 
 # Trans_status
@@ -31,13 +31,14 @@ TRANS_STATUS_CHOICE = (
     (FINISHED, 'finished'),
 )
 
-trans_status_dict = ['NOT_STARTED', 'ONGOING', 'APPROVING', 'APPROVED', 'FINISHED']
+trans_status_dict = ['NOT_STARTED', 'ONGOING', 'APPROVING', 'APPROVED', 'DISAPPROVED','FINISHED']
 
 def get_assignments(translator):  # return order of all assignments
     assignments = []
     if translator.get_role() == 1: #if translator_C2E
         for order in Order.objects.filter(Q(translator_C2E=translator.id)).order_by('submit'):
             assignments.append(order)
+            print order.get_trans_status()
         return assignments
     if translator.get_role() == 2: #if translator_E2C
         for order in Order.objects.filter(Q(translator_E2C =translator.id)).order_by('submit'):
@@ -48,12 +49,14 @@ def get_assignments(translator):  # return order of all assignments
 def get_assignments_status(translator, trans_status):  # return order of all ongoing assignments
     assignments = []
     for assignment in translator.get_assignments():
+        print assignment.get_trans_status()
         if assignment.get_trans_status() == trans_status:
             assignments.append(assignment)
     return assignments
 
 @login_required
 def translator(request, id):
+
     translator = Staff.objects.get(user_id = id)
     assignments = get_assignments(translator)
     return render(request, 'trans_home.html',
@@ -66,16 +69,17 @@ def translator(request, id):
 def translator_status(request,id,status):
     translator = Staff.objects.get(user_id = id)
     assignments = get_assignments_status(translator,status)
-
-    return render(request,'trans_home.html',
+    print assignments
+    return render(request,'trans_home_status.html',
                   {
                       'assignments':assignments,
                       'translator':translator
                   })
 @login_required
 def assignment_summary(request, id, order_id):
-    translator = Staff.objects.get(id = id)
+    translator = Staff.objects.get(user_id = id)
     assignment = Order.objects.get(id=order_id)
+
     if (request.POST.get('accept')):
         assignment.change_trans_status(ONGOING)
         assignment.save()
