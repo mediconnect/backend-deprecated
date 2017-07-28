@@ -60,10 +60,12 @@ class SignUpForm(forms.ModelForm):
     class Meta:
         model = User
         exclude = ['last_login', 'date_joined']
+        # specify fields to automatically include different inputs on website
         fields = ['username', 'email', 'password', 'first_name', 'last_name']
 
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
+        # specifiy the fields order on front end
         self.field_order = [
             'username',
             'password',
@@ -76,6 +78,7 @@ class SignUpForm(forms.ModelForm):
             'zipcode'
         ]
         self.order_fields(self.field_order)
+        # append validators for fields
         self.fields['username'].validators.append(forbidden_username_validator)
         self.fields['username'].validators.append(invalid_username_validator)
         self.fields['username'].validators.append(unique_email_validator)
@@ -88,6 +91,11 @@ class SignUpForm(forms.ModelForm):
         self.fields['last_name'].required = True
 
     def clean(self):
+        """
+        the clean function is automatically called by Django framework during upon
+        data transformation to back end. developers can use it to append error, and
+        check the validity of user input.
+        """
         super(SignUpForm, self).clean()
         password = self.cleaned_data.get('password')
         confirm_password = self.cleaned_data.get('confirm_password')

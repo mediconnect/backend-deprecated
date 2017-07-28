@@ -75,7 +75,7 @@ def result(request):
             for unit in dis:
                 keywords = set(unit.keyword.split(','))
                 if query in keywords:
-                    dis = unit
+                    query = unit
                     break
 
             hospital_info = []
@@ -97,6 +97,11 @@ def result(request):
 
 
 def result_guest(request):
+    """
+    result guest is search function used for customers not login.
+    this function can be optimized in the future, the algorithm of how
+    search is implemented.
+    """
     if request.method == 'POST':
         form = SearchForm(request.POST)
         if not form.is_valid():
@@ -105,6 +110,12 @@ def result_guest(request):
             })
         else:
             query = form.cleaned_data.get('query')
+            dis = Disease.objects.filter(Q(keyword__icontains=query))
+            for unit in dis:
+                keywords = set(unit.keyword.split(','))
+                if query in keywords:
+                    query = unit
+                    break
             hospital_info = []
             hospitals = Hospital.objects.filter(Q(specialty__icontains=query))
             for hosp in hospitals:
@@ -133,6 +144,11 @@ def hospital(request):
 
 
 def username_check(request):
+    """
+    :param request:
+    :return: JsonResponse with exist == True or False
+    this method used by front end Ajax call to check if user name exists
+    """
     name = request.GET.get('username', None)
     users = User.objects.filter(username=name)
     if len(users) > 0:
@@ -141,6 +157,11 @@ def username_check(request):
 
 
 def email_check(request):
+    """
+    :param request:
+    :return: JsonResponse with exist == True or False
+    this method used by front end Ajax call to check if email exists
+    """
     name = request.GET.get('email', None)
     users = User.objects.filter(email=name)
     if len(users) > 0:
