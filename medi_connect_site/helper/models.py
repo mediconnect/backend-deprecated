@@ -143,7 +143,7 @@ class Order(models.Model):
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
     week_number_at_submit = models.IntegerField(default=0)
     # use week_number_at_submit to hold the week number and calculate the submit deadline
-    submit = models.DateTimeField(auto_now_add=True, blank=True) # datetime of receiving the order
+    submit = models.DateTimeField(default=datetime.datetime.now(utc_8))  # datetime of receiving the order
     # all origin document uploaded by customer
     origin = models.ManyToManyField('Document', related_name='original_file')
     # all feedback document TRANSLATED and APPROVED
