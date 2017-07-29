@@ -3,8 +3,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Q
 import datetime
-import django
 from customer.models import Customer
+from django.utils import timezone
 
 
 # Function to move the position of a translator in sequence
@@ -77,7 +77,7 @@ SUBMITTED = 4  # origin documents translated, approved and submitted to hospital
 RETURN = 5  # hospital returns feedback
 TRANSLATING_FEEDBACK = 6  # translator starts translating feedback documents
 FEEDBACK = 7  # feedback documents translated, approved, and feedback to customer
-DONE = 8 #customer confirm all process done
+DONE = 8  # customer confirm all process done
 
 STATUS_CHOICES = (
     (STARTED, 'started'),
@@ -90,7 +90,8 @@ STATUS_CHOICES = (
     (PAID, 'PAID'),
 )
 
-status_dict = ['STARTED', 'PAID','RECEIVED', 'TRANSLATING_ORIGIN', 'SUBMITTED', 'RETURN', 'TRANSLATING_FEEDBACK', 'FEEDBACK','DONE']
+status_dict = ['STARTED', 'PAID', 'RECEIVED', 'TRANSLATING_ORIGIN', 'SUBMITTED', 'RETURN', 'TRANSLATING_FEEDBACK',
+               'FEEDBACK', 'DONE']
 # Trans_status
 
 NOT_STARTED = 0  # assignment not started yet
@@ -109,7 +110,7 @@ TRANS_STATUS_CHOICE = (
     (FINISHED, 'finished'),
 )
 
-trans_status_dict = ['NOT_STARTED', 'ONGOING', 'APPROVING', 'APPROVED', 'DISAPPROVED','FINISHED']
+trans_status_dict = ['NOT_STARTED', 'ONGOING', 'APPROVING', 'APPROVED', 'DISAPPROVED', 'FINISHED']
 EIGHT = datetime.timedelta(hours=8)
 
 
@@ -142,7 +143,7 @@ class Order(models.Model):
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
     week_number_at_submit = models.IntegerField(default=0)
     # use week_number_at_submit to hold the week number and calculate the submit deadline
-    submit = models.DateTimeField(default=django.utils.timezone.now)  # datetime of receiving the order
+    submit = models.DateTimeField(auto_now_add=True, blank=True) # datetime of receiving the order
     # all origin document uploaded by customer
     origin = models.ManyToManyField('Document', related_name='original_file')
     # all feedback document TRANSLATED and APPROVED
@@ -160,25 +161,24 @@ class Order(models.Model):
     def get_info(self):
         return 'Order id is ' + str(self.id) + ' Deadline is :' + self.get_deadline()
 
-
     def get_deadline(self):  # default deadline 2 days after submit
-        total_sec = (self.submit+datetime.timedelta(days=2)-datetime.datetime.now(utc_8)).total_seconds()
-        days = int(total_sec/(3600*24))
-        hours = int((total_sec-3600*24*days)/3600)
-        deadline= str(days) +'  days,  '+str(hours)+'  hours'
-        if hours < 0:
-            deadline+=( '  (passdue)  ')
-        return deadline
-
-
-
-    def get_submit_deadline(self):
-        total_sec = (self.submit+datetime.timedelta(days=7*(self.week_number_at_submit+1))-datetime.datetime.now(utc_8)).total_seconds()
+        total_sec = (self.submit + datetime.timedelta(days=2) - datetime.datetime.now(utc_8)).total_seconds()
         days = int(total_sec / (3600 * 24))
         hours = int((total_sec - 3600 * 24 * days) / 3600)
-        submit_deadline= str(days) + '  days,  ' + str(hours) + '  hours'
+        deadline = str(days) + '  days,  ' + str(hours) + '  hours'
         if hours < 0:
-            submit_deadline+=( '  (passdue)  ')
+            deadline += ('  (passdue)  ')
+        return deadline
+
+    def get_submit_deadline(self):
+        total_sec = (
+            self.submit + datetime.timedelta(days=7 * (self.week_number_at_submit + 1)) - datetime.datetime.now(
+                utc_8)).total_seconds()
+        days = int(total_sec / (3600 * 24))
+        hours = int((total_sec - 3600 * 24 * days) / 3600)
+        submit_deadline = str(days) + '  days,  ' + str(hours) + '  hours'
+        if hours < 0:
+            submit_deadline += ('  (passdue)  ')
         return submit_deadline
 
     def get_status(self):

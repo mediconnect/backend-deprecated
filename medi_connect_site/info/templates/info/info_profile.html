@@ -26,4 +26,26 @@
     <button type="submit" class="btn btn-default">Save</button>
 </form>
 
+<div class="panel panel-default">
+    <div class="panel-heading">Patients Info</div>
+    {% if patients_length %}
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+        </tr>
+        {% for patient in patients %}
+        <tr>
+            <td>{{patient.name}}</td>
+            <td>{{patient.age}}</td>
+            <td>{{patient.gender}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div>You currently don't have patients</div>
+    {% endif %}
+</div>
+
 {% endblock %}

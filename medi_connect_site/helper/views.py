@@ -113,6 +113,7 @@ multiple functions calls here. and insert key to dictionary, and let value be th
 header. the concept works like callback function.
 """
 
+
 def slot_0(hosp):
     hosp.slots_open_0 -= 1
 

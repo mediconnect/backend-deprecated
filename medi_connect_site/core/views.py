@@ -9,8 +9,6 @@ from customer.views import customer
 from translator.views import translator
 from supervisor.views import supervisor
 from helper.models import Hospital, Disease, Order, Staff
-from django.views.decorators.csrf import csrf_protect
-from django.contrib.auth.forms import PasswordResetForm
 
 
 # Create your views here
@@ -75,7 +73,7 @@ def result(request):
             for unit in dis:
                 keywords = set(unit.keyword.split(','))
                 if query in keywords:
-                    query = unit
+                    dis = unit
                     break
 
             hospital_info = []
@@ -114,7 +112,6 @@ def result_guest(request):
             for unit in dis:
                 keywords = set(unit.keyword.split(','))
                 if query in keywords:
-                    query = unit
                     break
             hospital_info = []
             hospitals = Hospital.objects.filter(Q(specialty__icontains=query))

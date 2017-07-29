@@ -35,9 +35,12 @@ def profile(request):
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
     })
+    patients = Patient.objects.filter(customer=customer)
     return render(request, 'info_profile.html', {
         'customer': customer,
         'form': form,
+        'patients': patients,
+        'patients_length': len(patients) > 0,
     })
 
 
