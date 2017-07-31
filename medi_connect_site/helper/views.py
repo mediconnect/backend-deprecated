@@ -98,17 +98,16 @@ def hospital(request, hospital_id, disease_id):
         if int(each.status) == 0:
             order = each
             break
-    order = Order(hospital=hosp, step=-1, status=0, disease=dis, customer=customer) if order is None else order
+    order = Order(hospital=hosp, status=0, disease=dis, customer=customer) if order is None else order
     order.save()
-    print order.id
     if order.step == 0:
-        return redirect('order_submit_first', order_id=int(order.id))
+        return redirect('order_info_first', order_id=int(order.id), slot_num=order.week_number_at_submit)
     elif order.step == 1:
-        return redirect('order_submit_second', order_id=int(order.id))
+        return redirect('order_submit_first', order_id=int(order.id))
     elif order.step == 2:
-        return redirect('document_submit', order_id=int(order.id))
+        return redirect('order_submit_second', order_id=int(order.id))
     elif order.step == 3:
-        return redirect('order_finish', order_id=int(order.id))
+        return redirect('document_submit', order_id=int(order.id))
 
     return render(request, "hospital_order.html", {
         'hospital': hosp,
