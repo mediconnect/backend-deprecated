@@ -95,39 +95,27 @@ def hospital(request, hospital_id, disease_id):
     order_list = Order.objects.filter(customer=customer, hospital=hosp, disease=dis)
     order = None
     for each in order_list:
-        if hosp == each.hospital and each.status == 0:
+        if int(each.status) == 0:
             order = each
-    order = Order(hospital=hosp, status=0, disease=dis, customer=customer) if order is None else order
+            break
+    order = Order(hospital=hosp, step=-1, status=0, disease=dis, customer=customer) if order is None else order
     order.save()
+    print order.id
+    if order.step == 0:
+        return redirect('order_submit_first', order_id=int(order.id))
+    elif order.step == 1:
+        return redirect('order_submit_second', order_id=int(order.id))
+    elif order.step == 2:
+        return redirect('document_submit', order_id=int(order.id))
+    elif order.step == 3:
+        return redirect('order_finish', order_id=int(order.id))
+
     return render(request, "hospital_order.html", {
         'hospital': hosp,
         'disease': dis,
         'customer': customer,
         'order_id': order.id,
     })
-
-
-"""
-for the sake of sanity of code style, which caused by multiple if conditions, create
-multiple functions calls here. and insert key to dictionary, and let value be the function
-header. the concept works like callback function.
-"""
-
-
-def slot_0(hosp):
-    hosp.slots_open_0 -= 1
-
-
-def slot_1(hosp):
-    hosp.slots_open_1 -= 1
-
-
-def slot_2(hosp):
-    hosp.slots_open_2 -= 1
-
-
-def slot_3(hosp):
-    hosp.slots_open_3 -= 1
 
 
 @login_required
@@ -146,6 +134,7 @@ def order_info_first(request, order_id, slot_num):
     order.customer = customer
     order.status = 0
     order.week_number_at_submit = slot_num
+    order.step = 0
     order.save()
     hosp = order.hospital
     slot_num = int(slot_num)
@@ -162,23 +151,22 @@ def order_info_first(request, order_id, slot_num):
             'order_id': order.id,
             'error': 'the hospital does not have available slot'
         })
-    _ = {
-        0: slot_0(hosp),
-        1: slot_1(hosp),
-        2: slot_2(hosp),
-        3: slot_3(hosp),
-    }[slot_num]
-    hosp.save()
-    if order.patient is None or order.patient.name is None or len(order.patient.name) == 0:
-        return render(request, 'order_info_first.html', {
-            'customer': customer,
-            'form': OrderFormFirst(instance=request.user, initial={
-                'diagnose_hospital': order.hospital.name
-            }),
-            'order_id': order.id,
-        })
+    if slot_num == 0:
+        hosp.slots_open_0 -= 1
+    elif slot_num == 1:
+        hosp.slots_open_1 -= 1
+    elif slot_num == 2:
+        hosp.slots_open_2 -= 1
     else:
-        return redirect('order_submit_first', order_id=order_id)
+        hosp.slots_open_3 -= 1
+    hosp.save()
+    return render(request, 'order_info_first.html', {
+        'customer': customer,
+        'form': OrderFormFirst(instance=request.user, initial={
+            'diagnose_hospital': order.hospital.name
+        }),
+        'order_id': order.id,
+    })
 
 
 @login_required
@@ -202,6 +190,7 @@ def order_submit_first(request, order_id):
             patient.save()
             order.patient = patient
             order.status = 0
+            order.step = 1
             order.save()
             return render(request, 'order_info_second.html', {
                 'customer': customer,
@@ -223,6 +212,35 @@ def order_submit_first(request, order_id):
 
 
 @login_required
+def order_patient_select(request, order_id):
+    customer = Customer.objects.get(user=request.user)
+    order = Order.objects.get(id=order_id)
+    patients = Patient.objects.filter(customer=customer)
+    return render(request, 'order_patient_select.html', {
+        'customer': customer,
+        'order_id': order.id,
+        'patients': patients,
+    })
+
+
+@login_required
+def order_patient_finish(request, order_id, patient_id):
+    customer = Customer.objects.get(user=request.user)
+    order = Order.objects.get(id=order_id)
+    patient = Patient.objects.get(id=patient_id)
+    order.patient = patient
+    order.step = 1
+    order.save()
+    return render(request, 'order_info_second.html', {
+        'customer': customer,
+        'form': OrderFormSecond(instance=request.user, initial={
+            'name': order.disease.name
+        }),
+        'order_id': order.id,
+    })
+
+
+@login_required
 def order_submit_second(request, order_id):
     if request.method == 'POST':
         form = OrderFormSecond(request.POST)
@@ -236,6 +254,7 @@ def order_submit_second(request, order_id):
                 'customer': customer,
             })
         else:
+            order.step = 2
             return render(request, 'document_submit.html', {
                 'customer': customer,
                 'form': DocumentForm(),
@@ -280,6 +299,7 @@ def document_submit(request, order_id):
                 doc = Document(document=f, comment=doc_comment, description=doc_description, order=order)
                 doc.save()
                 order.origin.add(doc)
+            order.step = 3
             order.save()
             return render(request, 'order_review.html', {
                 'customer': customer,
@@ -299,6 +319,7 @@ def finish(request, order_id):
     customer = Customer.objects.get(user=request.user)
     if request.method == 'POST':
         order.status = 1
+        order.step = 4
         order.save()
         assign_auto(order)
         return render(request, 'finish.html', {

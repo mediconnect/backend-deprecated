@@ -1,0 +1,26 @@
+{% extends "customer_header.html" %}
+
+{% block content %}
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+        <th></th>
+    </tr>
+
+    {% for patient in patients %}
+    <tr>
+        <td>{{patient.name}}</td>
+        <td>{{patient.age}}</td>
+        <td>{{patient.gender}}</td>
+        <td>
+            <form action="{% url 'order_patient_finish'  order_id=order_id patient_id=patient.id %}">
+                <button>Select This Patient</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

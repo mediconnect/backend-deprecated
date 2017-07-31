@@ -154,6 +154,7 @@ class Order(models.Model):
     status = models.CharField(blank=True, max_length=20, choices=STATUS_CHOICES)
     trans_status = models.CharField(default=0, max_length=20, choices=TRANS_STATUS_CHOICE)
     auto_assigned = models.BooleanField(default=False)
+    step = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'order'
