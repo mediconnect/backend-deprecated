@@ -130,6 +130,8 @@ utc_8 = UTC_8()
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
+    # keep the website working, change this after change all patient related information
+    patient_order = models.ForeignKey('OrderPatient', on_delete=models.CASCADE, null=True)
     # translator Chinese to English
     translator_C2E = models.ForeignKey('Staff', on_delete=models.CASCADE, null=True,
                                        related_name='chinese_translator')
@@ -279,6 +281,20 @@ class Patient(models.Model):
     class Meta:
         db_table = 'patient'
 
+class OrderPatient(models.Model):
+    #Order Patient table to store patient information
+    #This is created everytime an order is placed
+    #Do not change this table when edit patient
+    #Fetch patient info for display order-related info
+    name = models.CharField(blank = True,max_length = 50)
+    age = models.IntegerField(blank = True)
+    gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)
+    category = models.CharField(max_length=50, default='COLD')
+    diagnose_hospital = models.CharField(max_length=50, blank=True)
+    doctor = models.TextField(blank=True)
+
+    class Meta:
+        db_table = 'order_patient'
 
 class LikeHospital(models.Model):
     customer = models.ForeignKey(Customer, unique=False, default=None, related_name='customer_liked')
