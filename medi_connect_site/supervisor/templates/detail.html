@@ -1,6 +1,7 @@
 {% extends 'supervisor_base.html' %}
 {% block title %}Order Detail{% endblock %}
 {% block content %}
+<p id = 'order_id'>Order Id: {{assignment.id}}</p>
 <p>Customer:   {{assignment.customer.get_name}}</p>
 <p>Hospital:   {{assignment.hospital.name}}</p>
 <p>Patient:   {{assignment.patient.name}}</p>
@@ -29,7 +30,16 @@
    </li>
    {% endfor %}
  </ul>
-    <a href="{% url 'assign' id=supervisor.id order_id=assignment.id %}"> Assign</a><br>
-    <a href="{% url 'manage_files' id=supervisor.id order_id=assignment.id %}"> Manage Files</a><br>
-    <a href="{% url 'approve' id=supervisor.id order_id=assignment.id %}"> Approve</a>
+<a href="{% url 'assign' id=supervisor.user_id order_id=assignment.id %}"> Assign</a><br>
+<a href="{% url 'manage_files' id=supervisor.user_id order_id=assignment.id %}"> Manage Files</a><br>
+<a href="{% url 'approve' id=supervisor.user_id order_id=assignment.id %}"> Approve</a>
+
+<form method = 'post'>
+     {% csrf_token %}
+     {{ form }}
+     <input type="submit" class="btn" value="Delete" name="delete"/>
+
+ </form>
+
+
 {% endblock %}

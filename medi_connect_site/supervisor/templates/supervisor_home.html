@@ -127,11 +127,11 @@
         </th>
         <th>
             <input type="text" id="searchInput9" onkeyup="search(9)" placeholder="Search">
-            <button onclick="sortDeadline(8)">Sort</button>
+            <button onclick="sortDeadline(9)">Sort</button>
         </th>
         <th>
             <input type="text" id="searchInput10" onkeyup="search(10)" placeholder="Search">
-            <button onclick="sortDeadline(9)">Sort</button>
+            <button onclick="sortDeadline(10)">Sort</button>
         </th>
     </tr>
     {%for obj in orders%}
@@ -139,7 +139,7 @@
           <tr>
             <td>{{obj.id}}</td>
             <td>{{obj.customer.get_name}}</td>
-            <td>{{obj.patient.name}}</td>
+            <td>{{obj.patient_order.name}}</td>
             <td>{{obj.hospital.name}}</td>
             <td>{{obj.disease.name}}</td>
             <td>{{obj.translator_C2E.get_name}}</td>
@@ -148,7 +148,7 @@
             <td>{{obj.get_trans_status}}</td>
             <td>{{obj.get_deadline}}</td>
             <td>{{obj.get_submit_deadline}}</td>
-            <td><a href = "{% url 'detail' id=supervisor.id order_id=obj.id %}">Detail</a></td>
+            <td><a href = "{% url 'detail' id=supervisor.user_id order_id=obj.id %}">Detail</a></td>
           </tr>
       {% endif %}
 

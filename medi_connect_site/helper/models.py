@@ -144,8 +144,7 @@ class Order(models.Model):
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
     week_number_at_submit = models.IntegerField(default=0)
     # use week_number_at_submit to hold the week number and calculate the submit deadline
-    import django
-    submit = models.DateTimeField(default=django.utils.timezone.now)  # datetime of receiving the order
+    submit = models.DateTimeField(default=datetime.datetime.now(utc_8))  # datetime of receiving the order
     # all origin document uploaded by customer
     origin = models.ManyToManyField('Document', related_name='original_file')
     # all feedback document TRANSLATED and APPROVED
@@ -165,6 +164,7 @@ class Order(models.Model):
         return 'Order id is ' + str(self.id) + ' Deadline is :' + self.get_deadline()
 
     def get_deadline(self):  # default deadline 2 days after submit
+        print self.submit
         total_sec = (self.submit + datetime.timedelta(days=2) - datetime.datetime.now(utc_8)).total_seconds()
         days = int(total_sec / (3600 * 24))
         hours = int((total_sec - 3600 * 24 * days) / 3600)
