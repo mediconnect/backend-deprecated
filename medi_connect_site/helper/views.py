@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from models import Hospital, Patient, Disease, Order, Document, Staff, LikeHospital
+from models import Hospital, Patient, Disease, Order, Document, Staff, LikeHospital, OrderPatient
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from helper.forms import OrderFormFirst, OrderFormSecond, DocumentForm
@@ -190,6 +190,9 @@ def order_submit_first(request, order_id):
             order.patient = patient
             order.status = 0
             order.step = 1
+            order_patient = OrderPatient(name=patient.name, age=patient.age, gender=patient.gender)
+            order_patient.save()
+            order.patient_order = order_patient
             order.save()
             return render(request, 'order_info_second.html', {
                 'customer': customer,
@@ -229,6 +232,9 @@ def order_patient_finish(request, order_id, patient_id):
     patient = Patient.objects.get(id=patient_id)
     order.patient = patient
     order.step = 1
+    order_patient = OrderPatient(name=patient.name, age=patient.age, gender=patient.gender)
+    order_patient.save()
+    order.patient_order = order_patient
     order.save()
     return render(request, 'order_info_second.html', {
         'customer': customer,
