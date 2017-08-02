@@ -74,8 +74,6 @@ def move(trans_list, translator, new_position):
 
 def assign_auto(order):
     is_C2E = True if order.status <= 3 else False
-    print trans_list_C2E[0]
-    print len(trans_list_C2E)
     if is_C2E:
         translator = Staff.objects.get(id=trans_list_C2E[0])
         move(trans_list_C2E, translator.id, -1)
@@ -213,7 +211,26 @@ def assign(request, id, order_id):
 
 def detail(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
-    supervisor = Staff.objects.get(id=id)
+    supervisor = Staff.objects.get(user_id=id)
+    if (request.POST.get('delete')):
+        assignment.delete()
+        orders = Order.objects.all()
+        customer_choice = list(Customer.objects.all().distinct())
+        hospital_choice = list(Hospital.objects.all().distinct())
+        disease_choice = list(Disease.objects.all().distinct())
+        translator_C2E_choice = list(Staff.objects.filter(role=1).distinct())
+        translator_E2C_choice = list(Staff.objects.filter(role=2).distinct())
+        return render(request, 'supervisor_home.html', {
+            'customer_choice': customer_choice,
+            'hospital_choice': hospital_choice,
+            'disease_choice': disease_choice,
+            'translator_C2E_choice': translator_C2E_choice,
+            'translator_E2C_choice': translator_E2C_choice,
+            'status_choice': status_dict,
+            'trans_status_choice': trans_status_dict,
+            'orders': orders,
+            'supervisor': supervisor,
+        })
     return render(request, 'detail.html', {
         'assignment': assignment,
         'supervisor': supervisor,
@@ -223,7 +240,7 @@ def detail(request, id, order_id):
 @login_required
 def approve(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
-    supervisor = Staff.objects.get(id=id)
+    supervisor = Staff.objects.get(user_id=id)
     trans_C2E = assignment.translator_C2E
     trans_E2C = assignment.translator_E2C
     customer = Customer.objects.get(id=assignment.customer_id)
@@ -238,7 +255,6 @@ def approve(request, id, order_id):
             })
         else:
             approval = form.cleaned_data.get('approval')
-            print approval
             if approval:
                 if assignment.get_status() == 'TRANSLATING_ORIGIN':
                     assignment.change_status(RECEIVED)
@@ -281,7 +297,7 @@ def approve(request, id, order_id):
 @login_required
 def manage_files(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
-    supervisor = Staff.objects.get(id=id)
+    supervisor = Staff.objects.get(user_id=id)
     if (request.POST.get('delete')):
         document = Document.objects.get(document=request.GET.get('document'))
         document.delete()
@@ -319,38 +335,7 @@ def customer_list(request, id):
         'customers': customers,
         'supervisor': supervisor
     })
-"""
-@login_required
-def reset_password(request,customer_id):
-    supervisor = Staff.objects.get(user=request.user)
-    customer = Customer.objects.get(id=customer_id)
-    if request.method == 'POST':
-        form = PasswordResetForm(request.POST)
-        if not form.is_valid():
-            return render(request, 'reset_password.html', {
-                'supervisor':supervisor,
-                'customer': customer,
-                'form': form
-            })
-        old_password = form.cleaned_data.get('old_password')
-        user = customer.user
-        if not check_password(old_password, user.password, preferred='default'):
-            form.add_error('old_password', 'password doesn\'t match with previous password')
-            return render(request, 'reset_password.html', {
-                'supervisor': supervisor,
-                'customer': customer,
-                'form': form
-            })
-        password = form.cleaned_data.get('password')
-        user.password = make_password(password)
-        user.save()
-        customer.save()
-    return render(request, 'reset_password.html', {
-        'supervisor': supervisor,
-        'customer': customer,
-        'form': PasswordResetForm()
-    })
-"""
+
 
 
 @login_required

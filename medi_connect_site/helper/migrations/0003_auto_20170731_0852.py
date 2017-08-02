@@ -12,9 +12,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='order',
-            name='step',
-            field=models.IntegerField(null=True),
-        ),
+
     ]
