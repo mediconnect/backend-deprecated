@@ -40,6 +40,11 @@
             <td>{{patient.name}}</td>
             <td>{{patient.age}}</td>
             <td>{{patient.gender}}</td>
+            <td>
+                <form action="{% url 'info_profile_patient_edit' patient_id=patient.id %}" method="get">
+                    <button type="submit" class="btn btn-default">Edit</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </table>

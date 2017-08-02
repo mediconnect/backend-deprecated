@@ -196,3 +196,37 @@ def unmark(request, hospital_id):
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
+
+
+@login_required
+def profile_patient_edit(request, patient_id):
+    customer = Customer.objects.get(user=request.user)
+    patient = Patient.objects.get(id=patient_id)
+    if request.method == 'POST':
+        form = PatientAddForm(request.POST)
+        if not form.is_valid():
+            form.add_initial_prefix({
+                'name': patient.name,
+                'age': patient.age,
+                'gender': patient.gender,
+            })
+            return render(request, 'info_profile_patient_edit.html', {
+                'customer': customer,
+                'form': form,
+                'patient': patient,
+            })
+        patient.name = form.cleaned_data.get('name')
+        patient.age = form.cleaned_data.get('age')
+        patient.gender = form.cleaned_data.get('gender')
+        patient.save()
+        return redirect('info_profile')
+    form = PatientAddForm(instance=request.user, initial={
+        'name': patient.name,
+        'age': patient.age,
+        'gender': patient.gender,
+    })
+    return render(request, 'info_profile_patient_edit.html', {
+        'customer': customer,
+        'form': form,
+        'patient': patient,
+    })
