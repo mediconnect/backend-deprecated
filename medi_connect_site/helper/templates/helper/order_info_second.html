@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<form action="{% url 'order_submit_second' order_id=order_id %}" method="post" role="form">
+<form action="{% url 'order_submit_second' order_id=order_id %}" method="post" role="form", enctype="multipart/form-data">
     {% csrf_token %}
     {% for field in form.visible_fields %}
     <div class="form-group{% if field.errors %} has-error{% endif %}">

@@ -10,6 +10,5 @@ urlpatterns = [
     url(r'^order/patients/(?P<order_id>\d+)/(?P<patient_id>\d+)/$', views.order_patient_finish,
         name="order_patient_finish"),
     url(r'^order/document/(?P<order_id>\d+)/$', views.order_submit_second, name="order_submit_second"),
-    url(r'^order/review/(?P<order_id>\d+)/$', views.document_submit, name="document_submit"),
     url(r'^order/submit/(?P<order_id>\d+)/$', views.finish, name="order_finish"),
 ]

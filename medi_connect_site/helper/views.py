@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from models import Hospital, Patient, Disease, Order, Document, Staff, LikeHospital, OrderPatient
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
-from helper.forms import OrderFormFirst, OrderFormSecond, DocumentForm
+from helper.forms import OrderFormFirst, OrderFormSecond
 from django.core.files.storage import FileSystemStorage
 
 # Status
@@ -106,8 +106,6 @@ def hospital(request, hospital_id, disease_id):
         return redirect('order_submit_first', order_id=int(order.id))
     elif order.step == 2:
         return redirect('order_submit_second', order_id=int(order.id))
-    elif order.step == 3:
-        return redirect('document_submit', order_id=int(order.id))
 
     return render(request, "hospital_order.html", {
         'hospital': hosp,
@@ -247,41 +245,13 @@ def order_patient_finish(request, order_id, patient_id):
 
 @login_required
 def order_submit_second(request, order_id):
-    if request.method == 'POST':
-        form = OrderFormSecond(request.POST)
-        order = Order.objects.get(id=order_id)
-        customer = Customer.objects.get(user=request.user)
-        if not form.is_valid():
-            form.fields['name'] = order.disease.name
-            return render(request, 'order_info_second.html', {
-                'form': form,
-                'order_id': order.id,
-                'customer': customer,
-            })
-        else:
-            order.step = 2
-            return render(request, 'document_submit.html', {
-                'customer': customer,
-                'form': DocumentForm(),
-                'order_id': order_id,
-            })
-    else:
-        customer = Customer.objects.get(user=request.user)
-        return render(request, 'document_submit.html', {
-            'customer': customer,
-            'form': DocumentForm(),
-            'order_id': order_id,
-        })
-
-
-@login_required
-def document_submit(request, order_id):
     order = Order.objects.get(id=order_id)
     customer = Customer.objects.get(user=request.user)
     if request.method == 'POST':
-        form = DocumentForm(request.POST, request.FILES, instance=customer)
+        form = OrderFormSecond(request.POST, request.FILES, instance=customer)
         if not form.is_valid():
-            return render(request, 'document_submit.html', {
+            form.fields['name'] = order.disease.name
+            return render(request, 'order_info_second.html', {
                 'form': form,
                 'order_id': order.id,
                 'customer': customer,
@@ -304,14 +274,12 @@ def document_submit(request, order_id):
                 doc = Document(document=f, comment=doc_comment, description=doc_description, order=order)
                 doc.save()
                 order.origin.add(doc)
-            order.step = 3
-            order.save()
+            order.step = 2
             return render(request, 'order_review.html', {
                 'customer': customer,
                 'order': order,
             })
     else:
-        customer = Customer.objects.get(user=request.user)
         return render(request, 'order_review.html', {
             'customer': customer,
             'order': order,
@@ -324,17 +292,15 @@ def finish(request, order_id):
     customer = Customer.objects.get(user=request.user)
     if request.method == 'POST':
         order.status = 1
-        order.step = 4
+        order.step = 3
         order.save()
         assign_auto(order)
         return render(request, 'finish.html', {
             'customer': customer,
         })
-    else:
-        customer = Customer.objects.get(user=request.user)
-        return render(request, 'finish.html', {
-            'customer': customer,
-        })
+    return render(request, 'finish.html', {
+        'customer': customer,
+    })
 
 
 @login_required
