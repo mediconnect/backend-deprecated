@@ -1,5 +1,0 @@
-id,password,last_login,is_superuser,username,first_name,last_name,email,is_staff,is_active,date_joined
-9,pbkdf2_sha256$36000$aWOEa0nMSq7a$f/d/kjtT5WH4HAXiOwsiVqKMZVfe9uVmdp8wHD9zW1o=,"2017-06-09 23:26:38.983000",0,customer,aaa,bbb,111@1.com,0,1,"2017-06-08 12:26:00.721000"
-11,pbkdf2_sha256$36000$TzAzWwrIONsi$1exxxRznp0YgXK6ErIpC9X6AuSD5XIrxKM5D9QzEnN8=,"2017-06-12 12:51:40.495000",1,test,t,est,22@2.com,1,1,"2017-06-08 13:13:25.775000"
-16,pbkdf2_sha256$36000$rfO8b8L8Aazu$puGJdemqVveZ9zEAsOSggqvFbGSXIyduUNulYR3Xt8E=,"2017-06-09 23:59:17.180000",0,trans,trans,test,11@1.com,1,1,"2017-06-08 19:05:09.741000"
-18,password,NULL,0,trans_2,333,333,222@2.com,0,1,"2017-06-12 12:54:57.089000"

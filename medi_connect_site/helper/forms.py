@@ -35,23 +35,6 @@ class OrderFormFirst(forms.ModelForm):
 
 
 class OrderFormSecond(forms.ModelForm):
-    class Meta:
-        model = Disease
-        exclude = []
-        fields = ['name']
-
-    def __init__(self, *args, **kwargs):
-        super(OrderFormSecond, self).__init__(*args, **kwargs)
-        self.fields['name'].widget.attrs['readonly'] = True
-
-    def clean_category(self):
-        category = self.cleaned_data['name']
-        if category is None or len(category) == 0:
-            raise ValidationError('name cannot be None')
-        return category
-
-
-class DocumentForm(forms.ModelForm):
     document = forms.FileField(
         label="Choose required document",
         widget=forms.ClearableFileInput(attrs={'multiple': True}),
@@ -82,15 +65,29 @@ class DocumentForm(forms.ModelForm):
         label="Leave description for your extra document",
         required=False,
     )
+    doctor = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Leave description for your extra document",
+        required=True,
+    )
+    diagnose_hospital = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Leave description for your extra document",
+        required=True,
+    )
 
     class Meta:
-        model = Document
-        fields = []
+        model = Disease
         exclude = []
+        fields = ['name', 'doctor', 'diagnose_hospital']
 
     def __init__(self, *args, **kwargs):
-        super(DocumentForm, self).__init__(*args, **kwargs)
+        super(OrderFormSecond, self).__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs['readonly'] = True
         self.field_order = [
+            'name',
+            'doctor',
+            'diagnose_hospital',
             'document_description',
             'document',
             'document_comment',
@@ -99,3 +96,9 @@ class DocumentForm(forms.ModelForm):
             'extra_document_comment',
         ]
         self.order_fields(self.field_order)
+
+    def clean_category(self):
+        category = self.cleaned_data['name']
+        if category is None or len(category) == 0:
+            raise ValidationError('name cannot be None')
+        return category

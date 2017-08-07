@@ -1,8 +1,8 @@
-{% extends "customer_header.html" %}
+{% extends 'customer_header.html' %}
 
 {% block content %}
 
-<form action="{% url 'order_submit_second' order_id=order_id %}" method="post" role="form", enctype="multipart/form-data">
+<form action="{% url 'info_profile_patient_edit' patient_id=patient.id %}" method="post" role="form">
     {% csrf_token %}
     {% for field in form.visible_fields %}
     <div class="form-group{% if field.errors %} has-error{% endif %}">
@@ -16,7 +16,7 @@
         {% endfor %}
     </div>
     {% endfor %}
-    <button type="submit" class="btn btn-default">Next</button>
+    <button type="submit" class="btn btn-default">Save</button>
 </form>
 
 {% endblock %}

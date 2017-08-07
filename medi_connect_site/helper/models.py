@@ -282,13 +282,14 @@ class Patient(models.Model):
     class Meta:
         db_table = 'patient'
 
+
 class OrderPatient(models.Model):
-    #Order Patient table to store patient information
-    #This is created everytime an order is placed
-    #Do not change this table when edit patient
-    #Fetch patient info for display order-related info
-    name = models.CharField(blank = True,max_length = 50)
-    age = models.IntegerField(blank = True)
+    # Order Patient table to store patient information
+    # This is created everytime an order is placed
+    # Do not change this table when edit patient
+    # Fetch patient info for display order-related info
+    name = models.CharField(blank=True, max_length=50)
+    age = models.IntegerField(blank=True)
     gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)
     category = models.CharField(max_length=50, default='COLD')
     diagnose_hospital = models.CharField(max_length=50, blank=True)
@@ -296,6 +297,7 @@ class OrderPatient(models.Model):
 
     class Meta:
         db_table = 'order_patient'
+
 
 class LikeHospital(models.Model):
     customer = models.ForeignKey(Customer, unique=False, default=None, related_name='customer_liked')
