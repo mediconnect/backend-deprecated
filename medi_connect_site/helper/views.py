@@ -274,6 +274,13 @@ def order_submit_second(request, order_id):
                 doc = Document(document=f, comment=doc_comment, description=doc_description, order=order)
                 doc.save()
                 order.origin.add(doc)
+            doctor = form.cleaned_data.get('doctor')
+            hospital = form.cleaned_data.get('diagnose_hospital')
+            patient = order.patient_order
+            patient.doctor = doctor
+            patient.diagnose_hospital = hospital
+            patient.save()
+            order.save()
             order.step = 2
             return render(request, 'order_review.html', {
                 'customer': customer,

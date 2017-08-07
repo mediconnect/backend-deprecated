@@ -65,16 +65,29 @@ class OrderFormSecond(forms.ModelForm):
         label="Leave description for your extra document",
         required=False,
     )
+    doctor = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Leave description for your extra document",
+        required=True,
+    )
+    diagnose_hospital = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Leave description for your extra document",
+        required=True,
+    )
 
     class Meta:
         model = Disease
         exclude = []
-        fields = ['name']
+        fields = ['name', 'doctor', 'diagnose_hospital']
 
     def __init__(self, *args, **kwargs):
         super(OrderFormSecond, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs['readonly'] = True
         self.field_order = [
+            'name',
+            'doctor',
+            'diagnose_hospital',
             'document_description',
             'document',
             'document_comment',
