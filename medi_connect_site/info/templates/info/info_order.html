@@ -2,7 +2,19 @@
 {% block title %}Appointment{% endblock %}
 
 {% block content %}
-<ul class="list-group" id="order"></ul>
+<ul class="nav nav-tabs">
+    <li role="presentation"><a href="{% url 'info_profile' %}">Profile</a></li>
+    <li role="presentation"><a href="{% url 'info_bookmark' %}">Bookmark</a></li>
+    <li role="presentation" class="active"><a href="{% url 'info_order' %}">Appointment</a></li>
+</ul>
+
+<br>
+
+<ul class="list-group" id="order">
+    {% if not order_length %}
+        No order yet.
+    {% endif %}
+</ul>
 <script type="text/javascript">
 var ul = document.getElementById("order");
 var order_list = {{order_list | safe}};

@@ -2,19 +2,51 @@
 
 {% block content %}
 
-<ul class="nav nav-pills nav-stacked">
-    <li role="presentation"><a href="{% url 'info_profile' %}">Profile</a></li>
-    <li role="presentation"><a href="{% url 'info_profile_password' %}">Password</a></li>
-    <li role="presentation" class="active"><a href="{% url 'info_profile_password' %}">Add Patient</a></li>
+<ul class="nav nav-tabs">
+    <li role="presentation" class="active"><a href="{% url 'info_profile' %}">Profile</a></li>
+    <li role="presentation"><a href="{% url 'info_bookmark' %}">Bookmark</a></li>
+    <li role="presentation"><a href="{% url 'info_order' %}">Appointment</a></li>
 </ul>
 
+<br>
 
-<ul class="list-group">
-    {% for patient in patients %}
-         <li class="list-group-item">Name: {{patient.name}}</li>
-    {% endfor %}
+<ul class="nav nav-tabs">
+    <li role="presentation"><a href="{% url 'info_profile' %}">My Account</a></li>
+    <li role="presentation" class="active"><a href="{% url 'info_profile_patient' %}">Patients</a></li>
 </ul>
 
+<br>
+
+<h4>My Patients</h4>
+<div class="panel panel-default">
+    <div class="panel-heading">Patients Info</div>
+    {% if patients_length %}
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+        </tr>
+        {% for patient in patients %}
+        <tr>
+            <td>{{patient.name}}</td>
+            <td>{{patient.age}}</td>
+            <td>{{patient.gender}}</td>
+            <td>
+                <form action="{% url 'info_profile_patient_edit' patient_id=patient.id %}" method="get">
+                    <button type="submit" class="btn btn-default">Edit</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div>You currently don't have patients</div>
+    {% endif %}
+</div>
+
+<br>
+<h4>Add Patient</h4>
 <form action="{% url 'info_profile_patient' %}" method="post" role="form">
     {% csrf_token %}
     {% for field in form.visible_fields %}
@@ -31,5 +63,6 @@
     {% endfor %}
     <button type="submit" class="btn btn-default">Save</button>
 </form>
+
 
 {% endblock %}

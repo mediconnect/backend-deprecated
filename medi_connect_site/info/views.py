@@ -35,12 +35,9 @@ def profile(request):
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
     })
-    patients = Patient.objects.filter(customer=customer)
     return render(request, 'info_profile.html', {
         'customer': customer,
         'form': form,
-        'patients': patients,
-        'patients_length': len(patients) > 0,
     })
 
 
@@ -93,6 +90,7 @@ def profile_patient(request):
     return render(request, 'info_profile_patient.html', {
         'customer': customer,
         'patients': patients,
+        'patients_length': len(patients) > 0,
         'form': PatientAddForm()
     })
 
@@ -118,6 +116,7 @@ def order(request):
         order_list.append(order_dict)
     return render(request, 'info_order.html', {
         'order_list': json.dumps(order_list),
+        'order_length': len(order_list) > 0,
         'customer': customer,
     })
 
@@ -178,6 +177,7 @@ def bookmark(request):
         diseases[h.hospital.id] = h.disease.id
     return render(request, 'bookmark.html', {
         'hospitals': hospitals,
+        'hospitals_length': len(hospitals) > 0,
         'diseases': diseases,
         'customer': customer,
     })
@@ -219,7 +219,7 @@ def profile_patient_edit(request, patient_id):
         patient.age = form.cleaned_data.get('age')
         patient.gender = form.cleaned_data.get('gender')
         patient.save()
-        return redirect('info_profile')
+        return redirect('info_profile_patient')
     form = PatientAddForm(instance=request.user, initial={
         'name': patient.name,
         'age': patient.age,
