@@ -79,7 +79,7 @@ class OrderFormSecond(forms.ModelForm):
     class Meta:
         model = Disease
         exclude = []
-        fields = ['name', 'doctor', 'diagnose_hospital']
+        fields = ['name']
 
     def __init__(self, *args, **kwargs):
         super(OrderFormSecond, self).__init__(*args, **kwargs)

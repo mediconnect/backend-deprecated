@@ -22,7 +22,7 @@ for (var order_i in order_list) {
     var order = order_list[order_i];
     var li = document.createElement("li");
     li.className += "list-group-item";
-    var text = document.createTextNode("".concat("ID: ", order_i, ";Patient", order.patient, ";Hospital: ", order.hospital, ";Disease: ", order.disease));
+    var text = document.createTextNode("".concat("Patient: ", order.patient, ";  Hospital: ", order.hospital, ";  Disease: ", order.disease));
     li.appendChild(text);
     // reverse look up url
     var paymentform = document.createElement("form");
@@ -66,7 +66,7 @@ for (var order_i in order_list) {
 
     // give document url for files
     if (order.trans_status >= 6) {
-        for (doc in order.documents) {    
+        for (doc in order.documents) {
             li.appendChild((function() {
                 var link = document.createElement("a");
                 link.href = doc;
