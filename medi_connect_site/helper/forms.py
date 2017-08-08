@@ -67,12 +67,12 @@ class OrderFormSecond(forms.ModelForm):
     )
     doctor = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label="Leave description for your extra document",
+        label="Doctor",
         required=True,
     )
     diagnose_hospital = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label="Leave description for your extra document",
+        label="Diagnose Hospital",
         required=True,
     )
 

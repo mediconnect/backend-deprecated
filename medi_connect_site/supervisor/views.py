@@ -13,6 +13,12 @@ from customer.models import Customer
 from django.apps import apps
 from supervisor.forms import TransSignUpForm, AssignForm, ApproveForm,PasswordResetForm
 from helper.models import Staff
+from django.core import serializers
+from django.http import JsonResponse
+from django import template
+import json
+import django.utils.encoding as encode
+
 
 Order = apps.get_model('helper', 'Order')
 Document = apps.get_model('helper', 'Document')
@@ -98,45 +104,93 @@ def assign_manually(order, translator):
         move(trans_list_C2E, translator, -1)
         order.change_status(TRANSLATING_FEEDBACK)
         order.save()
+register = template.Library()
+@register.filter(name='forcetext')
+def forcetext(value):
+    return encode.force_text(value)
+
+@login_required()
+def update_result(request):
+    field = request.GET.get('field',None)
+    value = request.GET.get('value', None)
+    print field, value
+    print 'this is called'
+    if value != 'ALL':
+        filter = field + '__' + 'exact'
+        orders = Order.objects.filter(**{filter: value})
+    else:
+        orders = Order.objects.all()
+    data={
+        'results':[],
+        'choices':[]
+    }
+    choices = {
+        'customer_choices':[],
+        'patient_choices':[],
+        'hospital_choices':[],
+        'disease_choices':[],
+        'translator_C2E_choices':[],
+        'translator_E2C_choices':[],
+        'status_choices':[],
+        'trans_status_choices':[]
+
+    }
+    results = []
+    for each in orders:
+        result={
+            'Order_id':each.id,
+            'Customer': (each.customer.id,each.customer.get_name()),
+            'Patient': (each.patient.id,each.patient.name),
+            'Hospital':(each.hospital.id,each.hospital.name),
+            'Disease':(each.disease.id,each.disease.name),
+            'Translator_C2E':(each.translator_C2E.id,each.translator_C2E.get_name()),
+            'Translator_E2C':(each.translator_E2C.id,each.translator_C2E.get_name()),
+            'Status':(each.status,each.get_status()),
+            'Translator Status':(each.trans_status,each.get_trans_status()),
+            'Deadline':each.get_deadline(),
+            'Submit Deadline':each.get_submit_deadline()
+        }
+        results.append(result)
+    for each in results:
+        if each['Customer'] not in choices['customer_choices'] or choices['customer_choices'] is None:
+            choices['customer_choices'].append(each['Customer'])
+        if each['Patient'] not in choices['patient_choices'] or choices['patient_choices'] is None:
+            choices['patient_choices'].append(each['Patient'])
+        if each['Hospital'] not in choices['hospital_choices'] or choices['hospital_choices'] is None:
+            choices['hospital_choices'].append(each['Hospital'])
+        if each['Disease'] not in choices['disease_choices'] or choices['disease_choices'] is None:
+            choices['disease_choices'].append(each['Disease'])
+        if each['Translator_C2E'] not in choices['translator_C2E_choices']or choices['translator_C2E_choices'] is None:
+            choices['translator_C2E_choices'].append(each['Translator_C2E'])
+        if each['Translator_E2C'] not in choices['translator_E2C_choices']or choices['translator_E2C_choices'] is None:
+            choices['translator_E2C_choices'].append(each['Translator_E2C'])
+        if each['Status'] not in choices['status_choices']or choices['status_choices'] is None:
+            choices['status_choices'].append(each['Status'])
+        if each['Translator Status'] not in choices['trans_status_choices']or choices['trans_status_choices'] is None:
+            choices['trans_status_choices'].append(each['Translator Status'])
+    data['results']=results
+    data['choices']=choices
+    print orders
+    return JsonResponse(data)
 
 
 @login_required
 def supervisor(request, id):
     supervisor = Staff.objects.get(user_id=id)
     orders = Order.objects.all()
-    customer_choice = list(Customer.objects.all().distinct())
-    hospital_choice = list(Hospital.objects.all().distinct())
-    disease_choice = list(Disease.objects.all().distinct())
-    translator_C2E_choice = list(Staff.objects.filter(role=1).distinct())
-    translator_E2C_choice = list(Staff.objects.filter(role=2).distinct())
     return render(request, 'supervisor_home.html', {
-        'customer_choice':customer_choice,
-        'hospital_choice':hospital_choice,
-        'disease_choice':disease_choice,
-        'translator_C2E_choice':translator_C2E_choice,
-        'translator_E2C_choice':translator_E2C_choice,
-        'status_choice':status_dict,
-        'trans_status_choice':trans_status_dict,
         'orders': orders,
         'supervisor': supervisor,
     })
 
 def order_status(request, id,status):
     supervisor = Staff.objects.get(user_id=id)
-    orders = Order.objects.filter(trans_status = status)
-    customer_choice = list(Customer.objects.all().distinct())
-    hospital_choice = list(Hospital.objects.all().distinct())
-    disease_choice = list(Disease.objects.all().distinct())
-    translator_C2E_choice = list(Staff.objects.filter(role=1).distinct())
-    translator_E2C_choice = list(Staff.objects.filter(role=2).distinct())
+    if status != 'ALL':
+        orders = Order.objects.filter(trans_status = status)
+    else:
+        orders = Order.objects.all()
     return render(request, 'supervisor_order_status.html', {
-        'customer_choice':customer_choice,
-        'hospital_choice':hospital_choice,
-        'disease_choice':disease_choice,
-        'translator_C2E_choice':translator_C2E_choice,
-        'translator_E2C_choice':translator_E2C_choice,
-        'status_choice':status_dict,
-        'trans_status_choice':trans_status_dict,
+        'status':status,
         'orders': orders,
         'supervisor': supervisor,
     })

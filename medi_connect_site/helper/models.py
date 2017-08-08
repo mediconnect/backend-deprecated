@@ -162,9 +162,10 @@ class Order(models.Model):
 
     def get_info(self):
         return 'Order id is ' + str(self.id) + ' Deadline is :' + self.get_deadline()
+    def get_remaining(self):
+        return self.submit+datetime.timedelta(days=2);
 
     def get_deadline(self):  # default deadline 2 days after submit
-        print self.submit
         total_sec = (self.submit + datetime.timedelta(days=2) - datetime.datetime.now(utc_8)).total_seconds()
         days = int(total_sec / (3600 * 24))
         hours = int((total_sec - 3600 * 24 * days) / 3600)

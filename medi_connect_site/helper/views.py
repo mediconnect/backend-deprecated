@@ -106,6 +106,8 @@ def hospital(request, hospital_id, disease_id):
         return redirect('order_submit_first', order_id=int(order.id))
     elif order.step == 2:
         return redirect('order_submit_second', order_id=int(order.id))
+    elif order.step == 3:
+        return redirect('order_finish', order_id=int(order.id))
 
     return render(request, "hospital_order.html", {
         'hospital': hosp,
@@ -280,17 +282,16 @@ def order_submit_second(request, order_id):
             patient.doctor = doctor
             patient.diagnose_hospital = hospital
             patient.save()
-            order.save()
             order.step = 2
+            order.save()
             return render(request, 'order_review.html', {
                 'customer': customer,
                 'order': order,
             })
-    else:
-        return render(request, 'order_review.html', {
-            'customer': customer,
-            'order': order,
-        })
+    return render(request, 'order_review.html', {
+        'customer': customer,
+        'order': order,
+    })
 
 
 @login_required

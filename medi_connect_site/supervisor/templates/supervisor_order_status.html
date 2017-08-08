@@ -19,6 +19,8 @@
 
 
 
+
+
   <p>Orders:</p>
 
   <table class= 'fixed' id = 'table', style="width:100%">
@@ -47,82 +49,47 @@
         </th>
         <th>
             <input type="text" id="searchInput1" onkeyup="search(1)" placeholder="Search">
-            <select id = 'filterInput1' onchange="filter(1)">
-                <option value = 'all'>All</option>
-                {%for obj in customer_choice%}
-                    <option value = {{obj.get_name}}>{{obj.get_name}}</option>
-
-                {%endfor%}
+            <select class= 'select' id = 'customer_choices'>
             </select>
         </th>
         <th>
             <input type="text" id="searchInput2" onkeyup="search(2)" placeholder="Search">
-            <select id ="patient" onchange="patientFilter()">
-                <option value = 'all'>All</option>
-                {%for obj in customer_choice%}
-                    <option value = {{obj.get_name}}>{{obj.get_name}}</option>
+            <select class='select' id ="patient_choices" >
 
-                {%endfor%}
             </select>
         </th>
         <th>
             <input type="text" id="searchInput3" onkeyup="search(3)" placeholder="Search">
-            <select id = 'filterInput3' onchange="filter(3)">
-                <option value = 'all'>All</option>
-                {%for obj in hospital_choice%}
-                    <option value = {{obj.name}}>{{obj.name}}</option>
+            <select id = 'hospital_choices'>
 
-                {%endfor%}
             </select>
         </th>
         <th>
             <input type="text" id="searchInput4" onkeyup="search(4)" placeholder="Search">
-            <select id = 'filterInput4' onchange="filter(4)">
-                <option value = 'all'>All</option>
-                {%for obj in disease_choice%}
-                    <option value = {{obj.name}}>{{obj.name}}</option>
+            <select id = 'disease_choices'>
 
-                {%endfor%}
             </select>
         </th>
         <th>
             <input type="text" id="searchInput5" onkeyup="search(5)" placeholder="Search">
-            <select id = 'filterInput5' onchange="filter(5)">
-                <option value = 'all'>All</option>
-                {%for obj in translator_C2E_choice%}
-                    <option value = {{obj.get_name}}>{{obj.get_name}}</option>
-
-                {%endfor%}
+            <select id = 'translator_C2E_choices'>
             </select>
         </th>
         <th>
             <input type="text" id="searchInput6" onkeyup="search(6)" placeholder="Search">
-            <select id = 'filterInput6' onchange="filter(6)">
+            <select id = 'translator_E2C_choices'>
                 <option value = 'all'>All</option>
-                {%for obj in translator_E2C_choice%}
-                    <option value = {{obj.get_name}}>{{obj.get_name}}</option>
 
-                {%endfor%}
             </select>
         </th>
         <th>
             <input type="text" id="searchInput7" onkeyup="search(7)" placeholder="Search">
-            <select id = 'filterInput7' onchange="filter(7)">
-                <option value = 'all'>All</option>
-                {%for obj in status_choice%}
-                    <option value = {{obj}}>{{obj}}</option>
-
-                {%endfor%}
+            <select id = 'status_choices'>
             </select>
         </th>
         <th>
             <input type="text" id="searchInput8" onkeyup="search(8)" placeholder="Search">
-            <select id = 'filterInput8' onchange="filter(8)">
-                <option value = 'all'>All</option>
-                {%for obj in trans_status_choice%}
-                    <option value = {{obj}}>{{obj}}</option>
-
-                {%endfor%}
+            <select id = 'trans_status_choices' >
             </select>
         </th>
         <th>
@@ -134,9 +101,9 @@
             <button onclick="sortDeadline(9)">Sort</button>
         </th>
     </tr>
-    {%for obj in orders%}
 
-      <tr>
+      {%for obj in orders%}
+      <tr class="initial">
         <td>{{obj.id}}</td>
         <td>{{obj.customer.get_name}}</td>
         <td>{{obj.patient.name}}</td>
@@ -150,12 +117,109 @@
         <td>{{obj.get_submit_deadline}}</td>
         <td><a href = "{% url 'detail' id=supervisor.id order_id=obj.id %}">Detail</a></td>
       </tr>
-
     {%endfor%}
+
   </table>
 
+  <button id = 'test' name = 'customer' value = '1'>Test_value</button>
 
   <script>
+    $( document ).ready(function() {
+        var value = '{{status}}';
+        var field = 'trans_status';
+        var form = $("#testform");
+        $.getJSON("{% url 'update_result'%}",{'value':value,'field':field},function(data){
+            createChoices(data,'customer');
+            createChoices(data,'patient');
+            createChoices(data,'hospital');
+            createChoices(data,'disease');
+            createChoices(data,'translator_C2E');
+            createChoices(data,'translator_E2C');
+            createChoices(data,'status');
+            createChoices(data,'trans_status');
+        });
+    });
+    $(".select").change(function () {
+        $(".initial").empty();
+        var value = $(".select option:selected").val();
+        var field = $(".select option:selected").attr("field");
+        $.getJSON("{% url 'update_result'%}",{'value':value,'field':field},function(data){
+            createChoices(data,'customer');
+            createChoices(data,'patient');
+            createChoices(data,'hospital');
+            createChoices(data,'disease');
+            createChoices(data,'translator_C2E');
+            createChoices(data,'translator_E2C');
+            createChoices(data,'status');
+            createChoices(data,'trans_status');
+            appendRow(data);
+        });
+    });
+    function appendRow(data){
+        var rowResult = data['results'];
+        var table = document.getElementById("table");
+        for(var i=0;i<rowResult.length;i++){
+            var row = table.insertRow(-1);
+            insertCell_s(row,rowResult,i,'Order_id');
+            insertCell(row,rowResult,i,'Customer');
+            insertCell(row,rowResult,i,'Patient');
+            insertCell(row,rowResult,i,'Hospital');
+            insertCell(row,rowResult,i,'Disease');
+            insertCell(row,rowResult,i,'Translator_C2E');
+            insertCell(row,rowResult,i,'Translator_E2C');
+            insertCell(row,rowResult,i,'Status');
+            insertCell(row,rowResult,i,'Translator Status');
+            insertCell_s(row,rowResult,i,'Deadline');
+            insertCell_s(row,rowResult,i,'Submit Deadline');
+
+
+
+        }
+    }
+    function insertCell(row,rowResult,i,x){
+        var cell = row.insertCell(-1);
+        cell.className="initial";
+        cell.innerHTML = rowResult[i][x.toString()][1];
+    }
+    function insertCell_s(row,rowResult,i,x){
+        var cell = row.insertCell(-1);
+        cell.className="initial";
+        cell.innerHTML = rowResult[i][x.toString()];
+    }
+    function createChoices(data,x){
+
+        var a = x.toString()+'_choices'
+        var choices = data['choices'][a];
+        var select = document.getElementById(a);
+        select.innerHTML=" ";
+        var option_all = document.createElement("option");
+        var display = document.createElement("option");
+        display.text='...';
+        select.add(display);
+        option_all.text='All';
+        option_all.setAttribute("field",x.toString());
+        option_all.value='ALL';
+        select.add(option_all);
+        for(var i=0; i<choices.length;i++){
+            var option = document.createElement("option");
+            option.setAttribute("field",x.toString());
+            option.className='choice';
+            option.text=choices[i][1];
+            option.value=choices[i][0];
+            select.add(option);
+
+        }
+
+    }
+    /*
+        var patient_choices = data.choices.patient_choices;
+        var disease_choices = data.choices.disease_choices;
+        var hospital_choices = data.choices.hospital_choices;
+        var translator_C2E_choices = data.choices.translator_C2E_choices;
+        var translator_E2C_choices = data.choices.translator_E2C_choices;
+        var status_choices = data.choices.status_choices;
+        var trans_status_choices = data.choices.trans_status_choices;
+
     function patientFilter(){
       // Declare variables
       var input, filter, table, tr, td, i;
@@ -181,8 +245,6 @@
             tr[i].style.display = "";
         }
       }
-
-
 
     }
 
@@ -260,6 +322,7 @@
         }
       }
     }
+    */
 
     function sortDeadline(x) {
       var table, rows, switching, i, a, b, shouldSwitch;

@@ -1,0 +1,28 @@
+{% extends "customer_header.html" %}
+{% block title %}Appointment{% endblock %}
+
+{% block content %}
+<ul class="nav nav-tabs">
+    <li role="presentation"><a href="{% url 'info_profile' %}">Profile</a></li>
+    <li role="presentation"><a href="{% url 'info_bookmark' %}">Bookmark</a></li>
+    <li role="presentation" class="active"><a href="{% url 'info_order' %}">Appointment</a></li>
+</ul>
+
+<br>
+
+<h4>Review:</h4>
+
+<p>Patient: {{order.patient.name}}</p>
+<p>Gender: {{order.patient.gender}}</p>
+<p>Age: {{order.patient.age}}</p>
+<p>Disease: {{order.disease.name}}</p>
+<p>Hospital: {{order.hospital.name}}</p>
+
+{% for obj in order.origin.all %}
+    <a href={{obj.document.url}}>Download your submitted documents</a>
+    <br>
+{% endfor %}
+
+
+<p><a href="{% url 'info_order' %}">Back</a></p>
+{% endblock %}

@@ -168,3 +168,5 @@ EMAIL_HOST_USER = 'abcdefgdontreplyme@outlook.com'
 EMAIL_HOST_PASSWORD = 'passwordABC'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+

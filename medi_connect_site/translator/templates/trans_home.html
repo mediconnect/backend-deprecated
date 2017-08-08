@@ -3,20 +3,43 @@
 {% block title %}{{translator.get_name}}{% endblock %}
 
 {% block content %}
-  <p>Assignments</p>
-	<ul>
-		{%for obj in assignments%}
+ <style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        text-align:center;
+    }
+    table.fixed {table-layout:fixed; width:100px;}/*Setting the table width is important!*/
+    table.fixed td {overflow:hidden;}/*Hide text outside the cell.*/
 
-			{% if obj.get_trans_status != 'FINISHED' %}
-				<li>
-					<p>Order:{{obj.id}}</p>
-					<a href="{% url 'assignment_summary' id=translator.user.id order_id=obj.id %}" class = "button">View Summary</a>
-					<p>(Status:{{obj.get_trans_status}})</p>
-				</li>
-			{% endif %}
+    input,select{
+        width:70px;
+    }
+  </style>
+  
 
-		{%endfor%}
-	</ul>
+  <p>Orders:</p>
+
+  <table class= 'fixed' id = 'table', style="width:100%">
+    <tr>
+        <th>Order Id</th>
+        <th>Submit</th>
+		<th>Deadline</th>
+		<th>Status</th>
+		<th>Remaining</th>
+		<th>View Summary</th>
+    </tr>
+	{%for obj in assignments%}
+		<tr>
+			<td>{{obj.id}}</td>
+			<td>{{obj.submit}}</td>
+			<td>{{obj.get_remaining}}</td>
+			<td>{{obj.get_trans_status}}</td>
+			<td>{{obj.get_deadline}}</td>
+			<td><a href="{% url 'assignment_summary' id=translator.user.id order_id=obj.id %}" class = "button">View Summary</a></td>
+		</tr>
+	{%endfor%}
+  </table>
 
 
 {% endblock %}

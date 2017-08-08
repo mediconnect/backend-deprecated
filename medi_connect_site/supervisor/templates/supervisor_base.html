@@ -10,6 +10,7 @@
    <li class ="dropdown">
        <a class="dropdown-toggle" data-toggle="dropdown" href="{% url 'supervisor_home' id=supervisor.user_id %}">Orders<span class="caret"></span></a>
        <ul class="dropdown-menu">
+          <li><a href="{% url 'order_status' id=supervisor.user_id status='ALL'%}">All</a></li>
           <li><a href="{% url 'order_status' id=supervisor.user_id status=1%}">Translating</a></li>
           <li><a href="{% url 'order_status' id=supervisor.user_id status=2%}">Approving</a></li>
           <li><a href="{% url 'order_status' id=supervisor.user_id status=5%}">Done</a></li>

@@ -140,6 +140,16 @@ def process_order(request, order_id):
     return redirect('info_order', customer.id)
 
 
+@login_required
+def order_detail(request, order_id):
+    customer = Customer.objects.get(user=request.user)
+    order = Order.objects.get(id=order_id)
+    return render(request, 'info_order_detail.html', {
+        'customer': customer,
+        'order': order,
+    })
+
+
 def add_doc(request, order_id):
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
