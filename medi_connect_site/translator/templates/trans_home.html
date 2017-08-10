@@ -40,6 +40,21 @@
 		</tr>
 	{%endfor%}
   </table>
+  <div class="pagination">
+    <span class="step-links">
+        {% if assignments.has_previous %}
+            <a href="?page={{ assignments.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ assignments.number }} of {{ assignments.paginator.num_pages }}.
+        </span>
+
+        {% if assignments.has_next %}
+            <a href="?page={{ assignments.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
 
 
 {% endblock %}

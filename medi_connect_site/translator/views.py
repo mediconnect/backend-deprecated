@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files.storage import FileSystemStorage
 from forms import AssignmentSummaryForm
 from django.db.models import Q
@@ -59,6 +60,16 @@ def translator(request, id):
 
     translator = Staff.objects.get(user_id = id)
     assignments = get_assignments(translator)
+    paginator = Paginator(assignments, 1)
+    page = request.GET.get('page')
+    try:
+        assignemnts = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        assignments = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        assignments = paginator.page(paginator.num_pages)
     return render(request, 'trans_home.html',
                   {
                       'assignments': assignments,
@@ -69,7 +80,16 @@ def translator(request, id):
 def translator_status(request,id,status):
     translator = Staff.objects.get(user_id = id)
     assignments = get_assignments_status(translator,status)
-    print assignments
+    paginator = Paginator(assignments, 25)
+    page = request.GET.get('page')
+    try:
+        assignemnts = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        assignments = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        assignments = paginator.page(paginator.num_pages)
     return render(request,'trans_home_status.html',
                   {
                       'assignments':assignments,

@@ -122,6 +122,21 @@
   </table>
 
   <button id = 'test' name = 'customer' value = '1'>Test_value</button>
+  <div class="pagination">
+    <span class="step-links">
+        {% if orders.has_previous %}
+            <a href="?page={{ orders.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ orders.number }} of {{ orders.paginator.num_pages }}.
+        </span>
+
+        {% if orders.has_next %}
+            <a href="?page={{ orders.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
 
   <script>
     $( document ).ready(function() {

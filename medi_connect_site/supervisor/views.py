@@ -7,6 +7,7 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from customer.models import Customer
@@ -113,8 +114,6 @@ def forcetext(value):
 def update_result(request):
     field = request.GET.get('field',None)
     value = request.GET.get('value', None)
-    print field, value
-    print 'this is called'
     if value != 'ALL':
         filter = field + '__' + 'exact'
         orders = Order.objects.filter(**{filter: value})
@@ -170,7 +169,6 @@ def update_result(request):
             choices['trans_status_choices'].append(each['Translator Status'])
     data['results']=results
     data['choices']=choices
-    print orders
     return JsonResponse(data)
 
 
@@ -178,6 +176,16 @@ def update_result(request):
 def supervisor(request, id):
     supervisor = Staff.objects.get(user_id=id)
     orders = Order.objects.all()
+    paginator=Paginator(orders,25)
+    page=request.GET.get('page')
+    try:
+        orders = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        orders = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        orders = paginator.page(paginator.num_pages)
     return render(request, 'supervisor_home.html', {
         'orders': orders,
         'supervisor': supervisor,
