@@ -114,12 +114,13 @@ def forcetext(value):
 def update_result(request):
     field = request.GET.get('field',None)
     value = request.GET.get('value', None)
-
+    orders=None
     if value != 'ALL':
         filter = field + '__' + 'exact'
         orders = Order.objects.filter(**{filter: value})
     else:
         orders = Order.objects.all()
+
     paginator = Paginator(orders, 1)
     page = request.GET.get('page')
     try:
@@ -130,8 +131,9 @@ def update_result(request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         orders = paginator.page(paginator.num_pages)
+
     data={
-        'orders':orders,
+        'orders':serializers.serialize('json',orders),
         'results':[],
         'choices':[]
     }
@@ -181,6 +183,7 @@ def update_result(request):
             choices['trans_status_choices'].append(each['Translator Status'])
     data['results']=results
     data['choices']=choices
+    print data['orders'];
     return JsonResponse(data)
 
 

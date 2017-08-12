@@ -122,20 +122,7 @@
   </table>
 
   <button id = 'test' name = 'customer' value = '1'>Test_value</button>
-  <div class="pagination">
-    <span class="step-links">
-        {% if data[orders].has_previous %}
-            <a href="?page={{ data[orders].previous_page_number }}">previous</a>
-        {% endif %}
 
-        <span class="current">
-            Page {{data[orders].number }} of {{ data[orders].paginator.num_pages }}.
-        </span>
-
-        {% if data[orders].has_next %}
-            <a href="?page={{ data[orders].next_page_number }}">next</a>
-        {% endif %}
-    </span>
 </div>
 
   <script>
@@ -152,6 +139,7 @@
             createChoices(data,'translator_E2C');
             createChoices(data,'status');
             createChoices(data,'trans_status');
+            createPagination(data);
         });
     });
     $(".select").change(function () {
@@ -201,6 +189,9 @@
         cell.className="initial";
         cell.innerHTML = rowResult[i][x.toString()];
     }
+    function createPagination(data){
+        alert(data.orders.has_previous);
+    }
     function createChoices(data,x){
 
         var a = x.toString()+'_choices'
@@ -224,7 +215,7 @@
             select.add(option);
 
         }
- 
+
     }
     /*
         var patient_choices = data.choices.patient_choices;
