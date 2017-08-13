@@ -63,7 +63,7 @@ def translator(request, id):
     paginator = Paginator(assignments, 1)
     page = request.GET.get('page')
     try:
-        assignemnts = paginator.page(page)
+        assignments = paginator.page(page)
     except PageNotAnInteger:
         # If page is not an integer, deliver first page.
         assignments = paginator.page(1)
