@@ -8,7 +8,7 @@ from customer.models import Customer
 from customer.views import customer
 from translator.views import translator
 from supervisor.views import supervisor
-from helper.models import Hospital, Disease, Order, Staff
+from helper.models import Hospital, Disease, Staff, Rank
 
 
 # Create your views here
@@ -69,25 +69,28 @@ def result(request):
             return customer(request, request.user)
         else:
             query = form.cleaned_data.get('query')
-            dis = Disease.objects.filter(Q(keyword__icontains=query))
-            for unit in dis:
+            dis_list = Disease.objects.filter(Q(keyword__icontains=query))
+            dis = None
+            for unit in dis_list:
                 keywords = set(unit.keyword.split(','))
                 if query in keywords:
                     dis = unit
                     break
 
-            hospital_info = []
-            hospitals = Hospital.objects.filter(Q(specialty__icontains=query))
-            for hosp in hospitals:
-                specialities = set(hosp.specialty.split(','))
-                if query in specialities:
-                    hospital_info.append(hosp)
+            rank_list = Rank.objects.filter(disease=dis).order_by('rank')
+            hospital_list = []
+            for r in rank_list:
+                hospital_list.append(r.hospital)
+                if len(hospital_list) >= 5:
+                    break
 
             if request.user.is_authenticated():
                 return render(request, 'result.html',
                               {
-                                  'hospital_list': hospital_info,
+                                  'hospital_list': hospital_list,
                                   'disease': dis,
+                                  'hospital_length': len(hospital_list) > 0,
+                                  'disease_length': dis is not None,
                                   'customer': Customer.objects.get(user=request.user)
                               })
     else:
@@ -108,19 +111,24 @@ def result_guest(request):
             })
         else:
             query = form.cleaned_data.get('query')
-            dis = Disease.objects.filter(Q(keyword__icontains=query))
-            for unit in dis:
+            dis_list = Disease.objects.filter(Q(keyword__icontains=query))
+            dis = None
+            for unit in dis_list:
                 keywords = set(unit.keyword.split(','))
                 if query in keywords:
+                    dis = unit
                     break
-            hospital_info = []
-            hospitals = Hospital.objects.filter(Q(specialty__icontains=query))
-            for hosp in hospitals:
-                hospital_info.append(hosp) if hosp not in hospital_info else None
+
+            rank_list = Rank.objects.filter(disease=dis).order_by('rank')
+            hospital_list = []
+            for r in rank_list:
+                hospital_list.append(r.hospital)
+                if len(hospital_list) >= 5:
+                    break
 
             return render(request, 'result_guest.html',
                           {
-                              'hospital_list': hospital_info,
+                              'hospital_list': hospital_list,
                           })
     else:
         return render(request, 'result_guest.html')
