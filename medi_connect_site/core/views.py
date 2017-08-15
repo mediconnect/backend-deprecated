@@ -69,32 +69,55 @@ def result(request):
             return customer(request, request.user)
         else:
             query = form.cleaned_data.get('query')
-            dis_list = Disease.objects.filter(Q(keyword__icontains=query))
-            dis = None
+            dis_list = Disease.objects.all()
+            dis = []
             for unit in dis_list:
                 keywords = set(unit.keyword.split(','))
-                if query in keywords:
-                    dis = unit
-                    break
+                for keyword in keywords:
+                    if keyword in query:
+                        dis.append(unit)
+                        break
 
-            rank_list = Rank.objects.filter(disease=dis).order_by('rank')
+            if len(dis) > 1:
+                return render(request, 'disease_choice.html', {
+                    'customer': Customer.objects.get(user=request.user),
+                    'disease_list': dis,
+                })
+
+            rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
             hospital_list = []
             for r in rank_list:
                 hospital_list.append(r.hospital)
                 if len(hospital_list) >= 5:
                     break
 
-            if request.user.is_authenticated():
-                return render(request, 'result.html',
-                              {
-                                  'hospital_list': hospital_list,
-                                  'disease': dis,
-                                  'hospital_length': len(hospital_list) > 0,
-                                  'disease_length': dis is not None,
-                                  'customer': Customer.objects.get(user=request.user)
-                              })
+            return render(request, 'result.html', {
+                'hospital_list': hospital_list,
+                'disease': dis[0],
+                'hospital_length': len(hospital_list) > 0,
+                'disease_length': dis is not None,
+                'customer': Customer.objects.get(user=request.user)
+            })
     else:
         return render(request, 'result.html')
+
+
+def choose_hospital(request, disease_id):
+    dis = Disease.objects.get(id=disease_id)
+    rank_list = Rank.objects.filter(disease=dis)
+    hospital_list = []
+    for r in rank_list:
+        hospital_list.append(r.hospital)
+        if len(hospital_list) >= 5:
+            break
+
+    return render(request, 'result.html', {
+        'hospital_list': hospital_list,
+        'disease': dis,
+        'hospital_length': len(hospital_list) > 0,
+        'disease_length': dis is not None,
+        'customer': Customer.objects.get(user=request.user)
+    })
 
 
 def result_guest(request):

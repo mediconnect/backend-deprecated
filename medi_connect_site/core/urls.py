@@ -6,4 +6,5 @@ urlpatterns = [
     url(r'^username_check/$', views.username_check, name='username_check'),
     # url address used by front end Ajax call
     url(r'^email_check/$', views.email_check, name='email_check'),
+    url(r'^disease_choice/(?P<disease_id>\d+)/$', views.choose_hospital, name='choose_hospital'),
 ]
