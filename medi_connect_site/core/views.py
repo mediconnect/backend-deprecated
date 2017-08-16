@@ -63,6 +63,14 @@ def signup(request):
 
 
 def result(request):
+    """
+    this method fetch diseases keyword and compare with user input. the matching
+    part can be improved later. if found multiple matching diseases, return
+    multiple options and let user choose. if no result, return all diseases and
+    let user choose. if exactly one disease is found, directly go to relevant hospital.
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         form = SearchForm(request.POST)
         if not form.is_valid():
@@ -77,6 +85,12 @@ def result(request):
                     if str(keyword) in query:
                         dis.append(unit)
                         break
+
+            if len(dis) == 0:
+                return render(request, 'disease_choice.html', {
+                    'customer': Customer.objects.get(user=request.user),
+                    'disease_list': Disease.objects.all(),
+                })
 
             if len(dis) > 1:
                 return render(request, 'disease_choice.html', {
@@ -103,17 +117,13 @@ def result(request):
 
 
 def choose_hospital(request, disease_id):
-    print '!!!!!!!!!'
     dis = Disease.objects.get(id=disease_id)
-    print dis.name
     rank_list = Rank.objects.filter(disease=dis)
     hospital_list = []
     for r in rank_list:
         hospital_list.append(r.hospital)
         if len(hospital_list) >= 5:
             break
-
-    print hospital_list
 
     return render(request, 'result.html', {
         'hospital_list': hospital_list,
