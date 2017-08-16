@@ -3,9 +3,9 @@
 
 {% block content %}
 
-{% for disease in diseases %}
+{% for disease in disease_list %}
 <div class="media" style="border-style:solid">
-    <a href="{url 'choose_hospital' disease_id=disease.id }">
+    <a href="{% url 'choose_hospital' disease_id=disease.id %}">
         <div class="media-left media-middle">
         </div>
         <div class="media-body">

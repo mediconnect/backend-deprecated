@@ -72,9 +72,9 @@ def result(request):
             dis_list = Disease.objects.all()
             dis = []
             for unit in dis_list:
-                keywords = set(unit.keyword.split(','))
+                keywords = unit.keyword.split(',')
                 for keyword in keywords:
-                    if keyword in query:
+                    if str(keyword) in query:
                         dis.append(unit)
                         break
 
@@ -103,13 +103,17 @@ def result(request):
 
 
 def choose_hospital(request, disease_id):
+    print '!!!!!!!!!'
     dis = Disease.objects.get(id=disease_id)
+    print dis.name
     rank_list = Rank.objects.filter(disease=dis)
     hospital_list = []
     for r in rank_list:
         hospital_list.append(r.hospital)
         if len(hospital_list) >= 5:
             break
+
+    print hospital_list
 
     return render(request, 'result.html', {
         'hospital_list': hospital_list,
