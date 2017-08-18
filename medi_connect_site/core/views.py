@@ -1,14 +1,15 @@
-from django.shortcuts import render, redirect, HttpResponseRedirect
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.db.models import Q
-from forms import SignUpForm, SearchForm
+from forms import SignUpForm, SearchForm, ContactForm
 from customer.models import Customer
 from customer.views import customer
 from translator.views import translator
 from supervisor.views import supervisor
 from helper.models import Hospital, Disease, Staff, Rank
+import smtplib
 
 
 # Create your views here
@@ -64,12 +65,12 @@ def signup(request):
 
 def result(request):
     """
+    :param request:
+    :return:
     this method fetch diseases keyword and compare with user input. the matching
     part can be improved later. if found multiple matching diseases, return
     multiple options and let user choose. if no result, return all diseases and
     let user choose. if exactly one disease is found, directly go to relevant hospital.
-    :param request:
-    :return:
     """
     if request.method == 'POST':
         form = SearchForm(request.POST)
@@ -209,3 +210,50 @@ def email_check(request):
     if len(users) > 0:
         return JsonResponse({'exist': True})
     return JsonResponse({'exist': False})
+
+
+def contact(request):
+    form = ContactForm()
+    if request.user.is_authenticated():
+        return render(request, 'contact.html', {
+            'customer': Customer.objects.get(user=request.user),
+            'form': form,
+        })
+    else:
+        return render(request, 'contact.html', {
+            'form': form,
+        })
+
+
+def send_response(request):
+    form = ContactForm(request.POST)
+    if not form.is_valid():
+        if request.user.is_authenticated():
+            return render(request, 'contact.html', {
+                'customer': Customer.objects.get(user=request.user),
+                'form': form,
+            })
+        else:
+            return render(request, 'contact.html', {
+                'form': form,
+            })
+    email = form.cleaned_data.get('email')
+    message = form.cleaned_data.get('message')
+    password = 'passwordABC'
+
+    sender = 'abcdefgdontreplyme@outlook.com'
+    receivers = [email]
+    cc = ['cjs08091996@outlook.com']
+
+    try:
+        buf = smtplib.SMTP('smtp-mail.outlook.com', 587)
+        buf.ehlo()
+        buf.starttls()
+        buf.login(email, password)
+        buf.sendmail(sender, receivers + cc, message)
+        buf.close()
+        print "Successfully sent email"
+    except smtplib.SMTPException:
+        print "Error: unable to send email"
+
+    return redirect('home')

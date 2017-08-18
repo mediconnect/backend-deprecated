@@ -123,3 +123,28 @@ class SearchForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(SearchForm, self).__init__(*args, **kwargs)
+
+
+class ContactForm(forms.ModelForm):
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control'}),
+        label='Message',
+        required=True,
+    )
+
+    email = forms.EmailField(
+        label='Email Address for Response',
+    )
+
+    class Meta:
+        model = User
+        exclude = []
+        fields = []
+
+    def __init__(self, *args, **kwargs):
+        super(ContactForm, self).__init__(*args, **kwargs)
+        self.field_order = [
+            'email',
+            'message',
+        ]
+        self.order_fields(self.field_order)
