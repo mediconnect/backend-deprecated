@@ -215,8 +215,10 @@ def email_check(request):
 def contact(request):
     form = ContactForm()
     if request.user.is_authenticated():
+        customer = Customer.objects.get(user=request.user)
+        form.initial.update({'email': customer.user.email})
         return render(request, 'contact.html', {
-            'customer': Customer.objects.get(user=request.user),
+            'customer': customer,
             'form': form,
         })
     else:
@@ -249,7 +251,7 @@ def send_response(request):
         buf = smtplib.SMTP('smtp-mail.outlook.com', 587)
         buf.ehlo()
         buf.starttls()
-        buf.login(email, password)
+        buf.login(sender, password)
         buf.sendmail(sender, receivers + cc, message)
         buf.close()
         print "Successfully sent email"
