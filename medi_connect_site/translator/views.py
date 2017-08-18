@@ -6,6 +6,10 @@ from forms import AssignmentSummaryForm
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.apps import apps
+from django.core import serializers
+from django.http import JsonResponse
+import json
+import ast
 
 # Create your models here.
 #Get Order and Document Model from helper.models
@@ -37,9 +41,9 @@ trans_status_dict = ['NOT_STARTED', 'ONGOING', 'APPROVING', 'APPROVED', 'DISAPPR
 def get_assignments(translator):  # return order of all assignments
     assignments = []
     if translator.get_role() == 1: #if translator_C2E
+
         for order in Order.objects.filter(Q(translator_C2E=translator.id)).order_by('submit'):
             assignments.append(order)
-            print order.get_trans_status()
         return assignments
     if translator.get_role() == 2: #if translator_E2C
         for order in Order.objects.filter(Q(translator_E2C =translator.id)).order_by('submit'):
@@ -50,49 +54,76 @@ def get_assignments(translator):  # return order of all assignments
 def get_assignments_status(translator, trans_status):  # return order of all ongoing assignments
     assignments = []
     for assignment in translator.get_assignments():
-        print assignment.get_trans_status()
         if assignment.get_trans_status() == trans_status:
             assignments.append(assignment)
     return assignments
 
+@login_required()
+def update_result(request):
+    query=request.GET.get('query',None)
+    status = request.GET.get('status',None)
+    translator = Staff.objects.get(user=request.user)
+    data={
+        'result':{
+            'Order_Id':[],
+            'Customer':[],
+            'Disease':[],
+            'Submit':[],
+            'Deadline':[],
+            'Status':[],
+            'Remaining':[],
+            'Summary':[]
+        },
+        'choices':{
+            'customer_choice':[],
+            'disease_choice':[]
+        }
+    }
+    raw=get_assignments_status(translator,status)
+    json_acceptable_string = query.replace("'", "\"")
+    d = json.loads(json_acceptable_string)
+    if query != None and d != {}:
+        result = []
+        for each in raw:
+            match = True
+            for key in d:
+                if d[key] != 'All':
+                    attr=getattr(each,key)
+                    if attr.id !=int(d[key]):
+                        match = False
+            if match:
+                result.append(each)
+    else:
+        result = raw
+    for each in result:
+        data['result']['Order_Id'].append(each.id)
+        data['result']['Customer'].append((each.customer.id,each.customer.get_name()))
+        data['result']['Disease'].append((each.disease.id,each.disease.name))
+        data['result']['Submit'].append(each.get_submit_deadline())
+        data['result']['Deadline'].append(each.get_deadline())
+        data['result']['Status'].append(each.get_trans_status())
+        data['result']['Remaining'].append(each.get_remaining())
+
+    data['choices']['customer_choice']=list(set(data['result']['Customer']))
+    data['choices']['disease_choice'] = list(set(data['result']['Disease']))
+    return JsonResponse(data,safe=False)
+
 @login_required
 def translator(request, id):
-
     translator = Staff.objects.get(user_id = id)
-    assignments = get_assignments(translator)
-    paginator = Paginator(assignments, 1)
-    page = request.GET.get('page')
-    try:
-        assignments = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        assignments = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        assignments = paginator.page(paginator.num_pages)
+
     return render(request, 'trans_home.html',
                   {
-                      'assignments': assignments,
                       'translator': translator,
                   })
 
 @login_required
 def translator_status(request,id,status):
     translator = Staff.objects.get(user_id = id)
-    assignments = get_assignments_status(translator,status)
-    paginator = Paginator(assignments, 25)
-    page = request.GET.get('page')
-    try:
-        assignemnts = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        assignments = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        assignments = paginator.page(paginator.num_pages)
+    #assignments = get_assignments_status(translator,status)
     return render(request,'trans_home_status.html',
                   {
-                      'assignments':assignments,
+                      'status':status,
                       'translator':translator
                   })
 @login_required

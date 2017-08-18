@@ -105,6 +105,7 @@ def assign_manually(order, translator):
         move(trans_list_C2E, translator, -1)
         order.change_status(TRANSLATING_FEEDBACK)
         order.save()
+
 register = template.Library()
 @register.filter(name='forcetext')
 def forcetext(value):
@@ -114,14 +115,12 @@ def forcetext(value):
 def update_result(request):
     field = request.GET.get('field',None)
     value = request.GET.get('value', None)
-    orders=None
     if value != 'ALL':
         filter = field + '__' + 'exact'
         orders = Order.objects.filter(**{filter: value})
     else:
         orders = Order.objects.all()
-
-    paginator = Paginator(orders, 1)
+    paginator = Paginator(orders, 2)
     page = request.GET.get('page')
     try:
         orders = paginator.page(page)
@@ -131,12 +130,24 @@ def update_result(request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         orders = paginator.page(paginator.num_pages)
-
     data={
-        'orders':serializers.serialize('json',orders),
         'results':[],
-        'choices':[]
+        'choices':[],
+        'has_previous':orders.has_previous(),
+        'has_next':orders.has_next(),
+        'number':orders.number,
+        'num_pages':orders.paginator.num_pages
     }
+    if data['has_previous']:
+        data['previous_page_number']=orders.previous_page_number()
+    if data['has_next']:
+        data['next_page_number']=orders.next_page_number()
+    """
+        previous_page_number
+        next_page_number
+        number
+        num_pages
+    """
     choices = {
         'customer_choices':[],
         'patient_choices':[],
@@ -183,7 +194,6 @@ def update_result(request):
             choices['trans_status_choices'].append(each['Translator Status'])
     data['results']=results
     data['choices']=choices
-    print data['orders'];
     return JsonResponse(data)
 
 

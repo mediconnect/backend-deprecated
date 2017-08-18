@@ -102,35 +102,23 @@
         </th>
     </tr>
 
-      {%for obj in orders%}
-      <tr class="initial">
-        <td>{{obj.id}}</td>
-        <td>{{obj.customer.get_name}}</td>
-        <td>{{obj.patient.name}}</td>
-        <td>{{obj.hospital.name}}</td>
-        <td>{{obj.disease.name}}</td>
-        <td>{{obj.translator_C2E.get_name}}</td>
-        <td>{{obj.translator_E2C.get_name}}</td>
-        <td>{{obj.get_status}}</td>
-        <td>{{obj.get_trans_status}}</td>
-        <td>{{obj.get_deadline}}</td>
-        <td>{{obj.get_submit_deadline}}</td>
-        <td><a href = "{% url 'detail' id=supervisor.id order_id=obj.id %}">Detail</a></td>
-      </tr>
-    {%endfor%}
 
   </table>
 
-  <button id = 'test' name = 'customer' value = '1'>Test_value</button>
+  <div id="pagination">
+
+  </div>
+
 
 </div>
 
   <script>
+    var page = 1;
     $( document ).ready(function() {
         var value = '{{status}}';
         var field = 'trans_status';
         var form = $("#testform");
-        $.getJSON("{% url 'update_result'%}",{'value':value,'field':field},function(data){
+        $.getJSON("{% url 'update_result'%}",{'value':value,'field':field,'page':page},function(data){
             createChoices(data,'customer');
             createChoices(data,'patient');
             createChoices(data,'hospital');
@@ -139,14 +127,30 @@
             createChoices(data,'translator_E2C');
             createChoices(data,'status');
             createChoices(data,'trans_status');
+            appendRow(data);
             createPagination(data);
         });
     });
+    function createPagination(data){
+        var div = document.getElementById("pagination");
+        if(data['has_next']){
+            var a = document.createElement('a');
+            a.text='next';
+            a.href=window.location.href+"/?page="+data['next_page_number'];
+             a.onclick = function() {
+                window.
+                console.log(page);
+                page+=1;
+                console.log(page);}
+            div.appendChild(a);
+            console.log(a);
+        }
+    }
     $(".select").change(function () {
         $(".initial").empty();
         var value = $(".select option:selected").val();
         var field = $(".select option:selected").attr("field");
-        $.getJSON("{% url 'update_result'%}",{'value':value,'field':field},function(data){
+        $.getJSON("{% url 'update_result'%}",{'value':value,'field':field,'page':page},function(data){
             createChoices(data,'customer');
             createChoices(data,'patient');
             createChoices(data,'hospital');
@@ -189,9 +193,7 @@
         cell.className="initial";
         cell.innerHTML = rowResult[i][x.toString()];
     }
-    function createPagination(data){
-        alert(data.orders.has_previous);
-    }
+
     function createChoices(data,x){
 
         var a = x.toString()+'_choices'
