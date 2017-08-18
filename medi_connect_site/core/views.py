@@ -8,7 +8,7 @@ from customer.models import Customer
 from customer.views import customer
 from translator.views import translator
 from supervisor.views import supervisor
-from helper.models import Hospital, Disease, Order, Staff
+from helper.models import Hospital, Disease, Staff, Rank
 
 
 # Create your views here
@@ -63,35 +63,75 @@ def signup(request):
 
 
 def result(request):
+    """
+    this method fetch diseases keyword and compare with user input. the matching
+    part can be improved later. if found multiple matching diseases, return
+    multiple options and let user choose. if no result, return all diseases and
+    let user choose. if exactly one disease is found, directly go to relevant hospital.
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
         form = SearchForm(request.POST)
         if not form.is_valid():
             return customer(request, request.user)
         else:
             query = form.cleaned_data.get('query')
-            dis = Disease.objects.filter(Q(keyword__icontains=query))
-            for unit in dis:
-                keywords = set(unit.keyword.split(','))
-                if query in keywords:
-                    dis = unit
+            dis_list = Disease.objects.all()
+            dis = []
+            for unit in dis_list:
+                keywords = unit.keyword.split(',')
+                for keyword in keywords:
+                    if str(keyword) in query:
+                        dis.append(unit)
+                        break
+
+            if len(dis) == 0:
+                return render(request, 'disease_choice.html', {
+                    'customer': Customer.objects.get(user=request.user),
+                    'disease_list': Disease.objects.all(),
+                })
+
+            if len(dis) > 1:
+                return render(request, 'disease_choice.html', {
+                    'customer': Customer.objects.get(user=request.user),
+                    'disease_list': dis,
+                })
+
+            rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
+            hospital_list = []
+            for r in rank_list:
+                hospital_list.append(r.hospital)
+                if len(hospital_list) >= 5:
                     break
 
-            hospital_info = []
-            hospitals = Hospital.objects.filter(Q(specialty__icontains=query))
-            for hosp in hospitals:
-                specialities = set(hosp.specialty.split(','))
-                if query in specialities:
-                    hospital_info.append(hosp)
-
-            if request.user.is_authenticated():
-                return render(request, 'result.html',
-                              {
-                                  'hospital_list': hospital_info,
-                                  'disease': dis,
-                                  'customer': Customer.objects.get(user=request.user)
-                              })
+            return render(request, 'result.html', {
+                'hospital_list': hospital_list,
+                'disease': dis[0],
+                'hospital_length': len(hospital_list) > 0,
+                'disease_length': dis is not None,
+                'customer': Customer.objects.get(user=request.user)
+            })
     else:
         return render(request, 'result.html')
+
+
+def choose_hospital(request, disease_id):
+    dis = Disease.objects.get(id=disease_id)
+    rank_list = Rank.objects.filter(disease=dis)
+    hospital_list = []
+    for r in rank_list:
+        hospital_list.append(r.hospital)
+        if len(hospital_list) >= 5:
+            break
+
+    return render(request, 'result.html', {
+        'hospital_list': hospital_list,
+        'disease': dis,
+        'hospital_length': len(hospital_list) > 0,
+        'disease_length': dis is not None,
+        'customer': Customer.objects.get(user=request.user)
+    })
 
 
 def result_guest(request):
@@ -108,19 +148,24 @@ def result_guest(request):
             })
         else:
             query = form.cleaned_data.get('query')
-            dis = Disease.objects.filter(Q(keyword__icontains=query))
-            for unit in dis:
+            dis_list = Disease.objects.filter(Q(keyword__icontains=query))
+            dis = None
+            for unit in dis_list:
                 keywords = set(unit.keyword.split(','))
                 if query in keywords:
+                    dis = unit
                     break
-            hospital_info = []
-            hospitals = Hospital.objects.filter(Q(specialty__icontains=query))
-            for hosp in hospitals:
-                hospital_info.append(hosp) if hosp not in hospital_info else None
+
+            rank_list = Rank.objects.filter(disease=dis).order_by('rank')
+            hospital_list = []
+            for r in rank_list:
+                hospital_list.append(r.hospital)
+                if len(hospital_list) >= 5:
+                    break
 
             return render(request, 'result_guest.html',
                           {
-                              'hospital_list': hospital_info,
+                              'hospital_list': hospital_list,
                           })
     else:
         return render(request, 'result_guest.html')

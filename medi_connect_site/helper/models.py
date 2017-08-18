@@ -58,8 +58,8 @@ class Hospital(models.Model):
 
 class Rank(models.Model):
     rank = models.IntegerField(default=0)
-    hospital = models.OneToOneField(Hospital)
-    disease = models.OneToOneField(Disease)
+    hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_rank')
+    disease = models.ForeignKey(Disease, unique=False, default=None, related_name='disease_rank')
 
     class Meta:
         db_table = 'rank'
