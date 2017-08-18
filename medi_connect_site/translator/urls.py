@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^assignment/(?P<id>\d+)/(?P<order_id>\d+)/$', trans_views.assignment_summary, name='assignment_summary'),
     url(r'^login/$', auth_views.login, {'template_name': 'trans_login.html'}, name='translator/login'),
     url(r'^logout/', auth_views.logout, {'next_page': '/translator/login'}, name='translator_logout'),
+    url(r'^ajax/update_result/$', trans_views.update_result, name='trans_update_result'),
 ]

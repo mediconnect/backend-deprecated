@@ -268,7 +268,15 @@ GENDER_CHOICES = (
     (FEMALE, 'Female'),
     ('OTHER', 'Other')
 )
-
+#Relation
+SELF='SELF'
+RELATIVE='RELATIVE'
+CLIENT='CLIENT'
+RELATION_CHOICES=(
+    (SELF,'SELF'),
+    (RELATIVE,'RELATIVE'),
+    (CLIENT,'CLIENT')
+)
 
 class Patient(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
@@ -278,6 +286,7 @@ class Patient(models.Model):
     category = models.CharField(max_length=50, default='COLD')
     diagnose_hospital = models.CharField(max_length=50, blank=True)
     doctor = models.TextField(blank=True)
+    relationship = models.CharField(max_length=50,choices =RELATION_CHOICES,default = SELF)
 
     class Meta:
         db_table = 'patient'
