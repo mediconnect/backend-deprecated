@@ -62,6 +62,7 @@ def get_assignments_status(translator, trans_status):  # return order of all ong
 def update_result(request):
     query=request.GET.get('query',None)
     status = request.GET.get('status',None)
+    page = request.GET.get('page',1)
     translator = Staff.objects.get(user=request.user)
     data={
         'result':{
@@ -77,14 +78,19 @@ def update_result(request):
         'choices':{
             'customer_choice':[],
             'disease_choice':[]
-        }
+        },
+
+
     }
     raw=get_assignments_status(translator,status)
+    result_length = len(raw)
+    p = Paginator(raw,2)
+    raw_page = p.page(page)
     json_acceptable_string = query.replace("'", "\"")
     d = json.loads(json_acceptable_string)
     if query != None and d != {}:
         result = []
-        for each in raw:
+        for each in raw_page:
             match = True
             for key in d:
                 if d[key] != 'All':
@@ -94,15 +100,17 @@ def update_result(request):
             if match:
                 result.append(each)
     else:
-        result = raw
+        result = raw_page
+
     for each in result:
         data['result']['Order_Id'].append(each.id)
         data['result']['Customer'].append((each.customer.id,each.customer.get_name()))
         data['result']['Disease'].append((each.disease.id,each.disease.name))
-        data['result']['Submit'].append(each.get_submit_deadline())
-        data['result']['Deadline'].append(each.get_deadline())
+        data['result']['Submit'].append(each.submit) # submit deadline
+        data['result']['Deadline'].append(each.get_remaining()) # translate deadline
         data['result']['Status'].append(each.get_trans_status())
-        data['result']['Remaining'].append(each.get_remaining())
+        data['result']['Remaining'].append(each.get_deadline())
+
 
     data['choices']['customer_choice']=list(set(data['result']['Customer']))
     data['choices']['disease_choice'] = list(set(data['result']['Disease']))

@@ -16,7 +16,9 @@
         width:100px;
     }
   </style>
-
+  Submit是提交时间<br>
+  Deadline 是翻译的deadline<br>
+  Remaining 是剩余的时间<br>
   <p>Assignments</p>
     <input type="text" id="customer_search"  placeholder="Search Customer">
 
@@ -30,29 +32,34 @@
         <option>All</option>
     </select>
 
-	<table class= 'fixed' id = 'table', style="width:100%">
-    <tr>
-        <th>Order Id</th>
-        <th>Customer</th>
-        <th>Disease</th>
-        <th>Submit</th>
-		<th>Deadline</th>
-		<th>Status</th>
-		<th>Remaining</th>
-		<th>View Summary</th>
-    </tr>
+    <div id="pagination">
+        <table class= 'fixed' id = 'table', style="width:100%">
 
-  </table>
+            <tr>
+                <th>Order Id</th>
+                <th>Customer</th>
+                <th>Disease</th>
+                <th>Submit</th>
+                <th>Deadline</th>
+                <th>Status</th>
+                <th>Remaining</th>
+                <th>View Summary</th>
+            </tr>
+
+        </table>
+    </div>
+
 <script>
+    var result_length;
     var dic={}
     $( document ).ready(function() {
         $.getJSON("{% url 'trans_update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic)},function(data){
-            console.log(data);
             createChoice(data);
             createResult(data);
         });
 
     });
+
 
     function filter(){
         customer_filter = document.getElementById('customer_filter');
@@ -62,21 +69,20 @@
         disease_filter = document.getElementById('disease_filter');
         value = disease_filter.options[disease_filter.selectedIndex].value;
         dic.disease=value;
-
-        console.log(dic);
         $.getJSON("{% url 'trans_update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic)},function(data){
-            console.log(data);
+            createResult(data);
         });
 
     }
     function createResult(data){
         var table = document.getElementById('table');
-
+        $('.result').empty();
         for(var i=0;i<data.result.Customer.length;i++){
             var row = table.insertRow(-1);
+            row.className = 'result'
             createCell(row,data.result.Order_Id[i]);
-            createCell(row,data.result.Customer[i][0]);
-            createCell(row,data.result.Disease[i][0]);
+            createCell(row,data.result.Customer[i][1]);
+            createCell(row,data.result.Disease[i][1]);
             createCell(row,data.result.Submit[i]);
             createCell(row,data.result.Deadline[i]);
             createCell(row,data.result.Status[i]);
@@ -84,11 +90,26 @@
             createLink(row,'{{translator.user.id}}',data.result.Order_Id[i]);
 
         }
+
+        result_length = data.result.Customer.length;
+
+        $('#pagination').twbsPagination({
+            totalPages: parseInt(result_length/2)+1,
+            visiblePages:10,
+            onPageClick: function (event, page) {
+
+                $.getJSON("{% url 'trans_update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic),'page':page},function(data){
+                    createResult(data);
+                });
+            }
+        });
+    }
+    function revealPage(page){
+
     }
     function createCell(row,value){
         var cell = row.insertCell(-1);
         cell.innerHTML=value;
-        console.log(value);
     }
     function createLink(row,translator_id,Order_Id){
         var cell = row.insertCell(-1);
