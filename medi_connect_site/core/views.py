@@ -290,7 +290,11 @@ def send_response(request):
     except smtplib.SMTPException:
         print "Error: unable to send email"
 
-    return redirect('home')
+    if request.user.is_authenticated():
+        return render(request, 'success.html', {
+            'customer': Customer.objects.get(user=request.user)
+        })
+    return render(request, 'success_guest.html')
 
 
 def hospital_detail(request, hospital_id):
