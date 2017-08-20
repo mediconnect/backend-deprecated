@@ -80,12 +80,15 @@ def result(request):
             query = form.cleaned_data.get('query')
             dis_list = Disease.objects.all()
             dis = []
+            exact_match = False
             for unit in dis_list:
                 keywords = unit.keyword.split(',')
                 for keyword in keywords:
-                    if str(keyword) in query:
+                    if keyword in query:
+                        exact_match = exact_match or keyword == query
                         dis.append(unit)
-                        break
+                        if exact_match:
+                            break
 
             if len(dis) == 0:
                 return render(request, 'disease_choice.html', {
@@ -93,7 +96,7 @@ def result(request):
                     'disease_list': Disease.objects.all(),
                 })
 
-            if len(dis) > 1:
+            if len(dis) > 1 or not exact_match:
                 return render(request, 'disease_choice.html', {
                     'customer': Customer.objects.get(user=request.user),
                     'disease_list': dis,
@@ -126,13 +129,21 @@ def choose_hospital(request, disease_id):
         if len(hospital_list) >= 5:
             break
 
-    return render(request, 'result.html', {
-        'hospital_list': hospital_list,
-        'disease': dis,
-        'hospital_length': len(hospital_list) > 0,
-        'disease_length': dis is not None,
-        'customer': Customer.objects.get(user=request.user)
-    })
+    if request.user.is_authenticated():
+        return render(request, 'result.html', {
+            'hospital_list': hospital_list,
+            'disease': dis,
+            'hospital_length': len(hospital_list) > 0,
+            'disease_length': dis is not None,
+            'customer': Customer.objects.get(user=request.user)
+        })
+    else:
+        return render(request, 'result_guest.html', {
+            'hospital_list': hospital_list,
+            'disease': dis,
+            'hospital_length': len(hospital_list) > 0,
+            'disease_length': dis is not None,
+        })
 
 
 def result_guest(request):
@@ -145,29 +156,45 @@ def result_guest(request):
         form = SearchForm(request.POST)
         if not form.is_valid():
             return render(request, 'index.html', {
-                'form': SearchForm()
+                'form': form,
             })
         else:
             query = form.cleaned_data.get('query')
-            dis_list = Disease.objects.filter(Q(keyword__icontains=query))
-            dis = None
+            dis_list = Disease.objects.all()
+            dis = []
+            exact_match = False
             for unit in dis_list:
-                keywords = set(unit.keyword.split(','))
-                if query in keywords:
-                    dis = unit
-                    break
+                keywords = unit.keyword.split(',')
+                for keyword in keywords:
+                    if keyword in query:
+                        exact_match = exact_match or keyword == query
+                        dis.append(unit)
+                        if exact_match:
+                            break
 
-            rank_list = Rank.objects.filter(disease=dis).order_by('rank')
+            if len(dis) == 0:
+                return render(request, 'disease_choice_guest.html', {
+                    'disease_list': Disease.objects.all(),
+                })
+
+            if len(dis) > 1 or not exact_match:
+                return render(request, 'disease_choice_guest.html', {
+                    'disease_list': dis,
+                })
+
+            rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
             hospital_list = []
             for r in rank_list:
                 hospital_list.append(r.hospital)
                 if len(hospital_list) >= 5:
                     break
 
-            return render(request, 'result_guest.html',
-                          {
-                              'hospital_list': hospital_list,
-                          })
+            return render(request, 'result_guest.html', {
+                'hospital_list': hospital_list,
+                'disease': dis[0],
+                'hospital_length': len(hospital_list) > 0,
+                'disease_length': dis is not None,
+            })
     else:
         return render(request, 'result_guest.html')
 
@@ -180,7 +207,7 @@ def disease(request):
 
 
 def hospital(request):
-    hospitals = Hospital.objects.order_by('rank')[0:20]
+    hospitals = Hospital.objects.all()[0:20]
     return render(request, 'hospital.html', {
         'hospitals': hospitals,
     })
@@ -228,6 +255,11 @@ def contact(request):
 
 
 def send_response(request):
+    """
+    :param request:
+    :return:
+    send customer response to according emails
+    """
     form = ContactForm(request.POST)
     if not form.is_valid():
         if request.user.is_authenticated():
@@ -259,3 +291,9 @@ def send_response(request):
         print "Error: unable to send email"
 
     return redirect('home')
+
+
+def hospital_detail(request, hospital_id):
+    return render(request, 'hospital_detail.html', {
+        'hospital': Hospital.objects.get(id=hospital_id)
+    })

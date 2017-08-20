@@ -1,17 +1,16 @@
 {% extends "index.html" %}
-
-{% block title %}Result{% endblock %}
+{% block title %}Choose Disease{% endblock %}
 
 {% block content %}
 
-{% for hospital in hospital_list %}
+{% for disease in disease_list %}
 <div class="media" style="border-style:solid">
-    <a href="{% url 'hospital_detail' hospital_id=hospital.id %}">
+    <a href="{% url 'choose_hospital' disease_id=disease.id %}">
         <div class="media-left media-middle">
         </div>
         <div class="media-body">
-            <h4 class="media-heading">{{hospital.name}}</h4>
-            <p>{{hospital.introduction}}</p>
+            <h4 class="media-heading">{{disease.name}}</h4>
+            <p>{{disease.introduction}}</p>
         </div>
     </a>
 </div>
