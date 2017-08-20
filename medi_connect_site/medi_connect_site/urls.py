@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^result_guest/', core_views.result_guest, name='result_guest'),
     url(r'^hospital/', core_views.hospital, name='hospital_list'),
     url(r'^disease/', core_views.disease, name='disease_list'),
+    url(r'^contact/$', core_views.contact, name='contact'),
     url(r'^core/', include('core.urls')),
     url(r'^translator/', include('translator.urls')),
     url(r'^supervisor/', include('supervisor.urls')),
@@ -26,17 +27,6 @@ urlpatterns = [
     url(r'^info/', include('info.urls')),
     # javascript plugin reverse look up url
     url(r'^jsreverse/$', js_views.urls_js, name='js_reverse'),
-    # password reset url routers
-    url(r'^password_reset/$', auth_views.password_reset,
-        {'template_name': 'password_reset_form.html'},
-        name='password_reset'),
-    url(r'^password_reset/done/$', auth_views.password_reset_done, {'template_name': 'password_reset_done.html'},
-        name='password_reset_done'),
-    url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        auth_views.password_reset_confirm, {'template_name': 'password_reset_confirm.html'},
-        name='password_reset_confirm'),
-    url(r'^reset/done/$', auth_views.password_reset_complete, {'template_name': 'password_reset_complete.html'},
-        name='password_reset_complete'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
