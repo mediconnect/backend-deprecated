@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from models import Hospital, Patient, Disease, Order, Document, Staff, LikeHospital, OrderPatient
+from models import Hospital, Patient, Disease, Order, Document, Staff, LikeHospital, OrderPatient, Rank
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from helper.forms import OrderFormFirst, OrderFormSecond
@@ -111,6 +111,7 @@ def hospital(request, hospital_id, disease_id):
 
     return render(request, "hospital_order.html", {
         'hospital': hosp,
+        'rank': Rank.objects.get(hospital=hosp, disease=dis).rank,
         'disease': dis,
         'customer': customer,
         'order_id': order.id,
@@ -185,12 +186,14 @@ def order_submit_first(request, order_id):
             name = form.cleaned_data.get('name')
             age = form.cleaned_data.get('age')
             gender = form.cleaned_data.get('gender')
-            patient = Patient(name=name, age=age, gender=gender, customer=customer)
+            relationship = form.cleaned_data.get('relationship')
+            patient = Patient(name=name, age=age, gender=gender, customer=customer, relationship=relationship)
             patient.save()
             order.patient = patient
             order.status = 0
             order.step = 1
-            order_patient = OrderPatient(name=patient.name, age=patient.age, gender=patient.gender)
+            order_patient = OrderPatient(name=patient.name, age=patient.age, gender=patient.gender,
+                                         relationship=patient.relationship, )
             order_patient.save()
             order.patient_order = order_patient
             order.save()
@@ -232,7 +235,8 @@ def order_patient_finish(request, order_id, patient_id):
     patient = Patient.objects.get(id=patient_id)
     order.patient = patient
     order.step = 1
-    order_patient = OrderPatient(name=patient.name, age=patient.age, gender=patient.gender)
+    order_patient = OrderPatient(name=patient.name, age=patient.age, gender=patient.gender,
+                                 relationship=patient.relationship, )
     order_patient.save()
     order.patient_order = order_patient
     order.save()

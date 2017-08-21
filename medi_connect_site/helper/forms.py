@@ -7,7 +7,7 @@ class OrderFormFirst(forms.ModelForm):
     class Meta:
         model = Patient
         exclude = []
-        fields = ['name', 'age', 'gender', 'diagnose_hospital']
+        fields = ['name', 'age', 'gender', 'diagnose_hospital', 'relationship']
 
     def __init__(self, *args, **kwargs):
         super(OrderFormFirst, self).__init__(*args, **kwargs)

@@ -163,8 +163,8 @@ class Order(models.Model):
     def get_info(self):
         return 'Order id is ' + str(self.id) + ' Deadline is :' + self.get_deadline()
 
-    def get_remaining(self): #deadline
-        return self.submit+datetime.timedelta(days=2);
+    def get_remaining(self):  # deadline
+        return self.submit + datetime.timedelta(days=2);
 
     def get_deadline(self):  # default deadline 2 days after submit time remaining
         total_sec = (self.submit + datetime.timedelta(days=2) - datetime.datetime.now(utc_8)).total_seconds()
@@ -269,15 +269,16 @@ GENDER_CHOICES = (
     (FEMALE, 'Female'),
     ('OTHER', 'Other')
 )
-#Relation
-SELF='SELF'
-RELATIVE='RELATIVE'
-CLIENT='CLIENT'
-RELATION_CHOICES=(
-    (SELF,'SELF'),
-    (RELATIVE,'RELATIVE'),
-    (CLIENT,'CLIENT')
+# Relation
+SELF = 'SELF'
+RELATIVE = 'RELATIVE'
+CLIENT = 'CLIENT'
+RELATION_CHOICES = (
+    (SELF, 'SELF'),
+    (RELATIVE, 'RELATIVE'),
+    (CLIENT, 'CLIENT')
 )
+
 
 class Patient(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
@@ -287,7 +288,7 @@ class Patient(models.Model):
     category = models.CharField(max_length=50, default='COLD')
     diagnose_hospital = models.CharField(max_length=50, blank=True)
     doctor = models.TextField(blank=True)
-    relationship = models.CharField(max_length=50,choices =RELATION_CHOICES,default = SELF)
+    relationship = models.CharField(max_length=50, choices=RELATION_CHOICES, default=SELF)
 
     class Meta:
         db_table = 'patient'
@@ -304,6 +305,7 @@ class OrderPatient(models.Model):
     category = models.CharField(max_length=50, default='COLD')
     diagnose_hospital = models.CharField(max_length=50, blank=True)
     doctor = models.TextField(blank=True)
+    relationship = models.CharField(max_length=50, choices=RELATION_CHOICES, default=SELF)
 
     class Meta:
         db_table = 'order_patient'

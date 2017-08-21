@@ -6,17 +6,22 @@
 
 <div class="media" style="border-style:solid">
     {% if hospital_length and disease_length %}
-        {% for hospital in hospital_list %}
+        {% with rank=0 %}
+            {% for hospital in hospital_list %}
             <a href="{% url 'hospital_order' hospital_id=hospital.id disease_id=disease.id%}">
                 <div class="media-left media-middle"></div>
                 <div class="media-body">
-                    <h4 class="media-heading">{{hospital.name}}</h4>
-                    <p>{{hospital.introduction}}</p>
+                    <p>Rank: {{ rank|add:"1" }}</p>
+                    <h4 class="media-heading">Hospital Name: {{hospital.name}}</h4>
+                    <p>Introduction: {{hospital.introduction}}</p>
+                    <p>Feedback: {{hospital.feedback_time}}</p>
+                    <p>Price: {{hospital.price_range}}</p>
                 </div>
             </a>
-        {% endfor %}
+            {% endfor %}
+        {% endwith %}
     {% else %}
-        Result Not Found
+    Result Not Found
     {% endif %}
 </div>
 
