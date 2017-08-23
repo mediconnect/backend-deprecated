@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from customer.models import Customer
-from helper.models import Order, Patient, Document, LikeHospital, Hospital
+from helper.models import Order, Patient, Document, LikeHospital, Hospital, Disease
 from django.contrib.auth.decorators import login_required
 from forms import ProfileForm, PasswordResetForm, PatientAddForm, DocAddForm
 from django.contrib.auth.hashers import check_password, make_password
@@ -176,19 +176,38 @@ def add_doc(request, order_id):
     })
 
 
+
 @login_required
 def bookmark(request):
     customer = Customer.objects.get(user=request.user)
     liked_hospital = LikeHospital.objects.filter(customer=customer)
-    hospitals = []
-    diseases = dict()
+    diseases = set()
     for h in liked_hospital:
-        hospitals.append(h.hospital)
-        diseases[h.hospital.id] = h.disease.id
+        diseases.add(h.disease)
+    print diseases
     return render(request, 'bookmark.html', {
+        'diseases': diseases,
+        'customer': customer,
+        'disease_length': len(diseases) > 0,
+    })
+
+
+
+@login_required
+def bookmark_compare(request, disease_id):
+    customer = Customer.objects.get(user=request.user)
+    liked_hospital = LikeHospital.objects.filter(customer=customer)
+    disease = Disease.objects.get(id=disease_id)
+    hospitals = []
+    for h in liked_hospital:
+        if h.disease == disease:
+            hospitals.append(h.hospital)
+    print disease
+    print hospitals
+    return render(request, 'bookmark_compare.html', {
         'hospitals': hospitals,
         'hospitals_length': len(hospitals) > 0,
-        'diseases': diseases,
+        'disease': disease,
         'customer': customer,
     })
 

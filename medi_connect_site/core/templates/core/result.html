@@ -4,25 +4,23 @@
 
 {% block content %}
 
-<div class="media" style="border-style:solid">
-    {% if hospital_length and disease_length %}
-        {% with rank=0 %}
-            {% for hospital in hospital_list %}
-            <a href="{% url 'hospital_order' hospital_id=hospital.id disease_id=disease.id%}">
-                <div class="media-left media-middle"></div>
-                <div class="media-body">
-                    <p>Rank: {{ rank|add:"1" }}</p>
-                    <h4 class="media-heading">Hospital Name: {{hospital.name}}</h4>
-                    <p>Introduction: {{hospital.introduction}}</p>
-                    <p>Feedback: {{hospital.feedback_time}}</p>
-                    <p>Price: {{hospital.price_range}}</p>
-                </div>
-            </a>
-            {% endfor %}
-        {% endwith %}
-    {% else %}
+{% if hospital_length and disease_length %}
+    {% for hospital in hospital_list %}
+    <div class="media" style="border-style:solid">
+        <a href="{% url 'hospital_order' hospital_id=hospital.id disease_id=disease.id%}">
+            <div class="media-left media-middle"></div>
+            <div class="media-body">
+                <p>Rank: {{ forloop.counter0|add:"1" }}</p>
+                <h4 class="media-heading">Hospital Name: {{hospital.name}}</h4>
+                <p>Introduction: {{hospital.introduction}}</p>
+                <p>Feedback: {{hospital.feedback_time}}</p>
+                <p>Price: {{hospital.price_range}}</p>
+            </div>
+        </a>
+    </div>
+    {% endfor %}
+{% else %}
     Result Not Found
-    {% endif %}
-</div>
+{% endif %}
 
 {% endblock %}
