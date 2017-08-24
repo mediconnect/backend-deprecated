@@ -1,0 +1,44 @@
+{% extends "customer_header.html" %}
+{% block title %}Bookmarked Hospitals{% endblock %}
+
+{% block content %}
+<ul class="nav nav-tabs">
+    <li role="presentation"><a href="{% url 'info_profile' %}">Profile</a></li>
+    <li role="presentation" class="active"><a href="{% url 'info_bookmark' %}">Bookmark</a></li>
+    <li role="presentation"><a href="{% url 'info_order' %}">Appointment</a></li>
+</ul>
+
+<br>
+
+<div class="container-fluid">
+    <div class="row">
+        {% if hospitals_length %}
+        {% for hosp in hospitals %}
+        <div class="col-md-4" style="">
+            <p>Rank: {{ forloop.counter0|add:"1" }}</p>
+            <h4 class="media-heading">Hospital Name: {{hosp.name}}</h4>
+            <p>Introduction: {{hosp.introduction}}</p>
+            <p>Feedback: {{hosp.feedback_time}}</p>
+            <p>Price: {{hosp.price_range}}</p>
+            <form action="{% url 'info_unmark' hospital_id=hosp.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-default">
+                    <span style="font-size:1.5em;" class="glyphicon glyphicon-star"></span>
+                    I want to unMark
+                </button>
+            </form>
+            <a href="{% url 'hospital_order' hospital_id=hosp.id disease_id=disease.id %}">
+                Click here to hospital
+            </a>
+        </div>
+        {% endfor %}
+        {% else %}
+        Have not bookmark any hospitals yet.
+        {% endif %}
+    </div>
+</div>
+
+<script type="text/javascript">
+
+</script>
+{% endblock %}

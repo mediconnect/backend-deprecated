@@ -11,29 +11,10 @@
 <br>
 
 <ul class="list-group">
-    {% if hospitals_length %}
-        {% for hosp in hospitals %}
+    {% if disease_length %}
+        {% for dis in diseases %}
         <li class="list-group-item">
-            <span>Name</span>
-            <br>
-            <span>{{ hosp.name }}</span>
-            <br>
-            <span>Indroduction</span>
-            <br>
-            <span>{{ hosp.introduction }}</span>
-            <br>
-            <form action="{% url 'info_unmark' hospital_id=hosp.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-default">
-                    <span style="font-size:1.5em;" class="glyphicon glyphicon-star"></span>
-                    I want to unMark
-                </button>
-            </form>
-            {% with dis_id=diseases|get_item:hosp.id %}
-            <a href="{% url 'hospital_order' hospital_id=hosp.id disease_id=dis_id %}">
-                Click here to hospital
-            </a>
-            {% endwith %}
+            <a href="{% url 'info_bookmark_compare' disease_id=dis.id %}">{{dis.name}}</a>
         </li>
         {% endfor %}
     {% else %}
