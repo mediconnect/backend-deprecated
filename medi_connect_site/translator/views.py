@@ -1,27 +1,28 @@
+# -*- coding: utf-8 -*-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files.storage import FileSystemStorage
-from forms import AssignmentSummaryForm
+from helper.models import UTC_8
 from django.db.models import Q
-from django.contrib.auth.models import User
 from django.apps import apps
-from django.core import serializers
 from django.http import JsonResponse
 import json
-import ast
+import datetime
 
 # Create your models here.
 #Get Order and Document Model from helper.models
 Order = apps.get_model('helper','Order')
 Document = apps.get_model('helper','Document')
 Staff = apps.get_model('helper','Staff')
+utc_8 = UTC_8()
 # Create your views here.
 
 # Trans_status
 
-NOT_STARTED = 0  # assignment not started yet
-ONGOING = 1  # assignment started not submitted to supervisor
+NOT_STARTED = 0  # assignment not started yet    未开始
+ONGOING = 1  # assignment started not submitted to supervisor 进行中
 APPROVING = 2  # assignment submitted to supervisor for approval
 APPROVED = 3  # assignment approved, to status 5
 DISAPPROVED = 4  # assignment disapproved, return to status 1
@@ -58,6 +59,7 @@ def get_assignments_status(translator, trans_status):  # return order of all ong
             assignments.append(assignment)
     return assignments
 
+
 @login_required()
 def update_result(request):
     query=request.GET.get('query',None)
@@ -73,7 +75,9 @@ def update_result(request):
             'Deadline':[],
             'Status':[],
             'Remaining':[],
-            'Summary':[]
+            'Summary':[],
+            'Upload':[],
+            'Link':[]
         },
         'choices':{
             'customer_choice':[],
@@ -110,6 +114,8 @@ def update_result(request):
         data['result']['Deadline'].append(each.get_remaining()) # translate deadline
         data['result']['Status'].append(each.get_trans_status())
         data['result']['Remaining'].append(each.get_deadline())
+        data['result']['Upload'].append(each.get_upload())
+        data['result']['Link'].append(reverse('assignment_summary',args=[translator.user.id,each.id]))
 
 
     data['choices']['customer_choice']=list(set(data['result']['Customer']))
@@ -161,6 +167,7 @@ def assignment_summary(request, id, order_id):
         document = Document(order=assignment, document=file, is_origin=False)
         document.save()
         assignment.pending.add(document)
+        assignment.set_upload(datetime.datetime.now(utc_8))
         assignment.save()
         return render(request, 'assignment_summary.html', {
             'translator': translator,

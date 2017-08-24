@@ -43,7 +43,9 @@
                 <th>Deadline</th>
                 <th>Status</th>
                 <th>Remaining</th>
+                <th>Upload</th>
                 <th>View Summary</th>
+
             </tr>
 
         </table>
@@ -84,10 +86,12 @@
             createCell(row,data.result.Customer[i][1]);
             createCell(row,data.result.Disease[i][1]);
             createCell(row,data.result.Submit[i]);
-            createCell(row,data.result.Deadline[i]);
+            createCell(row,formatDate(data.result.Deadline[i]));
             createCell(row,data.result.Status[i]);
             createCell(row,data.result.Remaining[i]);
-            createLink(row,'{{translator.user.id}}',data.result.Order_Id[i]);
+            createCell(row,data.result.Upload[i]);
+            createLink(row,data.result.Link[i]);
+
 
         }
 
@@ -104,19 +108,22 @@
             }
         });
     }
-    function revealPage(page){
-
+    function formatDate(time){
+        var d = new Date(time);
+        return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日'+d.getHours()+'点'
     }
     function createCell(row,value){
         var cell = row.insertCell(-1);
         cell.innerHTML=value;
     }
-    function createLink(row,translator_id,Order_Id){
+    function createLink(row,href){
         var cell = row.insertCell(-1);
         var a = document.createElement('a');
         a.innerHTML = 'Summary';
-        a.href="{% url 'assignment_summary' id=14 order_id=127 %}";
+        a.href=href;
+        console.log(href);
         cell.appendChild(a);
+
 
     }
     function createChoice(data){

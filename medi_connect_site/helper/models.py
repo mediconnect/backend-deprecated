@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.db import models
 from django.contrib.auth.models import User
@@ -66,17 +67,17 @@ class Rank(models.Model):
 
 
 # Status
-STARTED = 0
-PAID = 1  # paid
-RECEIVED = 2  # order received
-TRANSLATING_ORIGIN = 3  # translator starts translating origin documents
-SUBMITTED = 4  # origin documents translated, approved and submitted to hospitals
+STARTED = 0 #下单中
+PAID = 1  # paid 已付款
+RECEIVED = 2  # order received 已接单
+TRANSLATING_ORIGIN = 3  # translator starts translating origin documents 翻译原件中
+SUBMITTED = 4  # origin documents translated, approved and submitted to hospitals 已提交
 # ============ Above is C2E status =============#
 # ============Below is E2C status ==============#
 RETURN = 5  # hospital returns feedback
-TRANSLATING_FEEDBACK = 6  # translator starts translating feedback documents
-FEEDBACK = 7  # feedback documents translated, approved, and feedback to customer
-DONE = 8  # customer confirm all process done
+TRANSLATING_FEEDBACK = 6  # translator starts translating feedback documents 翻译反馈中
+FEEDBACK = 7  # feedback documents translated, approved, and feedback to customer 已反馈
+DONE = 8  # customer confirm all process done 完成
 
 STATUS_CHOICES = (
     (STARTED, 'started'),
@@ -93,12 +94,12 @@ status_dict = ['STARTED', 'PAID', 'RECEIVED', 'TRANSLATING_ORIGIN', 'SUBMITTED',
                'FEEDBACK', 'DONE']
 # Trans_status
 
-NOT_STARTED = 0  # assignment not started yet
-ONGOING = 1  # assignment started not submitted to supervisor
-APPROVING = 2  # assignment submitted to supervisor for approval
-APPROVED = 3  # assignment approved, to status 5
-DISAPPROVED = 4  # assignment disapproved, return to status 1
-FINISHED = 5  # assignment approved and finished
+NOT_STARTED = 0  # assignment not started yet 未开始
+ONGOING = 1  # assignment started not submitted to supervisor 翻译中
+APPROVING = 2  # assignment submitted to supervisor for approval 审核中
+APPROVED = 3  # assignment approved, to status 5 已审核
+DISAPPROVED = 4  # assignment disapproved, return to status 1 未批准
+FINISHED = 5  # assignment approved and finished 完成
 
 TRANS_STATUS_CHOICE = (
     (NOT_STARTED, 'not_started'),
@@ -150,6 +151,7 @@ class Order(models.Model):
     # all feedback document TRANSLATED and APPROVED
     feedback = models.ManyToManyField('Document', related_name='feedback_file')
     # all pending document, make sure this NOT VISIBLE to customers
+    latest_upload = models.DateTimeField(null = True)
     pending = models.ManyToManyField('Document', related_name='pending_file')
     receive = models.DateField(default=datetime.date.today)
     status = models.CharField(blank=True, max_length=20, choices=STATUS_CHOICES)
@@ -164,7 +166,7 @@ class Order(models.Model):
         return 'Order id is ' + str(self.id) + ' Deadline is :' + self.get_deadline()
 
     def get_remaining(self): #deadline
-        return self.submit+datetime.timedelta(days=2);
+        return self.submit+datetime.timedelta(days=2)
 
     def get_deadline(self):  # default deadline 2 days after submit time remaining
         total_sec = (self.submit + datetime.timedelta(days=2) - datetime.datetime.now(utc_8)).total_seconds()
@@ -186,6 +188,11 @@ class Order(models.Model):
             submit_deadline += ('  (passdue)  ')
         return submit_deadline
 
+    def get_upload(self):
+        return self.latest_upload
+    def set_upload(self,time):
+        self.latest_upload = time
+
     def get_status(self):
         return status_dict[int(self.status)]
 
@@ -197,7 +204,6 @@ class Order(models.Model):
 
     def change_trans_status(self, status):
         self.trans_status = status
-
 
 def order_directory_path(instance, filename):
     return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name(), instance.order.id, filename)
@@ -216,7 +222,8 @@ class Document(models.Model):
     class Meta:
         db_table = 'document'
 
-
+    def get_upload(self):
+        return self.upload_at
 class Staff(models.Model):
     user = models.OneToOneField(User)
     role = models.IntegerField(default=0)
