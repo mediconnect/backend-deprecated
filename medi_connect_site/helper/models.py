@@ -66,7 +66,7 @@ class Rank(models.Model):
 
 
 # Status
-STARTED = 0 #下单中
+STARTED = 0  # 下单中
 PAID = 1  # paid 已付款
 RECEIVED = 2  # order received 已接单
 TRANSLATING_ORIGIN = 3  # translator starts translating origin documents 翻译原件中
@@ -150,7 +150,7 @@ class Order(models.Model):
     # all feedback document TRANSLATED and APPROVED
     feedback = models.ManyToManyField('Document', related_name='feedback_file')
     # all pending document, make sure this NOT VISIBLE to customers
-    latest_upload = models.DateTimeField(null = True)
+    latest_upload = models.DateTimeField(null=True)
     pending = models.ManyToManyField('Document', related_name='pending_file')
     receive = models.DateField(default=datetime.date.today)
     status = models.CharField(blank=True, max_length=20, choices=STATUS_CHOICES)
@@ -163,7 +163,6 @@ class Order(models.Model):
 
     def get_info(self):
         return 'Order id is ' + str(self.id) + ' Deadline is :' + self.get_deadline()
-
 
     def get_remaining(self):  # deadline
         return self.submit + datetime.timedelta(days=2);
@@ -190,7 +189,8 @@ class Order(models.Model):
 
     def get_upload(self):
         return self.latest_upload
-    def set_upload(self,time):
+
+    def set_upload(self, time):
         self.latest_upload = time
 
     def get_status(self):
@@ -204,6 +204,7 @@ class Order(models.Model):
 
     def change_trans_status(self, status):
         self.trans_status = status
+
 
 def order_directory_path(instance, filename):
     return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name(), instance.order.id, filename)
@@ -224,6 +225,8 @@ class Document(models.Model):
 
     def get_upload(self):
         return self.upload_at
+
+
 class Staff(models.Model):
     user = models.OneToOneField(User)
     role = models.IntegerField(default=0)
@@ -325,3 +328,12 @@ class LikeHospital(models.Model):
 
     class Meta:
         db_table = 'like_hospital'
+
+
+class HospitalReview(models.Model):
+    hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_review')
+    score = models.IntegerField()
+    review_number = models.IntegerField()
+
+    class Meta:
+        db_table = 'hospital_review'
