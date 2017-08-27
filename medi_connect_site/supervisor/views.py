@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.utils.encoding import uri_to_iri
-from django.views.generic.edit import FormView
-from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.decorators import login_required
@@ -14,11 +11,9 @@ from customer.models import Customer
 from django.apps import apps
 from supervisor.forms import TransSignUpForm, AssignForm, ApproveForm,PasswordResetForm
 from helper.models import Staff
-from django.core import serializers
 from django.http import JsonResponse
-from django import template
+from django.urls import reverse
 import json
-import django.utils.encoding as encode
 
 
 Order = apps.get_model('helper', 'Order')
@@ -38,18 +33,9 @@ RETURN = 5  # hospital returns feedback
 TRANSLATING_FEEDBACK = 6  # translator starts translating feedback documents
 FEEDBACK = 7  # feedback documents translated, approved, and feedback to customer
 
-STATUS_CHOICES = (
-    (STARTED, 'started'),
-    (SUBMITTED, 'submitted'),
-    (TRANSLATING_ORIGIN, 'translating_origin'),
-    (RECEIVED, 'received'),
-    (RETURN, 'return'),
-    (TRANSLATING_FEEDBACK, 'translating_feedback'),
-    (FEEDBACK, 'feedback'),
-    (PAID, 'PAID'),
-)
 
-status_dict = ['STARTED', 'PAID','RECEIVED', 'TRANSLATING_ORIGIN', 'SUBMITTED', 'RETURN', 'TRANSLATING_FEEDBACK', 'FEEDBACK']
+status_dict = ['客户未提交', '客户已提交','已付款',  '原件翻译中', '已提交至医院', '反馈已收到', '反馈翻译中',
+               '反馈已上传', '订单完成']
 # Trans_status
 
 NOT_STARTED = 0  # assignment not started yet
@@ -67,7 +53,7 @@ TRANS_STATUS_CHOICE = (
     (DISAPPROVED, 'disapproved'),
     (FINISHED, 'finished'),
 )
-trans_status_dict = ['NOT_STARTED','ONGOING','APPROVING','APPROVED','FINISHED']
+trans_status_dict = ['任务未开始', '翻译中', '提交审核中', '审核通过', '审核驳回','翻译完成']
 
 trans_list_C2E = list(Staff.objects.filter(role=1).values_list('id', flat=True))
 trans_list_E2C = list(Staff.objects.filter(role=2).values_list('id', flat=True))
@@ -77,6 +63,14 @@ def move(trans_list, translator, new_position):
     old_position = trans_list.index(translator)
     trans_list.insert(new_position, trans_list.pop(old_position))
     return trans_list
+
+def get_assignments_status(status):  # return order of all ongoing assignments
+    assignments = []
+    for assignment in Order.objects.all():
+        if assignment.get_status() == status:
+            assignments.append(assignment)
+    return assignments
+
 
 
 def assign_auto(order):
@@ -106,94 +100,95 @@ def assign_manually(order, translator):
         order.change_status(TRANSLATING_FEEDBACK)
         order.save()
 
-register = template.Library()
-@register.filter(name='forcetext')
-def forcetext(value):
-    return encode.force_text(value)
 
 @login_required()
 def update_result(request):
-    field = request.GET.get('field',None)
-    value = request.GET.get('value', None)
-    if value != 'ALL':
-        filter = field + '__' + 'exact'
-        orders = Order.objects.filter(**{filter: value})
-    else:
-        orders = Order.objects.all()
-    paginator = Paginator(orders, 2)
-    page = request.GET.get('page')
-    try:
-        orders = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        orders = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        orders = paginator.page(paginator.num_pages)
-    data={
-        'results':[],
-        'choices':[],
-        'has_previous':orders.has_previous(),
-        'has_next':orders.has_next(),
-        'number':orders.number,
-        'num_pages':orders.paginator.num_pages
-    }
-    if data['has_previous']:
-        data['previous_page_number']=orders.previous_page_number()
-    if data['has_next']:
-        data['next_page_number']=orders.next_page_number()
-    """
-        previous_page_number
-        next_page_number
-        number
-        num_pages
-    """
-    choices = {
-        'customer_choices':[],
-        'patient_choices':[],
-        'hospital_choices':[],
-        'disease_choices':[],
-        'translator_C2E_choices':[],
-        'translator_E2C_choices':[],
-        'status_choices':[],
-        'trans_status_choices':[]
+    query = request.GET.get('query', None)
+    status = request.GET.get('status', None)
+    sort = request.GET.get('sort','Deadline')
+    page = request.GET.get('page', 1)
+    supervisor = Staff.objects.get(user=request.user)
+    print query, status, sort, page
+    data = {
+        'result': {
+            'Order_Id': [],
+            'Customer': [],
+            'Patient':[],
+            'Hospital':[],
+            'Disease':[],
+            'Translator_C2E':[],
+            'Translator_E2C':[],
+            'Status': [],
+            'Trans_Status':[],
+            'Deadline':[],
+            'Trans_Deadline':[],
+            'Upload':[],
+            'Link': []
+        },
+        'choices': {
+            'customer_choice': [],
+            'patient_choice':[],
+            'hospital_choice':[],
+            'disease_choice': [],
+            'translator_C2E_choice':[],
+            'translator_E2C_choice':[],
+            'status_choice':[],
+            'trans_status_choice':[],
+        },
 
     }
-    results = []
-    for each in orders:
-        result={
-            'Order_id':each.id,
-            'Customer': (each.customer.id,each.customer.get_name()),
-            'Patient': (each.patient.id,each.patient.name),
-            'Hospital':(each.hospital.id,each.hospital.name),
-            'Disease':(each.disease.id,each.disease.name),
-            'Translator_C2E':(each.translator_C2E.id,each.translator_C2E.get_name()),
-            'Translator_E2C':(each.translator_E2C.id,each.translator_C2E.get_name()),
-            'Status':(each.status,each.get_status()),
-            'Translator Status':(each.trans_status,each.get_trans_status()),
-            'Deadline':each.get_deadline(),
-            'Submit Deadline':each.get_submit_deadline()
-        }
-        results.append(result)
-    for each in results:
-        if each['Customer'] not in choices['customer_choices'] or choices['customer_choices'] is None:
-            choices['customer_choices'].append(each['Customer'])
-        if each['Patient'] not in choices['patient_choices'] or choices['patient_choices'] is None:
-            choices['patient_choices'].append(each['Patient'])
-        if each['Hospital'] not in choices['hospital_choices'] or choices['hospital_choices'] is None:
-            choices['hospital_choices'].append(each['Hospital'])
-        if each['Disease'] not in choices['disease_choices'] or choices['disease_choices'] is None:
-            choices['disease_choices'].append(each['Disease'])
-        if each['Translator_C2E'] not in choices['translator_C2E_choices']or choices['translator_C2E_choices'] is None:
-            choices['translator_C2E_choices'].append(each['Translator_C2E'])
-        if each['Translator_E2C'] not in choices['translator_E2C_choices']or choices['translator_E2C_choices'] is None:
-            choices['translator_E2C_choices'].append(each['Translator_E2C'])
-        if each['Status'] not in choices['status_choices']or choices['status_choices'] is None:
-            choices['status_choices'].append(each['Status'])
-        if each['Translator Status'] not in choices['trans_status_choices']or choices['trans_status_choices'] is None:
-            choices['trans_status_choices'].append(each['Translator Status'])
-    data['results']=results
-    data['choices']=choices
+    raw = get_assignments_status(status)
+    print raw
+    if sort!=None:
+        if sort == 'Deadline':
+            raw = sorted(raw, key=lambda x: x.get_submit_deadline())
+        if sort == 'Trans_Deadline':
+            raw = sorted(raw,key = lambda x:x.get_deadline())
+        if sort == 'Upload':
+            raw = sorted(raw,key = lambda x:x.get_upload())
+
+    result_length = len(raw)
+    p = Paginator(raw, 2)
+    raw_page = p.page(page)
+    json_acceptable_string = query.replace("'", "\"")
+    d = json.loads(json_acceptable_string)
+    if query != None and d != {}:
+        result = []
+        for each in raw_page:
+            match = True
+            for key in d:
+                if d[key] != 'All':
+                    attr = getattr(each, key)
+                    if attr.id != int(d[key]):
+                        match = False
+            if match:
+                result.append(each)
+    else:
+        result = raw_page
+
+    for each in result:
+        data['result']['Order_Id'].append(each.id)
+        data['result']['Customer'].append((each.customer.id, each.customer.get_name()))
+        data['result']['Patient'].append((each.patient_order.id,each.patient_order.name))
+        data['result']['Hospital'].append((each.hospital.id,each.hospital.name))
+        data['result']['Disease'].append((each.disease.id, each.disease.name))
+        data['result']['Translator_C2E'].append((each.translator_C2E.id,each.translator_C2E.get_name()))
+        data['result']['Translator_E2C'].append((each.translator_E2C.id,each.translator_E2C.get_name()))
+        data['result']['Status'].append((each.get_status(),status_dict[int(each.get_status())]))
+        data['result']['Trans_Status'].append((each.get_trans_status(),trans_status_dict[int(each.get_trans_status())]))
+        data['result']['Deadline'].append(each.get_submit_deadline())
+        data['result']['Trans_Deadline'].append(each.get_deadline())
+        data['result']['Upload'].append(each.get_upload())
+        data['result']['Link'].append(reverse('detail', args=[supervisor.user.id, each.id]))
+
+    data['choices']['customer_choice'] = list(set(data['result']['Customer']))
+    data['choices']['disease_choice'] = list(set(data['result']['Disease']))
+    data['choices']['patient_choice'] = list(set(data['result']['Patient']))
+    data['choices']['hospital_choice'] = list(set(data['result']['Hospital']))
+    data['choices']['translator_c2e_choice'] = list(set(data['result']['Translator_C2E']))
+    data['choices']['translator_e2c_choice'] = list(set(data['result']['Translator_E2C']))
+    data['choices']['status_choice'] = list(set(data['result']['Status']))
+    data['choices']['trans_status_choice'] = list(set(data['result']['Trans_Status']))
     return JsonResponse(data)
 
 
@@ -201,16 +196,6 @@ def update_result(request):
 def supervisor(request, id):
     supervisor = Staff.objects.get(user_id=id)
     orders = Order.objects.all()
-    paginator=Paginator(orders,25)
-    page=request.GET.get('page')
-    try:
-        orders = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        orders = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        orders = paginator.page(paginator.num_pages)
     return render(request, 'supervisor_home.html', {
         'orders': orders,
         'supervisor': supervisor,

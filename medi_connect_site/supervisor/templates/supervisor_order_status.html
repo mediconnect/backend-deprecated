@@ -15,369 +15,212 @@
         width:70px;
     }
   </style>
-  <button id="include" onclick="startedFilter()">Switch</button>
+  <button id="include" onclick="startedFilter()">显示未开始订单</button>
 
 
 
 
 
-  <p>Orders:</p>
+  <p>订单:</p>
 
   <table class= 'fixed' id = 'table', style="width:100%">
     <tr>
-        <th>
-            Order Id
-
-        </th>
-        <th>Customer</th>
-        <th>Patient</th>
-        <th>Hospital</th>
-        <th>Disease</th>
-        <th>Translator_C2E </th>
-        <th>Translator_E2C</th>
-        <th>Status</th>
-        <th>Translator Status</th>
-        <th>Deadline</th>
-        <th>Submit Deadline</th>
-        <th>Detail</th>
+        <th>订单号</th>
+        <th>申请人</th>
+        <th>病人</th>
+        <th>医院</th>
+        <th>疾病</th>
+        <th>汉译英翻译 </th>
+        <th>英译汉翻译</th>
+        <th>状态</th>
+        <th>翻译状态</th>
+        <th>截止时间</th>
+        <th>翻译截止时间</th>
+        <th>最后上传时间</th>
+        <th>详情</th>
     </tr>
 
     <tr>
         <th>
-            <input type="text" id="searchInput0" onkeyup="search(0)" placeholder="Search">
+            <input type="text" id="order_search" onkeyup="search(0)" placeholder="搜索订单号">
 
         </th>
         <th>
-            <input type="text" id="searchInput1" onkeyup="search(1)" placeholder="Search">
-            <select class= 'select' id = 'customer_choices'>
+            <input type="text" id="customer_search" onkeyup="search(1)" placeholder="搜索申请人">
+            <select class= 'select' id = 'customer_filter'>
             </select>
         </th>
         <th>
-            <input type="text" id="searchInput2" onkeyup="search(2)" placeholder="Search">
-            <select class='select' id ="patient_choices" >
-
+            <input type="text" id="patient_search" onkeyup="search(2)" placeholder="搜索病人">
+            <select class='select' id ="patient_filter" >
             </select>
         </th>
         <th>
-            <input type="text" id="searchInput3" onkeyup="search(3)" placeholder="Search">
-            <select id = 'hospital_choices'>
-
-            </select>
-        </th>
-        <th>
-            <input type="text" id="searchInput4" onkeyup="search(4)" placeholder="Search">
-            <select id = 'disease_choices'>
+            <input type="text" id="hospital_search" onkeyup="search(3)" placeholder="搜索医院">
+            <select class = 'select' id = 'hospital_filter'>
 
             </select>
         </th>
         <th>
-            <input type="text" id="searchInput5" onkeyup="search(5)" placeholder="Search">
-            <select id = 'translator_C2E_choices'>
-            </select>
-        </th>
-        <th>
-            <input type="text" id="searchInput6" onkeyup="search(6)" placeholder="Search">
-            <select id = 'translator_E2C_choices'>
-                <option value = 'all'>All</option>
+            <input type="text" id="disease_search" onkeyup="search(4)" placeholder="搜索疾病">
+            <select class = 'select' id = 'disease_filter'>
 
             </select>
         </th>
         <th>
-            <input type="text" id="searchInput7" onkeyup="search(7)" placeholder="Search">
-            <select id = 'status_choices'>
+            <input type="text" id="trans_C2E_search" onkeyup="search(5)" placeholder="搜索汉译英翻译">
+            <select class = 'select' id = 'translator_C2E_filter'>
             </select>
         </th>
         <th>
-            <input type="text" id="searchInput8" onkeyup="search(8)" placeholder="Search">
-            <select id = 'trans_status_choices' >
+            <input type="text" id="trans_E2C_search" onkeyup="search(6)" placeholder="搜索英译汉翻译">
+            <select class = 'select' id = 'translator_E2C_filter'>
             </select>
         </th>
         <th>
-            <input type="text" id="searchInput9" onkeyup="search(9)" placeholder="Search">
-            <button onclick="sortDeadline(8)">Sort</button>
+            <input type="text" id="status_search" onkeyup="search(7)" placeholder="搜索状态">
+            <select class = 'select' id = 'status_filter'>
+            </select>
         </th>
         <th>
-            <input type="text" id="searchInput10" onkeyup="search(10)" placeholder="Search">
-            <button onclick="sortDeadline(9)">Sort</button>
+            <input type="text" id="trans_status_search" onkeyup="search(8)" placeholder="搜索翻译状态">
+            <select class = 'select' id = 'trans_status_filter' >
+            </select>
         </th>
+        <th>
+            <button onclick="sortDeadline()">排序</button>
+        </th>
+        <th>
+            <button onclick="sortDeadline()">排序</button>
+        </th>
+        <th>
+            <button onclick="sortDeadline()">排序</button>
+        </th>
+        <th></th>
     </tr>
-
 
   </table>
 
-  <div id="pagination">
-
-  </div>
 
 
 </div>
 
   <script>
-    var page = 1;
+    var result_length;
+    var dic={}
     $( document ).ready(function() {
-        var value = '{{status}}';
-        var field = 'trans_status';
-        var form = $("#testform");
-        $.getJSON("{% url 'update_result'%}",{'value':value,'field':field,'page':page},function(data){
-            createChoices(data,'customer');
-            createChoices(data,'patient');
-            createChoices(data,'hospital');
-            createChoices(data,'disease');
-            createChoices(data,'translator_C2E');
-            createChoices(data,'translator_E2C');
-            createChoices(data,'status');
-            createChoices(data,'trans_status');
-            appendRow(data);
-            createPagination(data);
+        $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic)},function(data){
+            console.log(data);
+            createResult(data);
+            createChoice(data);
+
         });
     });
-    function createPagination(data){
-        var div = document.getElementById("pagination");
-        if(data['has_next']){
-            var a = document.createElement('a');
-            a.text='next';
-            a.href=window.location.href+"/?page="+data['next_page_number'];
-             a.onclick = function() {
-                window.
-                console.log(page);
-                page+=1;
-                console.log(page);}
-            div.appendChild(a);
-            console.log(a);
-        }
+    function filter(){
+        buildQuery('customer');
+        buildQuery('patient');
+        buildQuery('hospital');
+        buildQuery('disease');
+        buildQuery('translator_C2E');
+        buildQuery('translator_E2C');
+        buildQuery('status');
+        buildQuery('trans_status');
     }
-    $(".select").change(function () {
-        $(".initial").empty();
-        var value = $(".select option:selected").val();
-        var field = $(".select option:selected").attr("field");
-        $.getJSON("{% url 'update_result'%}",{'value':value,'field':field,'page':page},function(data){
-            createChoices(data,'customer');
-            createChoices(data,'patient');
-            createChoices(data,'hospital');
-            createChoices(data,'disease');
-            createChoices(data,'translator_C2E');
-            createChoices(data,'translator_E2C');
-            createChoices(data,'status');
-            createChoices(data,'trans_status');
-            appendRow(data);
-        });
-    });
-    function appendRow(data){
-        var rowResult = data['results'];
-        var table = document.getElementById("table");
-        for(var i=0;i<rowResult.length;i++){
+    function buildQuery(x){
+        str = x.toString()
+        filter_str = str+'_filter';
+        search_str = str+'_search';
+        filter = document.getElementById(filter_str);
+        search = document.getElementById(search_str);
+        search.value = filter.options[filter.selectedIndex].value;
+        value = search.value;
+        dic[str]=value;
+    }
+    function createResult(data){
+        var table = document.getElementById('table');
+        $('.result').empty();
+        for(var i=0;i<data.result.Customer.length;i++){
             var row = table.insertRow(-1);
-            insertCell_s(row,rowResult,i,'Order_id');
-            insertCell(row,rowResult,i,'Customer');
-            insertCell(row,rowResult,i,'Patient');
-            insertCell(row,rowResult,i,'Hospital');
-            insertCell(row,rowResult,i,'Disease');
-            insertCell(row,rowResult,i,'Translator_C2E');
-            insertCell(row,rowResult,i,'Translator_E2C');
-            insertCell(row,rowResult,i,'Status');
-            insertCell(row,rowResult,i,'Translator Status');
-            insertCell_s(row,rowResult,i,'Deadline');
-            insertCell_s(row,rowResult,i,'Submit Deadline');
-
+            row.className = 'result'
+            createCell(row,data.result.Order_Id[i]);
+            createCell(row,data.result.Customer[i][1]);
+            createCell(row,data.result.Patient[i][1]);
+            createCell(row,data.result.Hospital[i][1]);
+            createCell(row,data.result.Disease[i][1]);
+            createCell(row,data.result.Translator_C2E[i][1]);
+            createCell(row,data.result.Translator_E2C[i][1]);
+            createCell(row,data.result.Status[i][1]);
+            createCell(row,data.result.Trans_Status[i][1]);
+            createCell(row,data.result.Deadline[i]);
+            createCell(row,data.result.Trans_Deadline[i]);
+            createCell(row,data.result.Upload[i]);
+            createLink(row,data.result.Link[i]);
 
 
         }
-    }
-    function insertCell(row,rowResult,i,x){
-        var cell = row.insertCell(-1);
-        cell.className="initial";
-        cell.innerHTML = rowResult[i][x.toString()][1];
-    }
-    function insertCell_s(row,rowResult,i,x){
-        var cell = row.insertCell(-1);
-        cell.className="initial";
-        cell.innerHTML = rowResult[i][x.toString()];
-    }
 
-    function createChoices(data,x){
+        result_length = data.result.Customer.length;
 
-        var a = x.toString()+'_choices'
-        var choices = data['choices'][a];
-        var select = document.getElementById(a);
-        select.innerHTML=" ";
-        var option_all = document.createElement("option");
-        var display = document.createElement("option");
-        display.text='...';
-        select.add(display);
-        option_all.text='All';
-        option_all.setAttribute("field",x.toString());
-        option_all.value='ALL';
-        select.add(option_all);
+        $('#pagination').twbsPagination({
+            next: '下一页',
+            last:'最后一页',
+            first:'第一页',
+            prev:'上一页',
+            totalPages: parseInt(result_length/2)+1,
+            visiblePages:10,
+            onPageClick: function (event, page) {
+                $.getJSON("{% url 'trans_update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic),'page':page},function(data){
+                    createResult(data);
+                });
+            }
+        });
+    }
+    function formatDate(time){
+        var d = new Date(time);
+        return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日'+d.getHours()+'点'
+    }
+    function createCell(row,value){
+        var cell = row.insertCell(-1);
+        cell.innerHTML=value;
+    }
+    function createLink(row,href){
+        var cell = row.insertCell(-1);
+        var a = document.createElement('a');
+        a.innerHTML = '详情';
+        a.href=href;
+        console.log(href);
+        cell.appendChild(a);
+
+
+    }
+    function createChoice(data){
+          createOption(data,'customer');
+          createOption(data,'patient');
+          createOption(data,'hospital');
+          createOption(data,'disease');
+          createOption(data,'translator_C2E');
+          createOption(data,'translator_E2C');
+          createOption(data,'status');
+          createOption(data,'trans_status');
+    }
+    function createOption(data,x){
+        str = x.toString();
+        filter = str+'_filter'
+        var select = document.getElementById(filter);
+        choice = str+'_choice'
+        choices = data.choices[choice]
+        var option = document.createElement('OPTION');
+        option.value='All';
+        option.text = '所有';
+        select.appendChild(option);
+
         for(var i=0; i<choices.length;i++){
-            var option = document.createElement("option");
-            option.setAttribute("field",x.toString());
-            option.className='choice';
-            option.text=choices[i][1];
+            var option = document.createElement('OPTION');
             option.value=choices[i][0];
-            select.add(option);
-
-        }
-
-    }
-    /*
-        var patient_choices = data.choices.patient_choices;
-        var disease_choices = data.choices.disease_choices;
-        var hospital_choices = data.choices.hospital_choices;
-        var translator_C2E_choices = data.choices.translator_C2E_choices;
-        var translator_E2C_choices = data.choices.translator_E2C_choices;
-        var status_choices = data.choices.status_choices;
-        var trans_status_choices = data.choices.trans_status_choices;
-
-    function patientFilter(){
-      // Declare variables
-      var input, filter, table, tr, td, i;
-      input = document.getElementById("patient");
-      filter = input.value.toUpperCase();
-      table = document.getElementById("table");
-      tr = table.getElementsByTagName("tr");
-      if (filter != 'ALL'){
-          // Loop through all table rows, and hide those who don't match the search query
-          for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[1];
-            if (td) {
-              if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-              } else {
-                tr[i].style.display = "none";
-              }
-            }
+            option.text = choices[i][1];
+            select.appendChild(option);
           }
-      }
-      else{
-        for (i = 0; i < tr.length; i++) {
-            tr[i].style.display = "";
-        }
-      }
-
     }
-
-    function filter(x){
-      // Declare variables
-      var input, filter, table, tr, td, i;
-      input = document.getElementById("filterInput"+x.toString());
-      filter = input.value.toUpperCase();
-      table = document.getElementById("table");
-      tr = table.getElementsByTagName("tr");
-      if (filter != 'ALL'){
-          // Loop through all table rows, and hide those who don't match the search query
-          for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[x];
-            if (td) {
-              if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                tr[i].style.display = "";
-              } else {
-                tr[i].style.display = "none";
-              }
-            }
-          }
-      }
-      else{
-        for (i = 0; i < tr.length; i++) {
-            tr[i].style.display = "";
-        }
-      }
-
-
-
-    }
-
-    function startedFilter() {
-      // Declare variables
-      var input, filter, table, tr, td, i;
-      filter = "STARTED";
-      table = document.getElementById("table");
-      tr = table.getElementsByTagName("tr");
-
-      // Loop through all table rows, and hide those who don't match the search query
-      for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[6];
-        if (td) {
-          if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-            if(tr[i].style.display == "none"){
-                tr[i].style.display = "";
-            }
-            else{
-                tr[i].style.display = "none";
-            }
-          }
-        }
-
-      }
-    }
-
-    function search(x) {
-      // Declare variables
-      var input, filter, table, tr, td, i;
-      input = document.getElementById("searchInput"+x.toString());
-      filter = input.value.toUpperCase();
-      table = document.getElementById("table");
-      tr = table.getElementsByTagName("tr");
-
-      // Loop through all table rows, and hide those who don't match the search query
-      for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td")[x];
-        if (td) {
-          if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
-          } else {
-            tr[i].style.display = "none";
-          }
-        }
-      }
-    }
-    */
-
-    function sortDeadline(x) {
-      var table, rows, switching, i, a, b, shouldSwitch;
-      table = document.getElementById("table");
-      switching = true;
-      /*Make a loop that will continue until
-      no switching has been done:*/
-      while (switching) {
-        //start by saying: no switching is done:
-        switching = false;
-        rows = table.getElementsByTagName("tr");
-        /*Loop through all table rows (except the
-        first, which contains table headers):*/
-        for (i = 2; i < (rows.length - 1); i++) {
-          //start by saying there should be no switching:
-          shouldSwitch = false;
-          /*Get the two elements you want to compare,
-          one from current row and one from the next:*/
-          a = rows[i].getElementsByTagName("td")[x].innerHTML;
-          a=parseFloat(a.substring(0,a.indexOf("days")))*24+parseFloat(a.substring(a.indexOf("hours")-4,a.indexOf("hours")));
-
-
-
-          b = rows[i + 1].getElementsByTagName("td")[x].innerHTML;
-          b=parseFloat(b.substring(0,b.indexOf("days")))*24+parseFloat(b.substring(b.indexOf("hours")-4,b.indexOf("hours")));
-
-
-          //check if the two rows should switch place:
-          if (a > b) {
-            //if so, mark as a switch and break the loop:
-            shouldSwitch= true;
-            break;
-          }
-        }
-        if (shouldSwitch) {
-          /*If a switch has been marked, make the switch
-          and mark that a switch has been done:*/
-          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-          switching = true;
-        }
-      }
-
-      function toHours(x){
-          x = x.split(" ");
-          window.alert(x);
-      }
-}
 </script>
 
 

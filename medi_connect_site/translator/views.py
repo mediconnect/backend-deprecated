@@ -37,7 +37,7 @@ TRANS_STATUS_CHOICE = (
     (FINISHED, 'finished'),
 )
 
-trans_status_dict = ['NOT_STARTED', 'ONGOING', 'APPROVING', 'APPROVED', 'DISAPPROVED','FINISHED']
+trans_status_dict = ['任务未开始', '翻译中', '提交审核中', '审核通过', '审核驳回','翻译完成']
 
 def get_assignments(translator):  # return order of all assignments
     assignments = []
@@ -112,7 +112,7 @@ def update_result(request):
         data['result']['Disease'].append((each.disease.id,each.disease.name))
         data['result']['Submit'].append(each.submit) # submit deadline
         data['result']['Deadline'].append(each.get_remaining()) # translate deadline
-        data['result']['Status'].append(each.get_trans_status())
+        data['result']['Status'].append(trans_status_dict[int(each.get_trans_status())])
         data['result']['Remaining'].append(each.get_deadline())
         data['result']['Upload'].append(each.get_upload())
         data['result']['Link'].append(reverse('assignment_summary',args=[translator.user.id,each.id]))

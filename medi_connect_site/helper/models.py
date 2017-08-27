@@ -89,8 +89,8 @@ STATUS_CHOICES = (
     (PAID, 'PAID'),
 )
 
-status_dict = ['STARTED', 'PAID', 'RECEIVED', 'TRANSLATING_ORIGIN', 'SUBMITTED', 'RETURN', 'TRANSLATING_FEEDBACK',
-               'FEEDBACK', 'DONE']
+status_dict = ['客户未提交', '客户已提交','已付款',  '原件翻译中', '已提交至医院', '反馈已收到', '反馈翻译中',
+               '反馈已上传', '订单完成']
 # Trans_status
 
 NOT_STARTED = 0  # assignment not started yet 未开始
@@ -109,7 +109,7 @@ TRANS_STATUS_CHOICE = (
     (FINISHED, 'finished'),
 )
 
-trans_status_dict = ['NOT_STARTED', 'ONGOING', 'APPROVING', 'APPROVED', 'DISAPPROVED', 'FINISHED']
+trans_status_dict = ['任务未开始', '翻译中', '提交审核中', '审核通过', '审核驳回','翻译完成']
 EIGHT = datetime.timedelta(hours=8)
 
 
@@ -172,9 +172,9 @@ class Order(models.Model):
         total_sec = (self.submit + datetime.timedelta(days=2) - datetime.datetime.now(utc_8)).total_seconds()
         days = int(total_sec / (3600 * 24))
         hours = int((total_sec - 3600 * 24 * days) / 3600)
-        deadline = str(days) + '  days,  ' + str(hours) + '  hours'
+        deadline = str(days) + '  天,  ' + str(hours) + '  小时'
         if hours < 0:
-            deadline += ('  (passdue)  ')
+            deadline += ('  (过期)  ')
         return deadline
 
     def get_submit_deadline(self):
@@ -194,10 +194,10 @@ class Order(models.Model):
         self.latest_upload = time
 
     def get_status(self):
-        return status_dict[int(self.status)]
+        return self.status
 
     def get_trans_status(self):
-        return trans_status_dict[int(self.trans_status)]
+        return self.trans_status
 
     def change_status(self, status):
         self.status = status

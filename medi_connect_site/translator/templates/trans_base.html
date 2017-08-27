@@ -7,11 +7,11 @@
 <div class="navbar navbar-inverse navbar-fixed-left">
   <a class="navbar-brand" href="{% url 'trans_home' id=translator.user.id%}">{{translator.get_name}}</a>
   <ul class="nav navbar-nav">
-   <li><a href="{% url 'trans_home_status' id=translator.user.id status='NOT_STARTED'%}">Assignments</a></li>
-   <li><a href="{% url 'trans_home_status' id=translator.user.id status='ONGOING'%}" >Ongoing</a></li>
-   <li><a href="{% url 'trans_home_status' id=translator.user.id status='APPROVING'%}">Approving</a></li>
-   <li><a href="{% url 'trans_home_status' id=translator.user.id status='FINISHED'%}">Finished</a></li>
-   <li><a href="{% url 'translator_logout' %}">Logout</a></li>
+   <li><a href="{% url 'trans_home_status' id=translator.user.id status=0%}">我的任务</a></li>
+   <li><a href="{% url 'trans_home_status' id=translator.user.id status=1%}" >翻译中</a></li>
+   <li><a href="{% url 'trans_home_status' id=translator.user.id status=2%}">提交审核中</a></li>
+   <li><a href="{% url 'trans_home_status' id=translator.user.id status=5%}">已完成</a></li>
+   <li><a href="{% url 'translator_logout' %}">登出</a></li>
   </ul>
 </div>
 {% block content %}
