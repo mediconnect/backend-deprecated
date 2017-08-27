@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from customer.models import Customer
-from helper.models import Order, Patient, Document, LikeHospital, Hospital, Disease
+from helper.models import Order, Patient, Document, LikeHospital, Hospital, Disease, HospitalReview
 from django.contrib.auth.decorators import login_required
 from forms import ProfileForm, PasswordResetForm, PatientAddForm, DocAddForm
 from django.contrib.auth.hashers import check_password, make_password
@@ -258,4 +258,25 @@ def profile_patient_edit(request, patient_id):
         'customer': customer,
         'form': form,
         'patient': patient,
+    })
+
+
+@login_required
+def hospital_review(request, order_id):
+    order = Order.objects.get(id=order_id)
+    if request.method == 'POST':
+        score = request.POST.get('score')
+        hospital = order.hospital
+        if len(HospitalReview.objects.filter(hospital=hospital)) > 0:
+            hospr = HospitalReview.objects.get(hospital=hospital)
+            hospr.score += score
+            hospr.review_number += 1
+            hospr.save()
+        else:
+            hospr = HospitalReview(hospital=hospital, score=score, review_number=1)
+            hospr.save()
+        return redirect('info_order')
+    return render(request, 'info_hospital_review.html', {
+        'customer': Customer.objects.get(user=request.user),
+        'order': order,
     })

@@ -85,6 +85,17 @@ for (var order_i in order_list) {
         })());
     }
 
+    li.appendChild(document.createElement("br"));
+
+    if (order.trans_status >= 0) {
+        li.appendChild((function() {
+            var link = document.createElement("a");
+            link.href = Urls.info_hospital_review(order.order_id);
+            link.appendChild(document.createTextNode("Review Hospital"));
+            return link;
+        })());
+    }
+
     ul.appendChild(li);
 }
 </script>

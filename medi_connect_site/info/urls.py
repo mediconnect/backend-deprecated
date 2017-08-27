@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^bookmark/$', views.bookmark, name="info_bookmark"),
     url(r'^bookmark/compare/(?P<disease_id>\d+)/$', views.bookmark_compare, name="info_bookmark_compare"),
     url(r'^unmark/(?P<hospital_id>\d+)/$', views.unmark, name="info_unmark"),
+    url(r'^review/(?P<order_id>\d+)/$', views.hospital_review, name="info_hospital_review"),
 ]
