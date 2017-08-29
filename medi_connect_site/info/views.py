@@ -266,10 +266,12 @@ def hospital_review(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
         score = request.POST.get('score')
+        comment = request.POST.get('comment')
+        print comment
         hospital = order.hospital
         if len(HospitalReview.objects.filter(hospital=hospital)) > 0:
             hospr = HospitalReview.objects.get(hospital=hospital)
-            hospr.score += score
+            hospr.score += int(score)
             hospr.review_number += 1
             hospr.save()
         else:
