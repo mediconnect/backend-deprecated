@@ -10,7 +10,7 @@
    <li class ="dropdown">
        <a class="dropdown-toggle" data-toggle="dropdown" href="{% url 'supervisor_home' id=supervisor.user_id %}">订单<span class="caret"></span></a>
        <ul class="dropdown-menu">
-          <li><a href="{% url 'order_status' id=supervisor.user_id status=0%}">所有</a></li>
+          <li><a href="{% url 'order_status' id=supervisor.user_id status='All'%}">所有</a></li>
           <li><a href="{% url 'order_status' id=supervisor.user_id status=1%}">翻译中</a></li>
           <li><a href="{% url 'order_status' id=supervisor.user_id status=2%}">审核中</a></li>
           <li><a href="{% url 'order_status' id=supervisor.user_id status=5%}">已完成</a></li>

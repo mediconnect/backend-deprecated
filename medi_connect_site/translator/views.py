@@ -110,7 +110,7 @@ def update_result(request):
         data['result']['Order_Id'].append(each.id)
         data['result']['Customer'].append((each.customer.id,each.customer.get_name()))
         data['result']['Disease'].append((each.disease.id,each.disease.name))
-        data['result']['Submit'].append(each.submit) # submit deadline
+        data['result']['Submit'].append(each.get_submit()) # submit deadline
         data['result']['Deadline'].append(each.get_remaining()) # translate deadline
         data['result']['Status'].append(trans_status_dict[int(each.get_trans_status())])
         data['result']['Remaining'].append(each.get_deadline())
@@ -120,6 +120,7 @@ def update_result(request):
 
     data['choices']['customer_choice']=list(set(data['result']['Customer']))
     data['choices']['disease_choice'] = list(set(data['result']['Disease']))
+    data['result_length']=result_length
     return JsonResponse(data,safe=False)
 
 @login_required

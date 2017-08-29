@@ -90,8 +90,7 @@
 
 
         }
-
-        result_length = data.result.Customer.length;
+        result_length = data.result_length;
 
         $('#pagination').twbsPagination({
             next: '下一页',
@@ -120,7 +119,6 @@
         var a = document.createElement('a');
         a.innerHTML = '详情';
         a.href=href;
-        console.log(href);
         cell.appendChild(a);
 
 

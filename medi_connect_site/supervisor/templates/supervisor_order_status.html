@@ -22,7 +22,7 @@
 
 
   <p>订单:</p>
-
+<div id = 'pagination'>
   <table class= 'fixed' id = 'table', style="width:100%">
     <tr>
         <th>订单号</th>
@@ -42,12 +42,12 @@
 
     <tr>
         <th>
-            <input type="text" id="order_search" onkeyup="search(0)" placeholder="搜索订单号">
+            <input type="text" id="order_search" onkeyup="setTimeout(test,1000)" placeholder="搜索订单号">
 
         </th>
         <th>
-            <input type="text" id="customer_search" onkeyup="search(1)" placeholder="搜索申请人">
-            <select class= 'select' id = 'customer_filter'>
+            <input type="text" id="customer_search" onkeyup="setTimeout(test,1000)" placeholder="搜索申请人">
+            <select class= 'select' id = 'customer_filter' onchange="filter()">
             </select>
         </th>
         <th>
@@ -110,13 +110,21 @@
     var dic={}
     $( document ).ready(function() {
         $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic)},function(data){
-            console.log(data);
             createResult(data);
             createChoice(data);
 
         });
     });
-    function filter(){
+    function test(){
+        if (document.getElementById('order_search').value==""){
+            dic['order_id']='All'
+        }
+        else{
+            dic['order_id']=document.getElementById('order_search').value;
+        }
+        buildQueryFromSearch('customer');
+        console.log(dic);
+        /*
         buildQuery('customer');
         buildQuery('patient');
         buildQuery('hospital');
@@ -125,16 +133,20 @@
         buildQuery('translator_E2C');
         buildQuery('status');
         buildQuery('trans_status');
+        */
+        $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic)},function(data){
+            createResult(data);
+
+        });
     }
-    function buildQuery(x){
+    function filter(){
+
+    }
+    function buildQueryFromSearch(x){
         str = x.toString()
-        filter_str = str+'_filter';
         search_str = str+'_search';
-        filter = document.getElementById(filter_str);
         search = document.getElementById(search_str);
-        search.value = filter.options[filter.selectedIndex].value;
-        value = search.value;
-        dic[str]=value;
+        dic[str]=search.value;
     }
     function createResult(data){
         var table = document.getElementById('table');
@@ -158,18 +170,18 @@
 
 
         }
-
-        result_length = data.result.Customer.length;
-
+        result_length = data.result_length;
+        console.log(result_length);
         $('#pagination').twbsPagination({
             next: '下一页',
             last:'最后一页',
             first:'第一页',
             prev:'上一页',
-            totalPages: parseInt(result_length/2)+1,
+            totalPages: (result_length>=5)? parseInt(result_length/5)+1 : 1,
             visiblePages:10,
             onPageClick: function (event, page) {
-                $.getJSON("{% url 'trans_update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic),'page':page},function(data){
+                $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic),'page':page},function(data){
+
                     createResult(data);
                 });
             }
@@ -188,7 +200,6 @@
         var a = document.createElement('a');
         a.innerHTML = '详情';
         a.href=href;
-        console.log(href);
         cell.appendChild(a);
 
 

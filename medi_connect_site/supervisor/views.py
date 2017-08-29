@@ -20,11 +20,13 @@ Order = apps.get_model('helper', 'Order')
 Document = apps.get_model('helper', 'Document')
 Hospital = apps.get_model('helper', 'Hospital')
 Disease = apps.get_model('helper','Disease')
+Patient = apps.get_model('helper','Patient')
+Patient_Order = apps.get_model('helper','OrderPatient')
 # Create your views here.
 # Status
 STARTED = 0
-PAID = 1  # paid
-RECEIVED = 2  # order received
+PAID = 2  # paid
+RECEIVED = 1  # order received
 TRANSLATING_ORIGIN = 3  # translator starts translating origin documents
 SUBMITTED = 4  # origin documents translated, approved and submitted to hospitals
 # ============ Above is C2E status =============#
@@ -32,8 +34,18 @@ SUBMITTED = 4  # origin documents translated, approved and submitted to hospital
 RETURN = 5  # hospital returns feedback
 TRANSLATING_FEEDBACK = 6  # translator starts translating feedback documents
 FEEDBACK = 7  # feedback documents translated, approved, and feedback to customer
-
-
+DONE = 8
+STATUS_CHOICE=[
+    (STARTED,'客户未提交'),
+    (RECEIVED,'客户已提交'),
+    (PAID,'已付款'),
+    (TRANSLATING_ORIGIN,'原件翻译中'),
+    (SUBMITTED,'已提交至医院'),
+    (RETURN,'反馈已收到'),
+    (TRANSLATING_FEEDBACK,'反馈翻译中'),
+    (FEEDBACK,'反馈已上传'),
+    (DONE,'订单完成')
+]
 status_dict = ['客户未提交', '客户已提交','已付款',  '原件翻译中', '已提交至医院', '反馈已收到', '反馈翻译中',
                '反馈已上传', '订单完成']
 # Trans_status
@@ -45,14 +57,14 @@ APPROVED = 3  # assignment approved, to status 5
 DISAPPROVED = 4  # assignment disapproved, return to status 1
 FINISHED = 5  # assignment approved and finished
 
-TRANS_STATUS_CHOICE = (
-    (NOT_STARTED, 'not_started'),
-    (ONGOING, 'ongoing'),
-    (APPROVING, 'approving'),
-    (APPROVED, 'approved'),
-    (DISAPPROVED, 'disapproved'),
-    (FINISHED, 'finished'),
-)
+TRANS_STATUS_CHOICE = [
+    (NOT_STARTED, '任务未开始'),
+    (ONGOING, '翻译中'),
+    (APPROVING, '提交审核中'),
+    (APPROVED, '审核通过'),
+    (DISAPPROVED, '审核驳回'),
+    (FINISHED, '翻译完成'),
+]
 trans_status_dict = ['任务未开始', '翻译中', '提交审核中', '审核通过', '审核驳回','翻译完成']
 
 trans_list_C2E = list(Staff.objects.filter(role=1).values_list('id', flat=True))
@@ -64,11 +76,14 @@ def move(trans_list, translator, new_position):
     trans_list.insert(new_position, trans_list.pop(old_position))
     return trans_list
 
-def get_assignments_status(status):  # return order of all ongoing assignments
+def get_assignments_status(status):
     assignments = []
-    for assignment in Order.objects.all():
-        if assignment.get_status() == status:
-            assignments.append(assignment)
+    if status == 'All':
+        assignments = list(Order.objects.all().order_by('submit'))
+    else:
+        for assignment in Order.objects.all().order_by('submit'):
+            if assignment.get_status() == status:
+                assignments.append(assignment)
     return assignments
 
 
@@ -108,7 +123,6 @@ def update_result(request):
     sort = request.GET.get('sort','Deadline')
     page = request.GET.get('page', 1)
     supervisor = Staff.objects.get(user=request.user)
-    print query, status, sort, page
     data = {
         'result': {
             'Order_Id': [],
@@ -134,11 +148,10 @@ def update_result(request):
             'translator_E2C_choice':[],
             'status_choice':[],
             'trans_status_choice':[],
-        },
+        }
 
     }
     raw = get_assignments_status(status)
-    print raw
     if sort!=None:
         if sort == 'Deadline':
             raw = sorted(raw, key=lambda x: x.get_submit_deadline())
@@ -147,24 +160,35 @@ def update_result(request):
         if sort == 'Upload':
             raw = sorted(raw,key = lambda x:x.get_upload())
 
-    result_length = len(raw)
-    p = Paginator(raw, 2)
+
+    p = Paginator(raw, 5)
     raw_page = p.page(page)
     json_acceptable_string = query.replace("'", "\"")
     d = json.loads(json_acceptable_string)
-    if query != None and d != {}:
-        result = []
-        for each in raw_page:
-            match = True
-            for key in d:
-                if d[key] != 'All':
-                    attr = getattr(each, key)
-                    if attr.id != int(d[key]):
-                        match = False
-            if match:
-                result.append(each)
+    if d!={} and d['order_id']!= 'All':
+        result = [Order.objects.get(id=d['order_id'])]
     else:
-        result = raw_page
+        if query != None and d != {}:
+            result = []
+            for each in raw_page:
+                match = True
+                for key in d:
+                    if d[key] != 'All':
+                        attr = getattr(each, key)
+                        if type(d[key])!=int:
+                            if str(d[key]) not in str(attr.get_name()):
+                                match = False
+                        else:
+                            if attr.id != int(d[key]):
+                                 match = False
+
+                if match:
+                    result.append(each)
+        else:
+            result = raw_page
+
+    result_length = len(result)
+    data['result_length'] = result_length
 
     for each in result:
         data['result']['Order_Id'].append(each.id)
@@ -172,8 +196,8 @@ def update_result(request):
         data['result']['Patient'].append((each.patient_order.id,each.patient_order.name))
         data['result']['Hospital'].append((each.hospital.id,each.hospital.name))
         data['result']['Disease'].append((each.disease.id, each.disease.name))
-        data['result']['Translator_C2E'].append((each.translator_C2E.id,each.translator_C2E.get_name()))
-        data['result']['Translator_E2C'].append((each.translator_E2C.id,each.translator_E2C.get_name()))
+        data['result']['Translator_C2E'].append(each.get_translator_C2E())
+        data['result']['Translator_E2C'].append(each.get_translator_E2C())
         data['result']['Status'].append((each.get_status(),status_dict[int(each.get_status())]))
         data['result']['Trans_Status'].append((each.get_trans_status(),trans_status_dict[int(each.get_trans_status())]))
         data['result']['Deadline'].append(each.get_submit_deadline())
@@ -181,14 +205,14 @@ def update_result(request):
         data['result']['Upload'].append(each.get_upload())
         data['result']['Link'].append(reverse('detail', args=[supervisor.user.id, each.id]))
 
-    data['choices']['customer_choice'] = list(set(data['result']['Customer']))
-    data['choices']['disease_choice'] = list(set(data['result']['Disease']))
-    data['choices']['patient_choice'] = list(set(data['result']['Patient']))
-    data['choices']['hospital_choice'] = list(set(data['result']['Hospital']))
-    data['choices']['translator_c2e_choice'] = list(set(data['result']['Translator_C2E']))
-    data['choices']['translator_e2c_choice'] = list(set(data['result']['Translator_E2C']))
-    data['choices']['status_choice'] = list(set(data['result']['Status']))
-    data['choices']['trans_status_choice'] = list(set(data['result']['Trans_Status']))
+    data['choices']['customer_choice'] = list(map(lambda x:(int(x),Customer.objects.get(id=x).get_name()),Order.objects.values_list('customer_id',flat=True).distinct()))
+    data['choices']['disease_choice'] = list(map(lambda x:(int(x),Disease.objects.get(id=x).name),Order.objects.values_list('disease_id',flat=True).distinct()))
+    data['choices']['patient_choice'] = list(map(lambda x:(int(x),Patient_Order.objects.get(id=x).name),Order.objects.values_list('patient_order_id',flat=True).distinct()))
+    data['choices']['hospital_choice'] = list(map(lambda x:(int(x),Hospital.objects.get(id=x).name),Order.objects.values_list('hospital_id',flat=True).distinct()))
+    data['choices']['translator_E2C_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.values_list('translator_E2C_id',flat=True).distinct().exclude(translator_E2C__isnull=True)))
+    data['choices']['translator_C2E_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.values_list('translator_C2E_id',flat=True).distinct().exclude(translator_C2E__isnull=True)))
+    data['choices']['status_choice'] = STATUS_CHOICE
+    data['choices']['trans_status_choice'] = TRANS_STATUS_CHOICE
     return JsonResponse(data)
 
 
