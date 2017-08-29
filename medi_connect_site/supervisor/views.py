@@ -82,7 +82,7 @@ def get_assignments_status(status):
         assignments = list(Order.objects.all().order_by('submit'))
     else:
         for assignment in Order.objects.all().order_by('submit'):
-            if assignment.get_status() == status:
+            if assignment.get_trans_status() == status:
                 assignments.append(assignment)
     return assignments
 
@@ -219,9 +219,7 @@ def update_result(request):
 @login_required
 def supervisor(request, id):
     supervisor = Staff.objects.get(user_id=id)
-    orders = Order.objects.all()
     return render(request, 'supervisor_home.html', {
-        'orders': orders,
         'supervisor': supervisor,
     })
 
@@ -309,24 +307,10 @@ def detail(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     supervisor = Staff.objects.get(user_id=id)
     if (request.POST.get('delete')):
-        assignment.delete()
-        orders = Order.objects.all()
-        customer_choice = list(Customer.objects.all().distinct())
-        hospital_choice = list(Hospital.objects.all().distinct())
-        disease_choice = list(Disease.objects.all().distinct())
-        translator_C2E_choice = list(Staff.objects.filter(role=1).distinct())
-        translator_E2C_choice = list(Staff.objects.filter(role=2).distinct())
         return render(request, 'supervisor_home.html', {
-            'customer_choice': customer_choice,
-            'hospital_choice': hospital_choice,
-            'disease_choice': disease_choice,
-            'translator_C2E_choice': translator_C2E_choice,
-            'translator_E2C_choice': translator_E2C_choice,
-            'status_choice': status_dict,
-            'trans_status_choice': trans_status_dict,
-            'orders': orders,
-            'supervisor': supervisor,
+            'supervisor':supervisor
         })
+
     return render(request, 'detail.html', {
         'assignment': assignment,
         'supervisor': supervisor,
@@ -352,12 +336,12 @@ def approve(request, id, order_id):
         else:
             approval = form.cleaned_data.get('approval')
             if approval:
-                if assignment.get_status() == 'TRANSLATING_ORIGIN':
+                if assignment.get_status() == 3:
                     assignment.change_status(RECEIVED)
 
                     for document in assignment.pending.all():
                         assignment.origin.add(document)
-                if assignment.get_status() == 'TRANSLATING_FEEDBACK':
+                if assignment.get_status() == 6:
                     assignment.change_status(FEEDBACK)
                     for document in assignment.pending.all():
                         assignment.feedback.add(document)

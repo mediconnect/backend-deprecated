@@ -2,17 +2,27 @@
 {% block title %}Approve Order{% endblock %}
 
 {% block content %}
-  {% if assignment.status >= 3 %}
-  <p>Approve E2C</p>
+  {% if assignment.get_trans_status != '2' %}
+    <p> 任务尚未提交审核 </p>
   {% else %}
-  <p>Approve C2E</p>
-{% endif %}
-  <form method="post">
+    {% if assignment.get_status >= 3 %}
+    <p>Approve E2C</p>
+    {% else %}
+    <p>Approve C2E</p>
+  {% endif %}
+
+  <form method="post" action = "{% url 'supervisor_home' id=supervisor.user.id %}">
     {% csrf_token %}
     {{ form.as_p }}
     <input type="submit",name = 'approve', value = 'Approve'/>
   </form>
 
-  <p><a href="{% url 'supervisor_home' id=supervisor.id %}">Return to home</a></p>
+  <p><a href="{% url 'supervisor_home' id=supervisor.user.id %}">Return to home</a></p>
   <p><a href="{% url 'detail' id=supervisor.id order_id=assignment.id %}">Return to detail</a></p>
+{% endif %}
+<script>
+  function success(){
+    alert('Approval Submitted');
+  }
+</script>
 {% endblock %}
