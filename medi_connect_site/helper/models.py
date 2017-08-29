@@ -116,10 +116,10 @@ status_dict = ['客户未提交', '客户已提交','已付款',  '原件翻译�
 NOT_STARTED = 0  # assignment not started yet 未开始
 ONGOING = 1  # assignment started not submitted to supervisor 翻译中
 APPROVING = 2  # assignment submitted to supervisor for approval 审核中
-APPROVED = 3  # assignment approved, to status 5 已审核
-DISAPPROVED = 4  # assignment disapproved, return to status 1 未批准
-FINISHED = 5  # assignment approved and finished 完成
-
+APPROVED = 4  # assignment approved, to status 5 已审核
+DISAPPROVED = 3  # assignment disapproved, return to status 1 未批准
+FINISHED = 5  # assignment approved and finished for the first half 完成
+ALL_FINISHED = 6 #All done
 TRANS_STATUS_CHOICE = (
     (NOT_STARTED, 'not_started'),
     (ONGOING, 'ongoing'),
@@ -127,9 +127,10 @@ TRANS_STATUS_CHOICE = (
     (APPROVED, 'approved'),
     (DISAPPROVED, 'disapproved'),
     (FINISHED, 'finished'),
+    (ALL_FINISHED,'all_finished')
 )
 
-trans_status_dict = ['任务未开始', '翻译中', '提交审核中', '审核通过', '审核驳回','翻译完成']
+trans_status_dict = ['任务未开始', '翻译中', '提交审核中', '审核驳回','审核通过','翻译完成','订单完成']
 
 EIGHT = datetime.timedelta(hours=8)
 
@@ -253,6 +254,7 @@ class Document(models.Model):
     required = models.BooleanField(default=False)
     is_origin = models.BooleanField(default=True)
     is_translated = models.BooleanField(default=False)
+    is_feedback = models.BooleanField(default = False)
     upload_at = models.DateTimeField(auto_now_add=True)
     comment = models.CharField(max_length=255, blank=True)
     document = models.FileField(upload_to=order_directory_path, null=True)

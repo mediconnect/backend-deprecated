@@ -53,9 +53,10 @@ status_dict = ['客户未提交', '客户已提交','已付款',  '原件翻译�
 NOT_STARTED = 0  # assignment not started yet
 ONGOING = 1  # assignment started not submitted to supervisor
 APPROVING = 2  # assignment submitted to supervisor for approval
-APPROVED = 3  # assignment approved, to status 5
-DISAPPROVED = 4  # assignment disapproved, return to status 1
+APPROVED = 4  # assignment approved, to status 5
+DISAPPROVED = 3  # assignment disapproved, return to status 1
 FINISHED = 5  # assignment approved and finished
+ALL_FINISHED = 6 #All done
 
 TRANS_STATUS_CHOICE = [
     (NOT_STARTED, '任务未开始'),
@@ -64,8 +65,9 @@ TRANS_STATUS_CHOICE = [
     (APPROVED, '审核通过'),
     (DISAPPROVED, '审核驳回'),
     (FINISHED, '翻译完成'),
+    (ALL_FINISHED,'全部完成')
 ]
-trans_status_dict = ['任务未开始', '翻译中', '提交审核中', '审核通过', '审核驳回','翻译完成']
+trans_status_dict = ['任务未开始', '翻译中', '提交审核中', '审核驳回','审核通过','翻译完成','订单完成']
 
 trans_list_C2E = list(Staff.objects.filter(role=1).values_list('id', flat=True))
 trans_list_E2C = list(Staff.objects.filter(role=2).values_list('id', flat=True))
@@ -328,21 +330,27 @@ def approve(request, id, order_id):
     if request.method == 'POST':
         form = ApproveForm(request.POST)
         if not form.is_valid():
+
             return render(request, 'approve.html', {
                 'form': form,
                 'assignment': assignment,
                 'supervisor': supervisor
             })
         else:
+
             approval = form.cleaned_data.get('approval')
+
             if approval:
                 if assignment.get_status() == 3:
                     assignment.change_status(RECEIVED)
+
 
                     for document in assignment.pending.all():
                         assignment.origin.add(document)
                 if assignment.get_status() == 6:
                     assignment.change_status(FEEDBACK)
+
+
                     for document in assignment.pending.all():
                         assignment.feedback.add(document)
                 assignment.pending.clear()

@@ -24,8 +24,8 @@ utc_8 = UTC_8()
 NOT_STARTED = 0  # assignment not started yet    未开始
 ONGOING = 1  # assignment started not submitted to supervisor 进行中
 APPROVING = 2  # assignment submitted to supervisor for approval
-APPROVED = 3  # assignment approved, to status 5
-DISAPPROVED = 4  # assignment disapproved, return to status 1
+APPROVED = 4  # assignment approved, to status 5
+DISAPPROVED = 3  # assignment disapproved, return to status 1
 FINISHED = 5  # assignment approved and finished
 
 TRANS_STATUS_CHOICE = (
@@ -37,7 +37,7 @@ TRANS_STATUS_CHOICE = (
     (FINISHED, 'finished'),
 )
 
-trans_status_dict = ['任务未开始', '翻译中', '提交审核中', '审核通过', '审核驳回','翻译完成']
+trans_status_dict = ['任务未开始', '翻译中', '提交审核中',  '审核驳回','审核通过','翻译完成']
 
 def get_assignments(translator):  # return order of all assignments
     assignments = []
