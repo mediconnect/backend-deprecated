@@ -97,11 +97,13 @@ def assign_auto(order):
         move(trans_list_C2E, translator.id, -1)
         order.translator_C2E = translator
         order.change_status(TRANSLATING_ORIGIN)
+        order.change_trans_status(NOT_STARTED)
     else:
         translator = Staff.objects.get(id=trans_list_E2C[0])
         move(trans_list_E2C, translator.id, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)
+        order.change_trans_status(NOT_STARTED)
         order.save()
 
 
@@ -341,20 +343,23 @@ def approve(request, id, order_id):
             approval = form.cleaned_data.get('approval')
 
             if approval:
-                if assignment.get_status() == 3:
-                    assignment.change_status(RECEIVED)
+                if assignment.get_status() == '3':
 
+                    assignment.change_status(RECEIVED)
 
                     for document in assignment.pending.all():
                         assignment.origin.add(document)
-                if assignment.get_status() == 6:
-                    assignment.change_status(FEEDBACK)
+                        assignment.save()
 
+                if assignment.get_status() == '6':
+                    assignment.change_status(FEEDBACK)
 
                     for document in assignment.pending.all():
                         assignment.feedback.add(document)
-                assignment.pending.clear()
+                        assignment.save()
+
                 assignment.change_trans_status(APPROVED)
+                assignment.pending.clear()
                 assignment.save()
             if not approval:
                 for document in assignment.pending.all():

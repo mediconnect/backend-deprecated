@@ -19,6 +19,33 @@ Staff = apps.get_model('helper','Staff')
 utc_8 = UTC_8()
 # Create your views here.
 
+# Status
+STARTED = 0  # 下单中
+PAID = 1  # paid 已付款
+RECEIVED = 2  # order received 已接单
+TRANSLATING_ORIGIN = 3  # translator starts translating origin documents 翻译原件中
+SUBMITTED = 4  # origin documents translated, approved and submitted to hospitals 已提交
+# ============ Above is C2E status =============#
+# ============Below is E2C status ==============#
+RETURN = 5  # hospital returns feedback
+TRANSLATING_FEEDBACK = 6  # translator starts translating feedback documents 翻译反馈中
+FEEDBACK = 7  # feedback documents translated, approved, and feedback to customer 已反馈
+DONE = 8  # customer confirm all process done 完成
+
+STATUS_CHOICES = (
+    (STARTED, 'started'),
+    (SUBMITTED, 'submitted'),
+    (TRANSLATING_ORIGIN, 'translating_origin'),
+    (RECEIVED, 'received'),
+    (RETURN, 'return'),
+    (TRANSLATING_FEEDBACK, 'translating_feedback'),
+    (FEEDBACK, 'feedback'),
+    (PAID, 'PAID'),
+)
+
+status_dict = ['客户未提交', '客户已提交','已付款',  '原件翻译中', '已提交至医院', '反馈已收到', '反馈翻译中',
+               '反馈已上传', '订单完成']
+
 # Trans_status
 
 NOT_STARTED = 0  # assignment not started yet    未开始
@@ -88,7 +115,7 @@ def update_result(request):
     }
     raw=get_assignments_status(translator,status)
     result_length = len(raw)
-    p = Paginator(raw,2)
+    p = Paginator(raw,5)
     raw_page = p.page(page)
     json_acceptable_string = query.replace("'", "\"")
     d = json.loads(json_acceptable_string)
@@ -135,7 +162,6 @@ def translator(request, id):
 @login_required
 def translator_status(request,id,status):
     translator = Staff.objects.get(user_id = id)
-    #assignments = get_assignments_status(translator,status)
     return render(request,'trans_home_status.html',
                   {
                       'status':status,
@@ -145,8 +171,11 @@ def translator_status(request,id,status):
 def assignment_summary(request, id, order_id):
     translator = Staff.objects.get(user_id = id)
     assignment = Order.objects.get(id=order_id)
-
     if (request.POST.get('accept')):
+        if translator.get_role() == 1:
+            assignment.change_status(TRANSLATING_ORIGIN)
+        if translator.get_role() == 2:
+            assignment.change_status(TRANSLATING_FEEDBACK)
         assignment.change_trans_status(ONGOING)
         assignment.save()
         return render(request, 'assignment_summary.html', {
@@ -160,7 +189,20 @@ def assignment_summary(request, id, order_id):
             'translator': translator,
             'assignment': assignment
         })
-
+    if (request.POST.get('finish')):
+        assignment.change_trans_status(FINISHED)
+        assignment.save()
+        return render(request, 'assignment_summary.html', {
+            'translator': translator,
+            'assignment': assignment
+        })
+    if (request.POST.get('redo')):
+        assignment.change_trans_status(ONGOING)
+        assignment.save()
+        return render(request, 'assignment_summary.html', {
+            'translator': translator,
+            'assignment': assignment
+        })
     if request.method == 'POST' and request.FILES.get('trans_files',False):
         file = request.FILES['trans_files']
         fs = FileSystemStorage()

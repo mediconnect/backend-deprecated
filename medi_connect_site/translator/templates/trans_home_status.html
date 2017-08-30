@@ -97,7 +97,7 @@
             last:'最后一页',
             first:'第一页',
             prev:'上一页',
-            totalPages: parseInt(result_length/2)+1,
+            totalPages: parseInt(result_length/5)+1,
             visiblePages:10,
             onPageClick: function (event, page) {
                 $.getJSON("{% url 'trans_update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic),'page':page},function(data){

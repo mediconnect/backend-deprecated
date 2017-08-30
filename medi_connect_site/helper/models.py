@@ -288,11 +288,15 @@ class Staff(models.Model):
         assignments = []
         if self.get_role() == 1:  # if translator_C2E
             for order in Order.objects.filter(Q(translator_C2E=self.id)).order_by('submit'):
-                assignments.append(order)
+                if order.get_status()<=3:
+                    assignments.append(order)
             return assignments
         if self.get_role() == 2:  # if translator_E2C
-            for order in Order.objects.filter(Q(translator_C2E=self.id)).order_by('submit'):
-                assignments.append(order)
+
+
+            for order in Order.objects.filter(Q(translator_E2C=self.id)).order_by('submit'):
+                if order.get_status() >3:
+                    assignments.append(order)
             return assignments
 
     def get_document_number(self):
