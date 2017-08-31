@@ -98,7 +98,6 @@ def result(request):
                 })
 
             if len(dis) > 1 or not exact_match:
-                print 1234567
                 return render(request, 'disease_choice.html', {
                     'customer': Customer.objects.get(user=request.user),
                     'disease_list': dis,
