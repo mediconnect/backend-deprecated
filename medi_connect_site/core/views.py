@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-from django.db.models import Q
 from forms import SignUpForm, SearchForm, ContactForm
 from customer.models import Customer
 from customer.views import customer
@@ -10,6 +9,7 @@ from translator.views import translator
 from supervisor.views import supervisor
 from helper.models import Hospital, Disease, Staff, Rank
 import smtplib
+from chisim.chi_sim import score
 
 
 # Create your views here
@@ -79,33 +79,39 @@ def result(request):
         else:
             query = form.cleaned_data.get('query')
             dis_list = Disease.objects.all()
-            dis = []
-            exact_match = False
-            for unit in dis_list:
-                keywords = unit.keyword.split(',')
+            dis_score = dict()
+            for dis in dis_list:
+                keywords = dis.keyword.split(',')
                 for keyword in keywords:
-                    if keyword in query:
-                        exact_match = exact_match or keyword == query
-                        dis.append(unit)
-                        if exact_match:
-                            break
+                    keyword = keyword.strip()
+                    dict_key = int(dis.id)
+                    dis_score.update({dict_key: max(-1 if dict_key not in dis_score else dis_score[dict_key],
+                                                    score(keyword, query))})
 
-            if len(dis) == 0:
+            import operator
+            dis_score = sorted(dis_score.items(), key=operator.itemgetter(1), reverse=True)
+
+            print dis_score
+
+            if dis_score[0][1] < 0.5:
                 return render(request, 'disease_choice.html', {
                     'customer': Customer.objects.get(user=request.user),
                     'all_dis': Disease.objects.all(),
                     'disease_length': False,
                 })
 
-            if len(dis) > 1 or not exact_match:
+            sort_list = [item[0] for item in dis_score if item[1] > 0.5]
+            disease_list = [Disease.objects.get(id=num) for num in sort_list]
+
+            if len(disease_list) > 1:
                 return render(request, 'disease_choice.html', {
                     'customer': Customer.objects.get(user=request.user),
-                    'disease_list': dis,
+                    'disease_list': disease_list,
                     'all_dis': Disease.objects.all(),
                     'disease_length': True,
                 })
 
-            rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
+            rank_list = Rank.objects.filter(disease=disease_list[0]).order_by('rank')
             hospital_list = []
             for r in rank_list:
                 hospital_list.append(r.hospital)
@@ -114,9 +120,9 @@ def result(request):
 
             return render(request, 'result.html', {
                 'hospital_list': hospital_list,
-                'disease': dis[0],
+                'disease': disease_list[0],
                 'hospital_length': len(hospital_list) > 0,
-                'disease_length': dis is not None,
+                'disease_length': disease_list[0] is not None,
                 'customer': Customer.objects.get(user=request.user)
             })
     else:

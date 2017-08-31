@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'helper',
     'info',
     'django_js_reverse',
+    'chisim',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +72,7 @@ TEMPLATES = [
             'helper/templates/helper',
             'info/templates/info',
             'core/templates/registration',
+            'chisim',
         ],
         'APP_DIRS': True,
         'OPTIONS': {
