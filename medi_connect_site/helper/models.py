@@ -235,10 +235,20 @@ class Order(models.Model):
         self.latest_upload = time
 
     def get_status(self):
-        return self.status
+        return int(self.status)
 
     def get_trans_status(self):
-        return self.trans_status
+        return int(self.trans_status)
+
+    def get_trans_status_for_translator(self,translator):
+        if self.get_status()<= SUBMITTED :
+            return self.get_trans_status()
+        else:
+            if translator.get_role() == 1:
+                return FINISHED
+            else:
+                return self.get_trans_status()
+
 
     def change_status(self, status):
         self.status = status
@@ -291,15 +301,15 @@ class Staff(models.Model):
         assignments = []
         if self.get_role() == 1:  # if translator_C2E
             for order in Order.objects.filter(Q(translator_C2E=self.id)).order_by('submit'):
-                if order.get_status() <= 3:
-                    assignments.append(order)
+                assignments.append(order)
+
             return assignments
+
         if self.get_role() == 2:  # if translator_E2C
-
-
             for order in Order.objects.filter(Q(translator_E2C=self.id)).order_by('submit'):
-                if order.get_status() > 3:
-                    assignments.append(order)
+
+                assignments.append(order)
+
             return assignments
 
     def get_document_number(self):
