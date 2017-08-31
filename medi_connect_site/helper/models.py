@@ -24,12 +24,14 @@ class Disease(models.Model):
     def get_name(self):
         return self.name
 
+
 def hospital_directory_path(instance, filename):
-    return 'hospital_{0}/{1}'.format(instance.hospital.get_name(),filename)
+    return 'hospital_{0}/{1}'.format(instance.hospital.get_name(), filename)
+
 
 class Hospital(models.Model):
     name = models.CharField(max_length=50)
-    image = models.ImageField(upload_to=hospital_directory_path,null=True)
+    image = models.ImageField(upload_to=hospital_directory_path, null=True)
     email = models.EmailField(blank=True)
     area = models.CharField(blank=True, max_length=50)
     default_slots = models.IntegerField(default=20)
@@ -43,8 +45,8 @@ class Hospital(models.Model):
     specialty = models.TextField(default='specialty')
     feedback_time = models.CharField(default='one week', max_length=50)
     price_range = models.CharField(default='unknown', max_length=50)
-    average_score = models.FloatField(null = True)
-    review_number = models.IntegerField(default = 0)
+    average_score = models.FloatField(null=True)
+    review_number = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'hospital'
@@ -66,13 +68,13 @@ class Hospital(models.Model):
         self.slots_open_2 = self.default_slots
         self.slots_open_3 = self.default_slots
 
-    def update_score(self,score):
+    def update_score(self, score):
         if self.review_number == 0:
             assert self.average_score is None, 'average score is not consistent with review number, something went wrong.'
             self.average_score = score
             self.review_number = 1
         else:
-            self.average_score = (self.average_score*self.review_number+score)/(self.review_number+1)
+            self.average_score = (self.average_score * self.review_number + score) / (self.review_number + 1)
             self.review_number += 1
 
 
@@ -109,7 +111,7 @@ STATUS_CHOICES = (
     (PAID, 'PAID'),
 )
 
-status_dict = ['客户未提交', '客户已提交','已付款',  '原件翻译中', '已提交至医院', '反馈已收到', '反馈翻译中',
+status_dict = ['客户未提交', '客户已提交', '已付款', '原件翻译中', '已提交至医院', '反馈已收到', '反馈翻译中',
                '反馈已上传', '订单完成']
 # Trans_status
 
@@ -119,7 +121,7 @@ APPROVING = 2  # assignment submitted to supervisor for approval 审核中
 APPROVED = 4  # assignment approved, to status 5 已审核
 DISAPPROVED = 3  # assignment disapproved, return to status 1 未批准
 FINISHED = 5  # assignment approved and finished for the first half 完成
-ALL_FINISHED = 6 #All done
+ALL_FINISHED = 6  # All done
 TRANS_STATUS_CHOICE = (
     (NOT_STARTED, 'not_started'),
     (ONGOING, 'ongoing'),
@@ -127,10 +129,10 @@ TRANS_STATUS_CHOICE = (
     (APPROVED, 'approved'),
     (DISAPPROVED, 'disapproved'),
     (FINISHED, 'finished'),
-    (ALL_FINISHED,'all_finished')
+    (ALL_FINISHED, 'all_finished')
 )
 
-trans_status_dict = ['任务未开始', '翻译中', '提交审核中', '审核驳回','审核通过','翻译完成','订单完成']
+trans_status_dict = ['任务未开始', '翻译中', '提交审核中', '审核驳回', '审核通过', '翻译完成', '订单完成']
 
 EIGHT = datetime.timedelta(hours=8)
 
@@ -188,22 +190,21 @@ class Order(models.Model):
 
     def get_translator_C2E(self):
         if self.translator_C2E is None:
-            return(-1,'未分配')
+            return (-1, '未分配')
         else:
-            return(self.translator_C2E.id,self.translator_C2E.get_name())
+            return (self.translator_C2E.id, self.translator_C2E.get_name())
 
     def get_translator_E2C(self):
         if self.translator_E2C is None:
-            return(-1,'未分配')
+            return (-1, '未分配')
         else:
-            return(self.translator_E2C.id,self.translator_E2C.get_name())
+            return (self.translator_E2C.id, self.translator_E2C.get_name())
 
     def get_submit(self):
-        return self.submit   + datetime.timedelta(hours = 8)
+        return self.submit + datetime.timedelta(hours=8)
 
     def get_remaining(self):  # deadline
         return self.get_submit() + datetime.timedelta(days=2);
-
 
     def get_deadline(self):  # default deadline 2 days after submit time remaining
         total_sec = (self.get_submit() + datetime.timedelta(days=2) - datetime.datetime.now(utc_8)).total_seconds()
@@ -215,7 +216,9 @@ class Order(models.Model):
         return deadline
 
     def get_submit_deadline(self):
-        total_sec = (self.get_submit() + datetime.timedelta(days=7 * (int(self.week_number_at_submit) + 1)) - datetime.datetime.now(utc_8)).total_seconds()
+        total_sec = (
+        self.get_submit() + datetime.timedelta(days=7 * (int(self.week_number_at_submit) + 1)) - datetime.datetime.now(
+            utc_8)).total_seconds()
         days = int(total_sec / (3600 * 24))
         hours = int((total_sec - 3600 * 24 * days) / 3600)
         submit_deadline = str(days) + '  days,  ' + str(hours) + '  hours'
@@ -264,7 +267,7 @@ class Document(models.Model):
     required = models.BooleanField(default=False)
     is_origin = models.BooleanField(default=True)
     is_translated = models.BooleanField(default=False)
-    is_feedback = models.BooleanField(default = False)
+    is_feedback = models.BooleanField(default=False)
     upload_at = models.DateTimeField(auto_now_add=True)
     comment = models.CharField(max_length=255, blank=True)
     document = models.FileField(upload_to=order_directory_path, null=True)
@@ -299,11 +302,14 @@ class Staff(models.Model):
         if self.get_role() == 1:  # if translator_C2E
             for order in Order.objects.filter(Q(translator_C2E=self.id)).order_by('submit'):
                 assignments.append(order)
+
             return assignments
 
         if self.get_role() == 2:  # if translator_E2C
             for order in Order.objects.filter(Q(translator_E2C=self.id)).order_by('submit'):
+
                 assignments.append(order)
+
             return assignments
 
     def get_document_number(self):
@@ -356,6 +362,7 @@ class Patient(models.Model):
     def get_name(self):
         return self.name
 
+
 class OrderPatient(models.Model):
     # Order Patient table to store patient information
     # This is created everytime an order is placed
@@ -368,11 +375,13 @@ class OrderPatient(models.Model):
     diagnose_hospital = models.CharField(max_length=50, blank=True)
     doctor = models.TextField(blank=True)
     relationship = models.CharField(max_length=50, choices=RELATION_CHOICES, default=SELF)
+
     class Meta:
         db_table = 'order_patient'
 
     def get_name(self):
         return self.name
+
 
 class LikeHospital(models.Model):
     customer = models.ForeignKey(Customer, unique=False, default=None, related_name='customer_liked')
@@ -385,9 +394,9 @@ class LikeHospital(models.Model):
 
 class HospitalReview(models.Model):
     hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_review')
-    order = models.OneToOneField(Order,default = None, related_name='order_review')
+    order = models.OneToOneField(Order, default=None, related_name='order_review')
     score = models.IntegerField()
-    comment = models.CharField(max_length=200,blank=True)
+    comment = models.CharField(max_length=200, blank=True)
 
     class Meta:
         db_table = 'hospital_review'

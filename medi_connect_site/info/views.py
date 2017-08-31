@@ -267,16 +267,8 @@ def hospital_review(request, order_id):
     if request.method == 'POST':
         score = request.POST.get('score')
         comment = request.POST.get('comment')
-        print comment
-        hospital = order.hospital
-        if len(HospitalReview.objects.filter(hospital=hospital)) > 0:
-            hospr = HospitalReview.objects.get(hospital=hospital)
-            hospr.score += int(score)
-            hospr.review_number += 1
-            hospr.save()
-        else:
-            hospr = HospitalReview(hospital=hospital, score=score, review_number=1)
-            hospr.save()
+        review = HospitalReview(hospital=order.hospital, score=score, comment=comment, order=order)
+        review.save()
         return redirect('info_order')
     return render(request, 'info_hospital_review.html', {
         'customer': Customer.objects.get(user=request.user),

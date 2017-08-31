@@ -93,13 +93,17 @@ def result(request):
             if len(dis) == 0:
                 return render(request, 'disease_choice.html', {
                     'customer': Customer.objects.get(user=request.user),
-                    'disease_list': Disease.objects.all(),
+                    'all_dis': Disease.objects.all(),
+                    'disease_length': False,
                 })
 
             if len(dis) > 1 or not exact_match:
+                print 1234567
                 return render(request, 'disease_choice.html', {
                     'customer': Customer.objects.get(user=request.user),
                     'disease_list': dis,
+                    'all_dis': Disease.objects.all(),
+                    'disease_length': True,
                 })
 
             rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
