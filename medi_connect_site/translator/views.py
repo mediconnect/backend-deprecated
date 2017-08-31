@@ -69,8 +69,8 @@ trans_status_dict = ['任务未开始', '翻译中', '提交审核中',  '审核
 def get_assignments(translator):  # return order of all assignments
     assignments = []
     if translator.get_role() == 1: #if translator_C2E
-
         for order in Order.objects.filter(Q(translator_C2E=translator.id)).order_by('submit'):
+
             assignments.append(order)
         return assignments
     if translator.get_role() == 2: #if translator_E2C
@@ -81,8 +81,10 @@ def get_assignments(translator):  # return order of all assignments
 
 def get_assignments_status(translator, trans_status):  # return order of all ongoing assignments
     assignments = []
+
     for assignment in translator.get_assignments():
-        if assignment.get_trans_status() == trans_status:
+        print type(assignment.get_trans_status_for_translator(translator)), int(trans_status)
+        if assignment.get_trans_status_for_translator(translator) == int(trans_status):
             assignments.append(assignment)
     return assignments
 
@@ -139,7 +141,7 @@ def update_result(request):
         data['result']['Disease'].append((each.disease.id,each.disease.name))
         data['result']['Submit'].append(each.get_submit()) # submit deadline
         data['result']['Deadline'].append(each.get_remaining()) # translate deadline
-        data['result']['Status'].append(trans_status_dict[int(each.get_trans_status())])
+        data['result']['Status'].append(trans_status_dict[int(each.get_trans_status_for_translator(translator))])
         data['result']['Remaining'].append(each.get_deadline())
         data['result']['Upload'].append(each.get_upload())
         data['result']['Link'].append(reverse('assignment_summary',args=[translator.user.id,each.id]))

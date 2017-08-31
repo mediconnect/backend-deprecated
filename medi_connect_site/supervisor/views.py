@@ -358,7 +358,7 @@ def approve(request, id, order_id):
                         assignment.feedback.add(document)
                         assignment.save()
 
-                assignment.change_trans_status(APPROVED)
+                assignment.change_trans_status(FINISHED)
                 assignment.pending.clear()
                 assignment.save()
             if not approval:
