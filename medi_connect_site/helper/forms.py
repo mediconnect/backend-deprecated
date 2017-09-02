@@ -3,14 +3,14 @@ from helper.models import Order, Patient, Disease, Document
 from django.core.exceptions import ValidationError
 
 
-class OrderFormFirst(forms.ModelForm):
+class PatientInfo(forms.ModelForm):
     class Meta:
         model = Patient
         exclude = []
-        fields = ['name', 'age', 'gender', 'diagnose_hospital', 'relationship']
+        fields = ['name', 'age', 'gender', 'diagnose_hospital', 'relationship', 'passport']
 
     def __init__(self, *args, **kwargs):
-        super(OrderFormFirst, self).__init__(*args, **kwargs)
+        super(PatientInfo, self).__init__(*args, **kwargs)
         self.fields['diagnose_hospital'].widget.attrs['readonly'] = True
 
     def clean_name(self):
@@ -34,45 +34,53 @@ class OrderFormFirst(forms.ModelForm):
         return gender
 
 
-class OrderFormSecond(forms.ModelForm):
-    document = forms.FileField(
-        label="Choose required document",
-        widget=forms.ClearableFileInput(attrs={'multiple': True}),
+class AppointmentInfo(forms.ModelForm):
+    hospital = forms.CharField(
+        label="Hospital",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
         required=True,
     )
-    extra_document = forms.FileField(
-        label="Choose optional document",
-        widget=forms.ClearableFileInput(attrs={'multiple': True}),
-        required=False,
-    )
-    document_comment = forms.CharField(
+
+    hospital_address = forms.CharField(
+        label="Hospital Address",
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label="Leave comment for your main document (optional)",
-        required=False,
-    )
-    extra_document_comment = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label="Leave comment for your extra document (optional)",
-        required=False,
-    )
-    document_description = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label="Leave description for your main document",
         required=True,
     )
-    extra_document_description = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label="Leave description for your extra document",
-        required=False,
+
+    time = forms.DateTimeField(
+        label="Appointment Time",
+        widget=forms.DateTimeInput(attrs={'class': 'form-control'}),
+        required=True,
     )
+
+    class Meta:
+        model = Order
+        exclude = []
+        fields = []
+
+    def __init__(self, *args, **kwargs):
+        super(AppointmentInfo, self).__init__(*args, **kwargs)
+        self.fields['hospital'].widget.attrs['readonly'] = True
+        self.fields['hospital_address'].widget.attrs['readonly'] = True
+        self.fields['time'].widget.attrs['readonly'] = True
+
+
+class DiseaseInfo(forms.ModelForm):
+    hospital = forms.CharField(
+        label="Hospital in China",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=True,
+    )
+
     doctor = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
         label="Doctor",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
         required=True,
     )
-    diagnose_hospital = forms.CharField(
+
+    contact = forms.CharField(
+        label="Contact Info",
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label="Diagnose Hospital",
         required=True,
     )
 
@@ -82,23 +90,44 @@ class OrderFormSecond(forms.ModelForm):
         fields = ['name']
 
     def __init__(self, *args, **kwargs):
-        super(OrderFormSecond, self).__init__(*args, **kwargs)
+        super(DiseaseInfo, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs['readonly'] = True
         self.field_order = [
             'name',
+            'hospital',
             'doctor',
-            'diagnose_hospital',
-            'document_description',
-            'document',
-            'document_comment',
-            'extra_document_description',
-            'extra_document',
-            'extra_document_comment',
+            'contact',
         ]
         self.order_fields(self.field_order)
 
-    def clean_category(self):
-        category = self.cleaned_data['name']
-        if category is None or len(category) == 0:
-            raise ValidationError('name cannot be None')
-        return category
+
+class DocumentInfo(forms.ModelForm):
+    document = forms.FileField(
+        label="Choose required document",
+        widget=forms.ClearableFileInput(attrs={'multiple': True}),
+        required=True,
+    )
+    document_comment = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Leave comment for your main document (optional)",
+        required=False,
+    )
+    document_description = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Leave description for your main document",
+        required=True,
+    )
+
+    class Meta:
+        model = Document
+        exclude = []
+        fields = []
+
+    def __init__(self, *args, **kwargs):
+        super(DocumentInfo, self).__init__(*args, **kwargs)
+        self.field_order = [
+            'document_description',
+            'document',
+            'document_comment',
+        ]
+        self.order_fields(self.field_order)

@@ -9,7 +9,6 @@ from translator.views import translator
 from supervisor.views import supervisor
 from helper.models import Hospital, Disease, Staff, Rank
 import smtplib
-from chisim.chi_sim import score
 
 
 # Create your views here
@@ -79,39 +78,34 @@ def result(request):
         else:
             query = form.cleaned_data.get('query')
             dis_list = Disease.objects.all()
-            dis_score = dict()
-            for dis in dis_list:
-                keywords = dis.keyword.split(',')
+            dis = []
+            exact_match = False
+            for unit in dis_list:
+                # split according to unicode chinese letter
+                keywords = unit.keyword.split(u'\uff0c')
                 for keyword in keywords:
-                    keyword = keyword.strip()
-                    dict_key = int(dis.id)
-                    dis_score.update({dict_key: max(-1 if dict_key not in dis_score else dis_score[dict_key],
-                                                    score(keyword, query))})
+                    if keyword in query:
+                        exact_match = exact_match or keyword == query
+                        dis.append(unit)
+                        if exact_match:
+                            break
 
-            import operator
-            dis_score = sorted(dis_score.items(), key=operator.itemgetter(1), reverse=True)
-
-            print dis_score
-
-            if dis_score[0][1] < 0.5:
+            if len(dis) == 0:
                 return render(request, 'disease_choice.html', {
                     'customer': Customer.objects.get(user=request.user),
                     'all_dis': Disease.objects.all(),
                     'disease_length': False,
                 })
 
-            sort_list = [item[0] for item in dis_score if item[1] > 0.5]
-            disease_list = [Disease.objects.get(id=num) for num in sort_list]
-
-            if len(disease_list) > 1:
+            if len(dis) > 1 or not exact_match:
                 return render(request, 'disease_choice.html', {
                     'customer': Customer.objects.get(user=request.user),
-                    'disease_list': disease_list,
+                    'disease_list': dis,
                     'all_dis': Disease.objects.all(),
                     'disease_length': True,
                 })
 
-            rank_list = Rank.objects.filter(disease=disease_list[0]).order_by('rank')
+            rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
             hospital_list = []
             for r in rank_list:
                 hospital_list.append(r.hospital)
@@ -120,9 +114,9 @@ def result(request):
 
             return render(request, 'result.html', {
                 'hospital_list': hospital_list,
-                'disease': disease_list[0],
+                'disease': dis[0],
                 'hospital_length': len(hospital_list) > 0,
-                'disease_length': disease_list[0] is not None,
+                'disease_length': dis is not None,
                 'customer': Customer.objects.get(user=request.user)
             })
     else:
@@ -173,7 +167,8 @@ def result_guest(request):
             dis = []
             exact_match = False
             for unit in dis_list:
-                keywords = unit.keyword.split(',')
+                # split according to unicode chinese letter
+                keywords = unit.keyword.split(u'\uff0c')
                 for keyword in keywords:
                     if keyword in query:
                         exact_match = exact_match or keyword == query
@@ -183,12 +178,15 @@ def result_guest(request):
 
             if len(dis) == 0:
                 return render(request, 'disease_choice_guest.html', {
-                    'disease_list': Disease.objects.all(),
+                    'all_dis': Disease.objects.all(),
+                    'disease_length': False,
                 })
 
             if len(dis) > 1 or not exact_match:
                 return render(request, 'disease_choice_guest.html', {
                     'disease_list': dis,
+                    'all_dis': Disease.objects.all(),
+                    'disease_length': True,
                 })
 
             rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')

@@ -355,6 +355,7 @@ class Patient(models.Model):
     diagnose_hospital = models.CharField(max_length=50, blank=True)
     doctor = models.TextField(blank=True)
     relationship = models.CharField(max_length=50, choices=RELATION_CHOICES, default=SELF)
+    passport = models.CharField(max_length=50, blank=True)
 
     class Meta:
         db_table = 'patient'
@@ -375,6 +376,7 @@ class OrderPatient(models.Model):
     diagnose_hospital = models.CharField(max_length=50, blank=True)
     doctor = models.TextField(blank=True)
     relationship = models.CharField(max_length=50, choices=RELATION_CHOICES, default=SELF)
+    passport = models.CharField(max_length=50, blank=True)
 
     class Meta:
         db_table = 'order_patient'
