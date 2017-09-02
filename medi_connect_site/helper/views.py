@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from models import Hospital, Patient, Disease, Order, Document, Staff, LikeHospital, OrderPatient, Rank
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
-from helper.forms import PatientInfo, AppointmentInfo, DiseaseInfo, DocumentInfo
+from helper.forms import PatientInfo, AppointmentInfo
 from django.core.files.storage import FileSystemStorage
 
 # Status
@@ -91,6 +91,7 @@ def hospital(request, hospital_id, disease_id):
     """
     hosp = Hospital.objects.get(id=hospital_id)
     dis = Disease.objects.get(id=disease_id)
+    print dis
     customer = Customer.objects.get(user=request.user)
     order_list = Order.objects.filter(customer=customer, hospital=hosp, disease=dis)
     order = None
@@ -201,15 +202,12 @@ def order_submit_first(request, order_id):
             order.save()
             return render(request, 'order_info_second.html', {
                 'customer': customer,
-                'appointmentform': AppointmentInfo(instance=request.user, initial={
+                'form': AppointmentInfo(instance=customer, initial={
                     'hospital': order.hospital.name,
                     'hospital_address': order.hospital.area,
                     'time': order.submit,
-                }),
-                'diseaseform': DiseaseInfo(instance=request.user, initial={
                     'name': order.disease.name,
                 }),
-                'documentform': DocumentInfo(),
                 'order_id': order.id,
             })
     else:
@@ -217,15 +215,12 @@ def order_submit_first(request, order_id):
         order = Order.objects.get(id=order_id)
         return render(request, 'order_info_second.html', {
             'customer': customer,
-            'appointmentform': AppointmentInfo(instance=request.user, initial={
+            'form': AppointmentInfo(instance=customer, initial={
                 'hospital': order.hospital.name,
                 'hospital_address': order.hospital.area,
                 'time': order.submit,
-            }),
-            'diseaseform': DiseaseInfo(instance=request.user, initial={
                 'name': order.disease.name,
             }),
-            'documentform': DocumentInfo(),
             'order_id': order_id,
         })
 
@@ -256,15 +251,12 @@ def order_patient_finish(request, order_id, patient_id):
     order.save()
     return render(request, 'order_info_second.html', {
         'customer': customer,
-        'appointmentform': AppointmentInfo(instance=request.user, initial={
+        'form': AppointmentInfo(instance=customer, initial={
             'hospital': order.hospital.name,
             'hospital_address': order.hospital.area,
             'time': order.submit,
-        }),
-        'diseaseform': DiseaseInfo(instance=request.user, initial={
             'name': order.disease.name,
         }),
-        'documentform': DocumentInfo(),
         'order_id': order.id,
     })
 
@@ -274,28 +266,24 @@ def order_submit_second(request, order_id):
     order = Order.objects.get(id=order_id)
     customer = Customer.objects.get(user=request.user)
     if request.method == 'POST':
-        appointmentform = AppointmentInfo(request.POST)
-        diseaseform = DiseaseInfo(request.POST)
-        documentform = DocumentInfo(request.POST, request.FILES, instance=customer)
-        if not appointmentform.is_valid() or not diseaseform.is_valid() or not documentform.is_valid():
+        form = AppointmentInfo(request.POST, request.FILES, instance=customer)
+        if not form.is_valid():
             return render(request, 'order_info_second.html', {
-                'appointmentform': appointmentform,
-                'diseaseform': diseaseform,
-                'documentform': documentform,
+                'form': form,
                 'order_id': order.id,
                 'customer': customer,
             })
         else:
-            doc_comment = documentform.cleaned_data.get('document_comment')
-            doc_description = documentform.cleaned_data.get('document_description')
+            doc_comment = form.cleaned_data.get('document_comment')
+            doc_description = form.cleaned_data.get('document_description')
             for f in request.FILES.getlist('document'):
                 fs = FileSystemStorage()
                 fs.save(f.name, f)
                 doc = Document(document=f, comment=doc_comment, description=doc_description, order=order)
                 doc.save()
                 order.origin.add(doc)
-            doctor = diseaseform.cleaned_data.get('doctor')
-            hospital = diseaseform.cleaned_data.get('diagnose_hospital')
+            doctor = form.cleaned_data.get('doctor')
+            hospital = form.cleaned_data.get('hospital_china')
             patient = order.patient_order
             patient.doctor = doctor
             patient.diagnose_hospital = hospital

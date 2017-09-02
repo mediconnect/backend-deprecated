@@ -53,20 +53,13 @@ class AppointmentInfo(forms.ModelForm):
         required=True,
     )
 
-    class Meta:
-        model = Order
-        exclude = []
-        fields = []
+    name = forms.CharField(
+        label="Disease Name",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=True,
+    )
 
-    def __init__(self, *args, **kwargs):
-        super(AppointmentInfo, self).__init__(*args, **kwargs)
-        self.fields['hospital'].widget.attrs['readonly'] = True
-        self.fields['hospital_address'].widget.attrs['readonly'] = True
-        self.fields['time'].widget.attrs['readonly'] = True
-
-
-class DiseaseInfo(forms.ModelForm):
-    hospital = forms.CharField(
+    hospital_china = forms.CharField(
         label="Hospital in China",
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         required=True,
@@ -84,24 +77,6 @@ class DiseaseInfo(forms.ModelForm):
         required=True,
     )
 
-    class Meta:
-        model = Disease
-        exclude = []
-        fields = ['name']
-
-    def __init__(self, *args, **kwargs):
-        super(DiseaseInfo, self).__init__(*args, **kwargs)
-        self.fields['name'].widget.attrs['readonly'] = True
-        self.field_order = [
-            'name',
-            'hospital',
-            'doctor',
-            'contact',
-        ]
-        self.order_fields(self.field_order)
-
-
-class DocumentInfo(forms.ModelForm):
     document = forms.FileField(
         label="Choose required document",
         widget=forms.ClearableFileInput(attrs={'multiple': True}),
@@ -119,13 +94,24 @@ class DocumentInfo(forms.ModelForm):
     )
 
     class Meta:
-        model = Document
+        model = Order
         exclude = []
         fields = []
 
     def __init__(self, *args, **kwargs):
-        super(DocumentInfo, self).__init__(*args, **kwargs)
+        super(AppointmentInfo, self).__init__(*args, **kwargs)
+        self.fields['hospital'].widget.attrs['readonly'] = True
+        self.fields['hospital_address'].widget.attrs['readonly'] = True
+        self.fields['time'].widget.attrs['readonly'] = True
+        self.fields['name'].widget.attrs['readonly'] = True
         self.field_order = [
+            'hospital',
+            'hospital_address',
+            'time',
+            'name',
+            'hospital_china',
+            'doctor',
+            'contact',
             'document_description',
             'document',
             'document_comment',

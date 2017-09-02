@@ -4,31 +4,7 @@
 
 <form action="{% url 'order_submit_second' order_id=order_id %}" method="post" role="form", enctype="multipart/form-data">
     {% csrf_token %}
-    {% for field in appointmentform.visible_fields %}
-    <div class="form-group{% if field.errors %} has-error{% endif %}">
-        <label for="{{ field.label }}">{{ field.label }}</label>
-        {{ field }}
-        {% if field.help_text %}
-        <span class="help-block">{{ field.help_text|safe }}</span>
-        {% endif %}
-        {% for error in field.errors %}
-        <label class="control-label">{{ error }}</label>
-        {% endfor %}
-    </div>
-    {% endfor %}
-    {% for field in diseaseform.visible_fields %}
-    <div class="form-group{% if field.errors %} has-error{% endif %}">
-        <label for="{{ field.label }}">{{ field.label }}</label>
-        {{ field }}
-        {% if field.help_text %}
-        <span class="help-block">{{ field.help_text|safe }}</span>
-        {% endif %}
-        {% for error in field.errors %}
-        <label class="control-label">{{ error }}</label>
-        {% endfor %}
-    </div>
-    {% endfor %}
-    {% for field in documentform.visible_fields %}
+    {% for field in form.visible_fields %}
     <div class="form-group{% if field.errors %} has-error{% endif %}">
         <label for="{{ field.label }}">{{ field.label }}</label>
         {{ field }}

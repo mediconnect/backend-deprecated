@@ -62,22 +62,22 @@
     var id = {{order_id}};
     $("#radio0").change(function() {
         if ( this.checked ) {
-            url_generator(id, 0);
+            $("#order_placement_form").attr("action", url_generator(id, 0));
         }
     });
     $("#radio1").change(function() {
         if ( this.checked ) {
-            url_generator(id, 1);
+            $("#order_placement_form").attr("action", url_generator(id, 1));
         }
     });
     $("#radio2").change(function() {
         if ( this.checked ) {
-            url_generator(id, 2);
+            $("#order_placement_form").attr("action", url_generator(id, 3));
         }
     });
     $("#radio3").change(function() {
         if ( this.checked ) {
-            url_generator(id, 3);
+            $("#order_placement_form").attr("action", url_generator(id, 4));
         }
     });
     function url_generator(order, num) {
