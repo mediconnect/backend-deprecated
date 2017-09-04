@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from models import Hospital, Patient, Disease, Order, Document, Staff, LikeHospital, OrderPatient, Rank
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
-from helper.forms import OrderFormFirst, OrderFormSecond
+from helper.forms import PatientInfo, AppointmentInfo
 from django.core.files.storage import FileSystemStorage
 
 # Status
@@ -91,6 +91,7 @@ def hospital(request, hospital_id, disease_id):
     """
     hosp = Hospital.objects.get(id=hospital_id)
     dis = Disease.objects.get(id=disease_id)
+    print dis
     customer = Customer.objects.get(user=request.user)
     order_list = Order.objects.filter(customer=customer, hospital=hosp, disease=dis)
     order = None
@@ -162,7 +163,7 @@ def order_info_first(request, order_id, slot_num):
     hosp.save()
     return render(request, 'order_info_first.html', {
         'customer': customer,
-        'form': OrderFormFirst(instance=request.user, initial={
+        'form': PatientInfo(instance=request.user, initial={
             'diagnose_hospital': order.hospital.name
         }),
         'order_id': order.id,
@@ -172,7 +173,7 @@ def order_info_first(request, order_id, slot_num):
 @login_required
 def order_submit_first(request, order_id):
     if request.method == 'POST':
-        form = OrderFormFirst(request.POST)
+        form = PatientInfo(request.POST)
         order = Order.objects.get(id=order_id)
         customer = Customer.objects.get(user=request.user)
         if not form.is_valid():
@@ -187,20 +188,25 @@ def order_submit_first(request, order_id):
             age = form.cleaned_data.get('age')
             gender = form.cleaned_data.get('gender')
             relationship = form.cleaned_data.get('relationship')
-            patient = Patient(name=name, age=age, gender=gender, customer=customer, relationship=relationship)
+            passport = form.cleaned_data.get('passport')
+            patient = Patient(name=name, age=age, gender=gender, customer=customer, relationship=relationship,
+                              passport=passport)
             patient.save()
             order.patient = patient
             order.status = 0
             order.step = 1
             order_patient = OrderPatient(name=patient.name, age=patient.age, gender=patient.gender,
-                                         relationship=patient.relationship, )
+                                         relationship=patient.relationship, passport=passport)
             order_patient.save()
             order.patient_order = order_patient
             order.save()
             return render(request, 'order_info_second.html', {
                 'customer': customer,
-                'form': OrderFormSecond(instance=request.user, initial={
-                    'name': order.disease.name
+                'form': AppointmentInfo(instance=customer, initial={
+                    'hospital': order.hospital.name,
+                    'hospital_address': order.hospital.area,
+                    'time': order.submit,
+                    'name': order.disease.name,
                 }),
                 'order_id': order.id,
             })
@@ -209,8 +215,11 @@ def order_submit_first(request, order_id):
         order = Order.objects.get(id=order_id)
         return render(request, 'order_info_second.html', {
             'customer': customer,
-            'form': OrderFormSecond(instance=request.user, initial={
-                'name': order.disease.name
+            'form': AppointmentInfo(instance=customer, initial={
+                'hospital': order.hospital.name,
+                'hospital_address': order.hospital.area,
+                'time': order.submit,
+                'name': order.disease.name,
             }),
             'order_id': order_id,
         })
@@ -236,14 +245,17 @@ def order_patient_finish(request, order_id, patient_id):
     order.patient = patient
     order.step = 1
     order_patient = OrderPatient(name=patient.name, age=patient.age, gender=patient.gender,
-                                 relationship=patient.relationship, )
+                                 relationship=patient.relationship, passport=patient.passport)
     order_patient.save()
     order.patient_order = order_patient
     order.save()
     return render(request, 'order_info_second.html', {
         'customer': customer,
-        'form': OrderFormSecond(instance=request.user, initial={
-            'name': order.disease.name
+        'form': AppointmentInfo(instance=customer, initial={
+            'hospital': order.hospital.name,
+            'hospital_address': order.hospital.area,
+            'time': order.submit,
+            'name': order.disease.name,
         }),
         'order_id': order.id,
     })
@@ -254,24 +266,14 @@ def order_submit_second(request, order_id):
     order = Order.objects.get(id=order_id)
     customer = Customer.objects.get(user=request.user)
     if request.method == 'POST':
-        form = OrderFormSecond(request.POST, request.FILES, instance=customer)
+        form = AppointmentInfo(request.POST, request.FILES, instance=customer)
         if not form.is_valid():
-            form.fields['name'] = order.disease.name
             return render(request, 'order_info_second.html', {
                 'form': form,
                 'order_id': order.id,
                 'customer': customer,
             })
         else:
-            extra_doc_comment = form.cleaned_data.get('extra_document_comment')
-            extra_doc_description = form.cleaned_data.get('extra_document_description')
-            for f in request.FILES.getlist('extra_document'):
-                fs = FileSystemStorage()
-                fs.save(f.name, f)
-                extra_doc = Document(document=f, comment=extra_doc_comment,
-                                     description=extra_doc_description, order=order)
-                extra_doc.save()
-                order.origin.add(extra_doc)
             doc_comment = form.cleaned_data.get('document_comment')
             doc_description = form.cleaned_data.get('document_description')
             for f in request.FILES.getlist('document'):
@@ -281,7 +283,7 @@ def order_submit_second(request, order_id):
                 doc.save()
                 order.origin.add(doc)
             doctor = form.cleaned_data.get('doctor')
-            hospital = form.cleaned_data.get('diagnose_hospital')
+            hospital = form.cleaned_data.get('hospital_china')
             patient = order.patient_order
             patient.doctor = doctor
             patient.diagnose_hospital = hospital

@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-from django.db.models import Q
 from forms import SignUpForm, SearchForm, ContactForm
 from customer.models import Customer
 from customer.views import customer
@@ -82,7 +81,8 @@ def result(request):
             dis = []
             exact_match = False
             for unit in dis_list:
-                keywords = unit.keyword.split(',')
+                # split according to unicode chinese letter
+                keywords = unit.keyword.split(u'\uff0c')
                 for keyword in keywords:
                     if keyword in query:
                         exact_match = exact_match or keyword == query
@@ -98,7 +98,6 @@ def result(request):
                 })
 
             if len(dis) > 1 or not exact_match:
-                print 1234567
                 return render(request, 'disease_choice.html', {
                     'customer': Customer.objects.get(user=request.user),
                     'disease_list': dis,
@@ -168,7 +167,8 @@ def result_guest(request):
             dis = []
             exact_match = False
             for unit in dis_list:
-                keywords = unit.keyword.split(',')
+                # split according to unicode chinese letter
+                keywords = unit.keyword.split(u'\uff0c')
                 for keyword in keywords:
                     if keyword in query:
                         exact_match = exact_match or keyword == query
@@ -178,12 +178,15 @@ def result_guest(request):
 
             if len(dis) == 0:
                 return render(request, 'disease_choice_guest.html', {
-                    'disease_list': Disease.objects.all(),
+                    'all_dis': Disease.objects.all(),
+                    'disease_length': False,
                 })
 
             if len(dis) > 1 or not exact_match:
                 return render(request, 'disease_choice_guest.html', {
                     'disease_list': dis,
+                    'all_dis': Disease.objects.all(),
+                    'disease_length': True,
                 })
 
             rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')

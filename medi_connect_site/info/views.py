@@ -106,7 +106,7 @@ def order(request):
         order_dict = dict()
         order_dict['hospital'] = order.hospital.name if order.hospital is not None else 'unknown'
         order_dict['disease'] = order.disease.name if order.disease is not None else 'unknown'
-        order_dict['patient'] = order.patient.name if order.patient is not None else 'unknown'
+        order_dict['patient'] = order.patient_order.name if order.patient_order is not None else 'unknown'
         order_dict['order_id'] = order.id
         order_dict['status'] = order.status
         order_dict['trans_status'] = order.trans_status if order.trans_status is not None else 'unknown'
