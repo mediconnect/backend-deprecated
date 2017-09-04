@@ -197,7 +197,7 @@ def update_result(request):
     for each in result:
         data['result']['Order_Id'].append(each.id)
         data['result']['Customer'].append((each.customer.id, each.customer.get_name()))
-        data['result']['Patient'].append((each.patient_order.id,each.patient_order.name))
+        data['result']['Patient'].append(each.get_patient())
         data['result']['Hospital'].append((each.hospital.id,each.hospital.name))
         data['result']['Disease'].append((each.disease.id, each.disease.name))
         data['result']['Translator_C2E'].append(each.get_translator_C2E())
@@ -211,10 +211,10 @@ def update_result(request):
 
     data['choices']['customer_choice'] = list(map(lambda x:(int(x),Customer.objects.get(id=x).get_name()),Order.objects.values_list('customer_id',flat=True).distinct()))
     data['choices']['disease_choice'] = list(map(lambda x:(int(x),Disease.objects.get(id=x).name),Order.objects.values_list('disease_id',flat=True).distinct()))
-    data['choices']['patient_choice'] = list(map(lambda x:(int(x),Patient_Order.objects.get(id=x).name),Order.objects.values_list('patient_order_id',flat=True).distinct()))
+    data['choices']['patient_choice'] = list(map(lambda x:(int(x),Patient_Order.objects.get(id=x).name),Order.objects.exclude(patient_order__isnull=True).values_list('patient_order_id',flat=True).distinct()))
     data['choices']['hospital_choice'] = list(map(lambda x:(int(x),Hospital.objects.get(id=x).name),Order.objects.values_list('hospital_id',flat=True).distinct()))
-    data['choices']['translator_E2C_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.values_list('translator_E2C_id',flat=True).distinct().exclude(translator_E2C__isnull=True)))
-    data['choices']['translator_C2E_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.values_list('translator_C2E_id',flat=True).distinct().exclude(translator_C2E__isnull=True)))
+    data['choices']['translator_E2C_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.exclude(translator_E2C__isnull=True).values_list('translator_E2C_id',flat=True).distinct().exclude(translator_E2C__isnull=True)))
+    data['choices']['translator_C2E_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.exclude(translator_C2E__isnull=True).values_list('translator_C2E_id',flat=True).distinct().exclude(translator_C2E__isnull=True)))
     data['choices']['status_choice'] = STATUS_CHOICE
     data['choices']['trans_status_choice'] = TRANS_STATUS_CHOICE
     return JsonResponse(data)
