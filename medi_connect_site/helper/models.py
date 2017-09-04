@@ -200,6 +200,12 @@ class Order(models.Model):
         else:
             return (self.translator_E2C.id, self.translator_E2C.get_name())
 
+    def get_patient(self):
+        if self.patient_order is None or self.patient is None:
+            print self.id, self.patient
+            return (-1,'病人信息缺失')
+        else:
+            return (self.patient_order.id, self.patient_order.get_name())
     def get_submit(self):
         return self.submit + datetime.timedelta(hours=8)
 
