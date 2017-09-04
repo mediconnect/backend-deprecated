@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from django.shortcuts import render, redirect
 from customer.models import Customer
 from helper.models import Order, Patient, Document, LikeHospital, Hospital, Disease, HospitalReview
@@ -99,24 +102,23 @@ def profile_patient(request):
 def order(request):
     customer = Customer.objects.get(user=request.user)
     orders = Order.objects.filter(customer=customer)
-    order_list = []
+    order_list = dict()
+    status_dict = [u'客户未提交', u'客户已提交', u'已付款', u'原件翻译中',
+                   u'已提交至医院', u'反馈已收到', u'反馈翻译中',
+                   u'反馈已上传', u'订单完成']
     for order in orders:
-        if order.status == 0:
+        if order.status == 8:
             continue
-        order_dict = dict()
-        order_dict['hospital'] = order.hospital.name if order.hospital is not None else 'unknown'
-        order_dict['disease'] = order.disease.name if order.disease is not None else 'unknown'
-        order_dict['patient'] = order.patient_order.name if order.patient_order is not None else 'unknown'
-        order_dict['order_id'] = order.id
-        order_dict['status'] = order.status
-        order_dict['trans_status'] = order.trans_status if order.trans_status is not None else 'unknown'
-        order_dict['documents'] = []
-        for item in order.feedback.all():
-            order_dict['documents'].append(item.document.url)
-        order_list.append(order_dict)
+        info = dict()
+        info['patient'] = order.patient_order.name if order.patient_order is not None else 'unknown'
+        info['time'] = order.submit
+        info['disease'] = order.disease.name if order.disease is not None else 'unknown'
+        info['hospital'] = order.hospital.name if order.hospital is not None else 'unknown'
+        info['status'] = status_dict[int(order.status)] if order.status is not None else 0
+        order_list[int(order.id)] = info
+    print order_list
     return render(request, 'info_order.html', {
-        'order_list': json.dumps(order_list),
-        'order_length': len(order_list) > 0,
+        'order_list': json.dump(order_list),
         'customer': customer,
     })
 
@@ -176,7 +178,6 @@ def add_doc(request, order_id):
     })
 
 
-
 @login_required
 def bookmark(request):
     customer = Customer.objects.get(user=request.user)
@@ -190,7 +191,6 @@ def bookmark(request):
         'customer': customer,
         'disease_length': len(diseases) > 0,
     })
-
 
 
 @login_required

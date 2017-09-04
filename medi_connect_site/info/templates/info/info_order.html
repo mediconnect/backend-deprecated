@@ -12,91 +12,26 @@
 
 <ul class="list-group" id="order">
     {% if not order_length %}
-        No order yet.
+    No order yet.
+    {% else %}
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Time</th>
+            <th>Disease</th>
+            <th>Hospital</th>
+            <th>Status</th>
+        </tr>
+        {% for order in order_list %}
+        <tr>
+            <td>{{order.patient}}</td>
+            <td>{{order.time}}</td>
+            <td>{{order.disease}}</td>
+            <td>{{order.hospital}}</td>
+            <td>{{order.status}}</td>
+        </tr>
+        {% endfor %}
+    </table>
     {% endif %}
 </ul>
-<script type="text/javascript">
-var ul = document.getElementById("order");
-var order_list = {{order_list | safe}};
-for (var order_i in order_list) {
-    var order = order_list[order_i];
-    var li = document.createElement("li");
-    li.className += "list-group-item";
-    var text = document.createTextNode("".concat("Patient: ", order.patient, "  Hospital: ", order.hospital, "  Disease: ", order.disease));
-    var a = document.createElement("a");
-    a.appendChild(text);
-    a.href = Urls.info_order_detail(order.order_id);
-    li.appendChild(a);
-    // reverse look up url
-    var paymentform = document.createElement("form");
-    paymentform.action = Urls.info_order_pay(order.order_id);
-    paymentform.method = "POST";
-    // append crsf token
-    var inputElem = document.createElement('input');
-    inputElem.type = 'hidden';
-    inputElem.name = 'csrfmiddlewaretoken';
-    inputElem.value = '{{ csrf_token }}';
-    paymentform.appendChild(inputElem);
-    // appnend button
-    var button = document.createElement("button");
-    paymentform.appendChild(button);
-    // disable button accordingly
-    if (order.status == 7) {
-        var button_text = document.createTextNode("Already Paid");
-        button.appendChild(button_text);
-        button.disabled = true;
-    } else {
-        var button_text = document.createTextNode("Pay");
-        button.appendChild(button_text);
-    }
-    li.appendChild(paymentform);
-    // add document form
-    var docform = document.createElement("form");
-    docform.appendChild((function() {
-        var button = document.createElement("button");
-        button.appendChild(document.createTextNode("Add Extra Doc"));
-        return button;
-    })());
-    docform.appendChild((function() {
-        var inputElem = document.createElement('input');
-        inputElem.type = 'hidden';
-        inputElem.name = 'csrfmiddlewaretoken';
-        inputElem.value = '{{ csrf_token }}';
-        return inputElem;
-    })());
-    docform.action = Urls.add_doc(order.order_id);
-    li.appendChild(docform);
-
-    // give document url for files
-    if (order.trans_status >= 6) {
-        for (doc in order.documents) {
-            li.appendChild((function() {
-                var link = document.createElement("a");
-                link.href = doc;
-                link.appendChild(document.createTextNode("Click to download the feedback file"));
-                return link;
-            })());
-        }
-    } else {
-        li.appendChild((function() {
-            var link = document.createElement("a");
-            link.appendChild(document.createTextNode("Feedback is not available yet"));
-            return link;
-        })());
-    }
-
-    li.appendChild(document.createElement("br"));
-
-    if (order.trans_status >= 0) {
-        li.appendChild((function() {
-            var link = document.createElement("a");
-            link.href = Urls.info_hospital_review(order.order_id);
-            link.appendChild(document.createTextNode("Review Hospital"));
-            return link;
-        })());
-    }
-
-    ul.appendChild(li);
-}
-</script>
 {% endblock %}
