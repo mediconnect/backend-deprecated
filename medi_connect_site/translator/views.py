@@ -116,14 +116,12 @@ def update_result(request):
 
     }
     raw=get_assignments_status(translator,status)
-    result_length = len(raw)
-    p = Paginator(raw,5)
-    raw_page = p.page(page)
+
     json_acceptable_string = query.replace("'", "\"")
     d = json.loads(json_acceptable_string)
     if query != None and d != {}:
         result = []
-        for each in raw_page:
+        for each in raw:
             match = True
             for key in d:
                 if d[key] != 'All':
@@ -133,7 +131,11 @@ def update_result(request):
             if match:
                 result.append(each)
     else:
-        result = raw_page
+        result = raw
+
+    result_length = len(raw)
+    p = Paginator(raw, 5)
+    raw_page = p.page(page)
 
     for each in result:
         data['result']['Order_Id'].append(each.id)

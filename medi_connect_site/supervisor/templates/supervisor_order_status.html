@@ -171,13 +171,14 @@
 
         }
         result_length = data.result_length;
+
         console.log(result_length);
         $('#pagination').twbsPagination({
             next: '下一页',
             last:'最后一页',
             first:'第一页',
             prev:'上一页',
-            totalPages: (result_length>=5)? parseInt(result_length/5)+1 : 1,
+            totalPages: (result_length>5)? parseInt(result_length/5)+1 : 1,
             visiblePages:10,
             onPageClick: function (event, page) {
                 $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic),'page':page},function(data){

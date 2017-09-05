@@ -84,7 +84,8 @@ def get_assignments_status(status):
         assignments = list(Order.objects.all().order_by('submit'))
     else:
         for assignment in Order.objects.all().order_by('submit'):
-            if assignment.get_trans_status() == status:
+
+            if assignment.get_trans_status() == int(status):
                 assignments.append(assignment)
     return assignments
 
@@ -156,6 +157,7 @@ def update_result(request):
 
     }
     raw = get_assignments_status(status)
+
     if sort!=None:
         if sort == 'Deadline':
             raw = sorted(raw, key=lambda x: x.get_submit_deadline())
@@ -165,8 +167,6 @@ def update_result(request):
             raw = sorted(raw,key = lambda x:x.get_upload())
 
 
-    p = Paginator(raw, 5)
-    raw_page = p.page(page)
     json_acceptable_string = query.replace("'", "\"")
     d = json.loads(json_acceptable_string)
     if d!={} and d['order_id']!= 'All':
@@ -174,7 +174,7 @@ def update_result(request):
     else:
         if query != None and d != {}:
             result = []
-            for each in raw_page:
+            for each in raw:
                 match = True
                 for key in d:
                     if d[key] != 'All':
@@ -189,9 +189,11 @@ def update_result(request):
                 if match:
                     result.append(each)
         else:
-            result = raw_page
+            result = raw
 
+    p = Paginator(result, 5)
     result_length = len(result)
+    result = p.page(page)
     data['result_length'] = result_length
 
     for each in result:
@@ -343,7 +345,7 @@ def approve(request, id, order_id):
             approval = form.cleaned_data.get('approval')
 
             if approval:
-                if assignment.get_status() == '3':
+                if assignment.get_status() == 3:
 
                     assignment.change_status(RECEIVED)
 
@@ -351,7 +353,7 @@ def approve(request, id, order_id):
                         assignment.origin.add(document)
                         assignment.save()
 
-                if assignment.get_status() == '6':
+                if assignment.get_status() == 6:
                     assignment.change_status(FEEDBACK)
 
                     for document in assignment.pending.all():
