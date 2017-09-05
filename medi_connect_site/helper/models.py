@@ -180,7 +180,6 @@ class Order(models.Model):
     status = models.CharField(blank=True, max_length=20, choices=STATUS_CHOICES)
     trans_status = models.CharField(default=0, max_length=20, choices=TRANS_STATUS_CHOICE)
     auto_assigned = models.BooleanField(default=False)
-    step = models.IntegerField(null=True)
 
     class Meta:
         db_table = 'order'
@@ -354,14 +353,15 @@ RELATION_CHOICES = (
 
 class Patient(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    name = models.CharField(blank=True, max_length=50)
-    age = models.IntegerField(blank=True)
+    name = models.CharField(max_length=50, default='')
+    age = models.IntegerField(default=0)
     gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)
     category = models.CharField(max_length=50, default='COLD')
-    diagnose_hospital = models.CharField(max_length=50, blank=True)
-    doctor = models.TextField(blank=True)
+    diagnose_hospital = models.CharField(max_length=50, default='')
+    doctor = models.CharField(max_length=50, default='')
     relationship = models.CharField(max_length=50, choices=RELATION_CHOICES, default=SELF)
-    passport = models.CharField(max_length=50, blank=True)
+    passport = models.CharField(max_length=50, default='')
+    contact = models.CharField(max_length=50, default='')
 
     class Meta:
         db_table = 'patient'
@@ -375,14 +375,15 @@ class OrderPatient(models.Model):
     # This is created everytime an order is placed
     # Do not change this table when edit patient
     # Fetch patient info for display order-related info
-    name = models.CharField(blank=True, max_length=50)
-    age = models.IntegerField(blank=True)
+    name = models.CharField(max_length=50, default='')
+    age = models.IntegerField(default=0)
     gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)
     category = models.CharField(max_length=50, default='COLD')
-    diagnose_hospital = models.CharField(max_length=50, blank=True)
-    doctor = models.TextField(blank=True)
+    diagnose_hospital = models.CharField(max_length=50, default='')
+    doctor = models.CharField(max_length=50, default='')
     relationship = models.CharField(max_length=50, choices=RELATION_CHOICES, default=SELF)
-    passport = models.CharField(max_length=50, blank=True)
+    passport = models.CharField(max_length=50, default='')
+    contact = models.CharField(max_length=50, default='')
 
     class Meta:
         db_table = 'order_patient'
