@@ -84,7 +84,8 @@ def get_assignments_status(status):
         assignments = list(Order.objects.all().order_by('submit'))
     else:
         for assignment in Order.objects.all().order_by('submit'):
-            if assignment.get_trans_status() == status:
+
+            if assignment.get_trans_status() == int(status):
                 assignments.append(assignment)
     return assignments
 
@@ -344,7 +345,7 @@ def approve(request, id, order_id):
             approval = form.cleaned_data.get('approval')
 
             if approval:
-                if assignment.get_status() == '3':
+                if assignment.get_status() == 3:
 
                     assignment.change_status(RECEIVED)
 
@@ -352,7 +353,7 @@ def approve(request, id, order_id):
                         assignment.origin.add(document)
                         assignment.save()
 
-                if assignment.get_status() == '6':
+                if assignment.get_status() == 6:
                     assignment.change_status(FEEDBACK)
 
                     for document in assignment.pending.all():

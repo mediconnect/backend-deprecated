@@ -35,7 +35,7 @@
         {%endif%}
 
 
-    {%if assignment.get_trans_status != '0'%}
+    {%if assignment.get_trans_status != 0%}
         <p>已上传文件</p>
         <ul>
             {%for obj in assignment.pending.all%}
@@ -51,7 +51,7 @@
 
         </form><br>
 
-        {%if assignment.get_trans_status == '1'%}
+        {%if assignment.get_trans_status == 1%}
             <form  method = 'post'>
                 {% csrf_token %}
                 {{form}}

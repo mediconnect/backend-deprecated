@@ -202,7 +202,6 @@ class Order(models.Model):
 
     def get_patient(self):
         if self.patient_order is None or self.patient is None:
-            print self.id, self.patient
             return (-1,'病人信息缺失')
         else:
             return (self.patient_order.id, self.patient_order.get_name())
