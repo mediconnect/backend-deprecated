@@ -7,11 +7,10 @@ class PatientInfo(forms.ModelForm):
     class Meta:
         model = Patient
         exclude = []
-        fields = ['name', 'age', 'gender', 'diagnose_hospital', 'relationship', 'passport']
+        fields = ['name', 'age', 'gender', 'relationship', 'passport']
 
     def __init__(self, *args, **kwargs):
         super(PatientInfo, self).__init__(*args, **kwargs)
-        self.fields['diagnose_hospital'].widget.attrs['readonly'] = True
 
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -59,7 +58,7 @@ class AppointmentInfo(forms.ModelForm):
         required=True,
     )
 
-    hospital_china = forms.CharField(
+    diagnose_hospital = forms.CharField(
         label="Hospital in China",
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         required=True,
@@ -81,11 +80,6 @@ class AppointmentInfo(forms.ModelForm):
         label="Choose required document",
         widget=forms.ClearableFileInput(attrs={'multiple': True}),
         required=True,
-    )
-    document_comment = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label="Leave comment for your main document (optional)",
-        required=False,
     )
     document_description = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
@@ -109,11 +103,10 @@ class AppointmentInfo(forms.ModelForm):
             'hospital_address',
             'time',
             'name',
-            'hospital_china',
+            'diagnose_hospital',
             'doctor',
             'contact',
             'document_description',
             'document',
-            'document_comment',
         ]
         self.order_fields(self.field_order)

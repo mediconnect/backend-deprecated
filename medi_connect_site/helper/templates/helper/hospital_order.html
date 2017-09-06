@@ -62,12 +62,12 @@
     var id = {{order_id}};
     $("#radio0").change(function() {
         if ( this.checked ) {
-            $("#order_placement_form").attr("action", url_generator(id, 0));
+            $("#order_placement_form").attr("action", url_generator(id, 1));
         }
     });
     $("#radio1").change(function() {
         if ( this.checked ) {
-            $("#order_placement_form").attr("action", url_generator(id, 1));
+            $("#order_placement_form").attr("action", url_generator(id, 2));
         }
     });
     $("#radio2").change(function() {

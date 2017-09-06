@@ -99,17 +99,8 @@ def hospital(request, hospital_id, disease_id):
         if int(each.status) == 0:
             order = each
             break
-    order = Order(hospital=hosp, step=-1, status=0, disease=dis, customer=customer) if order is None else order
+    order = Order(hospital=hosp, status=0, disease=dis, customer=customer) if order is None else order
     order.save()
-    if order.step == 0:
-        return redirect('order_info_first', order_id=int(order.id), slot_num=order.week_number_at_submit)
-    elif order.step == 1:
-        return redirect('order_submit_first', order_id=int(order.id))
-    elif order.step == 2:
-        return redirect('order_submit_second', order_id=int(order.id))
-    elif order.step == 3:
-        return redirect('order_finish', order_id=int(order.id))
-
     return render(request, "hospital_order.html", {
         'hospital': hosp,
         'rank': Rank.objects.get(hospital=hosp, disease=dis).rank,
@@ -134,16 +125,24 @@ def order_info_first(request, order_id, slot_num):
     order = Order.objects.get(id=order_id)
     order.customer = customer
     order.status = 0
-    order.week_number_at_submit = slot_num
-    order.step = 0
-    order.save()
     hosp = order.hospital
     slot_num = int(slot_num)
+    if order.week_number_at_submit != 0:
+        if slot_num == 1:
+            hosp.slots_open_0 += 1
+        elif slot_num == 2:
+            hosp.slots_open_1 += 1
+        elif slot_num == 3:
+            hosp.slots_open_2 += 1
+        else:
+            hosp.slots_open_3 += 1
+    order.week_number_at_submit = slot_num
+    order.save()
     avail_slot = {
-        0: hosp.slots_open_0,
-        1: hosp.slots_open_1,
-        2: hosp.slots_open_2,
-        3: hosp.slots_open_3,
+        1: hosp.slots_open_0,
+        2: hosp.slots_open_1,
+        3: hosp.slots_open_2,
+        4: hosp.slots_open_3,
     }[slot_num]
     if avail_slot < 1:
         return render(request, "hospital_order.html", {
@@ -152,11 +151,11 @@ def order_info_first(request, order_id, slot_num):
             'order_id': order.id,
             'error': 'the hospital does not have available slot'
         })
-    if slot_num == 0:
+    if slot_num == 1:
         hosp.slots_open_0 -= 1
-    elif slot_num == 1:
-        hosp.slots_open_1 -= 1
     elif slot_num == 2:
+        hosp.slots_open_1 -= 1
+    elif slot_num == 3:
         hosp.slots_open_2 -= 1
     else:
         hosp.slots_open_3 -= 1
@@ -164,7 +163,11 @@ def order_info_first(request, order_id, slot_num):
     return render(request, 'order_info_first.html', {
         'customer': customer,
         'form': PatientInfo(instance=request.user, initial={
-            'diagnose_hospital': order.hospital.name
+            'name': order.patient_order.name if order.patient_order is not None else '',
+            'age': order.patient_order.age if order.patient_order is not None else '',
+            'gender': order.patient_order.gender if order.patient_order is not None else '',
+            'relationship': order.patient_order.relationship if order.patient_order is not None else '',
+            'passport': order.patient_order.passport if order.patient_order is not None else '',
         }),
         'order_id': order.id,
     })
@@ -177,7 +180,6 @@ def order_submit_first(request, order_id):
         order = Order.objects.get(id=order_id)
         customer = Customer.objects.get(user=request.user)
         if not form.is_valid():
-            form.fields['diagnose_hospital'] = order.hospital.name
             return render(request, 'order_info_first.html', {
                 'form': form,
                 'order_id': order.id,
@@ -189,16 +191,28 @@ def order_submit_first(request, order_id):
             gender = form.cleaned_data.get('gender')
             relationship = form.cleaned_data.get('relationship')
             passport = form.cleaned_data.get('passport')
-            patient = Patient(name=name, age=age, gender=gender, customer=customer, relationship=relationship,
-                              passport=passport)
+            # create patient or fetch accordingly
+            patient = Patient() if order.patient is None else order.patient
+            patient.customer = customer
+            patient.name = name
+            patient.age = age
+            patient.gender = gender
+            patient.relationship = relationship
+            patient.passport = passport
             patient.save()
             order.patient = patient
+
             order.status = 0
-            order.step = 1
-            order_patient = OrderPatient(name=patient.name, age=patient.age, gender=patient.gender,
-                                         relationship=patient.relationship, passport=passport)
+
+            order_patient = OrderPatient() if order.patient_order is None else order.patient_order
+            order_patient.name = name
+            order_patient.age = age
+            order_patient.gender = gender
+            order_patient.relationship = relationship
+            order_patient.passport = passport
             order_patient.save()
             order.patient_order = order_patient
+
             order.save()
             return render(request, 'order_info_second.html', {
                 'customer': customer,
@@ -207,6 +221,9 @@ def order_submit_first(request, order_id):
                     'hospital_address': order.hospital.area,
                     'time': order.submit,
                     'name': order.disease.name,
+                    'diagnose_hospital': order.patient_order.diagnose_hospital if order.patient_order is not None else '',
+                    'doctor': order.patient_order.doctor if order.patient_order is not None else '',
+                    'contact': order.patient_order.contact if order.patient_order is not None else '',
                 }),
                 'order_id': order.id,
             })
@@ -220,6 +237,9 @@ def order_submit_first(request, order_id):
                 'hospital_address': order.hospital.area,
                 'time': order.submit,
                 'name': order.disease.name,
+                'diagnose_hospital': order.patient_order.diagnose_hospital if order.patient_order is not None else '',
+                'doctor': order.patient_order.doctor if order.patient_order is not None else '',
+                'contact': order.patient_order.contact if order.patient_order is not None else '',
             }),
             'order_id': order_id,
         })
@@ -243,9 +263,8 @@ def order_patient_finish(request, order_id, patient_id):
     order = Order.objects.get(id=order_id)
     patient = Patient.objects.get(id=patient_id)
     order.patient = patient
-    order.step = 1
     order_patient = OrderPatient(name=patient.name, age=patient.age, gender=patient.gender,
-                                 relationship=patient.relationship, passport=patient.passport)
+                                 relationship=patient.relationship, passport=patient.passport, contact=patient.contact)
     order_patient.save()
     order.patient_order = order_patient
     order.save()
@@ -256,6 +275,9 @@ def order_patient_finish(request, order_id, patient_id):
             'hospital_address': order.hospital.area,
             'time': order.submit,
             'name': order.disease.name,
+            'diagnose_hospital': order.patient_order.diagnose_hospital if order.patient_order is not None else '',
+            'doctor': order.patient_order.doctor if order.patient_order is not None else '',
+            'contact': order.patient_order.contact if order.patient_order is not None else '',
         }),
         'order_id': order.id,
     })
@@ -274,21 +296,21 @@ def order_submit_second(request, order_id):
                 'customer': customer,
             })
         else:
-            doc_comment = form.cleaned_data.get('document_comment')
             doc_description = form.cleaned_data.get('document_description')
             for f in request.FILES.getlist('document'):
                 fs = FileSystemStorage()
                 fs.save(f.name, f)
-                doc = Document(document=f, comment=doc_comment, description=doc_description, order=order)
+                doc = Document(document=f, description=doc_description, order=order)
                 doc.save()
                 order.origin.add(doc)
             doctor = form.cleaned_data.get('doctor')
-            hospital = form.cleaned_data.get('hospital_china')
+            hospital = form.cleaned_data.get('diagnose_hospital')
+            contact = form.cleaned_data.get('contact')
             patient = order.patient_order
             patient.doctor = doctor
             patient.diagnose_hospital = hospital
+            patient.contact = contact
             patient.save()
-            order.step = 2
             order.save()
             return render(request, 'order_review.html', {
                 'customer': customer,
@@ -306,7 +328,6 @@ def finish(request, order_id):
     customer = Customer.objects.get(user=request.user)
     if request.method == 'POST':
         order.status = 1
-        order.step = 3
         order.save()
         assign_auto(order)
         return render(request, 'finish.html', {
