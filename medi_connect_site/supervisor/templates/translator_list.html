@@ -8,18 +8,32 @@
     }
     </style>
     <table style="width:30%">
-    <p>Translator_C2E</p>
+    <p>汉译英翻译员</p>
         <tr>
-            <th>Translator Name</th>
-            <th>Email</th>
-            <th>Document Number</th>
+            <th>翻译员姓名</th>
+            <th>邮箱</th>
+            <th>订单数</th>
+            <th>重置密码</th>
+            <th>删除</th>
         </tr>
 
     {%for obj in translators_C2E%}
-        <tr>
+		<tr>
             <td>{{obj.get_name}}</td>
             <td>{{obj.user.email}}</td>
-            <td>{{obj.get_document_number}}</td>
+            <td>{{obj.get_assignment_number}}</td>
+            <td>
+                <form action="{% url 'password_reset' %}">
+                    {% csrf_token %}
+                    <input type="submit" value="重置" />
+                </form>
+            </td>
+            <td>
+                <form role="POST">
+                    {% csrf_token %}
+                    <input type="submit" onclick = 'check()' value="删除" class = 'btn' name = 'delete' />
+                </form>
+            </td>
         </tr>
 
   	{%endfor%}
@@ -27,20 +41,42 @@
     </table><br>
 
     <table style="width:30%">
-    <p>Translator_E2C</p>
+    <p>英译汉翻译员</p>
         <tr>
-            <th>Translator Name</th>
-            <th>Email</th>
-            <th>Document Number</th>
+            <th>翻译员姓名</th>
+            <th>邮箱</th>
+            <th>订单数</th>
+            <th>重置密码</th>
+            <th>删除</th>
         </tr>
 
     {%for obj in translators_E2C%}
 		<tr>
             <td>{{obj.get_name}}</td>
             <td>{{obj.user.email}}</td>
-            <td>{{obj.get_document_number}}</td>
+            <td>{{obj.get_assignment_number}}</td>
+            <td>
+                <form  action="{% url 'password_reset' %}">
+                    {% csrf_token %}
+                    <input type="submit" value="重置" />
+                </form>
+            </td>
+            <td>
+                <form  role="POST">
+                    {% csrf_token %}
+                    <input type="submit" onclick='check()' value="删除" class ='btn' name = 'delete' />
+                </form>
+            </td>
         </tr>
   	{%endfor%}
     </table>
-<p><a href="{% url 'trans_signup' id=supervisor.id %}">Add a translator</a></p>
+<p><a href="{% url 'trans_signup' id=supervisor.user.id %}">添加翻译员</a></p>
+
+<script>
+    function check(){
+        var pwd = window.prompt("请输入密码以确认操作",);
+    }
+    function validatePwd(pwd){
+    }
+</script>
 {% endblock %}

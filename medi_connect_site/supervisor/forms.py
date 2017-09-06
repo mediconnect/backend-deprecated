@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from helper.models import Document, Order, Staff
-import random
+from django.core.exceptions import ValidationError
 
 C2E_assignee_choice = []
 for e in Staff.objects.filter(role = 1):
@@ -23,7 +23,7 @@ class ApproveForm(forms.ModelForm):
         coerce=lambda x: x == 'True',
         choices=((False, 'DISAPPROVE'), (True, 'APRROVE')),
         widget=forms.RadioSelect,
-        required=False
+        required=True
     )
     class Meta:
         model = Order
@@ -72,28 +72,99 @@ class PasswordResetForm(forms.ModelForm):
 
 
 
+
+
+def forbidden_username_validator(value):
+    forbidden_username = ['admin', 'settings', 'news', 'about', 'help',
+                          'signin', 'signup', 'signout', 'terms', 'privacy',
+                          'cookie', 'new', 'login', 'logout', 'administrator',
+                          'join', 'account', 'username', 'root', 'blog',
+                          'user', 'users', 'billing', 'subscribe', 'reviews',
+                          'review', 'blog', 'blogs', 'edit', 'mail', 'email',
+                          'core', 'job', 'jobs', 'contribute', 'newsletter',
+                          'shop', 'profile', 'register', 'auth',
+                          'authentication', 'campaign', 'config', 'delete',
+                          'remove', 'forum', 'forums', 'download',
+                          'downloads', 'contact', 'blogs', 'feed', 'feeds',
+                          'faq', 'intranet', 'log', 'registration', 'search',
+                          'explore', 'rss', 'support', 'status', 'static',
+                          'media', 'setting', 'css', 'js', 'follow',
+                          'activity', 'questions', 'articles', 'network', ]
+
+    if value.lower() in forbidden_username:
+        raise ValidationError('This is a reserved word.')
+
+
+def invalid_username_validator(value):
+    if '@' in value or '+' in value or '-' in value:
+        raise ValidationError('Enter a valid username.')
+
+
+def unique_email_validator(value):
+    if User.objects.filter(email__iexact=value).exists():
+        raise ValidationError('User with this Email already exists.')
+
+
+def unique_username_ignore_case_validator(value):
+    if User.objects.filter(username__iexact=value).exists():
+        raise ValidationError('User with this Username already exists.')
+
+ROLE_CHOICES = (
+    (1,'Translator_C2E'),
+    (2,'Translator_E2C')
+)
 class TransSignUpForm(forms.ModelForm):
     confirm_password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        widget=forms.PasswordInput(),
         label="Confirm your password",
+        required=True)
+
+    role = forms.ChoiceField(
+        widget=forms.RadioSelect,
+        choices=ROLE_CHOICES,
         required=True)
 
     class Meta:
         model = User
         exclude = ['last_login', 'date_joined']
+        # specify fields to automatically include different inputs on website
         fields = ['username', 'email', 'password', 'first_name', 'last_name']
-        
-	def __init__(self, *args, **kwargs):
-		
-		super(TransSignUpForm, self).__init__(*args, **kwargs)
-		self.field_order = ['username','password','confirm_password','first_name','last_name','email']
-		self.order_fields(self.field_order)
-		self.fields['password'].widget = forms.PasswordInput(attrs={'class': 'form-control'},required = True)
+
+    def __init__(self, *args, **kwargs):
+        super(TransSignUpForm, self).__init__(*args, **kwargs)
+        # specifiy the fields order on front end
+        self.field_order = [
+            'username',
+            'password',
+            'confirm_password',
+            'first_name',
+            'last_name',
+            'email',
+            'role'
+        ]
+        self.order_fields(self.field_order)
+        # append validators for fields
+        self.fields['username'].validators.append(forbidden_username_validator)
+        self.fields['username'].validators.append(invalid_username_validator)
+        self.fields['username'].validators.append(unique_email_validator)
+        self.fields['email'].validators.append(unique_email_validator)
+        self.fields['password'].widget = forms.PasswordInput()
+        self.fields['password'].required = True
+        self.fields['username'].required = True
+        self.fields['email'].required = True
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
+        self.fields['role'].required = True
 
     def clean(self):
-    	super(TransSignUpForm, self).clean()
-    	password = self.cleaned_data.get('password')
-    	confirm_password = self.cleaned_data.get('confirm_password')
+        """
+        the clean function is automatically called by Django framework during upon
+        data transformation to back end. developers can use it to append error, and
+        check the validity of user input.
+        """
+        super(TransSignUpForm, self).clean()
+        password = self.cleaned_data.get('password')
+        confirm_password = self.cleaned_data.get('confirm_password')
         if password and password != confirm_password:
             self._errors['password'] = self.error_class(
                 ['Passwords don\'t match']
@@ -101,5 +172,4 @@ class TransSignUpForm(forms.ModelForm):
             self._errors['confirm_password'] = self.error_class(
                 ['Passwords don\'t match']
             )
-
         return self.cleaned_data

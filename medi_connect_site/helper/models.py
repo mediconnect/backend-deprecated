@@ -317,15 +317,10 @@ class Staff(models.Model):
 
             return assignments
 
-    def get_document_number(self):
-        count = 0
-        if self.get_role() == 1:  # if translator_C2E
-            for e in self.get_assignments():
-                count += e.origin.count()
-        if self.get_role() == 2:
-            for e in self.get_assignments():
-                count += e.feedback.count()
-        return count
+    def get_assignment_number(self):
+        if self.get_role() == 3:
+            return 0
+        return len(self.get_assignments())
 
 
 trans_list_C2E = list(Staff.objects.filter(role=1).values_list('id', flat=True))

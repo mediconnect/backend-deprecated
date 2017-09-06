@@ -231,13 +231,8 @@ def supervisor(request, id):
 
 def order_status(request, id,status):
     supervisor = Staff.objects.get(user_id=id)
-    if status != 'ALL':
-        orders = Order.objects.filter(trans_status = status)
-    else:
-        orders = Order.objects.all()
     return render(request, 'supervisor_order_status.html', {
         'status':status,
-        'orders': orders,
         'supervisor': supervisor,
     })
 
@@ -245,22 +240,33 @@ def order_status(request, id,status):
 @login_required
 def trans_signup(request, id):
     supervisor = Staff.objects.get(user_id=id)
+    translators_C2E = Staff.objects.filter(role=1)
+    translators_E2C = Staff.objects.filter(role=2)
     if request.method == 'POST':
         form = TransSignUpForm(request.POST)
         if not form.is_valid():
             return render(request, 'trans_signup.html',
                           {'form': form,
-                           'supervisor': supervisor
+                           'supervisor': supervisor,
                            })
         else:
-            form.save()
             username = form.cleaned_data.get('username')
-            raw_password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=raw_password, is_staff=True)
-            translator = User(user=user)
-            return render(request, 'trans_signup.html',
-                          {'form': form,
-                           'supervisor': supervisor
+            password = form.cleaned_data.get('password')
+            role = form.cleaned_data.get('role')
+            email = form.cleaned_data.get('email')
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
+            User.objects.create_user(username=username, password=password,
+                                     email=email, first_name=first_name, last_name=last_name, is_staff=True)
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            translator = Staff(user=user,role=role)
+            translator.save()
+            return render(request, 'translator_list.html',
+                          {
+                            'translators_C2E': translators_C2E,
+                            'translators_E2C': translators_E2C,
+                            'supervisor': supervisor
                            })
     else:
         return render(request, 'trans_signup.html',
@@ -438,7 +444,7 @@ def translator_list(request, id):
     supervisor = Staff.objects.get(user_id=id)
     translators_C2E = Staff.objects.filter(role=1)
     translators_E2C = Staff.objects.filter(role=2)
-    translators = translators_C2E.union(translators_E2C)
+
     return render(request, 'translator_list.html', {
         'translators_C2E': translators_C2E,
         'translators_E2C': translators_E2C,
