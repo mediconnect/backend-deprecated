@@ -51,7 +51,8 @@
         </tr>
 
     {%for obj in translators_E2C%}
-		<tr>
+		<tr id = 'trans_user_id' value = '{{obj.user.id}}'>
+
             <td>{{obj.get_name}}</td>
             <td>{{obj.user.email}}</td>
             <td>{{obj.get_assignment_number}}</td>
@@ -61,22 +62,22 @@
                     <input type="submit" value="重置" />
                 </form>
             </td>
-            <td>
-                <form  role="POST">
-                    {% csrf_token %}
-                    <input type="submit" onclick='check()' value="删除" class ='btn' name = 'delete' />
-                </form>
-            </td>
+            <td><button  onclick='check()'  class ='btn' name = 'delete' >删除</button></td>
         </tr>
   	{%endfor%}
     </table>
 <p><a href="{% url 'trans_signup' id=supervisor.user.id %}">添加翻译员</a></p>
 
 <script>
+
     function check(){
-        var pwd = window.prompt("请输入密码以确认操作",);
+        var pwd = window.prompt("请输入密码以确认操作");
+        var trans_id = $('#trans_user_id').attr('value');
+        $.getJSON("{% url 'validate_pwd'%}",{"password":pwd,'trans_id':trans_id},function(data){
+                console.log(data);
+            });
     }
-    function validatePwd(pwd){
-    }
+
+
 </script>
 {% endblock %}
