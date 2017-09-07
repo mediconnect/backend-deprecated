@@ -120,6 +120,28 @@ def assign_manually(order, translator):
         order.change_status(TRANSLATING_FEEDBACK)
         order.save()
 
+@login_required
+def validate_pwd(request):
+    data = {
+        'validate':False,
+        'msg':''
+    }
+    password = request.GET.get('password',None)
+    id = request.GET.get('trans_id',None)
+    supervisor = Staff.objects.get(user = request.user)
+    translator = Staff.objects.get(user_id = id)
+    translator.delete()
+    if check_password(password,supervisor.user.password):
+        data['validate']=True
+
+        data['msg']='操作成功'
+    else:
+        data['msg']='密码错误'
+    if password is '':
+        data['msg']='密码不能为空'
+    return JsonResponse(data)
+
+
 
 @login_required()
 def update_result(request):
@@ -444,7 +466,6 @@ def translator_list(request, id):
     supervisor = Staff.objects.get(user_id=id)
     translators_C2E = Staff.objects.filter(role=1)
     translators_E2C = Staff.objects.filter(role=2)
-
     return render(request, 'translator_list.html', {
         'translators_C2E': translators_C2E,
         'translators_E2C': translators_E2C,
