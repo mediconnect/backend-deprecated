@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from customer.models import Customer
 from django.apps import apps
-from supervisor.forms import TransSignUpForm, AssignForm, ApproveForm,PasswordResetForm
+from supervisor.forms import TransSignUpForm, E2C_AssignForm, C2E_AssignForm, ApproveForm,PasswordResetForm
 from helper.models import Staff
 from django.http import JsonResponse
 from django.urls import reverse
@@ -112,11 +112,11 @@ def assign_manually(order, translator):
     is_C2E = True if order.status <= 3 else False
     if is_C2E:
         order.translator_C2E = translator
-        move(trans_list_C2E, translator, -1)
+        #move(trans_list_C2E, translator, -1)
         order.change_status(TRANSLATING_ORIGIN)
     else:
         order.translator_E2C = translator
-        move(trans_list_C2E, translator, -1)
+        #move(trans_list_C2E, translator, -1)
         order.change_status(TRANSLATING_FEEDBACK)
         order.save()
 
@@ -300,11 +300,14 @@ def trans_signup(request, id):
 @login_required
 def assign(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
-    supervisor = Staff.objects.get(id=id)
+    supervisor = Staff.objects.get(user_id=id)
     customer = Customer.objects.get(id=assignment.customer_id)
     status = status_dict[int(assignment.status)]
     if request.method == 'POST':
-        form = AssignForm(request.POST)
+        if assignment.get_status() <= 3:
+            form = C2E_AssignForm(request.POST)
+        else:
+            form = C2E_AssignForm(request.POST)
         if not form.is_valid():
             return render(request, 'assign.html', {
                 'form': form,
@@ -312,24 +315,18 @@ def assign(request, id, order_id):
                 'supervisor': supervisor
             })
         else:
-            translator_id = form.cleaned_data.get('new_assignee')
-            if assignment.get_status() <= 3:
-                assign_manually(assignment, Staff.objects.get(id=translator_id))
-            else:
-                assign_manually(assignment, Staff.objects.get(id=translator_id))
-            trans_C2E = assignment.translator_C2E.get_name()
-            trans_E2C = assignment.translator_E2C.get_name()
+            translator_id = form.cleaned_data.get('assignee')
+            assign_manually(assignment, Staff.objects.get(user_id=translator_id))
             return render(request, 'detail.html', {
                 'assignment': assignment,
                 'supervisor': supervisor,
-                'status': status,
-                'customer': customer,
-                'trans_C2E': trans_C2E,
-                'trans_E2C': trans_E2C
 
             })
     else:
-        form = AssignForm()
+        if assignment.get_status() <= 3:
+            form = C2E_AssignForm()
+        else:
+            form = C2E_AssignForm()
         return render(request, 'assign.html', {
             'form': form,
             'supervisor': supervisor,

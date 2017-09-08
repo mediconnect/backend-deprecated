@@ -2,23 +2,16 @@
 {% block title %}Assign New Translator{% endblock %}
 
 {% block content %}
-  {% if assignment.status >= 3 %}
-    <p>Assign E2C translator</p>
-    <form action= "{% url 'assign' id=supervisor.id order_id=assignment.id %}" method="post">
+
+    <p>翻译员分配</p>
+    <form  method="post">
       {% csrf_token %}
-      {{ form.C2E_new_assignee }}
-      <input type="submit",name = 'assign', value = 'Assign'/>
+      {{ form.as_p}}
+      <input type="submit",name = 'assignee', value = 'Assign'/>
     </form>
-  {% else %}
-    <p>Assign C2E translator</p>
-     <form action= "{% url 'assign' id=supervisor.id order_id=assignment.id %}" method="post">
-      {% csrf_token %}
-      {{ form.E2C_new_assignee }}
-      <input type="submit",name = 'assign', value = 'Assign'/>
-    </form>
-{% endif %}
 
 
-  <p><a href="{% url 'supervisor_home' id=supervisor.id %}">Return to home</a></p>
+
+  <p><a href="{% url 'supervisor_home' id=supervisor.user.id %}">Return to home</a></p>
   <p><a href="{% url 'detail' id=supervisor.id order_id=assignment.id %}">Return to detail</a></p>
 {% endblock %}
