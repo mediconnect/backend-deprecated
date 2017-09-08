@@ -102,23 +102,49 @@ def profile_patient(request):
 def order(request):
     customer = Customer.objects.get(user=request.user)
     orders = Order.objects.filter(customer=customer)
-    order_list = dict()
+    order_list = []
     status_dict = [u'客户未提交', u'客户已提交', u'已付款', u'原件翻译中',
                    u'已提交至医院', u'反馈已收到', u'反馈翻译中',
                    u'反馈已上传', u'订单完成']
     for order in orders:
         if order.status == 8:
             continue
-        info = dict()
-        info['patient'] = order.patient_order.name if order.patient_order is not None else 'unknown'
-        info['time'] = order.submit
-        info['disease'] = order.disease.name if order.disease is not None else 'unknown'
-        info['hospital'] = order.hospital.name if order.hospital is not None else 'unknown'
-        info['status'] = status_dict[int(order.status)] if order.status is not None else 0
-        order_list[int(order.id)] = info
-    print order_list
+        order_dict = dict()
+        order_dict['patient'] = order.patient_order.name if order.patient_order is not None else 'unknown'
+        order_dict['time'] = str(order.submit)
+        order_dict['disease'] = order.disease.name if order.disease is not None else 'unknown'
+        order_dict['hospital'] = order.hospital.name if order.hospital is not None else 'unknown'
+        order_dict['status'] = status_dict[int(order.status)] if order.status is not None else 0
+        order_dict['id'] = int(order.id)
+        order_list.append(order_dict)
     return render(request, 'info_order.html', {
-        'order_list': json.dump(order_list),
+        'orders': order_list,
+        'order_length': len(order_list) > 0,
+        'customer': customer,
+    })
+
+@login_required
+def order_finished(request):
+    customer = Customer.objects.get(user=request.user)
+    orders = Order.objects.filter(customer=customer)
+    order_list = []
+    status_dict = [u'客户未提交', u'客户已提交', u'已付款', u'原件翻译中',
+                   u'已提交至医院', u'反馈已收到', u'反馈翻译中',
+                   u'反馈已上传', u'订单完成']
+    for order in orders:
+        if order.status != 8:
+            continue
+        order_dict = dict()
+        order_dict['patient'] = order.patient_order.name if order.patient_order is not None else 'unknown'
+        order_dict['time'] = str(order.submit)
+        order_dict['disease'] = order.disease.name if order.disease is not None else 'unknown'
+        order_dict['hospital'] = order.hospital.name if order.hospital is not None else 'unknown'
+        order_dict['status'] = status_dict[int(order.status)] if order.status is not None else 0
+        order_dict['id'] = int(order.id)
+        order_list.append(order_dict)
+    return render(request, 'info_order_finished.html', {
+        'orders': order_list,
+        'order_length': len(order_list) > 0,
         'customer': customer,
     })
 

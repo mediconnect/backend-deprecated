@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^profile/patient/$', views.profile_patient, name="info_profile_patient"),
     url(r'profile/patient/edit/(?P<patient_id>\d+)/$', views.profile_patient_edit, name="info_profile_patient_edit"),
     url(r'^order/$', views.order, name="info_order"),
+    url(r'^order/finished/$', views.order_finished, name="info_order_finished"),
     url(r'^order/payment/(?P<order_id>\d+)/$', views.order_pay, name="info_order_pay"),
     url(r'^order/checkout/(?P<order_id>\d+)/$', views.process_order, name="info_order_process"),
     url(r'^order/detail/(?P<order_id>\d+)/$', views.order_detail, name="info_order_detail"),

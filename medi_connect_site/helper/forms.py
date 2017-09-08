@@ -4,6 +4,30 @@ from django.core.exceptions import ValidationError
 
 
 class PatientInfo(forms.ModelForm):
+    contact = forms.CharField(
+        label="Contact",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=False,
+    )
+
+    email = forms.EmailField(
+        label="Email",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=False,
+    )
+
+    address = forms.CharField(
+        label="Address",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=False,
+    )
+
+    zipcode = forms.CharField(
+        label="Zipcode",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=False,
+    )
+
     class Meta:
         model = Patient
         exclude = []
@@ -11,6 +35,17 @@ class PatientInfo(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PatientInfo, self).__init__(*args, **kwargs)
+        self.fields['contact'].widget.attrs['readonly'] = True
+        self.fields['email'].widget.attrs['readonly'] = True
+        self.fields['address'].widget.attrs['readonly'] = True
+        self.fields['zipcode'].widget.attrs['readonly'] = True
+        self.field_order = [
+            'contact',
+            'email',
+            'address',
+            'zipcode',
+        ]
+        self.order_fields(self.field_order)
 
     def clean_name(self):
         name = self.cleaned_data['name']
