@@ -474,9 +474,17 @@ def translator_list(request, id):
 def hospital_list(request, id):
     supervisor = Staff.objects.get(user_id=id)
     hospitals = Hospital.objects.all()
-    if (request.POST.get('hospital_btn')):
+    if (request.POST.get('reset')):
         hospital = Hospital.objects.get(name=request.POST.get('hospital'))
         hospital.reset_slot()
+    if (request.POST.get('add')):
+        hospital = Hospital.objects.get(name=request.POST.get('hospital'))
+        week = Hospital.objects.get()
+        hospital.reset_slot()
+    if (request.POST.get('subtract')):
+        hospital = Hospital.objects.get(name=request.POST.get('hospital'))
+        hospital.reset_slot()
+
     return render(request, 'hospital_list.html', {
         'hospitals': hospitals,
         'supervisor': supervisor,

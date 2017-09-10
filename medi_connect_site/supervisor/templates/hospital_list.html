@@ -10,13 +10,19 @@
         <input style="border:none" type = 'text' name = 'hospital' value = '{{obj.name}}' size="30px" readonly><br>
         <ul>
           <li>Default: {{obj.default_slots}}</li>
-          <li>Week 1: {{obj.slots_open_0}}</li>
-          <li>Week 2: {{obj.slots_open_1}}</li>
-          <li>Week 3: {{obj.slots_open_2}}</li>
-          <li>Week 4: {{obj.slots_open_3}}</li>
+          <input type="submit" class="btn" value="减少" onclick="update()" name="subtract"/><li>Week 1: {{obj.slots_open_0}}</li><input type="submit" onclick="update()" class="btn" value="添加" name="add"/>
+          <input type="submit" class="btn" value="减少" onclick="update()" name="subtract"/><li>Week 2: {{obj.slots_open_1}}</li><input type="submit" onclick="update()" class="btn" value="添加" name="add"/>
+          <input type="submit" class="btn" value="减少" onclick="update()" name="subtract"/><li>Week 3: {{obj.slots_open_2}}</li><input type="submit" onclick="update()" class="btn" value="添加" name="add"/>
+          <input type="submit" class="btn" value="减少" onclick="update()" name="subtract"/><li>Week 4: {{obj.slots_open_}}</li><input type="submit" onclick="update()" class="btn" value="添加" name="add"/>
         </ul>
-        <input type="submit" class="btn" value="Reset Slots" name="hospital_btn"/>
+        <input type="submit" class="btn" value="重置" name="reset"/>
+
+
+
       </form>
     {% endfor %}
   </ul>
+  <script>
+
+  </script>
 {% endblock %}

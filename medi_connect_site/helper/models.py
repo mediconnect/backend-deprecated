@@ -63,7 +63,34 @@ class Hospital(models.Model):
         self.slots_open_2 = self.slots_open_3
         self.slots_open_3 = self.default_slots
         self.save()
-
+    def add_slot(self,week):
+        if week == 'all':
+            self.slots_open_0 += 1
+            self.slots_open_1 += 1
+            self.slots_open_2 += 1
+            self.slots_open_3 += 1
+        if week == 0:
+            self.slots_open_0 +=1
+        if week == 1:
+            self.slots_open_1 +=1
+        if week == 2:
+            self.slots_open_2 +=1
+        if week == 3:
+            self.slots_open_3 +=1
+    def subtract_slot(self,week):
+        if week == 'all':
+            self.slots_open_0 -= 1
+            self.slots_open_1 -= 1
+            self.slots_open_2 -= 1
+            self.slots_open_3 -= 1
+        if week == 0:
+            self.slots_open_0 -=1
+        if week == 1:
+            self.slots_open_1 -=1
+        if week == 2:
+            self.slots_open_2 -=1
+        if week == 3:
+            self.slots_open_3 -=1
     def set_default_slots(self, slot):
         self.default_slots = slot
         self.slots_open_0 = self.default_slots
@@ -351,6 +378,9 @@ RELATION_CHOICES = (
 class Patient(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, default='')
+    first_name = models.CharField(max_length=50, default='')
+    last_name = models.CharField(max_length=50, default='')
+    pin_yin = models.CharField(max_length=50, default='')
     age = models.IntegerField(default=0)
     gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)
     category = models.CharField(max_length=50, default='COLD')
