@@ -162,6 +162,10 @@ def order_info_first(request, order_id, slot_num):
     return render(request, 'order_info_first.html', {
         'customer': customer,
         'form': PatientInfo(instance=request.user, initial={
+            'contact': customer.get_name(),
+            'email': customer.email,
+            'address': customer.address,
+            'zipcode': customer.zipcode,
             'name': order.patient_order.name if order.patient_order is not None else '',
             'age': order.patient_order.age if order.patient_order is not None else '',
             'gender': order.patient_order.gender if order.patient_order is not None else '',
