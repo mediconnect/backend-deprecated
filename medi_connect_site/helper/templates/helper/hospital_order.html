@@ -23,7 +23,7 @@
 {% if error %}
 {{error}}
 {% endif %}
-<form action="{% url 'order_info_first' order_id=order_id slot_num=0 %}" method="post" id="order_placement_form">
+<form action="{% url 'order_info_first' order_id=order_id slot_num=1 %}" method="post" id="order_placement_form">
     {% csrf_token %}
     <button class="btn btn-default" type="submit">Place Order</button>
 </form>

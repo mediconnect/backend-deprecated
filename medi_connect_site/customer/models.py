@@ -6,7 +6,6 @@ import datetime
 # Create your models here.
 class Customer(models.Model):
     user = models.OneToOneField(User)
-    email = models.EmailField(default='unknown')
     wechat = models.TextField(blank=True)
     weibo = models.TextField(blank=True)
     qq = models.TextField(blank=True)
