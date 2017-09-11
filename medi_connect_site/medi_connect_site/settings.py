@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'helper',
     'info',
     'django_js_reverse',
+    'db_manager',
 ]
 
 MIDDLEWARE = [

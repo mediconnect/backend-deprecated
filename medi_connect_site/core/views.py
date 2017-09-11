@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -117,7 +119,8 @@ def result(request):
                 'disease': dis[0],
                 'hospital_length': len(hospital_list) > 0,
                 'disease_length': dis is not None,
-                'customer': Customer.objects.get(user=request.user)
+                'customer': Customer.objects.get(user=request.user),
+                'message': u'你是不是在搜索这个疾病: ' + dis[0].name,
             })
     else:
         return render(request, 'result.html')

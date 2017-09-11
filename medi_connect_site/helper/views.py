@@ -90,7 +90,6 @@ def hospital(request, hospital_id, disease_id):
     """
     hosp = Hospital.objects.get(id=hospital_id)
     dis = Disease.objects.get(id=disease_id)
-    print dis
     customer = Customer.objects.get(user=request.user)
     order_list = Order.objects.filter(customer=customer, hospital=hosp, disease=dis)
     order = None
@@ -107,6 +106,22 @@ def hospital(request, hospital_id, disease_id):
         'customer': customer,
         'order_id': order.id,
     })
+
+
+@login_required
+def fast_order(request, disease_id, hospital_id, slot_num):
+    hosp = Hospital.objects.get(id=hospital_id)
+    dis = Disease.objects.get(id=disease_id)
+    customer = Customer.objects.get(user=request.user)
+    order_list = Order.objects.filter(customer=customer, hospital=hosp, disease=dis)
+    order = None
+    for each in order_list:
+        if int(each.status) == 0:
+            order = each
+            break
+    order = Order(hospital=hosp, status=0, disease=dis, customer=customer) if order is None else order
+    order.save()
+    return redirect('order_info_first', order_id=order.id, slot_num=int(slot_num))
 
 
 @login_required
@@ -163,7 +178,7 @@ def order_info_first(request, order_id, slot_num):
         'customer': customer,
         'form': PatientInfo(instance=request.user, initial={
             'contact': customer.get_name(),
-            'email': customer.email,
+            'email': customer.user.email,
             'address': customer.address,
             'zipcode': customer.zipcode,
             'name': order.patient_order.name if order.patient_order is not None else '',
@@ -171,6 +186,7 @@ def order_info_first(request, order_id, slot_num):
             'gender': order.patient_order.gender if order.patient_order is not None else '',
             'relationship': order.patient_order.relationship if order.patient_order is not None else '',
             'passport': order.patient_order.passport if order.patient_order is not None else '',
+            'pin_yin': order.patient_order.pin_yin if order.patient_order is not None else '',
         }),
         'order_id': order.id,
     })
@@ -194,6 +210,7 @@ def order_submit_first(request, order_id):
             gender = form.cleaned_data.get('gender')
             relationship = form.cleaned_data.get('relationship')
             passport = form.cleaned_data.get('passport')
+            pin_yin = form.cleaned_data.get('pin_yin')
             # create patient or fetch accordingly
             patient = Patient() if order.patient is None else order.patient
             patient.customer = customer
@@ -202,6 +219,7 @@ def order_submit_first(request, order_id):
             patient.gender = gender
             patient.relationship = relationship
             patient.passport = passport
+            patient.pin_yin = pin_yin
             patient.save()
             order.patient = patient
 
@@ -213,6 +231,7 @@ def order_submit_first(request, order_id):
             order_patient.gender = gender
             order_patient.relationship = relationship
             order_patient.passport = passport
+            order_patient.pin_yin = pin_yin
             order_patient.save()
             order.patient_order = order_patient
 

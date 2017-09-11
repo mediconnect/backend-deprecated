@@ -26,7 +26,7 @@ class Disease(models.Model):
 
 
 def hospital_directory_path(instance, filename):
-    return 'hospital_{0}/{1}'.format(instance.hospital.get_name(), filename)
+    return 'hospital_{0}/{1}'.format(instance.hospital.get_id(), filename)
 
 
 class Hospital(models.Model):
@@ -50,6 +50,9 @@ class Hospital(models.Model):
 
     class Meta:
         db_table = 'hospital'
+
+    def get_id(self):
+        return self.get_id()
 
     def get_name(self):
         return self.name
