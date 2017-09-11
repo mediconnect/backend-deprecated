@@ -74,6 +74,7 @@ class Hospital(models.Model):
             self.slots_open_2 +=1
         if week == 3:
             self.slots_open_3 +=1
+        self.save()
     def subtract_slot(self,week):
         if week == 'all':
             self.slots_open_0 -= 1
@@ -88,6 +89,7 @@ class Hospital(models.Model):
             self.slots_open_2 -=1
         if week == 3:
             self.slots_open_3 -=1
+        self.save()
     def set_default_slots(self, slot):
         self.default_slots = slot
         self.slots_open_0 = self.default_slots
@@ -378,8 +380,9 @@ class Patient(models.Model):
     first_name = models.CharField(max_length=50, default='')
     last_name = models.CharField(max_length=50, default='')
     pin_yin = models.CharField(max_length=50, default='')
-    age = models.IntegerField(default=0)
-    gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)
+    age = models.IntegerField(default=0) #keep this until fix all birth date
+    birth = models.DateTimeField(default = datetime.date.today)
+    gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE) #birthdate
     category = models.CharField(max_length=50, default='COLD')
     diagnose_hospital = models.CharField(max_length=50, default='')
     doctor = models.CharField(max_length=50, default='')
@@ -393,6 +396,10 @@ class Patient(models.Model):
     def get_name(self):
         return self.name
 
+    def get_age(self): #method to calculate age
+        today = datetime.date.today
+        return today.year - self.birth.year - ((today.month, today.day) < (self.birth.month, self.birth.day))
+
 
 class OrderPatient(models.Model):
     # Order Patient table to store patient information
@@ -401,6 +408,7 @@ class OrderPatient(models.Model):
     # Fetch patient info for display order-related info
     name = models.CharField(max_length=50, default='')
     age = models.IntegerField(default=0)
+    birth = models.DateTimeField(default=datetime.date.today)
     gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)
     category = models.CharField(max_length=50, default='COLD')
     diagnose_hospital = models.CharField(max_length=50, default='')
@@ -415,6 +423,9 @@ class OrderPatient(models.Model):
     def get_name(self):
         return self.name
 
+    def get_age(self): #method to calculate age
+        today = datetime.date.today
+        return today.year - self.birth.year - ((today.month, today.day) < (self.birth.month, self.birth.day))
 
 class LikeHospital(models.Model):
     customer = models.ForeignKey(Customer, unique=False, default=None, related_name='customer_liked')

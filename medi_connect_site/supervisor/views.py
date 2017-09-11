@@ -4,6 +4,7 @@ from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
@@ -469,21 +470,37 @@ def translator_list(request, id):
         'supervisor': supervisor,
     })
 
-
 @login_required
+@csrf_exempt
 def hospital_list(request, id):
     supervisor = Staff.objects.get(user_id=id)
     hospitals = Hospital.objects.all()
     if (request.POST.get('reset')):
-        hospital = Hospital.objects.get(name=request.POST.get('hospital'))
+        #print request.POST.get('week_number')
+        hospital = Hospital.objects.get(id=request.POST.get('hospital'))
         hospital.reset_slot()
+        return render(request, 'hospital_list.html', {
+            'hospitals': hospitals,
+            'supervisor': supervisor,
+        })
     if (request.POST.get('add')):
-        hospital = Hospital.objects.get(name=request.POST.get('hospital'))
-        week = Hospital.objects.get()
-        hospital.reset_slot()
+        week = int(request.POST.get('week_number'))
+        hospital = Hospital.objects.get(id=request.POST.get('hospital'))
+        hospital.add_slot(week)
+        hospital.save()
+        return render(request, 'hospital_list.html', {
+            'hospitals': hospitals,
+            'supervisor': supervisor,
+        })
     if (request.POST.get('subtract')):
-        hospital = Hospital.objects.get(name=request.POST.get('hospital'))
-        hospital.reset_slot()
+        week = int(request.POST.get('week_number'))
+        hospital = Hospital.objects.get(id=request.POST.get('hospital'))
+        hospital.subtract_slot(week)
+        hospital.save()
+        return render(request, 'hospital_list.html', {
+            'hospitals': hospitals,
+            'supervisor': supervisor,
+        })
 
     return render(request, 'hospital_list.html', {
         'hospitals': hospitals,

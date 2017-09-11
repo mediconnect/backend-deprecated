@@ -7,22 +7,49 @@
       <form method="post">
         {% csrf_token %}
         {{ form }}
-        <input style="border:none" type = 'text' name = 'hospital' value = '{{obj.name}}' size="30px" readonly><br>
+        <input type = 'hidden' name = 'hospital' value = '{{obj.id}}' size="30px" readonly>{{obj.name}}<br>
+
+
+
+
+
         <ul>
           <li>Default: {{obj.default_slots}}</li>
-          <input type="submit" class="btn" value="减少" onclick="update()" name="subtract"/><li>Week 1: {{obj.slots_open_0}}</li><input type="submit" onclick="update()" class="btn" value="添加" name="add"/>
-          <input type="submit" class="btn" value="减少" onclick="update()" name="subtract"/><li>Week 2: {{obj.slots_open_1}}</li><input type="submit" onclick="update()" class="btn" value="添加" name="add"/>
-          <input type="submit" class="btn" value="减少" onclick="update()" name="subtract"/><li>Week 3: {{obj.slots_open_2}}</li><input type="submit" onclick="update()" class="btn" value="添加" name="add"/>
-          <input type="submit" class="btn" value="减少" onclick="update()" name="subtract"/><li>Week 4: {{obj.slots_open_}}</li><input type="submit" onclick="update()" class="btn" value="添加" name="add"/>
+            <input type = 'submit' class = 'btn' onclick = update(0,{{obj.id}}) name = 'subtract' value = '减少'>
+            <input type = 'hidden' name = 'week_number' value = 0 size="30px" readonly/>第一周:{{obj.slots_open_0}}
+            <input type = 'submit' class = 'btn' onclick = update(0,{{obj.id}}) name='add' value = '增加'>
+          <li>
+            <input type = 'submit' class = 'btn' onclick = update(1,{{obj.id}}) name = 'subtract' value = '减少'>
+            <input type = 'hidden' name = 'week_number' value = 1 size="30px" readonly/>第二周:{{obj.slots_open_1}}
+            <input type = 'submit' class = 'btn' onclick = update(1,{{obj.id}}) name='add' value = '增加'>
+          </li>
+          <li>
+            <input type = 'submit' class = 'btn' onclick = update(2,{{obj.id}}) name = 'subtract' value = '减少'>
+            <input type = 'hidden' name = 'week_number' value = 2 size="30px" readonly/>第三周:{{obj.slots_open_2}}
+            <input type = 'submit' class = 'btn' onclick = update(2,{{obj.id}}) name='add' value = '增加'>
+          </li>
+          <li>
+            <input type = 'submit' class = 'btn' onclick = update(3,{{obj.id}}) name = 'subtract' value = '减少'>
+            <input type = 'hidden' name = 'week_number' value = 3 size="30px" readonly/>第四周:{{obj.slots_open_3}}
+            <input type = 'submit' class = 'btn' onclick = update(3,{{obj.id}}) name='add' value = '增加'>
+          </li>
         </ul>
         <input type="submit" class="btn" value="重置" name="reset"/>
-
 
 
       </form>
     {% endfor %}
   </ul>
   <script>
-
+    function update(week_number,hospital){
+       $.ajax({
+            type: 'POST',
+             url:"{% url 'hospital_list' id=supervisor.user.id %}",
+             header:{
+                      'week_number':week_number,
+                      'hospital':hospital,
+                      }
+       });
+    }
   </script>
 {% endblock %}
