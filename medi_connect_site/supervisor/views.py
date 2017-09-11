@@ -131,7 +131,10 @@ def validate_pwd(request):
     id = request.GET.get('trans_id',None)
     supervisor = Staff.objects.get(user = request.user)
     translator = Staff.objects.get(user_id = id)
+    assignments = translator.get_assignments()
     translator.delete()
+    for each in assignments:
+        assign_auto(each)
     if check_password(password,supervisor.user.password):
         data['validate']=True
 
