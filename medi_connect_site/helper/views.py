@@ -186,6 +186,7 @@ def order_info_first(request, order_id, slot_num):
             'gender': order.patient_order.gender if order.patient_order is not None else '',
             'relationship': order.patient_order.relationship if order.patient_order is not None else '',
             'passport': order.patient_order.passport if order.patient_order is not None else '',
+            'pin_yin': order.patient_order.pin_yin if order.patient_order is not None else '',
         }),
         'order_id': order.id,
     })
@@ -209,6 +210,7 @@ def order_submit_first(request, order_id):
             gender = form.cleaned_data.get('gender')
             relationship = form.cleaned_data.get('relationship')
             passport = form.cleaned_data.get('passport')
+            pin_yin = form.cleaned_data.get('pin_yin')
             # create patient or fetch accordingly
             patient = Patient() if order.patient is None else order.patient
             patient.customer = customer
@@ -217,6 +219,7 @@ def order_submit_first(request, order_id):
             patient.gender = gender
             patient.relationship = relationship
             patient.passport = passport
+            patient.pin_yin = pin_yin
             patient.save()
             order.patient = patient
 
@@ -228,6 +231,7 @@ def order_submit_first(request, order_id):
             order_patient.gender = gender
             order_patient.relationship = relationship
             order_patient.passport = passport
+            order_patient.pin_yin = pin_yin
             order_patient.save()
             order.patient_order = order_patient
 
