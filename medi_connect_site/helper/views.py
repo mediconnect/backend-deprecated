@@ -61,14 +61,12 @@ def assign_auto(order):
     is_C2E = True if order.status <= 3 else False
     if is_C2E:
         translator = Staff.objects.filter(role=1).order_by('?').first()
-        # move(trans_list_C2E, translator.id, -1)
         order.translator_C2E = translator
         order.change_status(TRANSLATING_ORIGIN)
         order.change_trans_status(NOT_STARTED)
         order.save()
     else:
         translator = Staff.objects.filter(role=2).order_by('?').first()
-        # move(trans_list_E2C, translator.id, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)
         order.change_trans_status(NOT_STARTED)

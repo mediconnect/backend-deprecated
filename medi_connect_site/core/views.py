@@ -22,7 +22,6 @@ def home(request):
         # role: supervisor = 0, trans_C2E = 1, trnas_E2C = 2
         if request.user.is_staff:
             staff = Staff.objects.get(user_id=request.user.id)
-            print staff.get_role()
             if staff.get_role() == 0:
                 return supervisor(request, request.user.id)
             else:
