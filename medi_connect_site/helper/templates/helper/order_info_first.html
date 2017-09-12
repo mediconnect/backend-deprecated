@@ -20,4 +20,10 @@
     <a href="{% url 'order_patient_select' order_id=order_id %}">Add Already Existing Patient</a>
 </form>
 
+<script>
+$(document).ready(function() {
+    $('.datepicker').datepicker();
+});
+</script>
+
 {% endblock %}

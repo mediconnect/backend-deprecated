@@ -1,5 +1,5 @@
 from django import forms
-from helper.models import Order, Patient, Disease, Document
+from helper.models import Order, Patient
 from django.core.exceptions import ValidationError
 
 
@@ -31,7 +31,7 @@ class PatientInfo(forms.ModelForm):
     class Meta:
         model = Patient
         exclude = []
-        fields = ['first_name', 'last_name', 'age', 'gender', 'relationship', 'passport', 'pin_yin']
+        fields = ['first_name', 'last_name', 'birth', 'gender', 'relationship', 'passport', 'pin_yin']
 
     def __init__(self, *args, **kwargs):
         super(PatientInfo, self).__init__(*args, **kwargs)
@@ -39,6 +39,7 @@ class PatientInfo(forms.ModelForm):
         self.fields['email'].widget.attrs['readonly'] = True
         self.fields['address'].widget.attrs['readonly'] = True
         self.fields['zipcode'].widget.attrs['readonly'] = True
+        self.fields['birth'].widget = forms.DateInput(attrs={'class': 'datepicker'})
         self.field_order = [
             'contact',
             'email',

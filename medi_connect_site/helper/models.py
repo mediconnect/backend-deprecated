@@ -382,8 +382,7 @@ class Patient(models.Model):
     first_name = models.CharField(max_length=50, default='')
     last_name = models.CharField(max_length=50, default='')
     pin_yin = models.CharField(max_length=50, default='')
-    age = models.IntegerField(default=0) #keep this until fix all birth date
-    birth = models.DateTimeField(default = datetime.date.today)
+    birth = models.DateField(default = datetime.date.today)
     gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE) #birthdate
     category = models.CharField(max_length=50, default='COLD')
     diagnose_hospital = models.CharField(max_length=50, default='')
@@ -411,8 +410,7 @@ class OrderPatient(models.Model):
     first_name = models.CharField(max_length=50, default='')
     last_name = models.CharField(max_length=50, default='')
     pin_yin = models.CharField(max_length=50, default='')
-    age = models.IntegerField(default=0)
-    birth = models.DateTimeField(default=datetime.date.today)
+    birth = models.DateField(datetime.date.today)
     gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)
     category = models.CharField(max_length=50, default='COLD')
     diagnose_hospital = models.CharField(max_length=50, default='')
