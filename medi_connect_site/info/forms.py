@@ -56,7 +56,7 @@ class PatientAddForm(forms.ModelForm):
     class Meta:
         model = Patient
         exclude = []
-        fields = ['name', 'age', 'gender']
+        fields = ['first_name', 'last_name', 'age', 'gender', 'pin_yin']
 
 
 class DocAddForm(forms.ModelForm):

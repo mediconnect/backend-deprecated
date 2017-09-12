@@ -84,10 +84,12 @@ def profile_patient(request):
                 'form': form,
                 'patients': patients,
             })
-        name = form.cleaned_data.get('name')
+        first_name = form.cleaned_data.get('first_name')
+        last_name = form.cleaned_data.get('last_name')
         age = form.cleaned_data.get('age')
         gender = form.cleaned_data.get('gender')
-        patient = Patient.objects.create(name=name, age=age, gender=gender, customer=customer)
+        patient = Patient.objects.create(first_name=first_name, last_name=last_name, age=age, gender=gender,
+                                         customer=customer)
         patient.save()
     patients = Patient.objects.filter(customer=customer)
     return render(request, 'info_profile_patient.html', {
@@ -110,7 +112,7 @@ def order(request):
         if order.status == 8:
             continue
         order_dict = dict()
-        order_dict['patient'] = order.patient_order.name if order.patient_order is not None else 'unknown'
+        order_dict['patient'] = order.patient_order.get_name() if order.patient_order is not None else 'unknown'
         order_dict['time'] = str(order.submit)
         order_dict['disease'] = order.disease.name if order.disease is not None else 'unknown'
         order_dict['hospital'] = order.hospital.name if order.hospital is not None else 'unknown'
@@ -122,6 +124,7 @@ def order(request):
         'order_length': len(order_list) > 0,
         'customer': customer,
     })
+
 
 @login_required
 def order_finished(request):
@@ -135,7 +138,7 @@ def order_finished(request):
         if order.status != 8:
             continue
         order_dict = dict()
-        order_dict['patient'] = order.patient_order.name if order.patient_order is not None else 'unknown'
+        order_dict['patient'] = order.patient_order.get_name() if order.patient_order is not None else 'unknown'
         order_dict['time'] = str(order.submit)
         order_dict['disease'] = order.disease.name if order.disease is not None else 'unknown'
         order_dict['hospital'] = order.hospital.name if order.hospital is not None else 'unknown'
@@ -261,7 +264,7 @@ def profile_patient_edit(request, patient_id):
         form = PatientAddForm(request.POST)
         if not form.is_valid():
             form.add_initial_prefix({
-                'name': patient.name,
+                'name': patient.get_name(),
                 'age': patient.age,
                 'gender': patient.gender,
             })
@@ -270,13 +273,15 @@ def profile_patient_edit(request, patient_id):
                 'form': form,
                 'patient': patient,
             })
-        patient.name = form.cleaned_data.get('name')
+        patient.first_name = form.cleaned_data.get('first_name')
+        patient.last_name = form.cleaned_data.get('last_name')
         patient.age = form.cleaned_data.get('age')
         patient.gender = form.cleaned_data.get('gender')
+        patient.pin_yin = form.cleaned_data.get('pin_yin')
         patient.save()
         return redirect('info_profile_patient')
     form = PatientAddForm(instance=request.user, initial={
-        'name': patient.name,
+        'name': patient.get_name(),
         'age': patient.age,
         'gender': patient.gender,
     })

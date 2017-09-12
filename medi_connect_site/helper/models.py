@@ -377,7 +377,6 @@ RELATION_CHOICES = (
 
 class Patient(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50, default='')
     first_name = models.CharField(max_length=50, default='')
     last_name = models.CharField(max_length=50, default='')
     pin_yin = models.CharField(max_length=50, default='')
@@ -394,7 +393,7 @@ class Patient(models.Model):
         db_table = 'patient'
 
     def get_name(self):
-        return self.name
+        return self.first_name + self.last_name
 
 
 class OrderPatient(models.Model):
@@ -402,7 +401,9 @@ class OrderPatient(models.Model):
     # This is created everytime an order is placed
     # Do not change this table when edit patient
     # Fetch patient info for display order-related info
-    name = models.CharField(max_length=50, default='')
+    first_name = models.CharField(max_length=50, default='')
+    last_name = models.CharField(max_length=50, default='')
+    pin_yin = models.CharField(max_length=50, default='')
     age = models.IntegerField(default=0)
     gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)
     category = models.CharField(max_length=50, default='COLD')
@@ -416,7 +417,7 @@ class OrderPatient(models.Model):
         db_table = 'order_patient'
 
     def get_name(self):
-        return self.name
+        return self.first_name + self.last_name
 
 
 class LikeHospital(models.Model):

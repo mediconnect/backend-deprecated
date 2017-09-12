@@ -60,15 +60,15 @@ def move(trans_list, translator, new_position):
 def assign_auto(order):
     is_C2E = True if order.status <= 3 else False
     if is_C2E:
-        translator = Staff.objects.filter(role = 1).order_by('?').first()
-        #move(trans_list_C2E, translator.id, -1)
+        translator = Staff.objects.filter(role=1).order_by('?').first()
+        # move(trans_list_C2E, translator.id, -1)
         order.translator_C2E = translator
         order.change_status(TRANSLATING_ORIGIN)
         order.change_trans_status(NOT_STARTED)
         order.save()
     else:
         translator = Staff.objects.filter(role=2).order_by('?').first()
-        #move(trans_list_E2C, translator.id, -1)
+        # move(trans_list_E2C, translator.id, -1)
         order.translator_E2C = translator
         order.change_status(TRANSLATING_FEEDBACK)
         order.change_trans_status(NOT_STARTED)
@@ -181,7 +181,8 @@ def order_info_first(request, order_id, slot_num):
             'email': customer.user.email,
             'address': customer.address,
             'zipcode': customer.zipcode,
-            'name': order.patient_order.name if order.patient_order is not None else '',
+            'first_name': order.patient_order.first_name if order.patient_order is not None else '',
+            'last_name': order.patient_order.last_name if order.patient_order is not None else '',
             'age': order.patient_order.age if order.patient_order is not None else '',
             'gender': order.patient_order.gender if order.patient_order is not None else '',
             'relationship': order.patient_order.relationship if order.patient_order is not None else '',
@@ -205,7 +206,8 @@ def order_submit_first(request, order_id):
                 'customer': customer,
             })
         else:
-            name = form.cleaned_data.get('name')
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
             age = form.cleaned_data.get('age')
             gender = form.cleaned_data.get('gender')
             relationship = form.cleaned_data.get('relationship')
@@ -214,7 +216,8 @@ def order_submit_first(request, order_id):
             # create patient or fetch accordingly
             patient = Patient() if order.patient is None else order.patient
             patient.customer = customer
-            patient.name = name
+            patient.first_name = first_name
+            patient.last_name = last_name
             patient.age = age
             patient.gender = gender
             patient.relationship = relationship
@@ -226,7 +229,8 @@ def order_submit_first(request, order_id):
             order.status = 0
 
             order_patient = OrderPatient() if order.patient_order is None else order.patient_order
-            order_patient.name = name
+            order_patient.first_name = first_name
+            order_patient.last_name = last_name
             order_patient.age = age
             order_patient.gender = gender
             order_patient.relationship = relationship
@@ -285,8 +289,9 @@ def order_patient_finish(request, order_id, patient_id):
     order = Order.objects.get(id=order_id)
     patient = Patient.objects.get(id=patient_id)
     order.patient = patient
-    order_patient = OrderPatient(name=patient.name, age=patient.age, gender=patient.gender,
-                                 relationship=patient.relationship, passport=patient.passport, contact=patient.contact)
+    order_patient = OrderPatient(first_name=patient.first_name, last_name=patient.last_name, age=patient.age,
+                                 gender=patient.gender, relationship=patient.relationship, passport=patient.passport,
+                                 contact=patient.contact)
     order_patient.save()
     order.patient_order = order_patient
     order.save()
