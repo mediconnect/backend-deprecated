@@ -61,6 +61,7 @@ def assign_auto(order):
     is_C2E = True if order.status <= 3 else False
     if is_C2E:
         translator = Staff.objects.filter(role = 1).order_by('?').first()
+        print translator
         #move(trans_list_C2E, translator.id, -1)
         order.translator_C2E = translator
         order.change_status(TRANSLATING_ORIGIN)
