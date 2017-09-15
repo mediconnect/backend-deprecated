@@ -39,7 +39,9 @@ class PatientInfo(forms.ModelForm):
         self.fields['email'].widget.attrs['readonly'] = True
         self.fields['address'].widget.attrs['readonly'] = True
         self.fields['zipcode'].widget.attrs['readonly'] = True
-        self.fields['birth'].widget = forms.DateInput(attrs={'class': 'datepicker'})
+        self.fields['birth'].label = 'format should be yy-mm-dd change this later once UI plugin is done'
+        # comment out this form for later use
+        # self.fields['birth'].widget = forms.DateInput(attrs={'class': 'datepicker'})
         self.field_order = [
             'contact',
             'email',

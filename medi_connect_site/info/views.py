@@ -37,6 +37,9 @@ def profile(request):
         'email': request.user.email,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
+        'tel': customer.tel,
+        'address': customer.address,
+        'wechat': customer.wechat
     })
     return render(request, 'info_profile.html', {
         'customer': customer,
@@ -86,9 +89,9 @@ def profile_patient(request):
             })
         first_name = form.cleaned_data.get('first_name')
         last_name = form.cleaned_data.get('last_name')
-        age = form.cleaned_data.get('age')
+        birth = form.cleaned_data.get('birth')
         gender = form.cleaned_data.get('gender')
-        patient = Patient.objects.create(first_name=first_name, last_name=last_name, age=age, gender=gender,
+        patient = Patient.objects.create(first_name=first_name, last_name=last_name, birth=birth, gender=gender,
                                          customer=customer)
         patient.save()
     patients = Patient.objects.filter(customer=customer)
@@ -105,9 +108,9 @@ def order(request):
     customer = Customer.objects.get(user=request.user)
     orders = Order.objects.filter(customer=customer)
     order_list = []
-    status_dict = [u'客户未提交', u'客户已提交', u'已付款', u'原件翻译中',
-                   u'已提交至医院', u'反馈已收到', u'反馈翻译中',
-                   u'反馈已上传', u'订单完成']
+    status_dict = [u'未提交', u'未付款', u'翻译中', u'翻译中',
+                   u'医院研究反馈中', u'医院研究反馈中', u'医院研究反馈中',
+                   u'医院反馈翻译完成', u'订单完成']
     for order in orders:
         if order.status == 8:
             continue
@@ -131,9 +134,9 @@ def order_finished(request):
     customer = Customer.objects.get(user=request.user)
     orders = Order.objects.filter(customer=customer)
     order_list = []
-    status_dict = [u'客户未提交', u'客户已提交', u'已付款', u'原件翻译中',
-                   u'已提交至医院', u'反馈已收到', u'反馈翻译中',
-                   u'反馈已上传', u'订单完成']
+    status_dict = [u'未提交', u'未付款', u'翻译中', u'翻译中',
+                   u'医院研究反馈中', u'医院研究反馈中', u'医院研究反馈中',
+                   u'医院反馈翻译完成', u'订单完成']
     for order in orders:
         if order.status != 8:
             continue
@@ -231,8 +234,6 @@ def bookmark_compare(request, disease_id):
     for h in liked_hospital:
         if h.disease == disease:
             hospitals.append(h.hospital)
-    print disease
-    print hospitals
     return render(request, 'bookmark_compare.html', {
         'hospitals': hospitals,
         'hospitals_length': len(hospitals) > 0,
@@ -265,7 +266,7 @@ def profile_patient_edit(request, patient_id):
         if not form.is_valid():
             form.add_initial_prefix({
                 'name': patient.get_name(),
-                'age': patient.age,
+                'birth': patient.birth,
                 'gender': patient.gender,
             })
             return render(request, 'info_profile_patient_edit.html', {
@@ -275,14 +276,14 @@ def profile_patient_edit(request, patient_id):
             })
         patient.first_name = form.cleaned_data.get('first_name')
         patient.last_name = form.cleaned_data.get('last_name')
-        patient.age = form.cleaned_data.get('age')
+        patient.birth = form.cleaned_data.get('birth')
         patient.gender = form.cleaned_data.get('gender')
         patient.pin_yin = form.cleaned_data.get('pin_yin')
         patient.save()
         return redirect('info_profile_patient')
     form = PatientAddForm(instance=request.user, initial={
         'name': patient.get_name(),
-        'age': patient.age,
+        'birth': patient.birth,
         'gender': patient.gender,
     })
     return render(request, 'info_profile_patient_edit.html', {

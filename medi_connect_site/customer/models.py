@@ -6,12 +6,12 @@ import datetime
 # Create your models here.
 class Customer(models.Model):
     user = models.OneToOneField(User)
-    wechat = models.TextField(blank=True)
-    weibo = models.TextField(blank=True)
-    qq = models.TextField(blank=True)
-    tel = models.TextField(default='unknown')
-    address = models.TextField(blank=True)
-    zipcode = models.TextField(default=0)
+    wechat = models.CharField(blank=True, max_length=50)
+    weibo = models.CharField(blank=True, max_length=50)
+    qq = models.CharField(blank=True, max_length=50)
+    tel = models.CharField(default='unknown', max_length=50)
+    address = models.CharField(blank=True, max_length=50)
+    zipcode = models.CharField(default=0, max_length=50)
     register_time = models.DateField(default=datetime.date.today)
 
     class Meta:

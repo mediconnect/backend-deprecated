@@ -1,14 +1,29 @@
 from django import forms
 from django.contrib.auth.models import User
 from helper.models import Patient, Document
-from django.core.exceptions import ValidationError
+from customer.models import Customer
 
 
 class ProfileForm(forms.ModelForm):
+    first_name = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="First Name",
+        required=True)
+
+    last_name = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label="Last Name",
+        required=True)
+
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={'class': 'form-control'}),
+        label="Email",
+        required=True)
+
     class Meta:
-        model = User
+        model = Customer
         exclude = []
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['address', 'tel', 'wechat']
 
 
 class PasswordResetForm(forms.ModelForm):
