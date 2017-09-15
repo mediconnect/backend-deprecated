@@ -31,7 +31,14 @@ def profile(request):
         user.last_name = last_name
         user.email = email
         user.save()
+
         customer.user = user
+        tel = form.cleaned_data.get('tel')
+        address = form.cleaned_data.get('address')
+        wechat = form.cleaned_data.get('wechat')
+        customer.tel = tel
+        customer.address = address
+        customer.wechat = wechat
         customer.save()
     form = ProfileForm(instance=request.user, initial={
         'email': request.user.email,

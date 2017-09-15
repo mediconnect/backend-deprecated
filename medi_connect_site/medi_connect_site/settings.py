@@ -170,6 +170,8 @@ EMAIL_HOST_PASSWORD = 'passwordABC'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
+AUTHENTICATION_BACKENDS = ['backend.email_login.EmailLoginBackend']
+
 
 # SOCIAL_AUTH_PIPELINE = (
 #     'social.pipeline.social_auth.social_details',

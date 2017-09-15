@@ -10,8 +10,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', core_views.home, name='home'),
-    url(r'^login/', auth_views.login, {'template_name': 'login.html'},
-        name='login'),
+    url(r'^login/', core_views.auth, name='auth'),
     url(r'^logout/', auth_views.logout, {'next_page': '/'}, name='logout'),
     url(r'^signup/', core_views.signup, name='signup'),
     url(r'^result/', core_views.result, name='result'),

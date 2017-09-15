@@ -25,6 +25,18 @@ class ProfileForm(forms.ModelForm):
         exclude = []
         fields = ['address', 'tel', 'wechat']
 
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        self.field_order = [
+            'first_name',
+            'last_name',
+            'email',
+            'address',
+            'tel',
+            'wechat'
+        ]
+        self.order_fields(self.field_order)
+
 
 class PasswordResetForm(forms.ModelForm):
     confirm_password = forms.CharField(

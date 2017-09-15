@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
-from forms import SignUpForm, SearchForm, ContactForm
+from forms import SignUpForm, SearchForm, ContactForm, LoginForm
 from customer.models import Customer
 from customer.views import customer
 from translator.views import translator
@@ -34,6 +34,26 @@ def home(request):
         })
 
 
+def auth(request):
+    # TODO: add more eror info
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if not form.is_valid():
+            return render(request, 'login.html',
+                          {'form': form})
+        email = form.cleaned_data.get('email')
+        password = form.cleaned_data.get('password')
+        user = authenticate(email=email, password=password)
+        if user is None:
+            return render(request, 'login.html',
+                          {'form': form})
+        login(request, user)
+        return redirect('/')
+    return render(request, 'login.html', {
+        'form': LoginForm()
+    })
+
+
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -41,7 +61,6 @@ def signup(request):
             return render(request, 'signup.html',
                           {'form': form})
         else:
-            username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
             first_name = form.cleaned_data.get('first_name')
@@ -49,9 +68,9 @@ def signup(request):
             telephone = form.cleaned_data.get('telephone')
             address = form.cleaned_data.get('address')
             zipcode = form.cleaned_data.get('zipcode')
-            User.objects.create_user(username=username, password=password,
+            User.objects.create_user(username=email, password=password,
                                      email=email, first_name=first_name, last_name=last_name)
-            user = authenticate(username=username, password=password)
+            user = authenticate(email=email, password=password)
             login(request, user)
             customer = Customer(user=user)
             customer.set_attributes(telephone, address, zipcode)
