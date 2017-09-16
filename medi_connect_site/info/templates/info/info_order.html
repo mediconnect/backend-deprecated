@@ -28,6 +28,7 @@
             <th>Disease</th>
             <th>Hospital</th>
             <th>Status</th>
+            <th></th>
         </tr>
         {% for order in orders %}
         <tr class="clickable-row" data-href="{% url 'info_order_detail' order_id=order.id %}">
@@ -36,6 +37,11 @@
             <td>{{order.disease}}</td>
             <td>{{order.hospital}}</td>
             <td>{{order.status}}</td>
+            <td>
+                {% if order.status >= 0 %}
+                <a href="{% url 'info_hospital_review' order_id=order.id %}">Review</a>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
     </table>

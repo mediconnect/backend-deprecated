@@ -63,36 +63,39 @@ class Hospital(models.Model):
         self.slots_open_2 = self.slots_open_3
         self.slots_open_3 = self.default_slots
         self.save()
-    def add_slot(self,week):
+
+    def add_slot(self, week):
         if week == 'all':
             self.slots_open_0 += 1
             self.slots_open_1 += 1
             self.slots_open_2 += 1
             self.slots_open_3 += 1
         if week == 0:
-            self.slots_open_0 +=1
+            self.slots_open_0 += 1
         if week == 1:
-            self.slots_open_1 +=1
+            self.slots_open_1 += 1
         if week == 2:
-            self.slots_open_2 +=1
+            self.slots_open_2 += 1
         if week == 3:
-            self.slots_open_3 +=1
+            self.slots_open_3 += 1
         self.save()
-    def subtract_slot(self,week):
+
+    def subtract_slot(self, week):
         if week == 'all':
             self.slots_open_0 -= 1
             self.slots_open_1 -= 1
             self.slots_open_2 -= 1
             self.slots_open_3 -= 1
         if week == 0:
-            self.slots_open_0 -=1
+            self.slots_open_0 -= 1
         if week == 1:
-            self.slots_open_1 -=1
+            self.slots_open_1 -= 1
         if week == 2:
-            self.slots_open_2 -=1
+            self.slots_open_2 -= 1
         if week == 3:
-            self.slots_open_3 -=1
+            self.slots_open_3 -= 1
         self.save()
+
     def set_default_slots(self, slot):
         self.default_slots = slot
         self.slots_open_0 = self.default_slots
@@ -233,9 +236,10 @@ class Order(models.Model):
 
     def get_patient(self):
         if self.patient_order is None or self.patient is None:
-            return (-1,'病人信息缺失')
+            return (-1, '病人信息缺失')
         else:
             return (self.patient_order.id, self.patient_order.get_name())
+
     def get_submit(self):
         return self.submit + datetime.timedelta(hours=8)
 
@@ -253,8 +257,9 @@ class Order(models.Model):
 
     def get_submit_deadline(self):
         total_sec = (
-        self.get_submit() + datetime.timedelta(days=7 * (int(self.week_number_at_submit) + 1)) - datetime.datetime.now(
-            utc_8)).total_seconds()
+            self.get_submit() + datetime.timedelta(
+                days=7 * (int(self.week_number_at_submit) + 1)) - datetime.datetime.now(
+                utc_8)).total_seconds()
         days = int(total_sec / (3600 * 24))
         hours = int((total_sec - 3600 * 24 * days) / 3600)
         submit_deadline = str(days) + '  days,  ' + str(hours) + '  hours'
@@ -276,15 +281,14 @@ class Order(models.Model):
     def get_trans_status(self):
         return int(self.trans_status)
 
-    def get_trans_status_for_translator(self,translator):
-        if self.get_status()<= SUBMITTED :
+    def get_trans_status_for_translator(self, translator):
+        if self.get_status() <= SUBMITTED:
             return self.get_trans_status()
         else:
             if translator.get_role() == 1:
                 return FINISHED
             else:
                 return self.get_trans_status()
-
 
     def change_status(self, status):
         self.status = status
@@ -343,7 +347,6 @@ class Staff(models.Model):
 
         if self.get_role() == 2:  # if translator_E2C
             for order in Order.objects.filter(Q(translator_E2C=self.id)).order_by('submit'):
-
                 assignments.append(order)
 
             return assignments
@@ -382,8 +385,8 @@ class Patient(models.Model):
     first_name = models.CharField(max_length=50, default='')
     last_name = models.CharField(max_length=50, default='')
     pin_yin = models.CharField(max_length=50, default='')
-    birth = models.DateField(default = datetime.date.today)
-    gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE) #birthdate
+    birth = models.DateField(default=datetime.date.today)
+    gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)  # birthdate
     category = models.CharField(max_length=50, default='COLD')
     diagnose_hospital = models.CharField(max_length=50, default='')
     doctor = models.CharField(max_length=50, default='')
@@ -397,7 +400,7 @@ class Patient(models.Model):
     def get_name(self):
         return self.first_name + self.last_name
 
-    def get_age(self): #method to calculate age
+    def get_age(self):  # method to calculate age
         today = datetime.date.today
         return today.year - self.birth.year - ((today.month, today.day) < (self.birth.month, self.birth.day))
 
@@ -425,9 +428,10 @@ class OrderPatient(models.Model):
     def get_name(self):
         return self.first_name + self.last_name
 
-    def get_age(self): #method to calculate age
+    def get_age(self):  # method to calculate age
         today = datetime.date.today
         return today.year - self.birth.year - ((today.month, today.day) < (self.birth.month, self.birth.day))
+
 
 class LikeHospital(models.Model):
     customer = models.ForeignKey(Customer, unique=False, default=None, related_name='customer_liked')
@@ -441,7 +445,7 @@ class LikeHospital(models.Model):
 class HospitalReview(models.Model):
     hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_review')
     order = models.OneToOneField(Order, default=None, related_name='order_review')
-    score = models.IntegerField()
+    score = models.IntegerField(default=0)
     comment = models.CharField(max_length=200, blank=True)
 
     class Meta:

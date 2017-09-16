@@ -71,6 +71,7 @@ def assign_auto(order):
         order.change_status(TRANSLATING_FEEDBACK)
         order.change_trans_status(NOT_STARTED)
         order.save()
+    print order.status
 
 
 # Create your views here.

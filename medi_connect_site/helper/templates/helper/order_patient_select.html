@@ -4,15 +4,15 @@
 <table class="table">
     <tr>
         <th>Name</th>
-        <th>Age</th>
+        <th>Birth</th>
         <th>Gender</th>
         <th></th>
     </tr>
 
     {% for patient in patients %}
     <tr>
-        <td>{{patient.name}}</td>
-        <td>{{patient.age}}</td>
+        <td>{{patient.get_name}}</td>
+        <td>{{patient.birth}}</td>
         <td>{{patient.gender}}</td>
         <td>
             <form action="{% url 'order_patient_finish'  order_id=order_id patient_id=patient.id %}">
