@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'info',
     'django_js_reverse',
     'db_manager',
+    'dynamic_form',
 ]
 
 MIDDLEWARE = [
