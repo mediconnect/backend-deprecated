@@ -185,7 +185,8 @@ class UTC_8(datetime.tzinfo):
 
 utc_8 = UTC_8()
 
-
+def calculate_estimate(week_number):
+    return datetime.date.today + week_number*7
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
@@ -215,6 +216,8 @@ class Order(models.Model):
     status = models.CharField(blank=True, max_length=20, choices=STATUS_CHOICES)
     trans_status = models.CharField(default=0, max_length=20, choices=TRANS_STATUS_CHOICE)
     auto_assigned = models.BooleanField(default=False)
+    deposit_paid = models.BooleanField(default = False) #allow translation after this
+    estimate = models.DateField(default= calculate_estimate(self.week_number_at_submit))
 
     class Meta:
         db_table = 'order'
