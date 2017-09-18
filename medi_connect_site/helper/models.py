@@ -327,7 +327,7 @@ class Document(models.Model):
 class Staff(models.Model):
     user = models.OneToOneField(User)
     role = models.IntegerField(default=0)
-    #sequence = models.IntegerField(unique=True)
+    sequence = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'auth_staff'
