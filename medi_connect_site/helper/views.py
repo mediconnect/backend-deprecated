@@ -6,72 +6,47 @@ from django.contrib.auth.decorators import login_required
 from helper.forms import PatientInfo, AppointmentInfo
 from django.core.files.storage import FileSystemStorage
 
+
 # Status
-STARTED = 0
-SUBMITTED = 1  # deposit paid, only change appointment at this status
-TRANSLATING_ORIGIN = 2  # translator starts translating origin documents
-RECEIVED = 3  # origin documents translated, approved and submitted to hospitals
-# ============ Above is C2E status =============#
-# ============Below is E2C status ==============#
-RETURN = 4  # hospital returns feedback
-TRANSLATING_FEEDBACK = 5  # translator starts translating feedback documents
-FEEDBACK = 6  # feedback documents translated, approved, and feedback to customer
-PAID = 7  # remaining amount paid
-
-STATUS_CHOICES = (
-    (STARTED, 'started'),
-    (SUBMITTED, 'submitted'),
-    (TRANSLATING_ORIGIN, 'translating_origin'),
-    (RECEIVED, 'received'),
-    (RETURN, 'return'),
-    (TRANSLATING_FEEDBACK, 'translating_feedback'),
-    (FEEDBACK, 'feedback'),
-    (PAID, 'PAID'),
-)
-
-# Trans_status
-
-NOT_STARTED = 0  # assignment not started yet
-ONGOING = 1  # assignment started not submitted to supervisor
-APPROVING = 2  # assignment submitted to supervisor for approval
-APPROVED = 3  # assignment approved, to status 5
-DISAPPROVED = 4  # assignment disapproved, return to status 1
-FINISHED = 5  # assignment approved and finished
-
-TRANS_STATUS_CHOICE = (
-    (NOT_STARTED, 'not_started'),
-    (ONGOING, 'ongoing'),
-    (APPROVING, 'approving'),
-    (APPROVED, 'approved'),
-    (DISAPPROVED, 'disapproved'),
-    (FINISHED, 'finished'),
-)
-
-trans_list_C2E = list(Staff.objects.filter(role=1).values_list('id', flat=True))
-trans_list_E2C = list(Staff.objects.filter(role=2).values_list('id', flat=True))
-
-
-def move(trans_list, translator, new_position):
-    old_position = trans_list.index(translator)
-    trans_list.insert(new_position, trans_list.pop(old_position))
-    return trans_list
-
-
-def assign_auto(order):
-    is_C2E = True if order.status <= 3 else False
-    if is_C2E:
-        translator = Staff.objects.filter(role=1).order_by('?').first()
-        order.translator_C2E = translator
-        order.change_status(TRANSLATING_ORIGIN)
-        order.change_trans_status(NOT_STARTED)
-        order.save()
-    else:
-        translator = Staff.objects.filter(role=2).order_by('?').first()
-        order.translator_E2C = translator
-        order.change_status(TRANSLATING_FEEDBACK)
-        order.change_trans_status(NOT_STARTED)
-        order.save()
-    print order.status
+# STARTED = 0
+# SUBMITTED = 1 deposit paid, only change appointment at this status
+# TRANSLATING_ORIGIN = 2 translator starts translating origin documents
+# RECEIVED = 3  # origin documents translated, approved and submitted to hospitals
+# # ============ Above is C2E status =============#
+# # ============Below is E2C status ==============#
+# RETURN = 4 hospital returns feedback
+# TRANSLATING_FEEDBACK = 5 translator starts translating feedback documents
+# FEEDBACK = 6 feedback documents translated, approved, and feedback to customer
+# PAID = 7 remaining amount paid
+#
+# STATUS_CHOICES = (
+#     (STARTED, 'started'),
+#     (SUBMITTED, 'submitted'),
+#     (TRANSLATING_ORIGIN, 'translating_origin'),
+#     (RECEIVED, 'received'),
+#     (RETURN, 'return'),
+#     (TRANSLATING_FEEDBACK, 'translating_feedback'),
+#     (FEEDBACK, 'feedback'),
+#     (PAID, 'PAID'),
+# )
+#
+# # Trans_status
+#
+# NOT_STARTED = 0 assignment not started yet
+# ONGOING = 1 assignment started not submitted to supervisor
+# APPROVING = 2 assignment submitted to supervisor for approval
+# APPROVED = 3 assignment approved, to status 5
+# DISAPPROVED = 4 assignment disapproved, return to status 1
+# FINISHED = 5 assignment approved and finished
+#
+# TRANS_STATUS_CHOICE = (
+#     (NOT_STARTED, 'not_started'),
+#     (ONGOING, 'ongoing'),
+#     (APPROVING, 'approving'),
+#     (APPROVED, 'approved'),
+#     (DISAPPROVED, 'disapproved'),
+#     (FINISHED, 'finished'),
+# )
 
 
 # Create your views here.
@@ -349,16 +324,24 @@ def order_submit_second(request, order_id):
 
 
 @login_required
+def pay_deposit(request, order_id):
+    customer = Customer.objects.get(user=request.user)
+    order = Order.objects.get(id=order_id)
+    if request.method == 'POST':
+        order.deposit_paid = True
+        order.save()
+        return redirect('order_finish', order_id=order.id)
+    return render(request, 'order_deposit.html', {
+        'order': order,
+        'customer': customer,
+    })
+
+
+@login_required
 def finish(request, order_id):
     order = Order.objects.get(id=order_id)
     customer = Customer.objects.get(user=request.user)
-    if request.method == 'POST':
-        order.status = 1
-        order.save()
-        assign_auto(order)
-        return render(request, 'finish.html', {
-            'customer': customer,
-        })
+    order.status = 1
     return render(request, 'finish.html', {
         'customer': customer,
     })

@@ -185,7 +185,6 @@ class UTC_8(datetime.tzinfo):
 
 utc_8 = UTC_8()
 
-
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)

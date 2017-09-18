@@ -38,9 +38,9 @@
             <td>{{order.hospital}}</td>
             <td>{{order.status}}</td>
             <td>
-                {% if order.status >= 0 %}
+                {% ifequal order.status 6%}
                 <a href="{% url 'info_hospital_review' order_id=order.id %}">Review</a>
-                {% endif %}
+                {% endifequal %}
             </td>
         </tr>
         {% endfor %}

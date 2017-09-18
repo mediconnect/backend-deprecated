@@ -1,23 +1,25 @@
 # -*- coding: utf-8 -*-
 import datetime
-from staff.models import Staff
+from helper.models import Staff
 from helper.models import Order
+
+
 # Function to move the position of a translator in sequence
 def auto_assign(order):
-
     if order.get_status() <= TRANSLATING_ORIGIN:
         assignee = Staff.objects.filter(role=1).order_by('sequence')
         order.set_translator_C2E(assignee)
         order.save()
         assignee.move_to_tail()
 
-    if order.get_status() >= RETURN and order.get_status <=FEEDBACK:
-        assignee = Staff.objects.filter(role = 2).order_by('sequence')
+    if order.get_status() >= RETURN and order.get_status <= FEEDBACK:
+        assignee = Staff.objects.filter(role=2).order_by('sequence')
         order.set_translator_E2C(assignee)
         order.save()
         assignee.move_to_tail()
 
-def manual_assign(order,assignee):
+
+def manual_assign(order, assignee):
     if order.get_status() <= TRANSLATING_ORIGIN:
         order.set_translator_C2E(assignee)
         order.save()
@@ -28,8 +30,10 @@ def manual_assign(order,assignee):
         order.save()
         assignee.move_to_tail()
 
+
 def hospital_directory_path(instance, filename):
     return 'hospital_{0}/{1}'.format(instance.hospital.get_id(), filename)
+
 
 def order_directory_path(instance, filename):
     return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name(), instance.order.id, filename)
@@ -111,12 +115,13 @@ TRANS_STATUS_CHOICE = (
     (ALL_FINISHED, 'all_finished')
 )
 trans_status_dict = [
-                     '任务未开始', '翻译中', '提交审核中', '审核驳回', '审核通过', '翻译完成',
-                     '任务未开始', '翻译中', '提交审核中', '审核驳回', '审核通过', '翻译完成',
-                     '订单完成'
-                     ]
+    '任务未开始', '翻译中', '提交审核中', '审核驳回', '审核通过', '翻译完成',
+    '任务未开始', '翻译中', '提交审核中', '审核驳回', '审核通过', '翻译完成',
+    '订单完成'
+]
 
 EIGHT = datetime.timedelta(hours=8)
+
 
 class UTC_8(datetime.tzinfo):
     def utcoffset(self, dt):

@@ -29,9 +29,10 @@
 
 <br>
 
-{% if order.status <= 1 %}
+{% if pay %}
 <form action="{% url 'info_order_pay' order_id=order.id %}">
     <button type="submit" class="btn btn-default">Pay Order</button>
 </form>
 {% endif %}
+
 {% endblock %}

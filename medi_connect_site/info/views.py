@@ -7,9 +7,9 @@ from helper.models import Order, Patient, Document, LikeHospital, Hospital, Dise
 from django.contrib.auth.decorators import login_required
 from forms import ProfileForm, PasswordResetForm, PatientAddForm, DocAddForm
 from django.contrib.auth.hashers import check_password, make_password
-import json
 from django.utils.http import urlquote
 from django.template.defaultfilters import register
+from utility import auto_assign
 
 
 # Create your views here.
@@ -176,7 +176,8 @@ def order_pay(request, order_id):
 def process_order(request, order_id):
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
-    order.status = 7
+    order.status = 2
+    auto_assign(order)
     order.save()
     return redirect('info_order', customer.id)
 
@@ -185,9 +186,11 @@ def process_order(request, order_id):
 def order_detail(request, order_id):
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
+    print order.status
     return render(request, 'info_order_detail.html', {
         'customer': customer,
         'order': order,
+        'pay': int(order.status) < 2,
     })
 
 
