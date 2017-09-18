@@ -185,8 +185,7 @@ class UTC_8(datetime.tzinfo):
 
 utc_8 = UTC_8()
 
-def calculate_estimate(week_number):
-    return datetime.date.today + week_number*7
+
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
@@ -217,7 +216,8 @@ class Order(models.Model):
     trans_status = models.CharField(default=0, max_length=20, choices=TRANS_STATUS_CHOICE)
     auto_assigned = models.BooleanField(default=False)
     deposit_paid = models.BooleanField(default = False) #allow translation after this
-    estimate = models.DateField(default= calculate_estimate(self.week_number_at_submit))
+    full_payment_paid = models.BooleanField(default = False)
+
 
     class Meta:
         db_table = 'order'
@@ -269,6 +269,9 @@ class Order(models.Model):
         if hours < 0:
             submit_deadline += ('  (passdue)  ')
         return submit_deadline
+
+    def get_estimate(self):
+        return self.get_submit()+datetime.timedelta(weeks=self.week_number_at_submit    )
 
     def get_upload(self):
         if self.latest_upload is None:
@@ -325,14 +328,14 @@ class Document(models.Model):
 class Staff(models.Model):
     user = models.OneToOneField(User)
     role = models.IntegerField(default=0)
-
-    # sequence = models.IntegerField(unique=True)
+    #sequence = models.IntegerField(unique=True)
 
     class Meta:
         db_table = 'auth_staff'
+        get_latest_by = 'sequence'
 
     def get_role(self):
-        return self.role
+        return int(self.role)
 
     def get_name(self):
         name = self.user.first_name + ' ' + self.user.last_name
@@ -340,12 +343,20 @@ class Staff(models.Model):
             return name
         return self.user.username
 
+    def move_to_tail(self):
+        current_sequence = self.sequence
+        new_sequence = Staff.objects.lateset().sequence
+        for each in Staff.objects.filter('sequence'>current_sequence):
+            each.sequence-=1
+            each.save()
+        self.sequence=new_sequence
+        self.save()
+
     def get_assignments(self):  # return order of all assignments
         assignments = []
         if self.get_role() == 1:  # if translator_C2E
             for order in Order.objects.filter(Q(translator_C2E=self.id)).order_by('submit'):
                 assignments.append(order)
-
             return assignments
 
         if self.get_role() == 2:  # if translator_E2C
@@ -354,14 +365,26 @@ class Staff(models.Model):
 
             return assignments
 
+    def get_assignments_status(self,status):
+        assignments = []
+        if self.get_role() == 0:
+            if status == 'All':
+                assignments = list(Order.objects.order_by('submit'))
+            else:
+                for assignment in Order.objects.order_list.order_by('submit'):
+
+                    if assignment.get_trans_status() == int(status):
+                        assignments.append(assignment)
+        else:
+            for assignment in self.get_assignments():
+                if assignment.get_trans_status_for_translator(self) == int(self):
+                    assignments.append(assignment)
+        return assignments
+
     def get_assignment_number(self):
-        if self.get_role() == 3:
+        if self.get_role() == 0:
             return 0
         return len(self.get_assignments())
-
-
-trans_list_C2E = list(Staff.objects.filter(role=1).values_list('id', flat=True))
-trans_list_E2C = list(Staff.objects.filter(role=2).values_list('id', flat=True))
 
 # Gender
 MALE = 'M'
