@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django_js_reverse',
     'db_manager',
     'dynamic_form',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -172,6 +173,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 AUTHENTICATION_BACKENDS = ['backend.email_login.EmailLoginBackend']
+
+CELERY_RESULT_BACKEND = 'django-db'
 
 
 # SOCIAL_AUTH_PIPELINE = (

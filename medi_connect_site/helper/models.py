@@ -323,6 +323,9 @@ class Document(models.Model):
     def get_upload(self):
         return self.upload_at
 
+    def get_name(self):
+        return self.document
+
 class Staff(models.Model):
     user = models.OneToOneField(User)
     role = models.IntegerField(default=0)

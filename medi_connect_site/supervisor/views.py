@@ -142,9 +142,9 @@ def update_result(request):
         data['result']['Link'].append(reverse('detail', args=[supervisor.user.id, each.id]))
 
     data['choices']['customer_choice'] = list(map(lambda x:(int(x),Customer.objects.get(id=x).get_name()),Order.objects.values_list('customer_id',flat=True).distinct()))
-    data['choices']['disease_choice'] = list(map(lambda x:(int(x),Disease.objects.get(id=x).name),Order.objects.values_list('disease_id',flat=True).distinct()))
-    data['choices']['patient_choice'] = list(map(lambda x:(int(x),Patient_Order.objects.get(id=x).name),Order.objects.exclude(patient_order__isnull=True).values_list('patient_order_id',flat=True).distinct()))
-    data['choices']['hospital_choice'] = list(map(lambda x:(int(x),Hospital.objects.get(id=x).name),Order.objects.values_list('hospital_id',flat=True).distinct()))
+    data['choices']['disease_choice'] = list(map(lambda x:(int(x),Disease.objects.get(id=x).get_name()),Order.objects.values_list('disease_id',flat=True).distinct()))
+    data['choices']['patient_choice'] = list(map(lambda x:(int(x),Patient_Order.objects.get(id=x).get_name()),Order.objects.exclude(patient_order__isnull=True).values_list('patient_order_id',flat=True).distinct()))
+    data['choices']['hospital_choice'] = list(map(lambda x:(int(x),Hospital.objects.get(id=x).get_name()),Order.objects.values_list('hospital_id',flat=True).distinct()))
     data['choices']['translator_E2C_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.exclude(translator_E2C__isnull=True).values_list('translator_E2C_id',flat=True).distinct().exclude(translator_E2C__isnull=True)))
     data['choices']['translator_C2E_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.exclude(translator_C2E__isnull=True).values_list('translator_C2E_id',flat=True).distinct().exclude(translator_C2E__isnull=True)))
     data['choices']['status_choice'] = util.STATUS_CHOICE
