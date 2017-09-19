@@ -10,10 +10,3 @@ class Migration(migrations.Migration):
     dependencies = [
         ('helper', '0002_hospitalreview_review_number'),
     ]
-
-    operations = [
-        migrations.RemoveField(
-            model_name='hospitalreview',
-            name='review_number',
-        ),
-    ]

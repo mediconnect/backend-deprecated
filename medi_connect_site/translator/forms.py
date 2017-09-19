@@ -7,3 +7,13 @@ class AssignmentSummaryForm(forms.ModelForm):
 	class Meta:
 		model = Document
 		fields = ['document']
+
+class StaffLoginForm(forms.ModelForm):
+    class Meta:
+        model = User
+        exclude = []
+        fields = ['email', 'password']
+
+    def __init__(self, *args, **kwargs):
+        super(StaffLoginForm, self).__init__(*args, **kwargs)
+        self.fields['password'].widget = forms.PasswordInput()

@@ -1,9 +1,10 @@
 from django.conf.urls import url
 from django.contrib.auth import views as auth_views
-from supervisor import views as supervisor_views
+import views as supervisor_views
+from core import views as core_views
 
 urlpatterns = [
-    url(r'^login/$', auth_views.login, {'template_name': 'supervisor_login.html'}, name='supervisor_login'),
+    url(r'^login/$', core_views.auth, name='supervisor_login'),
     url(r'^home/(?P<id>\d+)/$',supervisor_views.supervisor, name = 'supervisor_home'),
     url(r'^orders/(?P<id>\d+)/(?P<status>\w+)/$',supervisor_views.order_status, name = 'order_status'),
     url(r'^ajax/update_result/$', supervisor_views.update_result, name='update_result'),

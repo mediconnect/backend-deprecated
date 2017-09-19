@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files.storage import FileSystemStorage
 from helper.models import UTC_8
+from forms import StaffLoginForm
+from django.contrib.auth import authenticate, login
 from django.db.models import Q
 from django.apps import apps
 from django.http import JsonResponse
@@ -66,6 +68,29 @@ TRANS_STATUS_CHOICE = (
 
 trans_status_dict = ['任务未开始', '翻译中', '提交审核中',  '审核驳回','审核通过','翻译完成']
 
+def translator_auth(request):
+    # TODO: add more eror info
+    if request.method == 'POST':
+        form = StaffLoginForm(request.POST)
+        if not form.is_valid():
+            return render(request, 'trans_login.html',
+                          {'form': form})
+        email = form.cleaned_data.get('email')
+        password = form.cleaned_data.get('password')
+        user = authenticate(email=email, password=password)
+        if user is None:
+            return render(request, 'trans_login.html',
+                          {'form': form})
+        login(request, user)
+        translator = Staff.objects.get(user=user)
+        return render(request, 'trans_home.html',
+                      {
+                          'translator': translator,
+                      })
+    return render(request, 'trans_login.html', {
+        'form': StaffLoginForm()
+    })
+
 def get_assignments(translator):  # return order of all assignments
     assignments = []
     if translator.get_role() == 1: #if translator_C2E
@@ -83,7 +108,6 @@ def get_assignments_status(translator, trans_status):  # return order of all ong
     assignments = []
 
     for assignment in translator.get_assignments():
-        print type(assignment.get_trans_status_for_translator(translator)), int(trans_status)
         if assignment.get_trans_status_for_translator(translator) == int(trans_status):
             assignments.append(assignment)
     return assignments
@@ -154,10 +178,11 @@ def update_result(request):
     data['result_length']=result_length
     return JsonResponse(data,safe=False)
 
+
+
 @login_required
 def translator(request, id):
     translator = Staff.objects.get(user_id = id)
-
     return render(request, 'trans_home.html',
                   {
                       'translator': translator,

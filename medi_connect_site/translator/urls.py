@@ -7,7 +7,7 @@ urlpatterns = [
     url(r'^home/(?P<id>\d+)/', trans_views.translator, name='trans_home'),
     url(r'^status/(?P<id>\d+)/(?P<status>\w+)/$', trans_views.translator_status, name='trans_home_status'),
     url(r'^assignment/(?P<id>\d+)/(?P<order_id>\d+)/$', trans_views.assignment_summary, name='assignment_summary'),
-    url(r'^login/$', core_views.auth, {'template_name': 'trans_login.html'}, name='translator/login'),
+    url(r'^login/$', core_views.auth, name='translator_login'),
     url(r'^logout/', auth_views.logout, {'next_page': '/translator/login'}, name='translator_logout'),
     url(r'^ajax/update_result/$', trans_views.update_result, name='trans_update_result'),
 ]

@@ -323,7 +323,6 @@ class Document(models.Model):
     def get_upload(self):
         return self.upload_at
 
-
 class Staff(models.Model):
     user = models.OneToOneField(User)
     role = models.IntegerField(default=0)
@@ -332,6 +331,10 @@ class Staff(models.Model):
     class Meta:
         db_table = 'auth_staff'
         get_latest_by = 'sequence'
+
+    def save(self, *args, **kwargs):
+        self.sequence = self.id
+        super(Staff, self).save(*args, **kwargs)
 
     def get_role(self):
         return int(self.role)
