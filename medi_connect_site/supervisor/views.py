@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate, login
 from customer.models import Customer
 from django.apps import apps
 from supervisor.forms import TransSignUpForm, E2C_AssignForm, C2E_AssignForm, ApproveForm,PasswordResetForm
-from helper.models import Staff
+from info import utility as util
 from django.http import JsonResponse
 from django.urls import reverse
 import json
@@ -23,103 +23,7 @@ Hospital = apps.get_model('helper', 'Hospital')
 Disease = apps.get_model('helper','Disease')
 Patient = apps.get_model('helper','Patient')
 Patient_Order = apps.get_model('helper','OrderPatient')
-# Create your views here.
-# Status
-STARTED = 0
-PAID = 2  # paid
-RECEIVED = 1  # order received
-TRANSLATING_ORIGIN = 3  # translator starts translating origin documents
-SUBMITTED = 4  # origin documents translated, approved and submitted to hospitals
-# ============ Above is C2E status =============#
-# ============Below is E2C status ==============#
-RETURN = 5  # hospital returns feedback
-TRANSLATING_FEEDBACK = 6  # translator starts translating feedback documents
-FEEDBACK = 7  # feedback documents translated, approved, and feedback to customer
-DONE = 8
-STATUS_CHOICE=[
-    (STARTED,'客户未提交'),
-    (RECEIVED,'客户已提交'),
-    (PAID,'已付款'),
-    (TRANSLATING_ORIGIN,'原件翻译中'),
-    (SUBMITTED,'已提交至医院'),
-    (RETURN,'反馈已收到'),
-    (TRANSLATING_FEEDBACK,'反馈翻译中'),
-    (FEEDBACK,'反馈已上传'),
-    (DONE,'订单完成')
-]
-status_dict = ['客户未提交', '客户已提交','已付款',  '原件翻译中', '已提交至医院', '反馈已收到', '反馈翻译中',
-               '反馈已上传', '订单完成']
-# Trans_status
-
-NOT_STARTED = 0  # assignment not started yet
-ONGOING = 1  # assignment started not submitted to supervisor
-APPROVING = 2  # assignment submitted to supervisor for approval
-APPROVED = 4  # assignment approved, to status 5
-DISAPPROVED = 3  # assignment disapproved, return to status 1
-FINISHED = 5  # assignment approved and finished
-ALL_FINISHED = 6 #All done
-
-TRANS_STATUS_CHOICE = [
-    (NOT_STARTED, '任务未开始'),
-    (ONGOING, '翻译中'),
-    (APPROVING, '提交审核中'),
-    (APPROVED, '审核通过'),
-    (DISAPPROVED, '审核驳回'),
-    (FINISHED, '翻译完成'),
-    (ALL_FINISHED,'全部完成')
-]
-trans_status_dict = ['任务未开始', '翻译中', '提交审核中', '审核驳回','审核通过','翻译完成','订单完成']
-
-trans_list_C2E = list(Staff.objects.filter(role=1).values_list('id', flat=True))
-trans_list_E2C = list(Staff.objects.filter(role=2).values_list('id', flat=True))
-
-
-def move(trans_list, translator, new_position):
-    old_position = trans_list.index(translator)
-    trans_list.insert(new_position, trans_list.pop(old_position))
-    return trans_list
-
-def get_assignments_status(status):
-    assignments = []
-    if status == 'All':
-        assignments = list(Order.objects.all().order_by('submit'))
-    else:
-        for assignment in Order.objects.all().order_by('submit'):
-
-            if assignment.get_trans_status() == int(status):
-                assignments.append(assignment)
-    return assignments
-
-
-
-def assign_auto(order):
-    is_C2E = True if order.status <= 3 else False
-    if is_C2E:
-        translator = Staff.objects.get(id=trans_list_C2E[0])
-        move(trans_list_C2E, translator.id, -1)
-        order.translator_C2E = translator
-        order.change_status(TRANSLATING_ORIGIN)
-        order.change_trans_status(NOT_STARTED)
-    else:
-        translator = Staff.objects.get(id=trans_list_E2C[0])
-        move(trans_list_E2C, translator.id, -1)
-        order.translator_E2C = translator
-        order.change_status(TRANSLATING_FEEDBACK)
-        order.change_trans_status(NOT_STARTED)
-        order.save()
-
-
-def assign_manually(order, translator):
-    is_C2E = True if order.status <= 3 else False
-    if is_C2E:
-        order.translator_C2E = translator
-        #move(trans_list_C2E, translator, -1)
-        order.change_status(TRANSLATING_ORIGIN)
-    else:
-        order.translator_E2C = translator
-        #move(trans_list_C2E, translator, -1)
-        order.change_status(TRANSLATING_FEEDBACK)
-        order.save()
+Staff = apps.get_model('helper','Staff')
 
 @login_required
 def validate_pwd(request):
@@ -134,7 +38,7 @@ def validate_pwd(request):
     assignments = translator.get_assignments()
     translator.delete()
     for each in assignments:
-        assign_auto(each)
+        util.assign_auto(each)
     if check_password(password,supervisor.user.password):
         data['validate']=True
 
@@ -182,7 +86,7 @@ def update_result(request):
         }
 
     }
-    raw = get_assignments_status(status)
+    raw = supervisor.get_assignments_status(status)
 
     if sort!=None:
         if sort == 'Deadline':
@@ -230,8 +134,8 @@ def update_result(request):
         data['result']['Disease'].append((each.disease.id, each.disease.name))
         data['result']['Translator_C2E'].append(each.get_translator_C2E())
         data['result']['Translator_E2C'].append(each.get_translator_E2C())
-        data['result']['Status'].append((each.get_status(),status_dict[int(each.get_status())]))
-        data['result']['Trans_Status'].append((each.get_trans_status(),trans_status_dict[int(each.get_trans_status())]))
+        data['result']['Status'].append((each.get_status(),util.status_dict[int(each.get_status())]))
+        data['result']['Trans_Status'].append((each.get_trans_status(),util.trans_status_dict[int(each.get_trans_status())]))
         data['result']['Deadline'].append(each.get_submit_deadline())
         data['result']['Trans_Deadline'].append(each.get_deadline())
         data['result']['Upload'].append(each.get_upload())
@@ -243,8 +147,8 @@ def update_result(request):
     data['choices']['hospital_choice'] = list(map(lambda x:(int(x),Hospital.objects.get(id=x).name),Order.objects.values_list('hospital_id',flat=True).distinct()))
     data['choices']['translator_E2C_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.exclude(translator_E2C__isnull=True).values_list('translator_E2C_id',flat=True).distinct().exclude(translator_E2C__isnull=True)))
     data['choices']['translator_C2E_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.exclude(translator_C2E__isnull=True).values_list('translator_C2E_id',flat=True).distinct().exclude(translator_C2E__isnull=True)))
-    data['choices']['status_choice'] = STATUS_CHOICE
-    data['choices']['trans_status_choice'] = TRANS_STATUS_CHOICE
+    data['choices']['status_choice'] = util.STATUS_CHOICE
+    data['choices']['trans_status_choice'] = util.TRANS_STATUS_CHOICE
     return JsonResponse(data)
 
 
@@ -306,7 +210,7 @@ def assign(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     supervisor = Staff.objects.get(user_id=id)
     customer = Customer.objects.get(id=assignment.customer_id)
-    status = status_dict[int(assignment.status)]
+    status = util.status_dict[int(assignment.status)]
     if request.method == 'POST':
         if assignment.get_status() <= 3:
             form = C2E_AssignForm(request.POST)
@@ -320,7 +224,7 @@ def assign(request, id, order_id):
             })
         else:
             translator_id = form.cleaned_data.get('assignee')
-            assign_manually(assignment, Staff.objects.get(user_id=translator_id))
+            util.assign_manually(assignment, Staff.objects.get(user_id=translator_id))
             return render(request, 'detail.html', {
                 'assignment': assignment,
                 'supervisor': supervisor,
@@ -359,7 +263,7 @@ def approve(request, id, order_id):
     trans_C2E = assignment.translator_C2E
     trans_E2C = assignment.translator_E2C
     customer = Customer.objects.get(id=assignment.customer_id)
-    status = status_dict[int(assignment.status)]
+    status = util.status_dict[int(assignment.status)]
     if request.method == 'POST':
         form = ApproveForm(request.POST)
         if not form.is_valid():
@@ -376,20 +280,20 @@ def approve(request, id, order_id):
             if approval:
                 if assignment.get_status() == 3:
 
-                    assignment.change_status(RECEIVED)
+                    assignment.change_status(util.RECEIVED)
 
                     for document in assignment.pending.all():
                         assignment.origin.add(document)
                         assignment.save()
 
                 if assignment.get_status() == 6:
-                    assignment.change_status(FEEDBACK)
+                    assignment.change_status(util.FEEDBACK)
 
                     for document in assignment.pending.all():
                         assignment.feedback.add(document)
                         assignment.save()
 
-                assignment.change_trans_status(FINISHED)
+                assignment.change_trans_status(util.FINISHED)
                 assignment.pending.clear()
                 assignment.save()
             if not approval:
@@ -398,7 +302,7 @@ def approve(request, id, order_id):
                         assignment.origin.add(document)
                     if document.is_feedback:
                         assignment.feedback.add(document)
-                assignment.change_trans_status(ONGOING)
+                assignment.change_trans_status(util.ONGOING)
                 assignment.save()
             return render(request, 'detail.html', {
                 'assignment': assignment,
@@ -437,7 +341,7 @@ def manage_files(request, id, order_id):
         document.save()
         assignment.feedback.add(document)
         if not assignment.auto_assigned:
-            assign_auto(assignment)
+            util.assign_auto(assignment)
         assignment.save()
         return render(request, 'manage_files.html', {
             'supervisor': supervisor,
