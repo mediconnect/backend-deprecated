@@ -7,6 +7,7 @@ from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
 import helper.models
+import info.utility as util
 
 
 class Migration(migrations.Migration):
@@ -41,7 +42,7 @@ class Migration(migrations.Migration):
                 ('is_feedback', models.BooleanField(default=False)),
                 ('upload_at', models.DateTimeField(auto_now_add=True)),
                 ('comment', models.CharField(blank=True, max_length=255)),
-                ('document', models.FileField(null=True, upload_to=helper.models.order_directory_path)),
+                ('document', models.FileField(null=True, upload_to=util.order_directory_path)),
             ],
             options={
                 'db_table': 'document',
@@ -52,7 +53,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=50)),
-                ('image', models.ImageField(null=True, upload_to=helper.models.hospital_directory_path)),
+                ('image', models.ImageField(null=True, upload_to=util.hospital_directory_path)),
                 ('email', models.EmailField(blank=True, max_length=254)),
                 ('area', models.CharField(blank=True, max_length=50)),
                 ('default_slots', models.IntegerField(default=20)),

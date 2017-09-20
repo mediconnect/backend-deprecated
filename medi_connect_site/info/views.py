@@ -3,13 +3,12 @@
 
 from django.shortcuts import render, redirect
 from customer.models import Customer
-from helper.models import Order, Patient, Document, LikeHospital, Hospital, Disease, HospitalReview
+from helper.models import Order, Patient, Document, LikeHospital, Hospital, Disease, HospitalReview,auto_assign
 from django.contrib.auth.decorators import login_required
 from forms import ProfileForm, PasswordResetForm, PatientAddForm, DocAddForm
 from django.contrib.auth.hashers import check_password, make_password
 from django.utils.http import urlquote
 from django.template.defaultfilters import register
-from utility import auto_assign
 
 
 # Create your views here.

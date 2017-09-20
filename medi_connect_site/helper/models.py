@@ -5,14 +5,34 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 import datetime
 from customer.models import Customer
-
+from info import utility as util
+from django.utils import timezone
 
 # Function to move the position of a translator in sequence
-def move(trans_list, translator_id, new_position):
-    old_position = trans_list.index(translator_id)
-    trans_list.insert(new_position, trans_list.pop(old_position))
-    return trans_list
+def auto_assign(order):
+    if order.get_status() <= util.TRANSLATING_ORIGIN:
+        assignee = Staff.objects.filter(role=1).order_by('sequence')[0]
+        order.set_translator_C2E(assignee)
+        assignee.set_sequence(timezone.now())
+        print assignee
 
+    if order.get_status() >= util.RETURN and order.get_status <= util.FEEDBACK:
+        assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
+        order.set_translator_E2C(assignee)
+        assignee.set_sequence(timezone.now())
+        print assignee
+
+
+def manual_assign(order, assignee):
+    if order.get_status() <= util.TRANSLATING_ORIGIN:
+        order.set_translator_C2E(assignee)
+        order.save()
+        assignee.set_sequence(timezone.now())
+
+    if order.get_status() >= util.RETURN and order.get_status <= util.FEEDBACK:
+        order.set_translator_E2C(assignee)
+        order.save()
+        assignee.set_sequence(timezone.now())
 
 class Disease(models.Model):
     name = models.CharField(default='unknown', max_length=50)
@@ -24,14 +44,9 @@ class Disease(models.Model):
     def get_name(self):
         return self.name
 
-
-def hospital_directory_path(instance, filename):
-    return 'hospital_{0}/{1}'.format(instance.hospital.get_id(), filename)
-
-
 class Hospital(models.Model):
     name = models.CharField(max_length=50)
-    image = models.ImageField(upload_to=hospital_directory_path, null=True)
+    image = models.ImageField(upload_to=util.hospital_directory_path, null=True)
     email = models.EmailField(blank=True)
     area = models.CharField(blank=True, max_length=50)
     default_slots = models.IntegerField(default=20)
@@ -46,7 +61,7 @@ class Hospital(models.Model):
     feedback_time = models.CharField(default='one week', max_length=50)
     price_range = models.CharField(default='unknown', max_length=50)
     average_score = models.FloatField(null=True)
-    review_number = models.IntegerField(default=0)
+    review_number = models.IntegerField(blank = True)
 
     class Meta:
         db_table = 'hospital'
@@ -122,82 +137,14 @@ class Rank(models.Model):
         db_table = 'rank'
 
 
-# Status
-STARTED = 0  # 下单中
-PAID = 1  # paid 已付款
-RECEIVED = 2  # order received 已接单
-TRANSLATING_ORIGIN = 3  # translator starts translating origin documents 翻译原件中
-SUBMITTED = 4  # origin documents translated, approved and submitted to hospitals 已提交
-# ============ Above is C2E status =============#
-# ============Below is E2C status ==============#
-RETURN = 5  # hospital returns feedback
-TRANSLATING_FEEDBACK = 6  # translator starts translating feedback documents 翻译反馈中
-FEEDBACK = 7  # feedback documents translated, approved, and feedback to customer 已反馈
-DONE = 8  # customer confirm all process done 完成
-
-STATUS_CHOICES = (
-    (STARTED, 'started'),
-    (SUBMITTED, 'submitted'),
-    (TRANSLATING_ORIGIN, 'translating_origin'),
-    (RECEIVED, 'received'),
-    (RETURN, 'return'),
-    (TRANSLATING_FEEDBACK, 'translating_feedback'),
-    (FEEDBACK, 'feedback'),
-    (PAID, 'PAID'),
-)
-
-status_dict = ['客户未提交', '客户已提交', '已付款', '原件翻译中', '已提交至医院', '反馈已收到', '反馈翻译中',
-               '反馈已上传', '订单完成']
-# Trans_status
-
-NOT_STARTED = 0  # assignment not started yet 未开始
-ONGOING = 1  # assignment started not submitted to supervisor 翻译中
-APPROVING = 2  # assignment submitted to supervisor for approval 审核中
-APPROVED = 4  # assignment approved, to status 5 已审核
-DISAPPROVED = 3  # assignment disapproved, return to status 1 未批准
-FINISHED = 5  # assignment approved and finished for the first half 完成
-ALL_FINISHED = 6  # All done
-TRANS_STATUS_CHOICE = (
-    (NOT_STARTED, 'not_started'),
-    (ONGOING, 'ongoing'),
-    (APPROVING, 'approving'),
-    (APPROVED, 'approved'),
-    (DISAPPROVED, 'disapproved'),
-    (FINISHED, 'finished'),
-    (ALL_FINISHED, 'all_finished')
-)
-
-trans_status_dict = ['任务未开始', '翻译中', '提交审核中', '审核驳回', '审核通过', '翻译完成', '订单完成']
-
-EIGHT = datetime.timedelta(hours=8)
-
-
-class UTC_8(datetime.tzinfo):
-    def utcoffset(self, dt):
-        return EIGHT
-
-    def tzname(self, dt):
-        return "UTC-8"
-
-    def dst(self, dt):
-        return EIGHT
-
-
-utc_8 = UTC_8()
-
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
-    # keep the website working, change this after change all patient related information
     patient_order = models.ForeignKey('OrderPatient', on_delete=models.CASCADE, null=True)
-    # translator Chinese to English
     translator_C2E = models.ForeignKey('Staff', on_delete=models.CASCADE, null=True,
                                        related_name='chinese_translator')
-    # translator English to Chinese
     translator_E2C = models.ForeignKey('Staff', on_delete=models.CASCADE, null=True,
                                        related_name='english_translator')
-    # supervisor = models.ForeignKey(Supervisor, on_delete = models.CASCADE, null = True)
-    # only one supervisor for now, no need to keep this info
     hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, null=True)
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
     week_number_at_submit = models.IntegerField(default=0)
@@ -211,8 +158,8 @@ class Order(models.Model):
     latest_upload = models.DateTimeField(null=True)
     pending = models.ManyToManyField('Document', related_name='pending_file')
     receive = models.DateField(default=datetime.date.today)
-    status = models.CharField(blank=True, max_length=20, choices=STATUS_CHOICES)
-    trans_status = models.CharField(default=0, max_length=20, choices=TRANS_STATUS_CHOICE)
+    status = models.CharField(blank=True, max_length=20, choices=util.STATUS_CHOICES)
+    trans_status = models.CharField(default=0, max_length=20, choices=util.TRANS_STATUS_CHOICE)
     auto_assigned = models.BooleanField(default=False)
     deposit_paid = models.BooleanField(default = False) #allow translation after this
     full_payment_paid = models.BooleanField(default = False)
@@ -230,11 +177,19 @@ class Order(models.Model):
         else:
             return (self.translator_C2E.id, self.translator_C2E.get_name())
 
+    def set_translator_C2E(self,assignee):
+        self.translator_C2E = assignee
+        self.save()
+
     def get_translator_E2C(self):
         if self.translator_E2C is None:
             return (-1, '未分配')
         else:
             return (self.translator_E2C.id, self.translator_E2C.get_name())
+
+    def set_translator_E2C(self, assignee):
+        self.translator_E2C = assignee
+        self.save()
 
     def get_patient(self):
         if self.patient_order is None or self.patient is None:
@@ -249,7 +204,7 @@ class Order(models.Model):
         return self.get_submit() + datetime.timedelta(days=2);
 
     def get_deadline(self):  # default deadline 2 days after submit time remaining
-        total_sec = (self.get_submit() + datetime.timedelta(days=2) - datetime.datetime.now(utc_8)).total_seconds()
+        total_sec = (self.get_submit() + datetime.timedelta(days=2) - datetime.datetime.now(util.utc_8)).total_seconds()
         days = int(total_sec / (3600 * 24))
         hours = int((total_sec - 3600 * 24 * days) / 3600)
         deadline = str(days) + '  天,  ' + str(hours) + '  小时'
@@ -261,7 +216,7 @@ class Order(models.Model):
         total_sec = (
             self.get_submit() + datetime.timedelta(
                 days=7 * (int(self.week_number_at_submit) + 1)) - datetime.datetime.now(
-                utc_8)).total_seconds()
+                util.utc_8)).total_seconds()
         days = int(total_sec / (3600 * 24))
         hours = int((total_sec - 3600 * 24 * days) / 3600)
         submit_deadline = str(days) + '  days,  ' + str(hours) + '  hours'
@@ -287,11 +242,11 @@ class Order(models.Model):
         return int(self.trans_status)
 
     def get_trans_status_for_translator(self, translator):
-        if self.get_status() <= SUBMITTED:
+        if self.get_status() <= util.SUBMITTED:
             return self.get_trans_status()
         else:
             if translator.get_role() == 1:
-                return FINISHED
+                return util.FINISHED
             else:
                 return self.get_trans_status()
 
@@ -329,15 +284,11 @@ class Document(models.Model):
 class Staff(models.Model):
     user = models.OneToOneField(User)
     role = models.IntegerField(default=0)
-    sequence = models.IntegerField(default=0)
+    sequence = models.DateTimeField(default = timezone.now)
 
     class Meta:
         db_table = 'auth_staff'
         get_latest_by = 'sequence'
-
-    def save(self, *args, **kwargs):
-        self.sequence = self.id
-        super(Staff, self).save(*args, **kwargs)
 
     def get_role(self):
         return int(self.role)
@@ -347,15 +298,6 @@ class Staff(models.Model):
         if name is not ' ':
             return name
         return self.user.username
-
-    def move_to_tail(self):
-        current_sequence = self.sequence
-        new_sequence = Staff.objects.lateset().sequence
-        for each in Staff.objects.filter('sequence'>current_sequence):
-            each.sequence-=1
-            each.save()
-        self.sequence=new_sequence
-        self.save()
 
     def get_assignments(self):  # return order of all assignments
         assignments = []
@@ -391,25 +333,9 @@ class Staff(models.Model):
             return 0
         return len(self.get_assignments())
 
-# Gender
-MALE = 'M'
-FEMALE = 'F'
-
-GENDER_CHOICES = (
-    (MALE, 'Male'),
-    (FEMALE, 'Female'),
-    ('OTHER', 'Other')
-)
-# Relation
-SELF = 'SELF'
-RELATIVE = 'RELATIVE'
-CLIENT = 'CLIENT'
-RELATION_CHOICES = (
-    (SELF, 'SELF'),
-    (RELATIVE, 'RELATIVE'),
-    (CLIENT, 'CLIENT')
-)
-
+    def set_sequence(self,timestamp):
+        self.sequence = timestamp
+        self.save()
 
 class Patient(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
@@ -417,11 +343,11 @@ class Patient(models.Model):
     last_name = models.CharField(max_length=50, default='')
     pin_yin = models.CharField(max_length=50, default='')
     birth = models.DateField(default=datetime.date.today)
-    gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)  # birthdate
+    gender = models.CharField(max_length=5, choices=util.GENDER_CHOICES, default=util.MALE)  # birthdate
     category = models.CharField(max_length=50, default='COLD')
     diagnose_hospital = models.CharField(max_length=50, default='')
     doctor = models.CharField(max_length=50, default='')
-    relationship = models.CharField(max_length=50, choices=RELATION_CHOICES, default=SELF)
+    relationship = models.CharField(max_length=50, choices=util.RELATION_CHOICES, default=util.SELF)
     passport = models.CharField(max_length=50, default='')
     contact = models.CharField(max_length=50, default='')
 
@@ -445,11 +371,11 @@ class OrderPatient(models.Model):
     last_name = models.CharField(max_length=50, default='')
     pin_yin = models.CharField(max_length=50, default='')
     birth = models.DateField(datetime.date.today)
-    gender = models.CharField(max_length=5, choices=GENDER_CHOICES, default=MALE)
+    gender = models.CharField(max_length=5, choices=util.GENDER_CHOICES, default=util.MALE)
     category = models.CharField(max_length=50, default='COLD')
     diagnose_hospital = models.CharField(max_length=50, default='')
     doctor = models.CharField(max_length=50, default='')
-    relationship = models.CharField(max_length=50, choices=RELATION_CHOICES, default=SELF)
+    relationship = models.CharField(max_length=50, choices=util.RELATION_CHOICES, default=util.SELF)
     passport = models.CharField(max_length=50, default='')
     contact = models.CharField(max_length=50, default='')
 

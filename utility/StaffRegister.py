@@ -14,10 +14,7 @@ while(not finished):
         if role in role_accept:
             break
         print('Not valid, try again')
-    while not email_checked:
-        email = raw_input('Please enter an email:')
-        check_email(email)
-        print('Enter a valid email')
+    email = raw_input('Please enter an email:')
     pwd = raw_input('Please enter a password:')
     user = User.objects.create_user(username=email,email=email,password=pwd)
     if role == 1:

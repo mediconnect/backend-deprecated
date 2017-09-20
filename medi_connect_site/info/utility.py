@@ -1,34 +1,6 @@
 # -*- coding: utf-8 -*-
+#======This file can only contain non-order dependant functions======#
 import datetime
-from helper.models import Staff
-from helper.models import Order
-
-
-# Function to move the position of a translator in sequence
-def auto_assign(order):
-    if order.get_status() <= TRANSLATING_ORIGIN:
-        assignee = Staff.objects.filter(role=1).order_by('sequence')
-        order.set_translator_C2E(assignee)
-        order.save()
-        assignee.move_to_tail()
-
-    if order.get_status() >= RETURN and order.get_status <= FEEDBACK:
-        assignee = Staff.objects.filter(role=2).order_by('sequence')
-        order.set_translator_E2C(assignee)
-        order.save()
-        assignee.move_to_tail()
-
-
-def manual_assign(order, assignee):
-    if order.get_status() <= TRANSLATING_ORIGIN:
-        order.set_translator_C2E(assignee)
-        order.save()
-        assignee.move_to_tail()
-
-    if order.get_status() >= RETURN and order.get_status <= FEEDBACK:
-        order.set_translator_E2C(assignee)
-        order.save()
-        assignee.move_to_tail()
 
 
 def hospital_directory_path(instance, filename):
@@ -136,4 +108,3 @@ class UTC_8(datetime.tzinfo):
 
 utc_8 = UTC_8()
 
-order_list = Order.objects.all()

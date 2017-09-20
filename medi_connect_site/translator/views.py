@@ -4,7 +4,6 @@ from django.shortcuts import render,redirect
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.files.storage import FileSystemStorage
-from helper.models import UTC_8
 from info import utility as util
 from forms import StaffLoginForm
 from django.contrib.auth import authenticate, login
@@ -19,7 +18,7 @@ import datetime
 Order = apps.get_model('helper','Order')
 Document = apps.get_model('helper','Document')
 Staff = apps.get_model('helper','Staff')
-utc_8 = UTC_8()
+utc_8 = util.UTC_8()
 # Create your views here.
 
 def translator_auth(request):
