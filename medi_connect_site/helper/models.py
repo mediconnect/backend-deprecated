@@ -10,11 +10,12 @@ from django.utils import timezone
 
 # Function to move the position of a translator in sequence
 def auto_assign(order):
+    print 'this is called'
     if order.get_status() <= util.TRANSLATING_ORIGIN:
         assignee = Staff.objects.filter(role=1).order_by('sequence')[0]
         order.set_translator_C2E(assignee)
         assignee.set_sequence(timezone.now())
-        print assignee
+        print assignee.id
 
     if order.get_status() >= util.RETURN and order.get_status <= util.FEEDBACK:
         assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
@@ -324,7 +325,7 @@ class Staff(models.Model):
                         assignments.append(assignment)
         else:
             for assignment in self.get_assignments():
-                if assignment.get_trans_status_for_translator(self) == int(self):
+                if assignment.get_trans_status_for_translator(self) == int(status):
                     assignments.append(assignment)
         return assignments
 

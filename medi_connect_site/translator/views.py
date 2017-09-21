@@ -71,7 +71,6 @@ def update_result(request):
 
     }
     raw=translator.get_assignments_status(status)
-
     json_acceptable_string = query.replace("'", "\"")
     d = json.loads(json_acceptable_string)
     if query != None and d != {}:

@@ -185,7 +185,6 @@ def process_order(request, order_id):
 def order_detail(request, order_id):
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
-    print order.status
     return render(request, 'info_order_detail.html', {
         'customer': customer,
         'order': order,

@@ -147,7 +147,7 @@ def update_result(request):
     data['choices']['hospital_choice'] = list(map(lambda x:(int(x),Hospital.objects.get(id=x).get_name()),Order.objects.values_list('hospital_id',flat=True).distinct()))
     data['choices']['translator_E2C_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.exclude(translator_E2C__isnull=True).values_list('translator_E2C_id',flat=True).distinct().exclude(translator_E2C__isnull=True)))
     data['choices']['translator_C2E_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.exclude(translator_C2E__isnull=True).values_list('translator_C2E_id',flat=True).distinct().exclude(translator_C2E__isnull=True)))
-    data['choices']['status_choice'] = util.STATUS_CHOICE
+    data['choices']['status_choice'] = util.STATUS_CHOICES
     data['choices']['trans_status_choice'] = util.TRANS_STATUS_CHOICE
     return JsonResponse(data)
 

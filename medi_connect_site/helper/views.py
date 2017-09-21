@@ -13,7 +13,7 @@ from django.core.files.storage import FileSystemStorage
 # TRANSLATING_ORIGIN = 2 translator starts translating origin documents
 # RECEIVED = 3  # origin documents translated, approved and submitted to hospitals
 # # ============ Above is C2E status =============#
-# # ============Below is E2C status ==============#
+
 # RETURN = 4 hospital returns feedback
 # TRANSLATING_FEEDBACK = 5 translator starts translating feedback documents
 # FEEDBACK = 6 feedback documents translated, approved, and feedback to customer
