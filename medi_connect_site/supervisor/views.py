@@ -24,6 +24,7 @@ Disease = apps.get_model('helper','Disease')
 Patient = apps.get_model('helper','Patient')
 Patient_Order = apps.get_model('helper','OrderPatient')
 Staff = apps.get_model('helper','Staff')
+Rank = apps.get_model('helper','Rank')
 
 @login_required
 def validate_pwd(request):
@@ -155,8 +156,16 @@ def update_result(request):
 @login_required
 def supervisor(request, id):
     supervisor = Staff.objects.get(user_id=id)
+    order_count = len(Order.objects.all())
+    customer_count = len(Customer.objects.all())
+    trans_C2E_count = len(Staff.objects.filter(role=1))
+    trans_E2C_count = len(Staff.objects.filter(role = 2))
     return render(request, 'supervisor_home.html', {
         'supervisor': supervisor,
+        'order_count':order_count,
+        'customer_count':customer_count,
+        'trans_c2e_count':trans_C2E_count,
+        'trans_e2c_count':trans_E2C_count
     })
 
 def order_status(request, id,status):
@@ -378,38 +387,38 @@ def translator_list(request, id):
     })
 
 @login_required
-@csrf_exempt
 def hospital_list(request, id):
     supervisor = Staff.objects.get(user_id=id)
     hospitals = Hospital.objects.all()
-    if (request.POST.get('reset')):
-        #print request.POST.get('week_number')
-        hospital = Hospital.objects.get(id=request.POST.get('hospital'))
-        hospital.reset_slot()
-        return render(request, 'hospital_list.html', {
-            'hospitals': hospitals,
-            'supervisor': supervisor,
-        })
-    if (request.POST.get('add')):
-        week = int(request.POST.get('week_number'))
-        hospital = Hospital.objects.get(id=request.POST.get('hospital'))
-        hospital.add_slot(week)
-        hospital.save()
-        return render(request, 'hospital_list.html', {
-            'hospitals': hospitals,
-            'supervisor': supervisor,
-        })
-    if (request.POST.get('subtract')):
-        week = int(request.POST.get('week_number'))
-        hospital = Hospital.objects.get(id=request.POST.get('hospital'))
-        hospital.subtract_slot(week)
-        hospital.save()
-        return render(request, 'hospital_list.html', {
-            'hospitals': hospitals,
-            'supervisor': supervisor,
-        })
-
     return render(request, 'hospital_list.html', {
         'hospitals': hospitals,
         'supervisor': supervisor,
+    })
+@login_required
+def set_slots(request):
+    hospital = request.GET.get('hospital',None)
+    disease = request.GET.get('disease',None)
+    slots_dict = request.GET.get('slots_dict',None)
+    print slots_dict
+    rank = Rank.objects.get(hospital = hospital,disease = disease)
+    rank.set_slots(slots_dict)
+    data={
+        'default':rank.default_slots,
+        'week_0':rank.slots_open_0,
+        'week_1': rank.slots_open_1,
+        'week_2': rank.slots_open_2,
+        'week_3': rank.slots_open_3,
+
+    }
+    return JsonResponse(data)
+
+@login_required
+def rank_manage(request,id):
+    supervisor = Staff.objects.get(user = request.user)
+    hospital = Hospital.objects.get(id = id)
+    disease_detail = Rank.objects.filter(hospital = hospital)
+    return render(request,'rank_manage.html',{
+        'supervisor':supervisor,
+        'hospital':hospital,
+        'disease_detail' : disease_detail
     })

@@ -18,5 +18,7 @@ urlpatterns = [
     url(r'^customer_list/(?P<id>\d+)/$',supervisor_views.customer_list,name = 'customer_list'),
     url(r'^translator_list/(?P<id>\d+)/$',supervisor_views.translator_list,name = 'translator_list'),
     url(r'^hospital_list/(?P<id>\d+)/$',supervisor_views.hospital_list,name = 'hospital_list'),
+    url(r'^hospital_detail/(?P<id>\w+)/$',supervisor_views.rank_manage,name ='hospital_detail'),
+    url(r'^ajax/set_slots/$', supervisor_views.set_slots, name='set_slots'),
 ]
 

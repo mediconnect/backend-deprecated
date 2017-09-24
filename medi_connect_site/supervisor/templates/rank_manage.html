@@ -1,0 +1,98 @@
+{% extends 'supervisor_base.html' %}
+
+{% block content %}
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+</style>
+<p>{{hospital.get_name}}</p>
+<table>
+    <tr>
+        <th>疾病</th>
+        <th>默认</th>
+        <th>第一周</th>
+        <th>第二周</th>
+        <th>第三周</th>
+        <th>第四周</th>
+        <th>修改</th>
+    </tr>
+    {% for obj in disease_detail %}
+    <tr>
+        <td>{{obj.disease.get_name}}</td>
+        <td class = "{{obj.disease.id}}">{{obj.default_slots}}</td>
+        <td class = "{{obj.disease.id}}">{{obj.slots_open_0}}</td>
+        <td class = "{{obj.disease.id}}">{{obj.slots_open_1}}</td>
+        <td class = "{{obj.disease.id}}">{{obj.slots_open_2}}</td>
+        <td class = "{{obj.disease.id}}">{{obj.slots_open_3}}</td>
+        <td><button class = 'btn' onclick = 'prompt("{{hospital.id}}","{{obj.disease.id}}")'>修改</button></td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+
+<script>
+    function prompt(hospital_id,disease_id){
+        var form = document.getElementById('setSlotForm');
+        console.log(form);
+        if(form != null){
+            document.body.removeChild(form);
+        }
+        form = document.createElement('form');
+        form.setAttribute('id','setSlotForm');
+        form.setAttribute('method','post');
+        console.log(form);
+
+        var box = document.createElement('table');
+        form.appendChild(box);
+
+        box.setAttribute('id','setSlotTable');
+        document.body.appendChild(box);
+
+        var row = document.createElement('tr');
+        row.setAttribute('id','setSlotRow');
+        document.getElementById('setSlotTable').appendChild(row);
+
+        var duplicate = document.getElementsByClassName(disease_id.toString());
+        for(i = 0; i< duplicate.length;i++){
+            var cell = document.createElement('td');
+            var input = document.createElement('input');
+
+            input.setAttribute('type','text');
+            input.setAttribute('class',disease_id*10+i);
+            console.log(input);
+            cell.appendChild(input);
+            input.setAttribute('value',duplicate[i].innerHTML)
+
+            document.getElementById('setSlotRow').appendChild(cell);
+        }
+        var button = document.createElement('button');
+        button.setAttribute('onclick',setSlots(hospital_id,disease_id));
+        button.setAttribute('class','btn');
+        var text = document.createTextNode('提交');
+        button.appendChild(text);
+        document.getElementById('setSlotRow').appendChild(button);
+
+    }
+    function setSlots(hospital_id,disease_id){
+        var slots_dict = {};
+        for(i = 0;i<5;i++){
+            week = document.getElementsByClassName(disease_id*10+i);
+            console.log(week);
+            //slots_dict[i]= week.getAttribute('value');
+        }
+
+        console.log(slots_dict);
+         $.getJSON("{% url 'set_slots'%}",{'hospital':hospital_id,'disease':disease_id,'slots_dict':JSON.stringify(slots_dict)},function(data){
+               console.log(data);
+        });
+    }
+</script>
+
+{% endblock %}

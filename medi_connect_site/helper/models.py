@@ -15,13 +15,13 @@ def auto_assign(order):
         assignee = Staff.objects.filter(role=1).order_by('sequence')[0]
         order.set_translator_C2E(assignee)
         assignee.set_sequence(timezone.now())
-        print assignee.id
+
 
     if order.get_status() >= util.RETURN and order.get_status <= util.FEEDBACK:
         assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
         order.set_translator_E2C(assignee)
         assignee.set_sequence(timezone.now())
-        print assignee
+
 
 
 def manual_assign(order, assignee):
@@ -50,17 +50,12 @@ class Hospital(models.Model):
     image = models.ImageField(upload_to=util.hospital_directory_path, null=True)
     email = models.EmailField(blank=True)
     area = models.CharField(blank=True, max_length=50)
-    default_slots = models.IntegerField(default=20)
-    slots_open_0 = models.IntegerField(default=20)
-    slots_open_1 = models.IntegerField(default=20)
-    slots_open_2 = models.IntegerField(default=20)
-    slots_open_3 = models.IntegerField(default=20)
     overall_rank = models.IntegerField(default=0)
     website = models.URLField(blank=True)
     introduction = models.TextField(default='intro')
     specialty = models.TextField(default='specialty')
-    feedback_time = models.CharField(default='one week', max_length=50)
-    price_range = models.CharField(default='unknown', max_length=50)
+    feedback_time = models.IntegerField(default=1)
+    price_range = models.CharField(default='unknown', max_length=50)#delete this after change all occurance
     average_score = models.FloatField(null=True)
     review_number = models.IntegerField(blank = True)
 
@@ -72,52 +67,6 @@ class Hospital(models.Model):
 
     def get_name(self):
         return self.name
-
-    def reset_slot(self):
-        self.slots_open_0 = self.slots_open_1
-        self.slots_open_1 = self.slots_open_2
-        self.slots_open_2 = self.slots_open_3
-        self.slots_open_3 = self.default_slots
-        self.save()
-
-    def add_slot(self, week):
-        if week == 'all':
-            self.slots_open_0 += 1
-            self.slots_open_1 += 1
-            self.slots_open_2 += 1
-            self.slots_open_3 += 1
-        if week == 0:
-            self.slots_open_0 += 1
-        if week == 1:
-            self.slots_open_1 += 1
-        if week == 2:
-            self.slots_open_2 += 1
-        if week == 3:
-            self.slots_open_3 += 1
-        self.save()
-
-    def subtract_slot(self, week):
-        if week == 'all':
-            self.slots_open_0 -= 1
-            self.slots_open_1 -= 1
-            self.slots_open_2 -= 1
-            self.slots_open_3 -= 1
-        if week == 0:
-            self.slots_open_0 -= 1
-        if week == 1:
-            self.slots_open_1 -= 1
-        if week == 2:
-            self.slots_open_2 -= 1
-        if week == 3:
-            self.slots_open_3 -= 1
-        self.save()
-
-    def set_default_slots(self, slot):
-        self.default_slots = slot
-        self.slots_open_0 = self.default_slots
-        self.slots_open_1 = self.default_slots
-        self.slots_open_2 = self.default_slots
-        self.slots_open_3 = self.default_slots
 
     def update_score(self, score):
         if self.review_number == 0:
@@ -133,9 +82,41 @@ class Rank(models.Model):
     rank = models.IntegerField(default=0)
     hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_rank')
     disease = models.ForeignKey(Disease, unique=False, default=None, related_name='disease_rank')
+    deposite = models.IntegerField(default = 10000)
+    full_price = models.IntegerField(default = 100000)
+    default_slots = models.IntegerField(default=20)
+    slots_open_0 = models.IntegerField(default=20)
+    slots_open_1 = models.IntegerField(default=20)
+    slots_open_2 = models.IntegerField(default=20)
+    slots_open_3 = models.IntegerField(default=20)
 
     class Meta:
         db_table = 'rank'
+
+    def reset_slot(self,week,number):
+        if week == 0:
+            self.slots_open_0 = number
+        if week == 1:
+            self.slots_open_1 = number
+        if week == 2:
+            self.slots_open_2 = number
+        if week == 3:
+            self.slots_open_3 = number
+
+    def set_default_slots(self, slot):
+        self.default_slots = slot
+        self.slots_open_0 = self.default_slots
+        self.slots_open_1 = self.default_slots
+        self.slots_open_2 = self.default_slots
+        self.slots_open_3 = self.default_slots
+        self.save()
+
+    def set_slots(self,slots_dict):
+        self.default_slots = slots_dict[0]
+        self.slots_open_0 = slots_dict[1]
+        self.slots_open_1 = slots_dict[2]
+        self.slots_open_2 = slots_dict[3]
+        self.slots_open_3 = slots_dict[4]
 
 
 class Order(models.Model):
@@ -150,7 +131,7 @@ class Order(models.Model):
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
     week_number_at_submit = models.IntegerField(default=0)
     # use week_number_at_submit to hold the week number and calculate the submit deadline
-    submit = models.DateTimeField(auto_now_add=True)  # datetime of receiving the order
+    submit = models.DateTimeField(default = timezone.now)  # datetime of receiving the order
     # all origin document uploaded by customer
     origin = models.ManyToManyField('Document', related_name='original_file')
     # all feedback document TRANSLATED and APPROVED
@@ -162,6 +143,7 @@ class Order(models.Model):
     status = models.CharField(blank=True, max_length=20, choices=util.STATUS_CHOICES)
     trans_status = models.CharField(default=0, max_length=20, choices=util.TRANS_STATUS_CHOICE)
     auto_assigned = models.BooleanField(default=False)
+    document_complete = models.BooleanField(default = False)
     deposit_paid = models.BooleanField(default = False) #allow translation after this
     full_payment_paid = models.BooleanField(default = False)
 
@@ -199,13 +181,15 @@ class Order(models.Model):
             return (self.patient_order.id, self.patient_order.get_name())
 
     def get_submit(self):
+        if not self.document_complete:
+            return '材料欠缺，无法完成订单'
         return self.submit + datetime.timedelta(hours=8)
 
     def get_remaining(self):  # deadline
-        return self.get_submit() + datetime.timedelta(days=2);
+        return self.submit+ datetime.timedelta(days=2,hours=8);
 
     def get_deadline(self):  # default deadline 2 days after submit time remaining
-        total_sec = (self.get_submit() + datetime.timedelta(days=2) - datetime.datetime.now(util.utc_8)).total_seconds()
+        total_sec = (self.submit + datetime.timedelta(days=2,hours=8) - datetime.datetime.now(util.utc_8)).total_seconds()
         days = int(total_sec / (3600 * 24))
         hours = int((total_sec - 3600 * 24 * days) / 3600)
         deadline = str(days) + '  天,  ' + str(hours) + '  小时'
@@ -214,6 +198,8 @@ class Order(models.Model):
         return deadline
 
     def get_submit_deadline(self):
+        if not self.document_complete:
+            return '材料缺失'
         total_sec = (
             self.get_submit() + datetime.timedelta(
                 days=7 * (int(self.week_number_at_submit) + 1)) - datetime.datetime.now(
@@ -226,7 +212,11 @@ class Order(models.Model):
         return submit_deadline
 
     def get_estimate(self):
-        return self.get_submit()+datetime.timedelta(weeks=self.week_number_at_submit    )
+        if not self.document_complete:
+            date = (self.submit+datetime.timedelta(weeks=self.week_number_at_submit,days = self.hospital.feedback_time,hours = 8))
+        else:
+            date = (self.get_submit()+datetime.timedelta(weeks=self.week_number_at_submit,days = self.hospital.feedback_time,hours = 8))
+        return str(date.year)+'/'+str(date.month)+'/'+str(date.day)+'-'+str(date.year)+'/'+str(date.month)+'/'+str(date.day+3)
 
     def get_upload(self):
         if self.latest_upload is None:
@@ -269,7 +259,7 @@ class Document(models.Model):
     is_origin = models.BooleanField(default=True)
     is_translated = models.BooleanField(default=False)
     is_feedback = models.BooleanField(default=False)
-    upload_at = models.DateTimeField(auto_now_add=True)
+    upload_at = models.DateTimeField(default = timezone.now)
     comment = models.CharField(max_length=255, blank=True)
     document = models.FileField(upload_to=order_directory_path, null=True)
 
@@ -319,7 +309,7 @@ class Staff(models.Model):
             if status == 'All':
                 assignments = list(Order.objects.order_by('submit'))
             else:
-                for assignment in Order.objects.order_list.order_by('submit'):
+                for assignment in Order.objects.order_by('submit'):
 
                     if assignment.get_trans_status() == int(status):
                         assignments.append(assignment)

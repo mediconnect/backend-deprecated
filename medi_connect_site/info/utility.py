@@ -57,6 +57,7 @@ STATUS_CHOICES = (
 status_dict = ['客户未提交', '客户已提交', '已付款', '原件翻译中', '已提交至医院', '反馈已收到', '反馈翻译中',
                '反馈已上传', '订单完成']
 # Trans_status
+#Temporarily hold status
 
 C2E_NOT_STARTED = 0  # c2e translation not started yet 未开始
 C2E_ONGOING = 1  # c2e translation started not submitted to supervisor 翻译中
@@ -64,6 +65,14 @@ C2E_APPROVING = 2  # c2e translation submitted to supervisor for approval 审核
 C2E_APPROVED = 4  # c2e translation approved, to status 5 已审核
 C2E_DISAPPROVED = 3  # c2e translation disapproved, return to status 1 未批准
 C2E_FINISHED = 5  # c2e translation approved and finished for the first half 完成
+
+NOT_STARTED = C2E_NOT_STARTED
+ONGOING = C2E_ONGOING
+APPROVING = C2E_APPROVING
+APPROVED = C2E_APPROVED
+DIS_APPROVED = C2E_DISAPPROVED
+FINISHED = C2E_FINISHED
+
 E2C_NOT_STARTED = 6
 E2C_ONGOING = 7
 E2C_APPROVING = 8

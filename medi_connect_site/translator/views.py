@@ -113,8 +113,10 @@ def update_result(request):
 @login_required
 def translator(request, id):
     translator = Staff.objects.get(user_id = id)
+    order_count = len(translator.get_assignments())
     return render(request, 'trans_home.html',
                   {
+                      'order_count':order_count,
                       'translator': translator,
                   })
 
