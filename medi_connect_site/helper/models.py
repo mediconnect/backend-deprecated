@@ -93,18 +93,7 @@ class Rank(models.Model):
     class Meta:
         db_table = 'rank'
 
-    def reset_slot(self,week,number):
-        if week == 0:
-            self.slots_open_0 = number
-        if week == 1:
-            self.slots_open_1 = number
-        if week == 2:
-            self.slots_open_2 = number
-        if week == 3:
-            self.slots_open_3 = number
-
-    def set_default_slots(self, slot):
-        self.default_slots = slot
+    def set_default_slots(self):
         self.slots_open_0 = self.default_slots
         self.slots_open_1 = self.default_slots
         self.slots_open_2 = self.default_slots
@@ -112,11 +101,12 @@ class Rank(models.Model):
         self.save()
 
     def set_slots(self,slots_dict):
-        self.default_slots = slots_dict[0]
-        self.slots_open_0 = slots_dict[1]
-        self.slots_open_1 = slots_dict[2]
-        self.slots_open_2 = slots_dict[3]
-        self.slots_open_3 = slots_dict[4]
+        self.default_slots = int(slots_dict[0])
+        self.slots_open_0 = int(slots_dict[1])
+        self.slots_open_1 = int(slots_dict[2])
+        self.slots_open_2 = int(slots_dict[3])
+        self.slots_open_3 = int(slots_dict[4])
+        self.save()
 
 
 class Order(models.Model):

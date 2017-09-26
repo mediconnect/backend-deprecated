@@ -399,12 +399,17 @@ def set_slots(request):
     hospital = request.GET.get('hospital',None)
     disease = request.GET.get('disease',None)
     slots_dict = request.GET.get('slots_dict',None)
-    print slots_dict
     rank = Rank.objects.get(hospital = hospital,disease = disease)
-    rank.set_slots(slots_dict)
+    if slots_dict != None:
+        d = dict(map(lambda (k, v): (int(k), int(v)), json.loads(slots_dict.replace("'", "\"")).iteritems()))
+        rank.set_slots(d)
+    else:
+        rank.set_default_slots()
+
+
     data={
         'default':rank.default_slots,
-        'week_0':rank.slots_open_0,
+        'week_0': rank.slots_open_0,
         'week_1': rank.slots_open_1,
         'week_2': rank.slots_open_2,
         'week_3': rank.slots_open_3,
@@ -417,6 +422,7 @@ def rank_manage(request,id):
     supervisor = Staff.objects.get(user = request.user)
     hospital = Hospital.objects.get(id = id)
     disease_detail = Rank.objects.filter(hospital = hospital)
+
     return render(request,'rank_manage.html',{
         'supervisor':supervisor,
         'hospital':hospital,
