@@ -10,7 +10,6 @@ from django.utils import timezone
 
 # Function to move the position of a translator in sequence
 def auto_assign(order):
-    print 'this is called'
     if order.get_status() <= util.TRANSLATING_ORIGIN:
         assignee = Staff.objects.filter(role=1).order_by('sequence')[0]
         order.set_translator_C2E(assignee)
@@ -298,9 +297,10 @@ class Staff(models.Model):
         if self.get_role() == 0:
             if status == 'All':
                 assignments = list(Order.objects.order_by('submit'))
+            elif status == 'PENDING':
+                assignments=list(Order.objects.filter(status = util.SUBMITTED)|Order.objects.filter(status = util.RETURN))
             else:
                 for assignment in Order.objects.order_by('submit'):
-
                     if assignment.get_trans_status() == int(status):
                         assignments.append(assignment)
         else:
