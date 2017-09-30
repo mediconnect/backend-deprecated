@@ -307,6 +307,11 @@ class Staff(models.Model):
             for assignment in self.get_assignments():
                 if assignment.get_trans_status_for_translator(self) == int(status):
                     assignments.append(assignment)
+            if int(status) == 1:
+                for assignment in self.get_assignments():
+                    if assignment.get_trans_status_for_translator(self) == util.DISAPPROVED:
+                        assignments.append(assignment)
+
         return assignments
 
     def get_assignment_number(self):
