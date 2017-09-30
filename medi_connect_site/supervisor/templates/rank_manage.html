@@ -1,0 +1,156 @@
+{% extends 'supervisor_base.html' %}
+
+{% block content %}
+<head>
+
+
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+</head>
+<style>
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+</style>
+
+<p>{{hospital.get_name}}</p>
+<table>
+    <tr>
+        <th>疾病</th>
+        <th>默认</th>
+        <th>第一周</th>
+        <th>第二周</th>
+        <th>第三周</th>
+        <th>第四周</th>
+        <th>修改</th>
+    </tr>
+    {% for obj in disease_detail %}
+    <tr>
+        <td>{{obj.disease.get_name}}</td>
+        <td class = "{{obj.disease.id}}">{{obj.default_slots}}</td>
+        <td class = "{{obj.disease.id}}">{{obj.slots_open_0}}</td>
+        <td class = "{{obj.disease.id}}">{{obj.slots_open_1}}</td>
+        <td class = "{{obj.disease.id}}">{{obj.slots_open_2}}</td>
+        <td class = "{{obj.disease.id}}">{{obj.slots_open_3}}</td>
+        <td><a href="#setSlots" data-rel="popup" class="ui-btn">修改</a></td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+  <div data-role="main" class="ui-content">
+
+    <div data-role="popup" id="setSlots" class="ui-content" style="min-width:250px;">
+          {% for obj in disease_detail %}
+        <form>
+
+            <table>
+                <p>设置数量(Press Esc to cancel)</p>
+                <tr>
+                    <th>默认</th>
+                    <th>第一周</th>
+                    <th>第二周</th>
+                    <th>第三周</th>
+                    <th>第四周</th>
+                    <th>提交</th>
+                    <th>重置</th>
+                </tr>
+                {% for obj in disease_detail %}
+                <tr id = "{{obj.disease.id}}" >
+                    <td ><input type="text" value="{{obj.default_slots}}"/></td>
+                    <td ><input type = "text" value="{{obj.slots_open_0}}"/></td>
+                    <td ><input type = "text" value="{{obj.slots_open_1}}"/></td>
+                    <td><input type = "text" value="{{obj.slots_open_2}}"/></td>
+                    <td><input type = "text" value="{{obj.slots_open_3}}"/></td>
+                    <td><button class = 'btn' onclick = 'setSlots("{{hospital.id}}","{{obj.disease.id}}")'>提交</button></td>
+                    <td><button class = 'btn' onclick = 'resetSlots("{{hospital.id}}","{{obj.disease.id}}")'>重置</button></td>
+
+                </tr>
+                {% endfor %}
+
+            </table>
+        </form>
+          {% endfor %}
+    </div>
+  </div>
+<script>
+    function setSlots(hospital_id,disease_id){
+        row = document.getElementById(disease_id.toString());
+        cells = row.getElementsByTagName('td');
+        var slots_dict = {};
+        for(i = 0;i<cells.length-2;i++){
+            slots_dict[i] = cells[i].getElementsByTagName('input')[0].value;
+            console.log(slots_dict[i]);
+        }
+        console.log(slots_dict);
+         $.getJSON("{% url 'set_slots'%}",{'hospital':hospital_id,'disease':disease_id,'slots_dict':JSON.stringify(slots_dict)},function(data){
+               location.reload()
+        });
+
+    }
+    function resetSlots(hospital_id,disease_id){
+         $.getJSON("{% url 'set_slots'%}",{'hospital':hospital_id,'disease':disease_id},function(data){
+               location.reload()
+        });
+
+    }
+</script>
+
+{% endblock %}
+<!---
+
+
+
+<script>
+    function prompt(hospital_id,disease_id){
+        var form = document.getElementById('setSlotForm');
+        console.log(form);
+        if(form != null){
+            document.body.removeChild(form);
+        }
+        form = document.createElement('form');
+        form.setAttribute('id','setSlotForm');
+        form.setAttribute('method','post');
+        console.log(form);
+
+        var box = document.createElement('table');
+        form.appendChild(box);
+
+        box.setAttribute('id','setSlotTable');
+        document.body.appendChild(box);
+
+        var row = document.createElement('tr');
+        row.setAttribute('id','setSlotRow');
+        document.getElementById('setSlotTable').appendChild(row);
+
+        var duplicate = document.getElementsByClassName(disease_id.toString());
+        for(i = 0; i< duplicate.length;i++){
+            var cell = document.createElement('td');
+            var input = document.createElement('input');
+
+            input.setAttribute('type','text');
+            input.setAttribute('class',disease_id*10+i);
+            //console.log(input);
+            cell.appendChild(input);
+            input.setAttribute('value',duplicate[i].innerHTML)
+
+            document.getElementById('setSlotRow').appendChild(cell);
+        }
+        var button = document.createElement('button');
+
+        button.setAttribute('class','btn');
+        var text = document.createTextNode('提交');
+        button.appendChild(text);
+        document.getElementById('setSlotRow').appendChild(button);
+        button.setAttribute('onclick',setSlots(hospital_id,disease_id));
+
+    }
+
+</script>
+
