@@ -5,6 +5,8 @@ from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from helper.forms import PatientInfo, AppointmentInfo
 from django.core.files.storage import FileSystemStorage
+from dynamic_form.forms import create_form
+from django.forms import formset_factory
 
 
 # Status
@@ -214,25 +216,7 @@ def order_submit_first(request, order_id):
             order.patient_order = order_patient
 
             order.save()
-            return render(request, 'order_info_second.html', {
-                'customer': customer,
-                'form': AppointmentInfo(instance=customer, initial={
-                    'hospital': order.hospital.name,
-                    'hospital_address': order.hospital.area,
-                    'time': order.submit,
-                    'name': order.disease.name,
-                    'diagnose_hospital': order.patient_order.diagnose_hospital if order.patient_order is not None else '',
-                    'doctor': order.patient_order.doctor if order.patient_order is not None else '',
-                    'contact': order.patient_order.contact if order.patient_order is not None else '',
-                }),
-                'order_id': order.id,
-            })
-    else:
-        customer = Customer.objects.get(user=request.user)
-        order = Order.objects.get(id=order_id)
-        return render(request, 'order_info_second.html', {
-            'customer': customer,
-            'form': AppointmentInfo(instance=customer, initial={
+            appointment_form = AppointmentInfo(instance=customer, initial={
                 'hospital': order.hospital.name,
                 'hospital_address': order.hospital.area,
                 'time': order.submit,
@@ -240,7 +224,29 @@ def order_submit_first(request, order_id):
                 'diagnose_hospital': order.patient_order.diagnose_hospital if order.patient_order is not None else '',
                 'doctor': order.patient_order.doctor if order.patient_order is not None else '',
                 'contact': order.patient_order.contact if order.patient_order is not None else '',
-            }),
+            })
+            form = create_form(int(order.hospital.id), int(order.disease.id), appointment_form)
+            return render(request, 'order_info_second.html', {
+                'customer': customer,
+                'form': form,
+                'order_id': order.id,
+            })
+    else:
+        customer = Customer.objects.get(user=request.user)
+        order = Order.objects.get(id=order_id)
+        appointment_form = AppointmentInfo(instance=customer, initial={
+            'hospital': order.hospital.name,
+            'hospital_address': order.hospital.area,
+            'time': order.submit,
+            'name': order.disease.name,
+            'diagnose_hospital': order.patient_order.diagnose_hospital if order.patient_order is not None else '',
+            'doctor': order.patient_order.doctor if order.patient_order is not None else '',
+            'contact': order.patient_order.contact if order.patient_order is not None else '',
+        })
+        form = create_form(int(order.hospital.id), int(order.disease.id), appointment_form)
+        return render(request, 'order_info_second.html', {
+            'customer': customer,
+            'form': form,
             'order_id': order_id,
         })
 
@@ -269,17 +275,19 @@ def order_patient_finish(request, order_id, patient_id):
     order_patient.save()
     order.patient_order = order_patient
     order.save()
+    appointment_form = AppointmentInfo(instance=customer, initial={
+        'hospital': order.hospital.name,
+        'hospital_address': order.hospital.area,
+        'time': order.submit,
+        'name': order.disease.name,
+        'diagnose_hospital': order.patient_order.diagnose_hospital if order.patient_order is not None else '',
+        'doctor': order.patient_order.doctor if order.patient_order is not None else '',
+        'contact': order.patient_order.contact if order.patient_order is not None else '',
+    })
+    form = create_form(int(order.hospital.id), int(order.disease.id), appointment_form)
     return render(request, 'order_info_second.html', {
         'customer': customer,
-        'form': AppointmentInfo(instance=customer, initial={
-            'hospital': order.hospital.name,
-            'hospital_address': order.hospital.area,
-            'time': order.submit,
-            'name': order.disease.name,
-            'diagnose_hospital': order.patient_order.diagnose_hospital if order.patient_order is not None else '',
-            'doctor': order.patient_order.doctor if order.patient_order is not None else '',
-            'contact': order.patient_order.contact if order.patient_order is not None else '',
-        }),
+        'form': form,
         'order_id': order.id,
     })
 

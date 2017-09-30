@@ -114,17 +114,6 @@ class AppointmentInfo(forms.ModelForm):
         required=True,
     )
 
-    document = forms.FileField(
-        label="Choose required document",
-        widget=forms.ClearableFileInput(attrs={'multiple': True}),
-        required=True,
-    )
-    document_description = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label="Leave description for your main document",
-        required=True,
-    )
-
     class Meta:
         model = Order
         exclude = []
@@ -144,7 +133,5 @@ class AppointmentInfo(forms.ModelForm):
             'diagnose_hospital',
             'doctor',
             'contact',
-            'document_description',
-            'document',
         ]
         self.order_fields(self.field_order)
