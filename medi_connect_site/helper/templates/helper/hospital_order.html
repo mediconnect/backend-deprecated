@@ -15,10 +15,10 @@
 <p>Introduction: {{hospital.introduction}}</p>
 <p>Feedback: {{hospital.feedback_time}}</p>
 <p>Price: {{hospital.price_range}}</p>
-<p> 1st week: {{hospital.slots_open_0}} <input id="radio0" type="radio" name="slots" checked>Choose 1st W<br></p>
-<p> 2nd week: {{hospital.slots_open_1}} <input id="radio1" type="radio" name="slots">Choose 2nd W<br></p>
-<p> 3rd week: {{hospital.slots_open_2}} <input id="radio2" type="radio" name="slots">Choose 3rd W<br></p>
-<p> 4th week: {{hospital.slots_open_3}} <input id="radio3" type="radio" name="slots">Choose 4th W<br></p>
+<p> 1st week: {{slots.0}} <input id="radio0" type="radio" name="slots" checked>Choose 1st W<br></p>
+<p> 2nd week: {{slots.1}} <input id="radio1" type="radio" name="slots">Choose 2nd W<br></p>
+<p> 3rd week: {{slots.2}} <input id="radio2" type="radio" name="slots">Choose 3rd W<br></p>
+<p> 4th week: {{slots.3}} <input id="radio3" type="radio" name="slots">Choose 4th W<br></p>
 
 {% if error %}
 {{error}}
@@ -81,7 +81,6 @@
         }
     });
     function url_generator(order, num) {
-        console.log(Urls.order_info_first(order, num));
         $("#order_placement_form").attr("action", Urls.order_info_first(order, num));
     }
 

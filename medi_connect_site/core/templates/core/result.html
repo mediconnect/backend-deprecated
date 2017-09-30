@@ -22,13 +22,13 @@
                     <p>Introduction: {{hospital.introduction}}</p>
                     <p>Feedback: {{hospital.feedback_time}}</p>
                     <p>Price: {{hospital.price_range}}</p>
-                    {% if hospital.slots_open_0 > 0 %}
+                    {% if slots.0 > 0 %}
                         <a href="{% url 'fast_order' disease_id=disease.id hospital_id=hospital.id slot_num=1 %}">First week is Available</a>
-                    {% elif hospital.slots_open_1 > 0 %}
+                    {% elif slots.1 > 0 %}
                         <a href="{% url 'fast_order' disease_id=disease.id hospital_id=hospital.id slot_num=2 %}">Second week is Available</a>
-                    {% elif hospital.slots_open_2 > 0 %}
+                    {% elif slots.2 > 0 %}
                         <a href="{% url 'fast_order' disease_id=disease.id hospital_id=hospital.id slot_num=3 %}">Third week is Available</a>
-                    {% elif hospital.slots_open_3 > 0 %}
+                    {% elif slots.3 > 0 %}
                         <a href="{% url 'fast_order' disease_id=disease.id hospital_id=hospital.id slot_num=4 %}">Fourth week is Available</a>
                     {% endif %}
                     <p></p>

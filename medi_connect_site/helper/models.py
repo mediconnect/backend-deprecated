@@ -81,7 +81,7 @@ class Rank(models.Model):
     rank = models.IntegerField(default=0)
     hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_rank')
     disease = models.ForeignKey(Disease, unique=False, default=None, related_name='disease_rank')
-    deposite = models.IntegerField(default = 10000)
+    deposit = models.IntegerField(default = 10000)
     full_price = models.IntegerField(default = 100000)
     default_slots = models.IntegerField(default=20)
     slots_open_0 = models.IntegerField(default=20)

@@ -5,7 +5,7 @@ from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from helper.forms import PatientInfo, AppointmentInfo
 from django.core.files.storage import FileSystemStorage
-from dynamic_form.forms import create_form
+from dynamic_form.forms import create_form, get_fields
 from django.forms import formset_factory
 
 
@@ -75,9 +75,12 @@ def hospital(request, hospital_id, disease_id):
             break
     order = Order(hospital=hosp, status=0, disease=dis, customer=customer) if order is None else order
     order.save()
+    rk = Rank.objects.get(hospital=hosp, disease=dis)
+    slots = {0: rk.slots_open_0, 1: rk.slots_open_1, 2: rk.slots_open_2, 3: rk.slots_open_3}
     return render(request, "hospital_order.html", {
         'hospital': hosp,
-        'rank': Rank.objects.get(hospital=hosp, disease=dis).rank,
+        'rank': rk.rank,
+        'slots': slots,
         'disease': dis,
         'customer': customer,
         'order_id': order.id,
@@ -305,13 +308,13 @@ def order_submit_second(request, order_id):
                 'customer': customer,
             })
         else:
-            doc_description = form.cleaned_data.get('document_description')
-            for f in request.FILES.getlist('document'):
-                fs = FileSystemStorage()
-                fs.save(f.name, f)
-                doc = Document(document=f, description=doc_description, order=order)
-                doc.save()
-                order.origin.add(doc)
+            for field in get_fields(order.hospital.id, order.disease.id):
+                for f in request.FILES.getlist(field):
+                    fs = FileSystemStorage()
+                    fs.save(f.name, f)
+                    doc = Document(document=f, description=field, order=order)
+                    doc.save()
+                    order.origin.add(doc)
             doctor = form.cleaned_data.get('doctor')
             hospital = form.cleaned_data.get('diagnose_hospital')
             contact = form.cleaned_data.get('contact')
@@ -332,11 +335,14 @@ def order_submit_second(request, order_id):
 
 
 @login_required
-def pay_deposit(request, order_id):
+def pay_deposit(request, order_id, amount=-1):
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
-        order.deposit_paid = True
+        if int(amount) == 1:
+            order.deposit_paid = True
+        else:
+            order.full_payment_paid = True
         order.save()
         return redirect('order_finish', order_id=order.id)
     return render(request, 'order_deposit.html', {
