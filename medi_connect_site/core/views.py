@@ -136,6 +136,7 @@ def result(request):
                 'hospital_list': hospital_list,
                 'disease': dis[0],
                 'hospital_length': len(hospital_list) > 0,
+                'slots': slots,
                 'disease_length': dis is not None,
                 'customer': Customer.objects.get(user=request.user),
                 'message': u'你是不是在搜索这个疾病: ' + dis[0].name,
