@@ -70,7 +70,7 @@ NOT_STARTED = C2E_NOT_STARTED
 ONGOING = C2E_ONGOING
 APPROVING = C2E_APPROVING
 APPROVED = C2E_APPROVED
-DIS_APPROVED = C2E_DISAPPROVED
+DISAPPROVED = C2E_DISAPPROVED
 FINISHED = C2E_FINISHED
 
 E2C_NOT_STARTED = 6
@@ -81,19 +81,19 @@ E2C_DISAPPROVED = 10
 E2C_FINISHED = 11
 ALL_FINISHED = 12
 TRANS_STATUS_CHOICE = (
-    (C2E_NOT_STARTED, 'c2e_not_started'),
-    (C2E_ONGOING, 'c2e_ongoing'),
-    (C2E_APPROVING, 'c2e_approving'),
-    (C2E_APPROVED, 'c2e_approved'),
-    (C2E_DISAPPROVED, 'c2e_disapproved'),
-    (C2E_FINISHED, 'c2e_finished'),
-    (E2C_NOT_STARTED, 'c2e_not_started'),
-    (E2C_ONGOING, 'c2e_ongoing'),
-    (E2C_APPROVING, 'c2e_approving'),
-    (E2C_APPROVED, 'c2e_approved'),
-    (E2C_DISAPPROVED, 'c2e_disapproved'),
-    (E2C_FINISHED, 'c2e_finished'),
-    (ALL_FINISHED, 'all_finished')
+    (C2E_NOT_STARTED, '汉译英未开始'),
+    (C2E_ONGOING, '汉译英进行中'),
+    (C2E_APPROVING, '汉译英审核中'),
+    (C2E_APPROVED, '汉译英已审核'),
+    (C2E_DISAPPROVED, '汉译英驳回'),
+    (C2E_FINISHED, '汉译英已完成'),
+    (E2C_NOT_STARTED, '英译汉未开始'),
+    (E2C_ONGOING, '英译汉进行中'),
+    (E2C_APPROVING, '汉译英审核中'),
+    (E2C_APPROVED, '汉译英已审核'),
+    (E2C_DISAPPROVED, '汉译英驳回'),
+    (E2C_FINISHED, '汉译英已完成'),
+    (ALL_FINISHED, '订单完成')
 )
 trans_status_dict = [
     '任务未开始', '翻译中', '提交审核中', '审核驳回', '审核通过', '翻译完成',

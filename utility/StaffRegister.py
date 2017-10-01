@@ -26,16 +26,16 @@ while(not finished):
             print('Not valid, try again')
         user.save()
         if trans_role == 1:
-            C2E = Staff(user = user, role= 1)
+            C2E = Staff(user = user, role= 1,is_staff=1)
             C2E.save()
             print('Succeed')
         if trans_role == 2:
-            E2C = Staff(user = user, role = 2)
+            E2C = Staff(user = user, role = 2,is_staff=1)
             E2C.save()
             print('Succeed')
     if role == 2:
         user.save()
-        supervisor = Staff(user = user, role = 0)
+        supervisor = Staff(user = user, role = 0,is_staff=1)
         supervisor.save()
         print('Succeed')
     while True:

@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from customer.models import Customer
 from django.apps import apps
-from supervisor.forms import TransSignUpForm, E2C_AssignForm, C2E_AssignForm, ApproveForm,PasswordResetForm
+from supervisor.forms import TransSignUpForm, E2C_AssignForm, C2E_AssignForm, ApproveForm,PasswordResetForm, SupervisorSignUpForm
 from info import utility as util
 from django.http import JsonResponse
 from django.urls import reverse
@@ -213,6 +213,41 @@ def trans_signup(request, id):
                        'supervisor': supervisor}
                       )
 
+@login_required
+def supervisor_signup(request, id):
+    supervisor = Staff.objects.get(user_id=id)
+    supervisor_list = Staff.objects.filter(role = 0)
+    if request.method == 'POST':
+        form = SupervisorSignUpForm(request.POST)
+        if not form.is_valid():
+            return render(request, 'trans_signup.html',
+                          {'form': form,
+                           'supervisor': supervisor,
+                           })
+        else:
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            role = form.cleaned_data.get('role')
+            email = form.cleaned_data.get('email')
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
+            User.objects.create_user(username=username, password=password,
+                                     email=email, first_name=first_name, last_name=last_name, is_staff=True)
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            translator = Staff(user=user,role=role)
+            translator.save()
+            return render(request, 'translator_list.html',
+                          {
+                            'translators_C2E': translators_C2E,
+                            'translators_E2C': translators_E2C,
+                            'supervisor': supervisor
+                           })
+    else:
+        return render(request, 'trans_signup.html',
+                      {'form': TransSignUpForm(),
+                       'supervisor': supervisor}
+                      )
 
 @login_required
 def assign(request, id, order_id):
@@ -288,30 +323,32 @@ def approve(request, id, order_id):
 
             if approval:
                 if assignment.get_status() == 3:
-
                     assignment.change_status(util.RECEIVED)
-
+                    assignment.change_trans_status(util.C2E_FINISHED)
                     for document in assignment.pending.all():
                         assignment.origin.add(document)
                         assignment.save()
 
                 if assignment.get_status() == 6:
                     assignment.change_status(util.FEEDBACK)
-
+                    assignment.change_trans_status(util.E2C_FINISHED)
                     for document in assignment.pending.all():
                         assignment.feedback.add(document)
                         assignment.save()
 
-                assignment.change_trans_status(util.FINISHED)
                 assignment.pending.clear()
                 assignment.save()
+
             if not approval:
                 for document in assignment.pending.all():
                     if document.is_origin:
                         assignment.origin.add(document)
                     if document.is_feedback:
                         assignment.feedback.add(document)
-                assignment.change_trans_status(util.ONGOING)
+                if assignment.get_status() == 3:
+                    assignment.change_trans_status(util.C2E_DISAPPROVED)
+                if assignment.get_status() == 6:
+                    assignment.change_trans_status(util.E2C_DISAPPROVED)
                 assignment.save()
             return render(request, 'detail.html', {
                 'assignment': assignment,
@@ -405,8 +442,6 @@ def set_slots(request):
         rank.set_slots(d)
     else:
         rank.set_default_slots()
-
-
     data={
         'default':rank.default_slots,
         'week_0': rank.slots_open_0,

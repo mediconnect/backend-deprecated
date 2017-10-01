@@ -135,30 +135,41 @@ def assignment_summary(request, id, order_id):
     if (request.POST.get('accept')):
         if translator.get_role() == 1:
             assignment.change_status(util.TRANSLATING_ORIGIN)
+            assignment.change_trans_status(util.C2E_ONGOING)
         if translator.get_role() == 2:
             assignment.change_status(util.TRANSLATING_FEEDBACK)
-        assignment.change_trans_status(util.ONGOING)
+            assignment.change_trans_status(util.E2C_ONGOING)
         assignment.save()
+
         return render(request, 'assignment_summary.html', {
             'translator': translator,
             'assignment': assignment
         })
     if(request.POST.get('approval')):
-        assignment.change_trans_status(util.APPROVING)
+        if translator.get_role() == 1:
+            assignment.change_trans_status(util.C2E_APPROVING)
+        if translator.get_role() == 2:
+            assignment.change_trans_status(util.E2C_APPROVING)
         assignment.save()
         return render(request, 'assignment_summary.html', {
             'translator': translator,
             'assignment': assignment
         })
     if (request.POST.get('finish')):
-        assignment.change_trans_status(util.FINISHED)
+        if translator.get_role() == 1:
+            assignment.change_trans_status(util.C2E_FINISHED)
+        if translator.get_role() == 2:
+            assignment.change_trans_status(util.E2C_FINISHED)
         assignment.save()
         return render(request, 'assignment_summary.html', {
             'translator': translator,
             'assignment': assignment
         })
     if (request.POST.get('redo')):
-        assignment.change_trans_status(util.ONGOING)
+        if translator.get_role() == 1:
+            assignment.change_trans_status(util.C2E_ONGOING)
+        if translator.get_role() == 2:
+            assignment.change_trans_status(util.E2C_ONGOING)
         assignment.save()
         return render(request, 'assignment_summary.html', {
             'translator': translator,

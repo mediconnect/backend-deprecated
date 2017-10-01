@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^ajax/validate_pwd/$', supervisor_views.validate_pwd, name='validate_pwd'),
     url(r'^logout/', auth_views.logout, {'next_page': '/supervisor/login'}, name='supervisor_logout'),
     url(r'^trans_signup/(?P<id>\d+)/$',supervisor_views.trans_signup ,name = 'trans_signup'),
+    url(r'^supervisor_signup/(?P<id>\d+)/$',supervisor_views.supervisor_signup ,name = 'trans_signup'),
     url(r'^detail/(?P<id>\d+)/(?P<order_id>\d+)/$',supervisor_views.detail ,name = 'detail'),
     url(r'^assign/(?P<id>\d+)/(?P<order_id>\d+)/$',supervisor_views.assign ,name = 'assign'),
     url(r'^approve/(?P<id>\d+)/(?P<order_id>\d+)/$',supervisor_views.approve ,name = 'approve'),

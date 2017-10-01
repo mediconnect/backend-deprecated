@@ -175,10 +175,10 @@ class Order(models.Model):
         return self.submit + datetime.timedelta(hours=8)
 
     def get_remaining(self):  # deadline
-        return self.submit+ datetime.timedelta(days=2,hours=8);
+        return self.submit+ datetime.timedelta(weeks = int(self.week_number_at_submit),days=2,hours=8);
 
     def get_deadline(self):  # default deadline 2 days after submit time remaining
-        total_sec = (self.submit + datetime.timedelta(days=2,hours=8) - datetime.datetime.now(util.utc_8)).total_seconds()
+        total_sec = (self.get_remaining() - datetime.datetime.now(util.utc_8)).total_seconds()
         days = int(total_sec / (3600 * 24))
         hours = int((total_sec - 3600 * 24 * days) / 3600)
         deadline = str(days) + '  天,  ' + str(hours) + '  小时'
@@ -187,8 +187,6 @@ class Order(models.Model):
         return deadline
 
     def get_submit_deadline(self):
-        if not self.document_complete:
-            return '材料缺失'
         total_sec = (
             self.get_submit() + datetime.timedelta(
                 days=7 * (int(self.week_number_at_submit) + 1)) - datetime.datetime.now(
@@ -303,9 +301,17 @@ class Staff(models.Model):
                 for assignment in Order.objects.order_by('submit'):
                     if assignment.get_trans_status() == int(status):
                         assignments.append(assignment)
-        else:
+        elif self.get_role() == 1:
             for assignment in self.get_assignments():
                 if assignment.get_trans_status_for_translator(self) == int(status):
+                    assignments.append(assignment)
+            if int(status) == 1:
+                for assignment in self.get_assignments():
+                    if assignment.get_trans_status_for_translator(self) == util.DISAPPROVED:
+                        assignments.append(assignment)
+        elif self.get_role() == 2:
+            for assignment in self.get_assignments():
+                if assignment.get_trans_status_for_translator(self) == int(status)+util.E2C_NOT_STARTED:
                     assignments.append(assignment)
             if int(status) == 1:
                 for assignment in self.get_assignments():
