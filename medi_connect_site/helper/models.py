@@ -46,6 +46,9 @@ class Disease(models.Model):
     def get_name(self):
         return self.name
 
+    def get_id(self):
+        return self.id
+
 
 class Hospital(models.Model):
     name = models.CharField(max_length=50)
@@ -65,7 +68,7 @@ class Hospital(models.Model):
         db_table = 'hospital'
 
     def get_id(self):
-        return self.get_id()
+        return self.id
 
     def get_name(self):
         return self.name
@@ -80,20 +83,33 @@ class Hospital(models.Model):
             self.review_number += 1
 
 
-class Rank(models.Model):
-    rank = models.IntegerField(default=0)
-    hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_rank')
-    disease = models.ForeignKey(Disease, unique=False, default=None, related_name='disease_rank')
-    """
-    these fields have nothing to do with Rank, create a new model for storing these info
-    deposit = models.IntegerField(default=10000)
-    full_price = models.IntegerField(default=100000)
+class Slot(models.Model):
+    hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_slot')
+    disease = models.ForeignKey(Disease, unique=False, default=None, related_name='disease_slot')
     default_slots = models.IntegerField(default=20)
     slots_open_0 = models.IntegerField(default=20)
     slots_open_1 = models.IntegerField(default=20)
     slots_open_2 = models.IntegerField(default=20)
     slots_open_3 = models.IntegerField(default=20)
-    """
+
+    class Meta:
+        db_table = 'slot'
+
+
+class Price(models.Model):
+    hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_price')
+    disease = models.ForeignKey(Disease, unique=False, default=None, related_name='disease_price')
+    deposit = models.IntegerField(default=10000)
+    full_price = models.IntegerField(default=100000)
+
+    class Meta:
+        db_table = 'price'
+
+
+class Rank(models.Model):
+    rank = models.IntegerField(default=0)
+    hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_rank')
+    disease = models.ForeignKey(Disease, unique=False, default=None, related_name='disease_rank')
 
     class Meta:
         db_table = 'rank'
@@ -109,19 +125,13 @@ class Order(models.Model):
                                        related_name='english_translator')
     hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, null=True)
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
-    """
-    this value can be calculated from submit field, redundant
     week_number_at_submit = models.IntegerField(default=0)
-    """
     submit = models.DateTimeField(default=timezone.now)  # datetime of receiving the order
     # all origin document uploaded by customer
     origin = models.ManyToManyField('Document', related_name='original_file')
     # all feedback document TRANSLATED and APPROVED
     feedback = models.ManyToManyField('Document', related_name='feedback_file')
-    """
-    this value can be retrieved from document model upload_at field, redundant
     latest_upload = models.DateTimeField(null=True)
-    """
     # all pending document, make sure this NOT VISIBLE to customers
     pending = models.ManyToManyField('Document', related_name='pending_file')
     receive = models.DateField(default=datetime.date.today)
@@ -129,7 +139,6 @@ class Order(models.Model):
     trans_status = models.CharField(default=0, max_length=20, choices=util.TRANS_STATUS_CHOICE)
     auto_assigned = models.BooleanField(default=False)
     document_complete = models.BooleanField(default=False)
-    deposit_paid = models.BooleanField(default=False)  # allow translation after this
     full_payment_paid = models.BooleanField(default=False)
 
     class Meta:
@@ -167,10 +176,10 @@ class Order(models.Model):
     def get_submit(self):
         if not self.document_complete:
             return '材料欠缺，无法完成订单'
-        return self.submit + datetime.timedelta(hours=8)
+        return self.submit
 
-    def get_remaining(self):  # deadline
-        return self.submit + datetime.timedelta(weeks=int(self.week_number_at_submit), days=2, hours=8);
+    def get_remaining(self):  # deadline for
+        return self.submit + datetime.timedelta(weeks=int(self.week_number_at_submit), days=2)
 
     def get_deadline(self):  # default deadline 2 days after submit time remaining
         total_sec = (self.get_remaining() - datetime.datetime.now(util.utc_8)).total_seconds()
@@ -183,7 +192,7 @@ class Order(models.Model):
 
     def get_submit_deadline(self):
         total_sec = (
-            self.get_submit() + datetime.timedelta(
+            self.submit + datetime.timedelta(
                 days=7 * (int(self.week_number_at_submit) + 1)) - datetime.datetime.now(
                 util.utc_8)).total_seconds()
         days = int(total_sec / (3600 * 24))
@@ -199,8 +208,9 @@ class Order(models.Model):
                                                      hours=8))
         else:
             date = (
-            self.get_submit() + datetime.timedelta(weeks=self.week_number_at_submit, days=self.hospital.feedback_time,
-                                                   hours=8))
+                self.get_submit() + datetime.timedelta(weeks=self.week_number_at_submit,
+                                                       days=self.hospital.feedback_time,
+                                                       hours=8))
         return str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '-' + str(date.year) + '/' + str(
             date.month) + '/' + str(date.day + 3)
 
@@ -211,6 +221,7 @@ class Order(models.Model):
 
     def set_upload(self, time):
         self.latest_upload = time
+        self.save()
 
     def get_status(self):
         return int(self.status)
@@ -229,9 +240,11 @@ class Order(models.Model):
 
     def change_status(self, status):
         self.status = status
+        self.save()
 
     def change_trans_status(self, status):
         self.trans_status = status
+        self.save()
 
 
 def order_directory_path(instance, filename):
@@ -403,5 +416,20 @@ class HospitalReview(models.Model):
     class Meta:
         db_table = 'hospital_review'
 
-    def upate_hospital(self):
+    def update_hospital(self):
         self.hospital.update_score(self.score)
+        self.save()
+
+
+class Questionnaire(models.Model):
+    hospital = models.ForeignKey(Hospital, unique=False, default=None)
+    disease = models.ForeignKey(Disease, unique=False, default=None)
+    questions = models.FileField(upload_to=util.questions_path, null=True)
+
+    class Meta:
+        db_table = 'questionnaire'
+
+    def is_created(self):
+        if self.questions is not None:
+            return True
+        return False

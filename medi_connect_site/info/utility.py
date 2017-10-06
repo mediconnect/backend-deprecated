@@ -11,6 +11,9 @@ def order_directory_path(instance, filename):
     return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name(), instance.order.id, filename)
 
 
+def questions_path(instance, filename):
+    return 'hospital_{0}/disease_{1}/{2}'.format(instance.hospital.get_id(), instance.disease.get_id(),  filename)
+
 # Gender
 MALE = 'M'
 FEMALE = 'F'
@@ -100,6 +103,18 @@ trans_status_dict = [
     '任务未开始', '翻译中', '提交审核中', '审核驳回', '审核通过', '翻译完成',
     '订单完成'
 ]
+
+# Questionnaire formats
+MULTIPLE_CHOICE = 0
+CHOOSE_ONE = 1
+TEXT = 2
+
+FORMAT_CHOICE=(
+    (MULTIPLE_CHOICE,'多项选择'),
+    (CHOOSE_ONE,'单选'),
+    (TEXT,'简答')
+)
+
 
 EIGHT = datetime.timedelta(hours=8)
 

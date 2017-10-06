@@ -1,0 +1,9 @@
+Number of questions: 3
+Q1: Who's your daddy?
+FORMAT: SINGLE_CHOICE
+CHOICES:[BOB,CODDY,DOUG]
+Q2: Who are the best?
+FORMAT: MULTIPLE_CHOICE
+CHOICES:[A,B,C,D]
+Q3: Why?
+FORMAT: TEXT

@@ -34,6 +34,9 @@
 <a href="{% url 'manage_files' id=supervisor.user_id order_id=assignment.id %}"> 管理文件</a><br>
 <a href="{% url 'approve' id=supervisor.user_id order_id=assignment.id %}"> 审核</a>
 
+<a href="{% url 'generate_questionnaire' hospital_id=assignment.hospital_id disease_id=assignment.disease_id %}">问卷</a>
+
+
 <form method = 'post'>
      {% csrf_token %}
      {{ form }}

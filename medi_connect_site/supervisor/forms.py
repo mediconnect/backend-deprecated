@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.auth.models import User
-from helper.models import Document, Order, Staff
+from helper.models import Document, Order, Staff, Questionnaire
 from django.core.exceptions import ValidationError
+import info.utility as util
 
 C2E_assignee_choice = []
 for e in Staff.objects.filter(role = 1):
@@ -17,12 +18,14 @@ class C2E_AssignForm(forms.ModelForm):
     class Meta:
         model = Order
         fields = ['assignee']
+
 class E2C_AssignForm(forms.ModelForm):
     E2C_new_assignee = forms.ChoiceField(choices=E2C_assignee_choice)
 
     class Meta:
         model = Order
         fields = ['E2C_new_assignee']
+
 class ApproveForm(forms.ModelForm):
     approval = forms.TypedChoiceField(
         coerce=lambda x: x == 'True',
@@ -180,63 +183,20 @@ class TransSignUpForm(forms.ModelForm):
         return self.cleaned_data
 
 
-class SupervisorSignUpForm(forms.ModelForm):
-    confirm_password = forms.CharField(
-        widget=forms.PasswordInput(),
-        label="Confirm your password",
-        required=True)
-
-    role = forms.ChoiceField(
+class GenerateQuestionnaireForm(forms.Form):
+    question=forms.CharField(
+        label='问题内容:',
+        required=True
+    )
+    format=forms.ChoiceField(
+        label='问题形式',
         widget=forms.RadioSelect,
-        choices=ROLE_CHOICES,
-        required=True)
-
-    class Meta:
-        model = User
-        exclude = ['last_login', 'date_joined']
-        # specify fields to automatically include different inputs on website
-        fields = ['username', 'email', 'password', 'first_name', 'last_name']
-
-    def __init__(self, *args, **kwargs):
-        super(TransSignUpForm, self).__init__(*args, **kwargs)
-        # specifiy the fields order on front end
-        self.field_order = [
-            'username',
-            'password',
-            'confirm_password',
-            'first_name',
-            'last_name',
-            'email',
-            'role'
-        ]
-        self.order_fields(self.field_order)
-        # append validators for fields
-        self.fields['username'].validators.append(forbidden_username_validator)
-        self.fields['username'].validators.append(invalid_username_validator)
-        self.fields['username'].validators.append(unique_email_validator)
-        self.fields['email'].validators.append(unique_email_validator)
-        self.fields['password'].widget = forms.PasswordInput()
-        self.fields['password'].required = True
-        self.fields['username'].required = True
-        self.fields['email'].required = True
-        self.fields['first_name'].required = True
-        self.fields['last_name'].required = True
-        self.fields['role'].required = True
-
-    def clean(self):
-        """
-        the clean function is automatically called by Django framework during upon
-        data transformation to back end. developers can use it to append error, and
-        check the validity of user input.
-        """
-        super(TransSignUpForm, self).clean()
-        password = self.cleaned_data.get('password')
-        confirm_password = self.cleaned_data.get('confirm_password')
-        if password and password != confirm_password:
-            self._errors['password'] = self.error_class(
-                ['Passwords don\'t match']
-            )
-            self._errors['confirm_password'] = self.error_class(
-                ['Passwords don\'t match']
-            )
-        return self.cleaned_data
+        choices=util.FORMAT_CHOICE,
+        required=True
+    )
+class ChoiceForm(forms.Form):
+    choice = forms.CharField(
+        label = '选项内容:',
+        widget=forms.TextInput,
+        required=True
+    )
