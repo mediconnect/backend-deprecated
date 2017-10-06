@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.db import models
-from django.contrib.auth.models import User
-from django.db.models import Q
+
 import datetime
+from django.contrib.auth.models import User
+from django.db import models
+from django.db.models import Q
+from django.utils import timezone
+
 from customer.models import Customer
 from info import utility as util
-from django.utils import timezone
+
 
 # Function to move the position of a translator in sequence
 def auto_assign(order):
@@ -15,12 +18,10 @@ def auto_assign(order):
         order.set_translator_C2E(assignee)
         assignee.set_sequence(timezone.now())
 
-
     if order.get_status() >= util.RETURN and order.get_status <= util.FEEDBACK:
         assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
         order.set_translator_E2C(assignee)
         assignee.set_sequence(timezone.now())
-
 
 
 def manual_assign(order, assignee):
@@ -34,6 +35,7 @@ def manual_assign(order, assignee):
         order.save()
         assignee.set_sequence(timezone.now())
 
+
 class Disease(models.Model):
     name = models.CharField(default='unknown', max_length=50)
     keyword = models.CharField(default='unknown', max_length=150)
@@ -43,6 +45,7 @@ class Disease(models.Model):
 
     def get_name(self):
         return self.name
+
 
 class Hospital(models.Model):
     name = models.CharField(max_length=50)
@@ -54,9 +57,9 @@ class Hospital(models.Model):
     introduction = models.TextField(default='intro')
     specialty = models.TextField(default='specialty')
     feedback_time = models.IntegerField(default=1)
-    price_range = models.CharField(default='unknown', max_length=50)#delete this after change all occurance
+    price_range = models.CharField(default='unknown', max_length=50)  # delete this after change all occurance
     average_score = models.FloatField(null=True)
-    review_number = models.IntegerField(blank = True)
+    review_number = models.IntegerField(blank=True)
 
     class Meta:
         db_table = 'hospital'
@@ -81,31 +84,19 @@ class Rank(models.Model):
     rank = models.IntegerField(default=0)
     hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_rank')
     disease = models.ForeignKey(Disease, unique=False, default=None, related_name='disease_rank')
-    deposit = models.IntegerField(default = 10000)
-    full_price = models.IntegerField(default = 100000)
+    """
+    these fields have nothing to do with Rank, create a new model for storing these info
+    deposit = models.IntegerField(default=10000)
+    full_price = models.IntegerField(default=100000)
     default_slots = models.IntegerField(default=20)
     slots_open_0 = models.IntegerField(default=20)
     slots_open_1 = models.IntegerField(default=20)
     slots_open_2 = models.IntegerField(default=20)
     slots_open_3 = models.IntegerField(default=20)
+    """
 
     class Meta:
         db_table = 'rank'
-
-    def set_default_slots(self):
-        self.slots_open_0 = self.default_slots
-        self.slots_open_1 = self.default_slots
-        self.slots_open_2 = self.default_slots
-        self.slots_open_3 = self.default_slots
-        self.save()
-
-    def set_slots(self,slots_dict):
-        self.default_slots = int(slots_dict[0])
-        self.slots_open_0 = int(slots_dict[1])
-        self.slots_open_1 = int(slots_dict[2])
-        self.slots_open_2 = int(slots_dict[3])
-        self.slots_open_3 = int(slots_dict[4])
-        self.save()
 
 
 class Order(models.Model):
@@ -118,24 +109,28 @@ class Order(models.Model):
                                        related_name='english_translator')
     hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, null=True)
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
+    """
+    this value can be calculated from submit field, redundant
     week_number_at_submit = models.IntegerField(default=0)
-    # use week_number_at_submit to hold the week number and calculate the submit deadline
-    submit = models.DateTimeField(default = timezone.now)  # datetime of receiving the order
+    """
+    submit = models.DateTimeField(default=timezone.now)  # datetime of receiving the order
     # all origin document uploaded by customer
     origin = models.ManyToManyField('Document', related_name='original_file')
     # all feedback document TRANSLATED and APPROVED
     feedback = models.ManyToManyField('Document', related_name='feedback_file')
-    # all pending document, make sure this NOT VISIBLE to customers
+    """
+    this value can be retrieved from document model upload_at field, redundant
     latest_upload = models.DateTimeField(null=True)
+    """
+    # all pending document, make sure this NOT VISIBLE to customers
     pending = models.ManyToManyField('Document', related_name='pending_file')
     receive = models.DateField(default=datetime.date.today)
     status = models.CharField(blank=True, max_length=20, choices=util.STATUS_CHOICES)
     trans_status = models.CharField(default=0, max_length=20, choices=util.TRANS_STATUS_CHOICE)
     auto_assigned = models.BooleanField(default=False)
-    document_complete = models.BooleanField(default = False)
-    deposit_paid = models.BooleanField(default = False) #allow translation after this
-    full_payment_paid = models.BooleanField(default = False)
-
+    document_complete = models.BooleanField(default=False)
+    deposit_paid = models.BooleanField(default=False)  # allow translation after this
+    full_payment_paid = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'order'
@@ -149,7 +144,7 @@ class Order(models.Model):
         else:
             return (self.translator_C2E.id, self.translator_C2E.get_name())
 
-    def set_translator_C2E(self,assignee):
+    def set_translator_C2E(self, assignee):
         self.translator_C2E = assignee
         self.save()
 
@@ -175,7 +170,7 @@ class Order(models.Model):
         return self.submit + datetime.timedelta(hours=8)
 
     def get_remaining(self):  # deadline
-        return self.submit+ datetime.timedelta(weeks = int(self.week_number_at_submit),days=2,hours=8);
+        return self.submit + datetime.timedelta(weeks=int(self.week_number_at_submit), days=2, hours=8);
 
     def get_deadline(self):  # default deadline 2 days after submit time remaining
         total_sec = (self.get_remaining() - datetime.datetime.now(util.utc_8)).total_seconds()
@@ -200,10 +195,14 @@ class Order(models.Model):
 
     def get_estimate(self):
         if not self.document_complete:
-            date = (self.submit+datetime.timedelta(weeks=self.week_number_at_submit,days = self.hospital.feedback_time,hours = 8))
+            date = (self.submit + datetime.timedelta(weeks=self.week_number_at_submit, days=self.hospital.feedback_time,
+                                                     hours=8))
         else:
-            date = (self.get_submit()+datetime.timedelta(weeks=self.week_number_at_submit,days = self.hospital.feedback_time,hours = 8))
-        return str(date.year)+'/'+str(date.month)+'/'+str(date.day)+'-'+str(date.year)+'/'+str(date.month)+'/'+str(date.day+3)
+            date = (
+            self.get_submit() + datetime.timedelta(weeks=self.week_number_at_submit, days=self.hospital.feedback_time,
+                                                   hours=8))
+        return str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '-' + str(date.year) + '/' + str(
+            date.month) + '/' + str(date.day + 3)
 
     def get_upload(self):
         if self.latest_upload is None:
@@ -246,7 +245,7 @@ class Document(models.Model):
     is_origin = models.BooleanField(default=True)
     is_translated = models.BooleanField(default=False)
     is_feedback = models.BooleanField(default=False)
-    upload_at = models.DateTimeField(default = timezone.now)
+    upload_at = models.DateTimeField(default=timezone.now)
     comment = models.CharField(max_length=255, blank=True)
     document = models.FileField(upload_to=order_directory_path, null=True)
 
@@ -259,9 +258,11 @@ class Document(models.Model):
     def get_name(self):
         return self.document
 
+
 class Staff(models.Model):
     user = models.OneToOneField(User)
     role = models.IntegerField(default=0)
+
     # sequence = models.DateTimeField(default = timezone.now)
 
     class Meta:
@@ -290,13 +291,14 @@ class Staff(models.Model):
 
             return assignments
 
-    def get_assignments_status(self,status):
+    def get_assignments_status(self, status):
         assignments = []
         if self.get_role() == 0:
             if status == 'All':
                 assignments = list(Order.objects.order_by('submit'))
             elif status == 'PENDING':
-                assignments=list(Order.objects.filter(status = util.SUBMITTED)|Order.objects.filter(status = util.RETURN))
+                assignments = list(
+                    Order.objects.filter(status=util.SUBMITTED) | Order.objects.filter(status=util.RETURN))
             else:
                 for assignment in Order.objects.order_by('submit'):
                     if assignment.get_trans_status() == int(status):
@@ -311,7 +313,7 @@ class Staff(models.Model):
                         assignments.append(assignment)
         elif self.get_role() == 2:
             for assignment in self.get_assignments():
-                if assignment.get_trans_status_for_translator(self) == int(status)+util.E2C_NOT_STARTED:
+                if assignment.get_trans_status_for_translator(self) == int(status) + util.E2C_NOT_STARTED:
                     assignments.append(assignment)
             if int(status) == 1:
                 for assignment in self.get_assignments():
@@ -325,9 +327,10 @@ class Staff(models.Model):
             return 0
         return len(self.get_assignments())
 
-    def set_sequence(self,timestamp):
+    def set_sequence(self, timestamp):
         self.sequence = timestamp
         self.save()
+
 
 class Patient(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
