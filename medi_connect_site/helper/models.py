@@ -44,6 +44,9 @@ class Disease(models.Model):
     def get_name(self):
         return self.name
 
+    def get_id(self):
+        return self.id
+
 class Hospital(models.Model):
     name = models.CharField(max_length=50)
     image = models.ImageField(upload_to=util.hospital_directory_path, null=True)
@@ -62,7 +65,7 @@ class Hospital(models.Model):
         db_table = 'hospital'
 
     def get_id(self):
-        return self.get_id()
+        return self.id
 
     def get_name(self):
         return self.name
@@ -172,10 +175,10 @@ class Order(models.Model):
     def get_submit(self):
         if not self.document_complete:
             return '材料欠缺，无法完成订单'
-        return self.submit + datetime.timedelta(hours=8)
+        return self.submit
 
-    def get_remaining(self):  # deadline
-        return self.submit+ datetime.timedelta(weeks = int(self.week_number_at_submit),days=2,hours=8);
+    def get_remaining(self):  # deadline for
+        return self.submit+ datetime.timedelta(weeks = int(self.week_number_at_submit),days=2);
 
     def get_deadline(self):  # default deadline 2 days after submit time remaining
         total_sec = (self.get_remaining() - datetime.datetime.now(util.utc_8)).total_seconds()
@@ -188,7 +191,7 @@ class Order(models.Model):
 
     def get_submit_deadline(self):
         total_sec = (
-            self.get_submit() + datetime.timedelta(
+            self.submit + datetime.timedelta(
                 days=7 * (int(self.week_number_at_submit) + 1)) - datetime.datetime.now(
                 util.utc_8)).total_seconds()
         days = int(total_sec / (3600 * 24))
@@ -212,6 +215,7 @@ class Order(models.Model):
 
     def set_upload(self, time):
         self.latest_upload = time
+        self.save()
 
     def get_status(self):
         return int(self.status)
@@ -230,9 +234,11 @@ class Order(models.Model):
 
     def change_status(self, status):
         self.status = status
+        self.save()
 
     def change_trans_status(self, status):
         self.trans_status = status
+        self.save()
 
 
 def order_directory_path(instance, filename):
@@ -402,3 +408,19 @@ class HospitalReview(models.Model):
 
     def upate_hospital(self):
         self.hospital.update_score(self.score)
+        self.save()
+
+
+class Questionnaire(models.Model):
+    hospital = models.ForeignKey(Hospital, unique=False, default=None)
+    disease = models.ForeignKey(Disease, unique=False, default=None)
+    questions = models.FileField(upload_to=util.questions_path, null=True)
+
+    class Meta:
+        db_table = 'questionnaire'
+
+
+    def is_created(self):
+        if self.questions is not None:
+            return True
+        return False

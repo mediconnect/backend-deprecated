@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import FileSystemStorage,default_storage
 from django.contrib.auth.hashers import check_password, make_password
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -10,11 +10,16 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from customer.models import Customer
 from django.apps import apps
-from supervisor.forms import TransSignUpForm, E2C_AssignForm, C2E_AssignForm, ApproveForm,PasswordResetForm, SupervisorSignUpForm
+from supervisor.forms import TransSignUpForm, E2C_AssignForm, C2E_AssignForm, ApproveForm,PasswordResetForm,GenerateQuestionnaireForm,ChoiceForm
+from django.forms import formset_factory
 from info import utility as util
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+from django.template import loader, Context
 from django.urls import reverse
 import json
+from django.core.files.base import ContentFile
+
+
 
 
 Order = apps.get_model('helper', 'Order')
@@ -25,6 +30,7 @@ Patient = apps.get_model('helper','Patient')
 Patient_Order = apps.get_model('helper','OrderPatient')
 Staff = apps.get_model('helper','Staff')
 Rank = apps.get_model('helper','Rank')
+Questionnaire = apps.get_model('helper','Questionnaire')
 
 @login_required
 def validate_pwd(request):
@@ -213,41 +219,7 @@ def trans_signup(request, id):
                        'supervisor': supervisor}
                       )
 
-@login_required
-def supervisor_signup(request, id):
-    supervisor = Staff.objects.get(user_id=id)
-    supervisor_list = Staff.objects.filter(role = 0)
-    if request.method == 'POST':
-        form = SupervisorSignUpForm(request.POST)
-        if not form.is_valid():
-            return render(request, 'trans_signup.html',
-                          {'form': form,
-                           'supervisor': supervisor,
-                           })
-        else:
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            role = form.cleaned_data.get('role')
-            email = form.cleaned_data.get('email')
-            first_name = form.cleaned_data.get('first_name')
-            last_name = form.cleaned_data.get('last_name')
-            User.objects.create_user(username=username, password=password,
-                                     email=email, first_name=first_name, last_name=last_name, is_staff=True)
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            translator = Staff(user=user,role=role)
-            translator.save()
-            return render(request, 'translator_list.html',
-                          {
-                            'translators_C2E': translators_C2E,
-                            'translators_E2C': translators_E2C,
-                            'supervisor': supervisor
-                           })
-    else:
-        return render(request, 'trans_signup.html',
-                      {'form': TransSignUpForm(),
-                       'supervisor': supervisor}
-                      )
+
 
 @login_required
 def assign(request, id, order_id):
@@ -311,16 +283,13 @@ def approve(request, id, order_id):
     if request.method == 'POST':
         form = ApproveForm(request.POST)
         if not form.is_valid():
-
             return render(request, 'approve.html', {
                 'form': form,
                 'assignment': assignment,
                 'supervisor': supervisor
             })
         else:
-
             approval = form.cleaned_data.get('approval')
-
             if approval:
                 if assignment.get_status() == 3:
                     assignment.change_status(util.RECEIVED)
@@ -463,3 +432,34 @@ def rank_manage(request,id):
         'hospital':hospital,
         'disease_detail' : disease_detail
     })
+
+
+def generate_questionnaire(request,hospital_id,disease_id):
+    supervisor = Staff.objects.get(user = request.user)
+    q = Questionnaire.objects.get_or_create(hospital_id=hospital_id, disease_id=disease_id)[0]
+    QuestionnaireFormSet = formset_factory(GenerateQuestionnaireForm,extra = 2)
+    ChoiceFormSet = formset_factory(ChoiceForm)
+    """
+    data = (
+        ('Q1:',util.MULTIPLE_CHOICE,"Who's your daddy?",["Bob","Cod","Dog","Ed"]),
+        ('Q2:',util.CHOOSE_ONE,"Greed is good?",["Agree","Can't agree more"]),
+        ('Q3:',util.TEXT,"I see dead people")
+    )
+
+    t = loader.get_template('question_format.txt')
+    c = {
+        'data': data,
+    }
+    myFile = default_storage.save(util.questions_path(q,'questions.txt'),ContentFile(t.render(c)))
+    q.questions=myFile
+    q.save()
+    """
+
+    return render(request, 'generate_questionnaire.html', {
+        'forms': QuestionnaireFormSet,
+        'choices':ChoiceFormSet,
+        'questionnaire':q,
+        'supervisor':supervisor
+    })
+
+
