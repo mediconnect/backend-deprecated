@@ -6,7 +6,18 @@
         {% for form in forms %}
             <form method="POST">
                 {% csrf_token %}
-                {{form.as_p}}
+
+                <label for="{{ form.question.id_for_label }}" >{{form_question.field.label}}</label>
+
+                <p>{{form.question}}</p>
+
+                <label for="{{ form.format.id_for_label }}">问题形式</label>
+
+                <select name="{{ form_format.name }}">
+                    {% for choice in form_format.field.choices %}
+                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
              </form>
         {% endfor %}
     </div>
@@ -22,13 +33,18 @@
     </div>
 
     <script>
-        var emptyQuestion = document.getElementById('emptyForm').cloneNode(true);
-        var emptyChoice = document.get
+        var emptyQuestion = document.getElementById('emptyForm');
+        var emptyChoice = document.getElementById('emptyChoice');
         function addQuestion(){
-            cln = emptyQuestion.cloneNode(true);
+            var cln = emptyQuestion.cloneNode(true);
             cln.removeAttribute('hidden');
-            div = document.getElementById('questions');
+            var div = document.getElementById('questions');
             div.appendChild(cln);
+        }
+        function addChoice(){
+            var cln = emptyChoice.cloneNode(true);
+            cln.removeAttribute('hidden');
+
         }
     </script>
 

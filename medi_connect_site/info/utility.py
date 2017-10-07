@@ -132,3 +132,7 @@ class UTC_8(datetime.tzinfo):
 
 utc_8 = UTC_8()
 
+#Payment Status
+NOT_PAID = 0
+DEPOSIT_PAID = 1
+FULL_PAYMENT = 2

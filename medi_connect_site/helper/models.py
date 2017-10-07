@@ -8,6 +8,7 @@ from customer.models import Customer
 from info import utility as util
 from django.utils import timezone
 
+
 # Function to move the position of a translator in sequence
 def auto_assign(order):
     if order.get_status() <= util.TRANSLATING_ORIGIN:
@@ -15,12 +16,10 @@ def auto_assign(order):
         order.set_translator_C2E(assignee)
         assignee.set_sequence(timezone.now())
 
-
     if order.get_status() >= util.RETURN and order.get_status <= util.FEEDBACK:
         assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
         order.set_translator_E2C(assignee)
         assignee.set_sequence(timezone.now())
-
 
 
 def manual_assign(order, assignee):
@@ -34,6 +33,7 @@ def manual_assign(order, assignee):
         order.save()
         assignee.set_sequence(timezone.now())
 
+
 class Disease(models.Model):
     name = models.CharField(default='unknown', max_length=50)
     keyword = models.CharField(default='unknown', max_length=150)
@@ -46,6 +46,7 @@ class Disease(models.Model):
 
     def get_id(self):
         return self.id
+
 
 class Hospital(models.Model):
     name = models.CharField(max_length=50)
@@ -84,8 +85,16 @@ class Rank(models.Model):
     rank = models.IntegerField(default=0)
     hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_rank')
     disease = models.ForeignKey(Disease, unique=False, default=None, related_name='disease_rank')
-    deposit = models.IntegerField(default = 10000)
-    full_price = models.IntegerField(default = 100000)
+
+    class Meta:
+        db_table = 'rank'
+
+
+class DetailInfo(models.Model):
+    hospital = models.ForeignKey(Hospital, unique=False, default=None)
+    disease = models.ForeignKey(Disease, unique=False, default=None)
+    deposit = models.IntegerField(default=10000)
+    full_price = models.IntegerField(default=100000)
     default_slots = models.IntegerField(default=20)
     slots_open_0 = models.IntegerField(default=20)
     slots_open_1 = models.IntegerField(default=20)
@@ -93,7 +102,7 @@ class Rank(models.Model):
     slots_open_3 = models.IntegerField(default=20)
 
     class Meta:
-        db_table = 'rank'
+        db_table = 'detail_info'
 
     def set_default_slots(self):
         self.slots_open_0 = self.default_slots
@@ -109,7 +118,6 @@ class Rank(models.Model):
         self.slots_open_2 = int(slots_dict[3])
         self.slots_open_3 = int(slots_dict[4])
         self.save()
-
 
 class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
@@ -136,8 +144,7 @@ class Order(models.Model):
     trans_status = models.CharField(default=0, max_length=20, choices=util.TRANS_STATUS_CHOICE)
     auto_assigned = models.BooleanField(default=False)
     document_complete = models.BooleanField(default = False)
-    deposit_paid = models.BooleanField(default = False) #allow translation after this
-    full_payment_paid = models.BooleanField(default = False)
+    payment = models.IntegerField(default = util.NOT_PAID)
 
 
     class Meta:
@@ -406,7 +413,7 @@ class HospitalReview(models.Model):
     class Meta:
         db_table = 'hospital_review'
 
-    def upate_hospital(self):
+    def update_hospital(self):
         self.hospital.update_score(self.score)
         self.save()
 
@@ -418,7 +425,6 @@ class Questionnaire(models.Model):
 
     class Meta:
         db_table = 'questionnaire'
-
 
     def is_created(self):
         if self.questions is not None:
