@@ -60,7 +60,6 @@ class Hospital(models.Model):
     introduction = models.TextField(default='intro')
     specialty = models.TextField(default='specialty')
     feedback_time = models.IntegerField(default=1)
-    price_range = models.CharField(default='unknown', max_length=50)  # delete this after change all occurance
     average_score = models.FloatField(null=True)
     review_number = models.IntegerField(blank=True)
 
@@ -202,17 +201,17 @@ class Order(models.Model):
             submit_deadline += ('  (passdue)  ')
         return submit_deadline
 
-    def get_estimate(self):
-        if not self.document_complete:
-            date = (self.submit + datetime.timedelta(weeks=self.week_number_at_submit, days=self.hospital.feedback_time,
-                                                     hours=8))
-        else:
-            date = (
-                self.get_submit() + datetime.timedelta(weeks=self.week_number_at_submit,
-                                                       days=self.hospital.feedback_time,
-                                                       hours=8))
-        return str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '-' + str(date.year) + '/' + str(
-            date.month) + '/' + str(date.day + 3)
+    # def get_estimate(self):
+    #     if not self.document_complete:
+    #         date = (self.submit + datetime.timedelta(weeks=self.week_number_at_submit, days=self.hospital.feedback_time,
+    #                                                  hours=8))
+    #     else:
+    #         date = (
+    #             self.get_submit() + datetime.timedelta(weeks=self.week_number_at_submit,
+    #                                                    days=self.hospital.feedback_time,
+    #                                                    hours=8))
+    #     return str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '-' + str(date.year) + '/' + str(
+    #         date.month) + '/' + str(date.day + 3)
 
     def get_upload(self):
         if self.latest_upload is None:

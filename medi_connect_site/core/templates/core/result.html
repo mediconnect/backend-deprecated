@@ -13,22 +13,22 @@
         <div class="col-md-8">
             <div class="media" style="border-style:solid">
                 <div class="media-left media-middle">
-                    <img src="{{ hospital.image.url }}" height="128" width="128">
+                    <img src="{{ hospital.image }}" height="128" width="128">
                 </div>
                 <div class="media-body">
-                    <p>Specialty Rank: {{ forloop.counter0|add:"1" }}</p>
-                    <p>Review Score: {{hospital.average_score}}</p>
-                    <h4 class="media-heading">Hospital Name: {{hospital.name}}</h4>
-                    <p>Introduction: {{hospital.introduction}}</p>
-                    <p>Feedback: {{hospital.feedback_time}}</p>
-                    <p>Price: {{hospital.price_range}}</p>
-                    {% if slots.0 > 0 %}
+                    <p>Specialty Rank: {{ hospital.rank }}</p>
+                    <p>Review Score: {{ hospital.average_score }}</p>
+                    <h4 class="media-heading">Hospital Name: {{ hospital.name }}</h4>
+                    <p>Introduction: {{ hospital.introduction }}</p>
+                    <p>Feedback: {{ hospital.feedback_time }}</p>
+                    <p>Price: {{ hospital.price_range }}</p>
+                    {% if hospital.slot.0 > 0 %}
                         <a href="{% url 'fast_order' disease_id=disease.id hospital_id=hospital.id slot_num=1 %}">First week is Available</a>
-                    {% elif slots.1 > 0 %}
+                    {% elif hospital.slot.1 > 0 %}
                         <a href="{% url 'fast_order' disease_id=disease.id hospital_id=hospital.id slot_num=2 %}">Second week is Available</a>
-                    {% elif slots.2 > 0 %}
+                    {% elif hospital.slot.2 > 0 %}
                         <a href="{% url 'fast_order' disease_id=disease.id hospital_id=hospital.id slot_num=3 %}">Third week is Available</a>
-                    {% elif slots.3 > 0 %}
+                    {% elif hospital.slot.3 > 0 %}
                         <a href="{% url 'fast_order' disease_id=disease.id hospital_id=hospital.id slot_num=4 %}">Fourth week is Available</a>
                     {% endif %}
                     <p></p>

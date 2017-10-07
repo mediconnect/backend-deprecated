@@ -9,7 +9,7 @@ from customer.models import Customer
 from customer.views import customer
 from translator.views import translator
 from supervisor.views import supervisor
-from helper.models import Hospital, Disease, Staff, Rank
+from helper.models import Hospital, Disease, Staff, Rank, Slot
 import smtplib
 import json
 
@@ -127,23 +127,28 @@ def result(request):
                 })
 
             rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
-            hospitals = []
+            hospital_list = []
             rank = 1
             for r in rank_list:
                 hosp = r.hospital
-                data = dict()
-                data['name'] = hosp.name
-                data['rank'] = rank
-                data['score'] = hosp.average_score
-                data['introduction'] = hosp.introduction
-                data['feedback'] = hosp.feedback_time
-
+                single_hopital = dict()
+                single_hopital['id'] = hosp.id
+                single_hopital['name'] = hosp.name
+                single_hopital['rank'] = rank
+                single_hopital['score'] = hosp.average_score
+                single_hopital['introduction'] = hosp.introduction
+                single_hopital['feedback'] = hosp.feedback_time
+                single_hopital['image'] = hosp.image.url
+                rank += 1
+                slot = Slot.objects.get(disease=dis[0], hospital=hosp)
+                single_hopital['slot'] = {0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2,
+                                          3: slot.slots_open_3}
+                hospital_list.append(single_hopital)
 
             return render(request, 'result.html', {
                 'hospital_list': hospital_list,
                 'disease': dis[0],
                 'hospital_length': len(hospital_list) > 0,
-                'slots': slots,
                 'disease_length': dis is not None,
                 'customer': Customer.objects.get(user=request.user),
                 'message': u'你是不是在搜索这个疾病: ' + dis[0].name,
@@ -154,12 +159,24 @@ def result(request):
 
 def choose_hospital(request, disease_id):
     dis = Disease.objects.get(id=disease_id)
-    rank_list = Rank.objects.filter(disease=dis)
+    rank_list = Rank.objects.filter(disease=dis).order_by('rank')
     hospital_list = []
+    rank = 1
     for r in rank_list:
-        hospital_list.append(r.hospital)
-        if len(hospital_list) >= 5:
-            break
+        hosp = r.hospital
+        single_hopital = dict()
+        single_hopital['id'] = hosp.id
+        single_hopital['name'] = hosp.name
+        single_hopital['rank'] = rank
+        single_hopital['score'] = hosp.average_score
+        single_hopital['introduction'] = hosp.introduction
+        single_hopital['feedback'] = hosp.feedback_time
+        single_hopital['image'] = hosp.image.url
+        rank += 1
+        slot = Slot.objects.get(disease=dis, hospital=hosp)
+        single_hopital['slot'] = {0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2,
+                                  3: slot.slots_open_3}
+        hospital_list.append(single_hopital)
 
     if request.user.is_authenticated():
         return render(request, 'result.html', {

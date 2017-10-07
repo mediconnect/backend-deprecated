@@ -79,7 +79,7 @@ def hospital(request, hospital_id, disease_id):
     slots = {0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2, 3: slot.slots_open_3}
     return render(request, "hospital_order.html", {
         'hospital': hosp,
-        'rank': Rank.objects.get(disease=dis, hospital=hosp),
+        'rank': Rank.objects.get(disease=dis, hospital=hosp).rank,
         'slots': slots,
         'disease': dis,
         'customer': customer,
@@ -120,22 +120,23 @@ def order_info_first(request, order_id, slot_num):
     order.status = 0
     hosp = order.hospital
     slot_num = int(slot_num)
+    slot = Slot.objects.get(disease=order.disease, hospital=order.hospital)
     if order.week_number_at_submit != 0:
         if slot_num == 1:
-            hosp.slots_open_0 += 1
+            slot.slots_open_0 += 1
         elif slot_num == 2:
-            hosp.slots_open_1 += 1
+            slot.slots_open_1 += 1
         elif slot_num == 3:
-            hosp.slots_open_2 += 1
+            slot.slots_open_2 += 1
         else:
-            hosp.slots_open_3 += 1
+            slot.slots_open_3 += 1
     order.week_number_at_submit = slot_num
     order.save()
     avail_slot = {
-        1: hosp.slots_open_0,
-        2: hosp.slots_open_1,
-        3: hosp.slots_open_2,
-        4: hosp.slots_open_3,
+        1: slot.slots_open_0,
+        2: slot.slots_open_1,
+        3: slot.slots_open_2,
+        4: slot.slots_open_3,
     }[slot_num]
     if avail_slot < 1:
         return render(request, "hospital_order.html", {
@@ -145,14 +146,14 @@ def order_info_first(request, order_id, slot_num):
             'error': 'the hospital does not have available slot'
         })
     if slot_num == 1:
-        hosp.slots_open_0 -= 1
+        slot.slots_open_0 -= 1
     elif slot_num == 2:
-        hosp.slots_open_1 -= 1
+        slot.slots_open_1 -= 1
     elif slot_num == 3:
-        hosp.slots_open_2 -= 1
+        slot.slots_open_2 -= 1
     else:
-        hosp.slots_open_3 -= 1
-    hosp.save()
+        slot.slots_open_3 -= 1
+    slot.save()
     return render(request, 'order_info_first.html', {
         'customer': customer,
         'form': PatientInfo(instance=request.user, initial={
@@ -340,7 +341,7 @@ def pay_deposit(request, order_id, amount=-1):
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
         if int(amount) == 1:
-            order.deposit_paid = True
+            order.full_payment_paid = False
         else:
             order.full_payment_paid = True
         order.save()
