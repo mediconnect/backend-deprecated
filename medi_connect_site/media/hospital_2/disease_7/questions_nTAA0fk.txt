@@ -1,3 +1,0 @@
-"Q1:", "0", "Who\&#39;s your daddy?", "[u\&#39;Bob\&#39;, u\&#39;Cod\&#39;, u\&#39;Dog\&#39;, u\&#39;Ed\&#39;]", ""
-"Q2:", "1", "Greed is good?", "[u\&#39;Agree\&#39;, u\&quot;Can\&#39;t agree more\&quot;]", ""
-"Q3:", "2", "I see dead people", "", ""
