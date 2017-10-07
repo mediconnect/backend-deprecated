@@ -11,6 +11,7 @@ from translator.views import translator
 from supervisor.views import supervisor
 from helper.models import Hospital, Disease, Staff, Rank
 import smtplib
+import json
 
 
 # Create your views here
@@ -126,11 +127,17 @@ def result(request):
                 })
 
             rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
-            hospital_list = []
+            hospitals = []
+            rank = 1
             for r in rank_list:
-                hospital_list.append(r.hospital)
-                if len(hospital_list) >= 5:
-                    break
+                hosp = r.hospital
+                data = dict()
+                data['name'] = hosp.name
+                data['rank'] = rank
+                data['score'] = hosp.average_score
+                data['introduction'] = hosp.introduction
+                data['feedback'] = hosp.feedback_time
+
 
             return render(request, 'result.html', {
                 'hospital_list': hospital_list,

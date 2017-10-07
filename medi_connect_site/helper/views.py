@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from models import Hospital, Patient, Disease, Order, Document, Staff, LikeHospital, OrderPatient, Rank
+from models import Hospital, Patient, Disease, Order, Document, Staff, LikeHospital, OrderPatient, Rank, Slot
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from helper.forms import PatientInfo, AppointmentInfo
@@ -75,11 +75,11 @@ def hospital(request, hospital_id, disease_id):
             break
     order = Order(hospital=hosp, status=0, disease=dis, customer=customer) if order is None else order
     order.save()
-    rk = Rank.objects.get(hospital=hosp, disease=dis)
-    slots = {0: rk.slots_open_0, 1: rk.slots_open_1, 2: rk.slots_open_2, 3: rk.slots_open_3}
+    slot = Slot.objects.get(hospital=hosp, disease=dis)
+    slots = {0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2, 3: slot.slots_open_3}
     return render(request, "hospital_order.html", {
         'hospital': hosp,
-        'rank': rk.rank,
+        'rank': Rank.objects.get(disease=dis, hospital=hosp),
         'slots': slots,
         'disease': dis,
         'customer': customer,
