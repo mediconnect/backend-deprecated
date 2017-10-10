@@ -347,8 +347,10 @@ def pay_deposit(request, order_id, amount=-1):
     if request.method == 'POST':
         if int(amount) == 1:
             order.full_payment_paid = False
+            order.status = 1
         else:
             order.full_payment_paid = True
+            order.status = 1
         order.save()
         return redirect('order_finish', order_id=order.id)
     return render(request, 'order_deposit.html', {
