@@ -455,7 +455,7 @@ def generate_questionnaire(request,hospital_id,disease_id):
     q.save()
     """
 
-    return render(request, 'generate_questionnaire.html', {
+    return render(request, ' generate_questionnaire.html', {
         'forms': QuestionnaireFormSet,
         'choices':ChoiceFormSet,
         'questionnaire':q,

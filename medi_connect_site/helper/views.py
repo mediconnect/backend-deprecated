@@ -4,8 +4,10 @@ from models import Hospital, Patient, Disease, Order, Document, Staff, LikeHospi
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from helper.forms import PatientInfo, AppointmentInfo
+from helper.models import auto_assign
 from django.core.files.storage import FileSystemStorage
 from dynamic_form.forms import create_form, get_fields
+import info.utility as util
 from django.forms import formset_factory
 
 
@@ -326,6 +328,7 @@ def order_submit_second(request, order_id):
             patient.diagnose_hospital = hospital
             patient.contact = contact
             patient.save()
+            order.change_status(util.RECEIVED)
             order.save()
             return render(request, 'order_review.html', {
                 'customer': customer,
@@ -358,7 +361,7 @@ def pay_deposit(request, order_id, amount=-1):
 def finish(request, order_id):
     order = Order.objects.get(id=order_id)
     customer = Customer.objects.get(user=request.user)
-    order.status = 1
+    auto_assign(order)
     return render(request, 'finish.html', {
         'customer': customer,
     })

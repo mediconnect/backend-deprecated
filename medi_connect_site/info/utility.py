@@ -35,8 +35,8 @@ RELATION_CHOICES = (
 
 # Status
 STARTED = 0  # 下单中
-PAID = 1  # paid 已付款
-RECEIVED = 2  # order received 已接单
+RECEIVED = 1  # paid 已付款
+PAID = 2  # order received 已接单
 TRANSLATING_ORIGIN = 3  # translator starts translating origin documents 翻译原件中
 SUBMITTED = 4  # origin documents translated, approved and submitted to hospitals 已提交
 # ============ Above is C2E status =============#

@@ -4,6 +4,9 @@
 {% block content %}
 
 <div class="container">
+    {% if error %}
+        <p>{{error}}</p>
+    {% endif %}
     <div class="row">
         {% if form.non_field_errors %}
         {% for error in form.non_field_errors %}

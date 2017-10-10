@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
 
 
@@ -113,6 +114,7 @@ class LoginForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)
         self.fields['password'].widget = forms.PasswordInput()
+
 
 
 class SearchForm(forms.ModelForm):
