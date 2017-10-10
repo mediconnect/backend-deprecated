@@ -21,7 +21,8 @@
                     <h4 class="media-heading">Hospital Name: {{ hospital.name }}</h4>
                     <p>Introduction: {{ hospital.introduction }}</p>
                     <p>Feedback: {{ hospital.feedback_time }} week</p>
-                    <p>Price: {{ hospital.price_range }}</p>
+                    <p>Total price:  {{ hospital.full_price }}</p>
+                    <p>Deposit:  {{ hospital.deposit_price }}</p>
                     {% if hospital.slot.0 > 0 %}
                         <a href="{% url 'fast_order' disease_id=disease.id hospital_id=hospital.id slot_num=1 %}">First week is Available</a>
                     {% elif hospital.slot.1 > 0 %}
