@@ -20,7 +20,7 @@
                     <p>Review Score: {{ hospital.average_score }}</p>
                     <h4 class="media-heading">Hospital Name: {{ hospital.name }}</h4>
                     <p>Introduction: {{ hospital.introduction }}</p>
-                    <p>Feedback: {{ hospital.feedback_time }}</p>
+                    <p>Feedback: {{ hospital.feedback_time }} week</p>
                     <p>Price: {{ hospital.price_range }}</p>
                     {% if hospital.slot.0 > 0 %}
                         <a href="{% url 'fast_order' disease_id=disease.id hospital_id=hospital.id slot_num=1 %}">First week is Available</a>

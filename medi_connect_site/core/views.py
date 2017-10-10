@@ -73,8 +73,7 @@ def signup(request):
                                      email=email, first_name=first_name, last_name=last_name)
             user = authenticate(email=email, password=password)
             login(request, user)
-            customer = Customer(user=user)
-            customer.set_attributes(telephone, address, zipcode)
+            customer = Customer(user=user, tel=telephone, address=address, zipcode=zipcode)
             customer.save()
             return redirect('/')
 
@@ -137,7 +136,7 @@ def result(request):
                 single_hopital['rank'] = rank
                 single_hopital['score'] = hosp.average_score
                 single_hopital['introduction'] = hosp.introduction
-                single_hopital['feedback'] = hosp.feedback_time
+                single_hopital['feedback_time'] = hosp.feedback
                 single_hopital['image'] = hosp.image.url
                 rank += 1
                 slot = Slot.objects.get(disease=dis[0], hospital=hosp)

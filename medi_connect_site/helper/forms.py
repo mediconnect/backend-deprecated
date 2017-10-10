@@ -1,9 +1,11 @@
 from django import forms
-from helper.models import Order, Patient
 from django.core.exceptions import ValidationError
+
+from helper.models import Order, Patient
 
 
 class PatientInfo(forms.ModelForm):
+    # those fields belong to patient
     contact = forms.CharField(
         label="Contact",
         widget=forms.TextInput(attrs={'class': 'form-control'}),
@@ -22,8 +24,20 @@ class PatientInfo(forms.ModelForm):
         required=False,
     )
 
-    zipcode = forms.CharField(
-        label="Zipcode",
+    telephone = forms.CharField(
+        label="Tel",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=False,
+    )
+
+    wechat = forms.CharField(
+        label="Wechat",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=False,
+    )
+
+    qq = forms.CharField(
+        label="QQ",
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         required=False,
     )
@@ -38,15 +52,14 @@ class PatientInfo(forms.ModelForm):
         self.fields['contact'].widget.attrs['readonly'] = True
         self.fields['email'].widget.attrs['readonly'] = True
         self.fields['address'].widget.attrs['readonly'] = True
-        self.fields['zipcode'].widget.attrs['readonly'] = True
+        self.fields['telephone'].widget.attrs['readonly'] = True
+        self.fields['wechat'].widget.attrs['readonly'] = True
+        self.fields['qq'].widget.attrs['readonly'] = True
         self.fields['birth'].label = 'format should be yy-mm-dd change this later once UI plugin is done'
         # comment out this form for later use
         # self.fields['birth'].widget = forms.DateInput(attrs={'class': 'datepicker'})
         self.field_order = [
-            'contact',
-            'email',
-            'address',
-            'zipcode',
+            'contact', 'email', 'address', 'telephone', 'wechat', 'qq'
         ]
         self.order_fields(self.field_order)
 
