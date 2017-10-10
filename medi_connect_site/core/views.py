@@ -47,11 +47,14 @@ def auth(request):
         user = authenticate(email=email, password=password)
         if user is None:
             return render(request, 'login.html',
-                          {'form': form})
+                          {
+                            'form': form,
+                            'error': 'Invalid Login'
+                           })
         login(request, user)
         return redirect('/')
     return render(request, 'login.html', {
-        'form': LoginForm()
+        'form': LoginForm(),
     })
 
 
