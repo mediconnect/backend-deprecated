@@ -34,7 +34,7 @@ th, td {
         <td class = "{{obj.disease.id}}">{{obj.slots_open_1}}</td>
         <td class = "{{obj.disease.id}}">{{obj.slots_open_2}}</td>
         <td class = "{{obj.disease.id}}">{{obj.slots_open_3}}</td>
-        <td><button onclick = 'popup("{{obj.hospital.id}}","{{obj.disease.id}}")'>修改</button></td>
+        <td><button onclick = 'popup("{{obj.disease.id}}")'>修改</button></td>
     </tr>
     {% endfor %}
 
@@ -56,14 +56,14 @@ th, td {
                     <th>重置</th>
                 </tr>
 
-                <tr id = 'slots-row'>
+                <tr>
                     <td ><input type="text" /></td>
                     <td ><input type = "text" /></td>
                     <td ><input type = "text" /></td>
                     <td><input type = "text" /></td>
                     <td><input type = "text" /></td>
-                    <td><button class = 'btn' onclick = 'setSlots("{{hospital.id}}","{{obj.disease.id}}")'>提交</button></td>
-                    <td><button class = 'btn' onclick = 'resetSlots("{{hospital.id}}","{{obj.disease.id}}")'>重置</button></td>
+                    <td><button class = 'btn'>提交</button></td>
+                    <td><button class = 'btn'>重置</button></td>
                 </tr>
 
             </table>
@@ -72,7 +72,7 @@ th, td {
   </div>
 <script>
     var emptyDiv = document.getElementById('popup').cloneNode(true);
-    function popup(hospital_id,disease_id){
+    function popup(disease_id){
         exist = document.getElementById('exist')
         if(exist){
             exist.parentNode.removeChild(exist);
@@ -85,16 +85,22 @@ th, td {
         cln.setAttribute('id','exist');
         document.body.appendChild(cln);
         row = cln.getElementsByTagName('tr')[1];
+        row.setAttribute('id','set-'+disease_id.toString());
+        console.log(row);
         cells = row.getElementsByTagName('td');
-        console.log(cells);
+        //console.log(cells);
         for(i = 0;i<5;i++){
             textNode = document.createTextNode(slots_array[i].innerText);
             cells[i].appendChild(textNode);
         }
+        cells[5].setAttribute('onclick','setSlots("{{hospital.id}}",$disease_id$)'.replace('$disease_id$',disease_id));
+        cells[6].setAttribute('onclick','resetSlots("{{hospital.id}}",$disease_id$)'.replace('$disease_id$',disease_id));
 
     }
     function setSlots(hospital_id,disease_id){
-        row = document.getElementById(disease_id.toString());
+        console.log(disease_id);
+        row = document.getElementById('set-'+disease_id.toString());
+        console.log(row);
         cells = row.getElementsByTagName('td');
         var slots_dict = {};
         for(i = 0;i<cells.length-2;i++){
