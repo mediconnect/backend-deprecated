@@ -2,11 +2,7 @@
 
 {% block content %}
 <head>
-
-
-    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
     <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 </head>
 <style>
 table, th, td {
@@ -38,18 +34,16 @@ th, td {
         <td class = "{{obj.disease.id}}">{{obj.slots_open_1}}</td>
         <td class = "{{obj.disease.id}}">{{obj.slots_open_2}}</td>
         <td class = "{{obj.disease.id}}">{{obj.slots_open_3}}</td>
-        <td><a href="#setSlots" data-rel="popup" class="ui-btn">修改</a></td>
+        <td><button onclick = 'popup()' data-rel="popup" class="ui-btn">修改</button></td>
     </tr>
     {% endfor %}
 
 </table>
 
-  <div data-role="main" class="ui-content">
+  <div data-role="main" >
 
-    <div data-role="popup" id="setSlots" class="ui-content" style="min-width:250px;">
-          {% for obj in disease_detail %}
+    <div data-role="popup" id="setSlots" style="min-width:250px;" hidden>
         <form>
-
             <table>
                 <p>设置数量(Press Esc to cancel)</p>
                 <tr>
@@ -61,7 +55,7 @@ th, td {
                     <th>提交</th>
                     <th>重置</th>
                 </tr>
-                {% for obj in disease_detail %}
+                
                 <tr id = "{{obj.disease.id}}" >
                     <td ><input type="text" value="{{obj.default_slots}}"/></td>
                     <td ><input type = "text" value="{{obj.slots_open_0}}"/></td>
@@ -70,16 +64,18 @@ th, td {
                     <td><input type = "text" value="{{obj.slots_open_3}}"/></td>
                     <td><button class = 'btn' onclick = 'setSlots("{{hospital.id}}","{{obj.disease.id}}")'>提交</button></td>
                     <td><button class = 'btn' onclick = 'resetSlots("{{hospital.id}}","{{obj.disease.id}}")'>重置</button></td>
-
                 </tr>
-                {% endfor %}
 
             </table>
         </form>
-          {% endfor %}
     </div>
   </div>
 <script>
+    function popup(){
+        div = document.getElementById('setSlots');
+        console.log(div);
+        div.removeAttribute('hidden');
+    }
     function setSlots(hospital_id,disease_id){
         row = document.getElementById(disease_id.toString());
         cells = row.getElementsByTagName('td');

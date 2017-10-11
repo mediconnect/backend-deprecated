@@ -31,6 +31,7 @@ Patient_Order = apps.get_model('helper','OrderPatient')
 Staff = apps.get_model('helper','Staff')
 Rank = apps.get_model('helper','Rank')
 Questionnaire = apps.get_model('helper','Questionnaire')
+Slot = apps.get_model('helper','Slot')
 
 @login_required
 def validate_pwd(request):
@@ -405,18 +406,18 @@ def set_slots(request):
     hospital = request.GET.get('hospital',None)
     disease = request.GET.get('disease',None)
     slots_dict = request.GET.get('slots_dict',None)
-    rank = Rank.objects.get(hospital = hospital,disease = disease)
+    slots = Slot.objects.get(hospital = hospital,disease = disease)
     if slots_dict != None:
         d = dict(map(lambda (k, v): (int(k), int(v)), json.loads(slots_dict.replace("'", "\"")).iteritems()))
-        rank.set_slots(d)
+        slots.set_slots(d)
     else:
-        rank.set_default_slots()
+        slots.set_default_slots()
     data={
-        'default':rank.default_slots,
-        'week_0': rank.slots_open_0,
-        'week_1': rank.slots_open_1,
-        'week_2': rank.slots_open_2,
-        'week_3': rank.slots_open_3,
+        'default':slots.default_slots,
+        'week_0': slots.slots_open_0,
+        'week_1': slots.slots_open_1,
+        'week_2': slots.slots_open_2,
+        'week_3': slots.slots_open_3,
 
     }
     return JsonResponse(data)
@@ -425,7 +426,7 @@ def set_slots(request):
 def rank_manage(request,id):
     supervisor = Staff.objects.get(user = request.user)
     hospital = Hospital.objects.get(id = id)
-    disease_detail = Rank.objects.filter(hospital = hospital)
+    disease_detail = Slot.objects.filter(hospital = hospital)
 
     return render(request,'rank_manage.html',{
         'supervisor':supervisor,
