@@ -34,15 +34,15 @@ th, td {
         <td class = "{{obj.disease.id}}">{{obj.slots_open_1}}</td>
         <td class = "{{obj.disease.id}}">{{obj.slots_open_2}}</td>
         <td class = "{{obj.disease.id}}">{{obj.slots_open_3}}</td>
-        <td><button onclick = 'popup()' data-rel="popup" class="ui-btn">修改</button></td>
+        <td><button onclick = 'popup("{{obj.hospital.id}}","{{obj.disease.id}}")'>修改</button></td>
     </tr>
     {% endfor %}
 
 </table>
 
-  <div data-role="main" >
+  <div >
 
-    <div data-role="popup" id="setSlots" style="min-width:250px;" hidden>
+    <div id = 'popup' hidden>
         <form>
             <table>
                 <p>设置数量(Press Esc to cancel)</p>
@@ -55,13 +55,13 @@ th, td {
                     <th>提交</th>
                     <th>重置</th>
                 </tr>
-                
-                <tr id = "{{obj.disease.id}}" >
-                    <td ><input type="text" value="{{obj.default_slots}}"/></td>
-                    <td ><input type = "text" value="{{obj.slots_open_0}}"/></td>
-                    <td ><input type = "text" value="{{obj.slots_open_1}}"/></td>
-                    <td><input type = "text" value="{{obj.slots_open_2}}"/></td>
-                    <td><input type = "text" value="{{obj.slots_open_3}}"/></td>
+
+                <tr id = 'slots-row'>
+                    <td ><input type="text" /></td>
+                    <td ><input type = "text" /></td>
+                    <td ><input type = "text" /></td>
+                    <td><input type = "text" /></td>
+                    <td><input type = "text" /></td>
                     <td><button class = 'btn' onclick = 'setSlots("{{hospital.id}}","{{obj.disease.id}}")'>提交</button></td>
                     <td><button class = 'btn' onclick = 'resetSlots("{{hospital.id}}","{{obj.disease.id}}")'>重置</button></td>
                 </tr>
@@ -71,10 +71,27 @@ th, td {
     </div>
   </div>
 <script>
-    function popup(){
-        div = document.getElementById('setSlots');
-        console.log(div);
-        div.removeAttribute('hidden');
+    var emptyDiv = document.getElementById('popup').cloneNode(true);
+    function popup(hospital_id,disease_id){
+        exist = document.getElementById('exist')
+        if(exist){
+            exist.parentNode.removeChild(exist);
+        }
+        //console.log(disease_id);
+        slots_array = document.getElementsByClassName(disease_id);
+        //console.log(slots_array);
+        cln = emptyDiv.cloneNode(true);
+        cln.removeAttribute('hidden');
+        cln.setAttribute('id','exist');
+        document.body.appendChild(cln);
+        row = cln.getElementsByTagName('tr')[1];
+        cells = row.getElementsByTagName('td');
+        console.log(cells);
+        for(i = 0;i<5;i++){
+            textNode = document.createTextNode(slots_array[i].innerText);
+            cells[i].appendChild(textNode);
+        }
+
     }
     function setSlots(hospital_id,disease_id){
         row = document.getElementById(disease_id.toString());
