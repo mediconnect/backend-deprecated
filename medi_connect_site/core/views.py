@@ -9,7 +9,7 @@ from customer.models import Customer
 from customer.views import customer
 from translator.views import translator
 from supervisor.views import supervisor
-from helper.models import Hospital, Disease, Staff, Rank, Slot
+from helper.models import Hospital, Disease, Staff, Rank, Slot, Price
 import smtplib
 import json
 
@@ -139,8 +139,10 @@ def result(request):
                 single_hopital['rank'] = rank
                 single_hopital['score'] = hosp.average_score
                 single_hopital['introduction'] = hosp.introduction
-                single_hopital['feedback_time'] = hosp.feedback
+                single_hopital['feedback_time'] = hosp.feedback_time
                 single_hopital['image'] = hosp.image.url
+                single_hopital['full_price'] = Price.objects.get(hospital=hosp, disease=dis[0]).full_price
+                single_hopital['deposit_price'] = Price.objects.get(hospital=hosp, disease=dis[0]).deposit
                 rank += 1
                 slot = Slot.objects.get(disease=dis[0], hospital=hosp)
                 single_hopital['slot'] = {0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2,
@@ -172,8 +174,10 @@ def choose_hospital(request, disease_id):
         single_hopital['rank'] = rank
         single_hopital['score'] = hosp.average_score
         single_hopital['introduction'] = hosp.introduction
-        single_hopital['feedback'] = hosp.feedback_time
+        single_hopital['feedback_time'] = hosp.feedback_time
         single_hopital['image'] = hosp.image.url
+        single_hopital['full_price'] = Price.objects.get(hospital=hosp, disease=dis).full_price
+        single_hopital['deposit_price'] = Price.objects.get(hospital=hosp, disease=dis).deposit
         rank += 1
         slot = Slot.objects.get(disease=dis, hospital=hosp)
         single_hopital['slot'] = {0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2,
