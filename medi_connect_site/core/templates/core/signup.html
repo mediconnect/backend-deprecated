@@ -55,6 +55,20 @@ $("input[name='email']").change(function() {
         }
     });
 });
+
+$("input[name='password']").keyup(function(){
+    $("#password-error").remove();
+    var password = $("input[name='password']").val();
+    var strength = 1;
+    var arr = [/.{8,}/, /[a-z]+/, /[0-9]+/, /[A-Z]+/];
+    jQuery.map(arr, function(regexp) {
+    if(password.match(regexp))
+     strength++;
+    });
+    $("input[name='password']").after("<label id='password-error' class='control-label'>Password Strength:"+strength+"<br>Password must contain at least one lowercase letter,one uppercase letter, one number and one special character and longer than 8 characters.</label>");
+    if (strength == 5) $("#password-error").html('Password is strong enough');
+    if (password.length == 0) $("#password-error").html('Password can not be empty');
+})
 </script>
 
 {% endblock %}
