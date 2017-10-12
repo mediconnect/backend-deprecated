@@ -65,9 +65,9 @@ $("input[name='password']").keyup(function(){
     if(password.match(regexp))
      strength++;
     });
-    $("input[name='password']").after("<label id='password-error' class='control-label'>Password Strength:"+strength+"<br>Password must contain at least one lowercase letter,one uppercase letter, one number and one special character and longer than 8 characters.</label>");
-    if (strength == 5) $("#password-error").html('Password is strong enough');
-    if (password.length == 0) $("#password-error").html('Password can not be empty');
+    $("input[name='password']").after("<label id='password-error' class='control-label'>密码强度:"+strength+"<br>密码长度至少为8，包含1个大写，1个小写，1个数字，1个特殊字符</label>");
+    if (strength == 5) $("#password-error").html('密码强度足够');
+    if (password.length == 0) $("#password-error").html('密码不能为空');
 })
 </script>
 

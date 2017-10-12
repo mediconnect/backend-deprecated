@@ -289,8 +289,7 @@ class Document(models.Model):
 class Staff(models.Model):
     user = models.OneToOneField(User)
     role = models.IntegerField(default=0)
-
-    # sequence = models.DateTimeField(default = timezone.now)
+    sequence = models.DateTimeField(default = timezone.now)
 
     class Meta:
         db_table = 'auth_staff'
