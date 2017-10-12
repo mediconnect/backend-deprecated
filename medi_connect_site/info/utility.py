@@ -24,13 +24,22 @@ GENDER_CHOICES = (
     ('OTHER', 'Other')
 )
 # Relation
+# 本人，父母，子女，配偶，其他亲属，朋友，其他
 SELF = 'SELF'
+PARENT = 'PARENT'
+CHILD = 'CHILD'
+SPOUSE = 'SPOUSE'
 RELATIVE = 'RELATIVE'
-CLIENT = 'CLIENT'
+FRIEND = 'FRIEND'
+OTHER = 'OTHER'
 RELATION_CHOICES = (
-    (SELF, 'SELF'),
-    (RELATIVE, 'RELATIVE'),
-    (CLIENT, 'CLIENT')
+    (SELF, '本人'),
+    (PARENT, '父母'),
+    (CHILD, '子女'),
+    (SPOUSE,'配偶'),
+    (RELATIVE,'其他亲属'),
+    (FRIEND,'朋友'),
+    (OTHER,'其他')
 )
 
 # Status
