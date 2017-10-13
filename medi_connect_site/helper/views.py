@@ -156,6 +156,7 @@ def order_info_first(request, order_id, slot_num):
     else:
         slot.slots_open_3 -= 1
     slot.save()
+    pin_yin = order.patient_order.pin_yin.split() if order.patient_order is not None and len(order.patient_order.pin_yin) >= 3 else ['', '']
     return render(request, 'order_info_first.html', {
         'customer': customer,
         'form': PatientInfo(instance=request.user, initial={
@@ -171,7 +172,8 @@ def order_info_first(request, order_id, slot_num):
             'gender': order.patient_order.gender if order.patient_order is not None else '',
             'relationship': order.patient_order.relationship if order.patient_order is not None else '',
             'passport': order.patient_order.passport if order.patient_order is not None else '',
-            'pin_yin': order.patient_order.pin_yin if order.patient_order is not None else '',
+            'first_name_pin_yin': pin_yin[0],
+            'last_name_pin_yin': pin_yin[1],
         }),
         'order_id': order.id,
     })
@@ -196,7 +198,8 @@ def order_submit_first(request, order_id):
             gender = form.cleaned_data.get('gender')
             relationship = form.cleaned_data.get('relationship')
             passport = form.cleaned_data.get('passport')
-            pin_yin = form.cleaned_data.get('pin_yin')
+            first_name_pin_yin = form.cleaned_data.get('first_name_pin_yin')
+            last_name_pin_yin = form.cleaned_data.get('last_name_pin_yin')
             # create patient or fetch accordingly
             patient = Patient() if order.patient is None else order.patient
             patient.customer = customer
@@ -206,7 +209,7 @@ def order_submit_first(request, order_id):
             patient.gender = gender
             patient.relationship = relationship
             patient.passport = passport
-            patient.pin_yin = pin_yin
+            patient.pin_yin = first_name_pin_yin + last_name_pin_yin
             patient.save()
             order.patient = patient
 
@@ -219,7 +222,7 @@ def order_submit_first(request, order_id):
             order_patient.gender = gender
             order_patient.relationship = relationship
             order_patient.passport = passport
-            order_patient.pin_yin = pin_yin
+            order_patient.pin_yin = first_name_pin_yin + last_name_pin_yin
             order_patient.save()
             order.patient_order = order_patient
 
@@ -363,7 +366,7 @@ def pay_deposit(request, order_id, amount=-1):
 def finish(request, order_id):
     order = Order.objects.get(id=order_id)
     customer = Customer.objects.get(user=request.user)
-    auto_assign(order)
+    # auto_assign(order)
     return render(request, 'finish.html', {
         'customer': customer,
     })

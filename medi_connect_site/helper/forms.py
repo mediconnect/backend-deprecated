@@ -42,10 +42,22 @@ class PatientInfo(forms.ModelForm):
         required=False,
     )
 
+    last_name_pin_yin = forms.CharField(
+        label="Last Name Pin Yin",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=False,
+    )
+
+    first_name_pin_yin = forms.CharField(
+        label="First Name Pin Yin",
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        required=False,
+    )
+
     class Meta:
         model = Patient
         exclude = []
-        fields = ['first_name', 'last_name', 'birth', 'gender', 'relationship', 'passport', 'pin_yin']
+        fields = ['first_name', 'last_name', 'birth', 'gender', 'relationship', 'passport']
 
     def __init__(self, *args, **kwargs):
         super(PatientInfo, self).__init__(*args, **kwargs)
@@ -59,7 +71,7 @@ class PatientInfo(forms.ModelForm):
         # comment out this form for later use
         # self.fields['birth'].widget = forms.DateInput(attrs={'class': 'datepicker'})
         self.field_order = [
-            'contact', 'email', 'address', 'telephone', 'wechat', 'qq'
+            'contact', 'email', 'address', 'telephone', 'wechat', 'qq', 'first_name_pin_yin', 'last_name_pin_yin'
         ]
         self.order_fields(self.field_order)
 
