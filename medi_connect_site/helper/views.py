@@ -318,8 +318,6 @@ def order_submit_second(request, order_id):
         else:
             for field in get_fields(order.hospital.id, order.disease.id):
                 for f in request.FILES.getlist(field):
-                    fs = FileSystemStorage()
-                    fs.save(f.name, f)
                     doc = Document(document=f, description=field, order=order)
                     doc.save()
                     order.origin.add(doc)
@@ -366,7 +364,7 @@ def pay_deposit(request, order_id, amount=-1):
 def finish(request, order_id):
     order = Order.objects.get(id=order_id)
     customer = Customer.objects.get(user=request.user)
-    # auto_assign(order)
+    auto_assign(order)
     return render(request, 'finish.html', {
         'customer': customer,
     })
