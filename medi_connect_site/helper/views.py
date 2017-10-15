@@ -166,8 +166,7 @@ def order_info_first(request, order_id, slot_num):
             'telephone': customer.tel,
             'wechat': customer.wechat if len(customer.wechat) >= 1 else 'unknown',
             'qq': customer.qq if len(customer.qq) >= 1 else 'unknown',
-            'first_name': order.patient_order.first_name if order.patient_order is not None else '',
-            'last_name': order.patient_order.last_name if order.patient_order is not None else '',
+            'name': order.patient_order.name if order.patient_order is not None else '',
             'birth': order.patient_order.birth if order.patient_order is not None else '',
             'gender': order.patient_order.gender if order.patient_order is not None else '',
             'relationship': order.patient_order.relationship if order.patient_order is not None else '',
@@ -192,8 +191,7 @@ def order_submit_first(request, order_id):
                 'customer': customer,
             })
         else:
-            first_name = form.cleaned_data.get('first_name')
-            last_name = form.cleaned_data.get('last_name')
+            name = form.cleaned_data.get('name')
             birth = form.cleaned_data.get('birth')
             gender = form.cleaned_data.get('gender')
             relationship = form.cleaned_data.get('relationship')
@@ -203,26 +201,24 @@ def order_submit_first(request, order_id):
             # create patient or fetch accordingly
             patient = Patient() if order.patient is None else order.patient
             patient.customer = customer
-            patient.first_name = first_name
-            patient.last_name = last_name
+            patient.name = name
             patient.birth = birth
             patient.gender = gender
             patient.relationship = relationship
             patient.passport = passport
-            patient.pin_yin = first_name_pin_yin + last_name_pin_yin
+            patient.pin_yin = first_name_pin_yin + ' ' + last_name_pin_yin
             patient.save()
             order.patient = patient
 
             order.status = 0
 
             order_patient = OrderPatient() if order.patient_order is None else order.patient_order
-            order_patient.first_name = first_name
-            order_patient.last_name = last_name
+            order_patient.name = name
             order_patient.birth = birth
             order_patient.gender = gender
             order_patient.relationship = relationship
             order_patient.passport = passport
-            order_patient.pin_yin = first_name_pin_yin + last_name_pin_yin
+            order_patient.pin_yin = first_name_pin_yin + ' ' + last_name_pin_yin
             order_patient.save()
             order.patient_order = order_patient
 
