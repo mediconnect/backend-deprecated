@@ -18,6 +18,7 @@ from django.template import loader, Context
 from django.urls import reverse
 import json
 from django.core.files.base import ContentFile
+from helper.models import auto_assign,manual_assign
 
 
 
@@ -241,7 +242,7 @@ def assign(request, id, order_id):
             })
         else:
             translator_id = form.cleaned_data.get('assignee')
-            util.assign_manually(assignment, Staff.objects.get(user_id=translator_id))
+            manual_assign(assignment, Staff.objects.get(user_id=translator_id))
             return render(request, 'detail.html', {
                 'assignment': assignment,
                 'supervisor': supervisor,
@@ -357,7 +358,7 @@ def manage_files(request, id, order_id):
         document.save()
         assignment.feedback.add(document)
         if not assignment.auto_assigned:
-            util.assign_auto(assignment)
+            auto_assign(assignment)
         assignment.save()
         return render(request, 'manage_files.html', {
             'supervisor': supervisor,
@@ -407,6 +408,7 @@ def set_slots(request):
     disease = request.GET.get('disease',None)
     slots_dict = request.GET.get('slots_dict',None)
     slots = Slot.objects.get(hospital = hospital,disease = disease)
+    print slots_dict
     if slots_dict != None:
         d = dict(map(lambda (k, v): (int(k), int(v)), json.loads(slots_dict.replace("'", "\"")).iteritems()))
         slots.set_slots(d)
