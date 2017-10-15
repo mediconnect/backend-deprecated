@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import datetime
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q
@@ -163,9 +164,9 @@ class Order(models.Model):
 
     def get_translator_C2E(self):
         if self.translator_C2E is None:
-            return (-1, '未分配')
+            return -1, '未分配'
         else:
-            return (self.translator_C2E.id, self.translator_C2E.get_name())
+            return self.translator_C2E.id, self.translator_C2E.get_name()
 
     def set_translator_C2E(self, assignee):
         self.translator_C2E = assignee
@@ -173,9 +174,9 @@ class Order(models.Model):
 
     def get_translator_E2C(self):
         if self.translator_E2C is None:
-            return (-1, '未分配')
+            return -1, '未分配'
         else:
-            return (self.translator_E2C.id, self.translator_E2C.get_name())
+            return self.translator_E2C.id, self.translator_E2C.get_name()
 
     def set_translator_E2C(self, assignee):
         self.translator_E2C = assignee
@@ -183,9 +184,9 @@ class Order(models.Model):
 
     def get_patient(self):
         if self.patient_order is None or self.patient is None:
-            return (-1, '病人信息缺失')
+            return -1, '病人信息缺失'
         else:
-            return (self.patient_order.id, self.patient_order.get_name())
+            return self.patient_order.id, self.patient_order.get_name()
 
     def get_submit(self):
         if not self.document_complete:
@@ -289,7 +290,7 @@ class Document(models.Model):
 class Staff(models.Model):
     user = models.OneToOneField(User)
     role = models.IntegerField(default=0)
-    sequence = models.DateTimeField(default = timezone.now)
+    # sequence = models.DateTimeField(default=timezone.now)
 
     class Meta:
         db_table = 'auth_staff'
@@ -360,8 +361,7 @@ class Staff(models.Model):
 
 class Patient(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=50, default='')
-    last_name = models.CharField(max_length=50, default='')
+    name = models.CharField(max_length=50, default='')
     pin_yin = models.CharField(max_length=50, default='')
     birth = models.DateField(default=datetime.date.today)
     gender = models.CharField(max_length=5, choices=util.GENDER_CHOICES, default=util.MALE)  # birthdate
@@ -376,7 +376,7 @@ class Patient(models.Model):
         db_table = 'patient'
 
     def get_name(self):
-        return self.first_name + self.last_name
+        return self.name
 
     def get_age(self):  # method to calculate age
         today = datetime.date.today
@@ -388,8 +388,7 @@ class OrderPatient(models.Model):
     # This is created everytime an order is placed
     # Do not change this table when edit patient
     # Fetch patient info for display order-related info
-    first_name = models.CharField(max_length=50, default='')
-    last_name = models.CharField(max_length=50, default='')
+    name = models.CharField(max_length=50, default='')
     pin_yin = models.CharField(max_length=50, default='')
     birth = models.DateField(datetime.date.today)
     gender = models.CharField(max_length=5, choices=util.GENDER_CHOICES, default=util.MALE)
@@ -404,7 +403,7 @@ class OrderPatient(models.Model):
         db_table = 'order_patient'
 
     def get_name(self):
-        return self.first_name + self.last_name
+        return self.name
 
     def get_age(self):  # method to calculate age
         today = datetime.date.today
