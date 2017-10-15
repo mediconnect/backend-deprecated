@@ -166,7 +166,8 @@ def order_info_first(request, order_id, slot_num):
             'telephone': customer.tel,
             'wechat': customer.wechat if len(customer.wechat) >= 1 else 'unknown',
             'qq': customer.qq if len(customer.qq) >= 1 else 'unknown',
-            'name': order.patient_order.name if order.patient_order is not None else '',
+            'first_name': order.patient_order.first_name if order.patient_order is not None else '',
+            'last_name': order.patient_order.last_name if order.patient_order is not None else '',
             'birth': order.patient_order.birth if order.patient_order is not None else '',
             'gender': order.patient_order.gender if order.patient_order is not None else '',
             'relationship': order.patient_order.relationship if order.patient_order is not None else '',
@@ -191,7 +192,8 @@ def order_submit_first(request, order_id):
                 'customer': customer,
             })
         else:
-            name = form.cleaned_data.get('name')
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
             birth = form.cleaned_data.get('birth')
             gender = form.cleaned_data.get('gender')
             relationship = form.cleaned_data.get('relationship')
@@ -201,7 +203,8 @@ def order_submit_first(request, order_id):
             # create patient or fetch accordingly
             patient = Patient() if order.patient is None else order.patient
             patient.customer = customer
-            patient.name = name
+            patient.first_name = first_name
+            patient.last_name = last_name
             patient.birth = birth
             patient.gender = gender
             patient.relationship = relationship
@@ -213,7 +216,8 @@ def order_submit_first(request, order_id):
             order.status = 0
 
             order_patient = OrderPatient() if order.patient_order is None else order.patient_order
-            order_patient.name = name
+            order_patient.first_name = first_name
+            order_patient.last_name = last_name
             order_patient.birth = birth
             order_patient.gender = gender
             order_patient.relationship = relationship

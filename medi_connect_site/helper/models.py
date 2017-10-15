@@ -6,7 +6,7 @@ import datetime
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q
-from django.utils import timezone
+from django.utils import timezone, http
 
 from customer.models import Customer
 from info import utility as util
@@ -263,7 +263,7 @@ class Order(models.Model):
 
 
 def order_directory_path(instance, filename):
-    return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name(), instance.order.id, filename)
+    return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name(), instance.order.id, http.urlquote(filename))
 
 
 class Document(models.Model):
@@ -361,7 +361,8 @@ class Staff(models.Model):
 
 class Patient(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50, default='')
+    first_name = models.CharField(max_length=50, default='')
+    last_name = models.CharField(max_length=50, default='')
     pin_yin = models.CharField(max_length=50, default='')
     birth = models.DateField(default=datetime.date.today)
     gender = models.CharField(max_length=5, choices=util.GENDER_CHOICES, default=util.MALE)  # birthdate
@@ -376,7 +377,7 @@ class Patient(models.Model):
         db_table = 'patient'
 
     def get_name(self):
-        return self.name
+        return self.first_name + ' ' + self.last_name
 
     def get_age(self):  # method to calculate age
         today = datetime.date.today
@@ -388,7 +389,8 @@ class OrderPatient(models.Model):
     # This is created everytime an order is placed
     # Do not change this table when edit patient
     # Fetch patient info for display order-related info
-    name = models.CharField(max_length=50, default='')
+    first_name = models.CharField(max_length=50, default='')
+    last_name = models.CharField(max_length=50, default='')
     pin_yin = models.CharField(max_length=50, default='')
     birth = models.DateField(datetime.date.today)
     gender = models.CharField(max_length=5, choices=util.GENDER_CHOICES, default=util.MALE)
@@ -403,7 +405,7 @@ class OrderPatient(models.Model):
         db_table = 'order_patient'
 
     def get_name(self):
-        return self.name
+        return self.first_name + ' ' + self.last_name
 
     def get_age(self):  # method to calculate age
         today = datetime.date.today
