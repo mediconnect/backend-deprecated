@@ -408,6 +408,7 @@ def set_slots(request):
     disease = request.GET.get('disease',None)
     slots_dict = request.GET.get('slots_dict',None)
     slots = Slot.objects.get(hospital = hospital,disease = disease)
+    print slots_dict
     if slots_dict != None:
         d = dict(map(lambda (k, v): (int(k), int(v)), json.loads(slots_dict.replace("'", "\"")).iteritems()))
         slots.set_slots(d)
