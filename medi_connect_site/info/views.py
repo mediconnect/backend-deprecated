@@ -225,7 +225,6 @@ def bookmark(request):
     diseases = set()
     for h in liked_hospital:
         diseases.add(h.disease)
-    print diseases
     return render(request, 'bookmark.html', {
         'diseases': diseases,
         'customer': customer,
