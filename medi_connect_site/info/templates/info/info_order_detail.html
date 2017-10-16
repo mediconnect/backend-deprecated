@@ -19,7 +19,7 @@
 <p>Hospital: {{order.hospital.name}}</p>
 
 {% for obj in order.origin.all %}
-    <a href={{obj.document.url}}>Download your submitted documents</a>
+    <a href={{obj.document.url}}>{{ obj.description }}</a>
     <br>
 {% endfor %}
 

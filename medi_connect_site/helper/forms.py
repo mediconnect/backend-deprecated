@@ -57,7 +57,7 @@ class PatientInfo(forms.ModelForm):
     class Meta:
         model = Patient
         exclude = []
-        fields = ['name', 'birth', 'gender', 'relationship', 'passport']
+        fields = ['first_name', 'last_name', 'birth', 'gender', 'relationship', 'passport']
 
     def __init__(self, *args, **kwargs):
         super(PatientInfo, self).__init__(*args, **kwargs)
@@ -71,15 +71,10 @@ class PatientInfo(forms.ModelForm):
         # comment out this form for later use
         # self.fields['birth'].widget = forms.DateInput(attrs={'class': 'datepicker'})
         self.field_order = [
-            'contact', 'email', 'address', 'telephone', 'wechat', 'qq', 'first_name_pin_yin', 'last_name_pin_yin'
+            'contact', 'email', 'address', 'telephone', 'wechat', 'qq', 'first_name', 'last_name', 'first_name_pin_yin',
+            'last_name_pin_yin'
         ]
         self.order_fields(self.field_order)
-
-    def clean_name(self):
-        name = self.cleaned_data['name']
-        if name is None or len(name) == 0:
-            raise ValidationError('name cannot be None')
-        return name
 
     def clean_age(self):
         age = self.cleaned_data['age']

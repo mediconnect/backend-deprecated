@@ -83,7 +83,7 @@ class PatientAddForm(forms.ModelForm):
     class Meta:
         model = Patient
         exclude = []
-        fields = ['name', 'birth', 'gender', 'pin_yin']
+        fields = ['first_name', 'last_name', 'birth', 'gender', 'pin_yin']
 
     def __init__(self, *args, **kwargs):
         super(PatientAddForm, self).__init__(*args, **kwargs)

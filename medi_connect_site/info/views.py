@@ -93,10 +93,11 @@ def profile_patient(request):
                 'form': form,
                 'patients': patients,
             })
-        name = form.cleaned_data.get('name')
+        first_name = form.cleaned_data.get('first_name')
+        last_name = form.cleaned_data.get('last_name')
         birth = form.cleaned_data.get('birth')
         gender = form.cleaned_data.get('gender')
-        patient = Patient.objects.create(name=name, birth=birth, gender=gender,
+        patient = Patient.objects.create(first_name=first_name, last_name=last_name, birth=birth, gender=gender,
                                          customer=customer)
         patient.save()
     patients = Patient.objects.filter(customer=customer)
@@ -224,7 +225,6 @@ def bookmark(request):
     diseases = set()
     for h in liked_hospital:
         diseases.add(h.disease)
-    print diseases
     return render(request, 'bookmark.html', {
         'diseases': diseases,
         'customer': customer,
@@ -281,7 +281,8 @@ def profile_patient_edit(request, patient_id):
                 'form': form,
                 'patient': patient,
             })
-        patient.name = form.cleaned_data.get('name')
+        patient.first_name = form.cleaned_data.get('first_name')
+        patient.last_name = form.cleaned_data.get('last_name')
         patient.birth = form.cleaned_data.get('birth')
         patient.gender = form.cleaned_data.get('gender')
         patient.pin_yin = form.cleaned_data.get('pin_yin')

@@ -166,7 +166,8 @@ def order_info_first(request, order_id, slot_num):
             'telephone': customer.tel,
             'wechat': customer.wechat if len(customer.wechat) >= 1 else 'unknown',
             'qq': customer.qq if len(customer.qq) >= 1 else 'unknown',
-            'name': order.patient_order.name if order.patient_order is not None else '',
+            'first_name': order.patient_order.first_name if order.patient_order is not None else '',
+            'last_name': order.patient_order.last_name if order.patient_order is not None else '',
             'birth': order.patient_order.birth if order.patient_order is not None else '',
             'gender': order.patient_order.gender if order.patient_order is not None else '',
             'relationship': order.patient_order.relationship if order.patient_order is not None else '',
@@ -191,7 +192,8 @@ def order_submit_first(request, order_id):
                 'customer': customer,
             })
         else:
-            name = form.cleaned_data.get('name')
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
             birth = form.cleaned_data.get('birth')
             gender = form.cleaned_data.get('gender')
             relationship = form.cleaned_data.get('relationship')
@@ -201,7 +203,8 @@ def order_submit_first(request, order_id):
             # create patient or fetch accordingly
             patient = Patient() if order.patient is None else order.patient
             patient.customer = customer
-            patient.name = name
+            patient.first_name = first_name
+            patient.last_name = last_name
             patient.birth = birth
             patient.gender = gender
             patient.relationship = relationship
@@ -213,7 +216,8 @@ def order_submit_first(request, order_id):
             order.status = 0
 
             order_patient = OrderPatient() if order.patient_order is None else order.patient_order
-            order_patient.name = name
+            order_patient.first_name = first_name
+            order_patient.last_name = last_name
             order_patient.birth = birth
             order_patient.gender = gender
             order_patient.relationship = relationship
@@ -314,8 +318,6 @@ def order_submit_second(request, order_id):
         else:
             for field in get_fields(order.hospital.id, order.disease.id):
                 for f in request.FILES.getlist(field):
-                    fs = FileSystemStorage()
-                    fs.save(f.name, f)
                     doc = Document(document=f, description=field, order=order)
                     doc.save()
                     order.origin.add(doc)
@@ -362,7 +364,7 @@ def pay_deposit(request, order_id, amount=-1):
 def finish(request, order_id):
     order = Order.objects.get(id=order_id)
     customer = Customer.objects.get(user=request.user)
-    # auto_assign(order)
+    auto_assign(order)
     return render(request, 'finish.html', {
         'customer': customer,
     })
