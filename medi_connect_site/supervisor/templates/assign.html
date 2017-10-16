@@ -13,5 +13,5 @@
 
 
   <p><a href="{% url 'supervisor_home' id=supervisor.user.id %}">Return to home</a></p>
-  <p><a href="{% url 'detail' id=supervisor.id order_id=assignment.id %}">Return to detail</a></p>
+  <p><a href="{% url 'detail' id=supervisor.user.id order_id=assignment.id %}">Return to detail</a></p>
 {% endblock %}
