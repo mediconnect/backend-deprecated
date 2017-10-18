@@ -1,0 +1,14 @@
+{% extends "customer_header.html" %}
+{% block title %}Compare{% endblock %}
+
+{% block content %}
+<ul class="nav nav-tabs">
+    <li role="presentation"><a href="{% url 'info_profile' %}">Profile</a></li>
+    <li role="presentation" class="active"><a href="{% url 'info_bookmark' %}">Bookmark</a></li>
+    <li role="presentation"><a href="{% url 'info_order' %}">Appointment</a></li>
+</ul>
+
+<br>
+
+
+{% endblock %}

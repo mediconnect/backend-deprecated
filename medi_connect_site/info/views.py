@@ -250,6 +250,15 @@ def bookmark_compare(request, disease_id):
 
 
 @login_required
+def bookmark_detail(request, hospital1_id, hospital2_id):
+    return render(request, 'bookmark_detail.html', {
+        'hospital1': Hospital.objects.get(id=hospital1_id),
+        'hospital2': Hospital.objects.get(id=hospital2_id),
+        'customer': Customer.objects.get(user=request.user),
+    })
+
+
+@login_required
 def unmark(request, hospital_id):
     customer = Customer.objects.get(user=request.user)
     hosp = Hospital.objects.get(id=hospital_id)
