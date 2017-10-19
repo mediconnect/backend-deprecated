@@ -1,0 +1,40 @@
+{% extends "customer_header.html" %}
+{% block title %}Compare{% endblock %}
+
+{% block content %}
+<ul class="nav nav-tabs">
+    <li role="presentation"><a href="{% url 'info_profile' %}">Profile</a></li>
+    <li role="presentation" class="active"><a href="{% url 'info_bookmark' %}">Bookmark</a></li>
+    <li role="presentation"><a href="{% url 'info_order' %}">Appointment</a></li>
+</ul>
+
+<br>
+
+<table class="table table-striped">
+    <tr>
+        <td></td>
+        <td>{{ hospital1.name }}</td>
+        <td>{{ hospital2.name }}</td>
+    </tr>
+    <tr>
+        <td>Introduction</td>
+        <td>{{ hospital1.introduction }}</td>
+        <td>{{ hospital2.introduction }}</td>
+    </tr>
+    <tr>
+        <td>Area</td>
+        <td>{{ hospital1.area }}</td>
+        <td>{{ hospital2.area }}</td>
+    </tr>
+    <tr>
+        <td>Specialty</td>
+        <td>{{ hospital1.specialty }}</td>
+        <td>{{ hospital2.specialty }}</td>
+    </tr>
+    <tr>
+        <td>Score</td>
+        <td>{{ hospital1.average_score }}</td>
+        <td>{{ hospital2.average_score }}</td>
+    </tr>
+</table>
+{% endblock %}
