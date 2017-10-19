@@ -17,22 +17,31 @@ def auto_assign(order):
     if order.get_status() <= util.TRANSLATING_ORIGIN:
         assignee = Staff.objects.filter(role=1).order_by('sequence')[0]
         order.set_translator_C2E(assignee)
+        order.change_status(util.TRANSLATING_ORIGIN)
+        order.change_status(util.C2E_NOT_STARTED)
         assignee.set_sequence(timezone.now())
 
     if order.get_status() >= util.RETURN and order.get_status <= util.FEEDBACK:
         assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
         order.set_translator_E2C(assignee)
+        order.change_status(util.TRANSLATING_FEEDBACK)
+        order.change_status(util.E2C_NOT_STARTED)
+        order.auto_assigned = 1
         assignee.set_sequence(timezone.now())
 
 
 def manual_assign(order, assignee):
     if order.get_status() <= util.TRANSLATING_ORIGIN:
         order.set_translator_C2E(assignee)
+        order.change_status(util.TRANSLATING_ORIGIN)
+        order.change_status(util.C2E_NOT_STARTED)
         order.save()
         assignee.set_sequence(timezone.now())
 
     if order.get_status() >= util.RETURN and order.get_status <= util.FEEDBACK:
         order.set_translator_E2C(assignee)
+        order.change_status(util.TRANSLATING_FEEDBACK)
+        order.change_status(util.E2C_NOT_STARTED)
         order.save()
         assignee.set_sequence(timezone.now())
 
@@ -217,17 +226,17 @@ class Order(models.Model):
             submit_deadline += ('  (passdue)  ')
         return submit_deadline
 
-    # def get_estimate(self):
-    #     if not self.document_complete:
-    #         date = (self.submit + datetime.timedelta(weeks=self.week_number_at_submit, days=self.hospital.feedback_time,
-    #                                                  hours=8))
-    #     else:
-    #         date = (
-    #             self.get_submit() + datetime.timedelta(weeks=self.week_number_at_submit,
-    #                                                    days=self.hospital.feedback_time,
-    #                                                    hours=8))
-    #     return str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '-' + str(date.year) + '/' + str(
-    #         date.month) + '/' + str(date.day + 3)
+    def get_estimate(self):
+        if not self.document_complete:
+            date = (self.submit + datetime.timedelta(weeks=self.week_number_at_submit, days=int(self.hospital.feedback_time),
+                                                      hours=8))
+        else:
+            date = (
+                self.get_submit() + datetime.timedelta(weeks=self.week_number_at_submit,
+                                                        days=self.hospital.feedback_time,
+                                                        hours=8))
+        return str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '-' + str(date.year) + '/' + str(
+             date.month) + '/' + str(date.day + 3)
 
     def get_upload(self):
         if self.latest_upload is None:
