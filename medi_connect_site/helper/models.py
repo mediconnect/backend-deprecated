@@ -18,16 +18,18 @@ def auto_assign(order):
         assignee = Staff.objects.filter(role=1).order_by('sequence')[0]
         order.set_translator_C2E(assignee)
         order.change_status(util.TRANSLATING_ORIGIN)
-        order.change_status(util.C2E_NOT_STARTED)
+        order.change_trans_status(util.C2E_NOT_STARTED)
         assignee.set_sequence(timezone.now())
 
-    if order.get_status() >= util.RETURN and order.get_status <= util.FEEDBACK:
+    if order.get_status() >= util.RETURN:
         assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
         order.set_translator_E2C(assignee)
         order.change_status(util.TRANSLATING_FEEDBACK)
-        order.change_status(util.E2C_NOT_STARTED)
+        order.change_trans_status(util.E2C_NOT_STARTED)
         order.auto_assigned = 1
         assignee.set_sequence(timezone.now())
+    order.save()
+    print order.auto_assigned,order.translator_C2E,order.status,order.trans_status,order.translator_E2C
 
 
 def manual_assign(order, assignee):

@@ -230,10 +230,10 @@ def assign(request, id, order_id):
     customer = Customer.objects.get(id=assignment.customer_id)
     status = util.status_dict[int(assignment.status)]
     if request.method == 'POST':
-        if assignment.get_status() <= 3:
+        if assignment.get_status() <= util.TRANSLATING_ORIGIN:
             form = C2E_AssignForm(request.POST)
         else:
-            form = C2E_AssignForm(request.POST)
+            form = E2C_AssignForm(request.POST)
         if not form.is_valid():
             return render(request, 'assign.html', {
                 'form': form,
@@ -252,7 +252,7 @@ def assign(request, id, order_id):
         if assignment.get_status() <= 3:
             form = C2E_AssignForm()
         else:
-            form = C2E_AssignForm()
+            form = E2C_AssignForm()
         return render(request, 'assign.html', {
             'form': form,
             'supervisor': supervisor,
@@ -293,14 +293,14 @@ def approve(request, id, order_id):
         else:
             approval = form.cleaned_data.get('approval')
             if approval:
-                if assignment.get_status() == 3:
-                    assignment.change_status(util.RECEIVED)
+                if assignment.get_status() == util.TRANSLATING_ORIGIN:
+                    assignment.change_status(util.SUBMITTED)
                     assignment.change_trans_status(util.C2E_FINISHED)
                     for document in assignment.pending.all():
                         assignment.origin.add(document)
                         assignment.save()
 
-                if assignment.get_status() == 6:
+                if assignment.get_status() == util.TRANSLATING_FEEDBACK:
                     assignment.change_status(util.FEEDBACK)
                     assignment.change_trans_status(util.E2C_FINISHED)
                     for document in assignment.pending.all():
@@ -344,7 +344,8 @@ def manage_files(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     supervisor = Staff.objects.get(user_id=id)
     if (request.POST.get('delete')):
-        document = Document.objects.get(document=request.GET.get('document'))
+        print request.POST.get('document')
+        document = Document.objects.get(document=request.POST.get('document'))
         document.delete()
         return render(request, 'manage_files.html', {
             'supervisor': supervisor,
@@ -357,7 +358,9 @@ def manage_files(request, id, order_id):
         document = Document(order=assignment, document=file, is_origin=True)
         document.save()
         assignment.feedback.add(document)
-        auto_assign(assignment)
+        if not assignment.auto_assigned:
+            assignment.change_status(util.RETURN)
+            auto_assign(assignment)
         assignment.save()
         return render(request, 'manage_files.html', {
             'supervisor': supervisor,
