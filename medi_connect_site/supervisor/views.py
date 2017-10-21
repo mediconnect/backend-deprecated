@@ -344,7 +344,6 @@ def manage_files(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     supervisor = Staff.objects.get(user_id=id)
     if (request.POST.get('delete')):
-        print request.POST.get('document')
         document = Document.objects.get(document=request.POST.get('document'))
         document.delete()
         return render(request, 'manage_files.html', {
