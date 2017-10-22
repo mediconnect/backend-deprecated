@@ -264,8 +264,10 @@ def detail(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     supervisor = Staff.objects.get(user_id=id)
     if (request.POST.get('delete')):
-        return render(request, 'supervisor_home.html', {
-            'supervisor':supervisor
+        assignment.delete()
+        return render(request, 'supervisor_order_status.html', {
+            'status': 'All',
+            'supervisor': supervisor,
         })
 
     return render(request, 'detail.html', {
