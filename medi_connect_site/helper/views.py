@@ -1,14 +1,13 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from models import Hospital, Patient, Disease, Order, Document, Staff, LikeHospital, OrderPatient, Rank, Slot
+from models import Hospital, Patient, Disease, Order, Document, HospitalReview, LikeHospital, OrderPatient, Rank, Slot
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from helper.forms import PatientInfo, AppointmentInfo
 from helper.models import auto_assign
-from django.core.files.storage import FileSystemStorage
 from dynamic_form.forms import create_form, get_fields
 import info.utility as util
-from django.forms import formset_factory
+from django.core.paginator import Paginator, EmptyPage
 
 
 # Status
@@ -79,6 +78,13 @@ def hospital(request, hospital_id, disease_id):
     order.save()
     slot = Slot.objects.get(hospital=hosp, disease=dis)
     slots = {0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2, 3: slot.slots_open_3}
+    comments = HospitalReview.objects.filter(hospital=hosp)
+    pages = Paginator(comments, 2)
+    try:
+        comments = pages.page(1)
+    except EmptyPage:
+        comments = False
+
     return render(request, "hospital_order.html", {
         'hospital': hosp,
         'rank': Rank.objects.get(disease=dis, hospital=hosp).rank,
@@ -86,7 +92,30 @@ def hospital(request, hospital_id, disease_id):
         'disease': dis,
         'customer': customer,
         'order_id': order.id,
+        'comments': comments,
     })
+
+
+@login_required
+def get_comment(request):
+    hospital_id = int(request.GET.get('hospital_id', None))
+    page = int(request.GET.get('page', None))
+    hosp = Hospital.objects.get(id=hospital_id)
+    comments = HospitalReview.objects.filter(hospital=hosp)
+    pages = Paginator(comments, 2)
+
+    try:
+        comments = pages.page(page + 1)
+    except EmptyPage:
+        comments = None
+
+    if comments is None:
+        return JsonResponse({'status': 'empty'})
+
+    data = dict()
+    data['comments'] = [x.comment for x in comments]
+    data['status'] = 'exist'
+    return JsonResponse(data)
 
 
 @login_required

@@ -28,7 +28,23 @@
     <button class="btn btn-default" type="submit">Place Order</button>
 </form>
 
+<br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <ul class="list-group" id="comments-container">
+                {% for comment in comments %}
+                <li class="list-group-item">{{comment.comment}}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <button class="btn btn-default" id="more-comment">Other Comments</button>
+    </div>
+</div>
+
 <script type="text/javascript">
+    var hosp_id = {{hospital.id}};
     $(function() {
         like(false);
     });
@@ -37,7 +53,6 @@
     });
 
     function like(mark) {
-        var hosp_id = {{hospital.id}};
         var dis_id = {{disease.id}};
         $.ajax({
             url: "{% url 'like_hospital' %}",
@@ -84,9 +99,27 @@
         $("#order_placement_form").attr("action", Urls.order_info_first(order, num));
     }
 
-
-
-
-
+    var page = 1;
+    $('#more-comment').click(function() {
+        $.ajax({
+            url: "{% url 'get_comment' %}",
+            data: {
+                "hospital_id": hosp_id,
+                "page": page,
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data.status == "empty") {
+                    $('#more-comment').prop('value', 'No More Comments');
+                    $('#more-comment').prop('disabled', true);
+                } else {
+                    $.each(data.comments, function(i, comment) {
+                        $('#comments-container').append("<li class='list-group-item'>" + comment + "</li>");
+                    });
+                }
+            }
+        });
+        page += 1;
+    });
 </script>
 {% endblock %}
