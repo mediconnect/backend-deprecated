@@ -2,8 +2,8 @@
 {% block title %}Approve Order{% endblock %}
 
 {% block content %}
-  {% if assignment.get_trans_status != 2 %}
-    {%if assignment.get_trans_status >= 4 %}
+  {% if assignment.get_trans_status != 2 and assignment.get_trans_status != 8%}
+    {%if assignment.get_trans_status == 4 or assignment.get_trans_status == 5%}
       <p>任务已通过审核 {{assignment.get_trans_status}}</p>
     {% else %}
       <p> 任务尚未提交审核{{assignment.get_trans_status}} </p>
