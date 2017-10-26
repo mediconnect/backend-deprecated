@@ -40,8 +40,20 @@
 <form method = 'post'>
      {% csrf_token %}
      {{ form }}
-     <input type="submit" class="btn" value="删除" name="delete"/>
- </form>
+     <input type="submit" onclick = 'check()' value="删除" class = 'btn' name = 'delete' />
+</form>
 
+<script>
+
+    function check(){
+        var pwd = window.prompt("请输入密码以确认操作");
+        var trans_id = $('#trans_user_id').attr('value');
+        $.getJSON("{% url 'validate_pwd'%}",{"password":pwd,'trans_id':trans_id},function(data){
+                console.log(data);
+            });
+    }
+
+
+</script>
 
 {% endblock %}

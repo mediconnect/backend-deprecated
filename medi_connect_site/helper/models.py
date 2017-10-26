@@ -395,7 +395,7 @@ class Patient(models.Model):
 
 
 class OrderPatient(models.Model):
-    # Order Patient table to store patient information
+    # Order Patient table to store patient nformation
     # This is created everytime an order is placed
     # Do not change this table when edit patient
     # Fetch patient info for display order-related info
@@ -448,12 +448,11 @@ class HospitalReview(models.Model):
 class Questionnaire(models.Model):
     hospital = models.ForeignKey(Hospital, unique=False, default=None)
     disease = models.ForeignKey(Disease, unique=False, default=None)
+    category = models.CharField(max_length = 200,blank = True)
     questions = models.FileField(upload_to=util.questions_path, null=True)
+    is_created = models.BooleanField(default = False)
+    is_translated = models.BooleanField(default = False)
+    translator_E2C = models.ForeignKey(Staff,on_delete=models.CASCADE, null = False)
 
     class Meta:
         db_table = 'questionnaire'
-
-    def is_created(self):
-        if self.questions is not None:
-            return True
-        return False

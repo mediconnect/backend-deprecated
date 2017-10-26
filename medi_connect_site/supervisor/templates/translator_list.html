@@ -23,7 +23,7 @@
             <td>{{obj.user.email}}</td>
             <td>{{obj.get_assignment_number}}</td>
             <td>
-                <form action="{% url 'send_password' id=supervisor.user.id user_id=obj.user.id %}">
+                <form action="{% url 'send_password'%}">
                     {% csrf_token %}
                     <input type="submit" value="重置" />
                 </form>

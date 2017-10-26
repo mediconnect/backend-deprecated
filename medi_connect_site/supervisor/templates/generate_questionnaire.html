@@ -23,11 +23,17 @@
 
     <script>
         var emptyQuestion = document.getElementById('emptyForm').cloneNode(true);
-        var emptyChoice = document.get
+        var emptyChoice = document.getElementById('emptyChoice').cloneNode(true);
         function addQuestion(){
             cln = emptyQuestion.cloneNode(true);
             cln.removeAttribute('hidden');
             div = document.getElementById('questions');
+            div.appendChild(cln);
+        }
+        function addChoice(){
+            cln = emptyChoice.cloneNode(true);
+            cln.removeAttribute('hidden');
+            div = document.getElementById('choices');
             div.appendChild(cln);
         }
     </script>

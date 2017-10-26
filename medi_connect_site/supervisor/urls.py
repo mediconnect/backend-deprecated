@@ -15,7 +15,7 @@ urlpatterns = [
     url(r'^ajax/validate_pwd/$', supervisor_views.validate_pwd, name='validate_pwd'),
 
     url(r'^trans_signup/(?P<id>\d+)/$',supervisor_views.trans_signup ,name = 'trans_signup'),
-    url(r'^send_password/(?P<id>\d+)/(?P<user_id>\d+)/$', auth_views.password_reset, {'template_name': 'reset_password.html'}, name='send_password'),
+    #url(r'^send_password/$', auth_views.password_reset, {'template_name': 'reset_password.html'}, name='send_password'),
 
     url(r'^detail/(?P<id>\d+)/(?P<order_id>\d+)/$',supervisor_views.detail ,name = 'detail'),
     url(r'^assign/(?P<id>\d+)/(?P<order_id>\d+)/$',supervisor_views.assign ,name = 'assign'),
