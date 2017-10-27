@@ -189,11 +189,12 @@ class GenerateQuestionnaireForm(forms.Form):
         required=True
     )
     format=forms.ChoiceField(
-        label='问题形式',
+        label='问题形式:',
         widget=forms.RadioSelect,
         choices=util.FORMAT_CHOICE,
         required=True
     )
+
 class ChoiceForm(forms.Form):
     choice = forms.CharField(
         label = '选项内容:',

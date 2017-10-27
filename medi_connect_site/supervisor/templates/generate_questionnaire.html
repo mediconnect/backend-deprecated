@@ -3,39 +3,100 @@
 
 {% block content %}
     <div id="questions">
-        {% for form in forms %}
-            <form method="POST">
-                {% csrf_token %}
-                {{form.as_p}}
-             </form>
-        {% endfor %}
+            <div id = 0 class = "question">
+                <form method="POST">
+                    {% csrf_token %}
+                    <p class = "content">{{question_form.question.label_tag}} {{question_form.question}}</p>
+                    <p>{{question_form.format.label}} </p>
+                    {% for x,y in question_form.fields.format.choices %}
+                        <input type="radio" name = "format" value="{{ x }}" onchange="createChoice(this.value,this.parentElement)"/>{{ y }}
+                    {% endfor %}
+                </form>
+                <div class = "choices">
+                    <button onclick ='addChoice(this.parentElement)'>添加选项</button>
+                </div><br>
+            </div>
     </div>
 
-    <button onclick ='addQuestion()'>添加问题</button>
+    <button onclick ='addQuestion()'>添加问题</button><br>
+    <button onclick ='submitQuestions()'>创建</button>
 
     <!--Use this to append form-->
-    <div id = 'emptyForm' hidden>
-        {{forms.empty_form.as_p}}
+    <div id = 'emptyForm' class = "question" hidden>
+        <form method="POST">
+            {% csrf_token %}
+            <p class = "content">{{question_form.question.label_tag}} {{question_form.question}}</p>
+            <p>{{question_form.format.label}} </p>
+            {% for x,y in question_form.fields.format.choices %}
+                <input type="radio" name = "format" value="{{ x }}" onchange="createChoice(this.value,this.parentElement)"/>{{ y }}
+            {% endfor %}
+        </form>
+        <div class = "choices">
+            <button onclick ='addChoice(this.parentElement)'>添加选项</button>
+        </div><br>
     </div>
-    <div id = 'emptyChoice' hidden>
-        {{choices.empty_form.as_p}}
+
+    <div id = 'emptyChoice' class = choice hidden>
+        {{choice_form}}
     </div>
 
     <script>
         var emptyQuestion = document.getElementById('emptyForm').cloneNode(true);
         var emptyChoice = document.getElementById('emptyChoice').cloneNode(true);
+        var question_counter = 0;
+        var data = {0:{}};
         function addQuestion(){
-            cln = emptyQuestion.cloneNode(true);
+            question_counter++;
+            var cln = emptyQuestion.cloneNode(true);
             cln.removeAttribute('hidden');
-            div = document.getElementById('questions');
+            cln.setAttribute('id',question_counter);
+            var div = document.getElementById('questions');
             div.appendChild(cln);
+            //console.log(cln);
+            data[question_counter]={};
         }
-        function addChoice(){
-            cln = emptyChoice.cloneNode(true);
+
+        function createChoice(format,parent){
+            data[parent.parentElement.id]["format"]=format;
+            //console.log(data);
+        }
+
+        function addChoice(parent){
+            var question_id = parent.parentElement.id;
+
+            console.log(data[parent.parentElement.id]);
+            if(!("format" in data[parent.parentElement.id])){
+                alert("Choose Format First!");
+                return;
+            }
+            if(data[parent.parentElement.id]["format"] == 2){
+                alert("Do not need choices");
+                return;
+            }
+            var cln = emptyChoice.cloneNode(true);
             cln.removeAttribute('hidden');
-            div = document.getElementById('choices');
-            div.appendChild(cln);
+            parent.appendChild(cln);
         }
+
+        function submitQuestions(){
+            var questions = document.getElementsByClassName("question");
+            for(i=0;i<questions.length-1;i++){
+                var question = questions[i];
+                var content = question.getElementsByClassName("content")[0].getElementsByTagName("input")[0].value;
+                data[i]["question"]=content;
+                data[i]["choices"]=[];
+                var choices = question.getElementsByClassName("choice");
+                for(j=0;j<choices.length;j++){
+                    var choice = choices[j].getElementsByTagName("input")[0].value;
+                    data[i]["choices"][j]=choice;
+                }
+            }
+            console.log(data);
+            $.getJSON("{% url 'create_questionnaire'%}",{"data":JSON.stringify(data), "hospital":{{hospital}}, "disease":{{disease}}, "category":"{{category}}" },function(data){
+                console.log(data);
+            });
+        }
+
     </script>
 
 {% endblock %}

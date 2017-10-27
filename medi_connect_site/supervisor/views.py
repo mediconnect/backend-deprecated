@@ -438,31 +438,44 @@ def rank_manage(request,id):
         'disease_detail' : disease_detail
     })
 
+def create_questionnaire(request):
+    data = request.GET.get('data',None)
+    hospital_id = request.GET.get('hospital',None)
+    disease_id = request.GET.get('disease',None)
+    category = request.GET.get('category',None)
+    q = Questionnaire.objects.get_or_create(hospital_id=hospital_id, disease_id=disease_id,category=category)[0]
+    t = loader.get_template('question_format.txt')
+    json_acceptable_string = data.replace("'", "\"")
+    data = json.loads(json_acceptable_string)
+    data_list = []
+    for each in data:
+        tuple_= ("Question Number: ",each,"Question: ",data[each]["question"],"Question Format: ",data[each]["format"],"Choices: ",)
+        #tuple_+= tuple(data[each]["choices"])
+        data_list.append(tuple(map(lambda k: str(k), tuple_)))
+        data_list.append((map(lambda k: str(k),data[each]["choices"])))
+    c = {
+        'data': data_list,
+    }
+    myFile = default_storage.save(util.questions_path(q, 'questions.txt'), ContentFile(t.render(c)))
+    q.questions = myFile
+    print data_list
+    q.save()
+
+    return JsonResponse('000',safe=False)
 
 def generate_questionnaire(request,hospital_id,disease_id):
     supervisor = Staff.objects.get(user = request.user)
-    q = Questionnaire.objects.get_or_create(hospital_id=hospital_id, disease_id=disease_id)[0]
-    QuestionnaireFormSet = formset_factory(GenerateQuestionnaireForm,extra = 2)
-    ChoiceFormSet = formset_factory(ChoiceForm)
-    """
-    data = (
-        ('Q1:',util.MULTIPLE_CHOICE,"Who's your daddy?",["Bob","Cod","Dog","Ed"]),
-        ('Q2:',util.CHOOSE_ONE,"Greed is good?",["Agree","Can't agree more"]),
-        ('Q3:',util.TEXT,"I see dead people")
-    )
+    question_form = GenerateQuestionnaireForm()
+    choice_form = ChoiceForm()
 
-    t = loader.get_template('question_format.txt')
-    c = {
-        'data': data,
-    }
-    myFile = default_storage.save(util.questions_path(q,'questions.txt'),ContentFile(t.render(c)))
-    q.questions=myFile
-    q.save()
-    """
+
 
     return render(request, 'generate_questionnaire.html', {
-        'forms': QuestionnaireFormSet,
-        'choices':ChoiceFormSet,
-        'questionnaire':q,
-        'supervisor':supervisor
+        'question_form': question_form,
+        'choice_form':choice_form,
+        #'questionnaire':q,
+        'supervisor':supervisor,
+        'hospital':hospital_id,
+        'disease':disease_id,
+        'category':'unknown'
     })

@@ -452,7 +452,7 @@ class Questionnaire(models.Model):
     questions = models.FileField(upload_to=util.questions_path, null=True)
     is_created = models.BooleanField(default = False)
     is_translated = models.BooleanField(default = False)
-    translator_E2C = models.ForeignKey(Staff,on_delete=models.CASCADE, null = False)
+    translator = models.ForeignKey(Staff,on_delete=models.CASCADE, null = False)
 
     class Meta:
         db_table = 'questionnaire'
