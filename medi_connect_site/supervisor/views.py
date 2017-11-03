@@ -439,6 +439,9 @@ def rank_manage(request,id):
     })
 
 def create_questionnaire(request):
+
+    #TODO: Add error message and output pdf.
+
     data = request.GET.get('data',None)
     hospital_id = request.GET.get('hospital',None)
     disease_id = request.GET.get('disease',None)
@@ -458,24 +461,29 @@ def create_questionnaire(request):
     }
     myFile = default_storage.save(util.questions_path(q, 'questions.txt'), ContentFile(t.render(c)))
     q.questions = myFile
-    print data_list
+    assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
+    q.translator = assignee
     q.save()
-
     return JsonResponse('000',safe=False)
 
 def generate_questionnaire(request,hospital_id,disease_id):
     supervisor = Staff.objects.get(user = request.user)
     question_form = GenerateQuestionnaireForm()
     choice_form = ChoiceForm()
-
-
-
     return render(request, 'generate_questionnaire.html', {
         'question_form': question_form,
         'choice_form':choice_form,
-        #'questionnaire':q,
         'supervisor':supervisor,
         'hospital':hospital_id,
         'disease':disease_id,
         'category':'unknown'
     })
+
+def render_questionnaire(request,questionnaire_id):
+    q = Questionnaire.objects.get(id = - questionnaire_id)
+    template = q.questions
+    content = default_storage.open(template).read()
+    print content
+    return render(request,'render_questionnaire.html'),{
+        'questionnaire_id':questionnaire_id
+    }

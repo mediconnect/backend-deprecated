@@ -29,7 +29,7 @@ def auto_assign(order):
         order.auto_assigned = 1
         assignee.set_sequence(timezone.now())
     order.save()
-    print order.auto_assigned,order.translator_C2E,order.status,order.trans_status,order.translator_E2C
+    #print order.auto_assigned,order.translator_C2E,order.status,order.trans_status,order.translator_E2C
 
 
 def manual_assign(order, assignee):
@@ -95,8 +95,8 @@ class Hospital(models.Model):
 
 
 class Slot(models.Model):
-    hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_slot')
-    disease = models.ForeignKey(Disease, unique=False, default=None, related_name='disease_slot')
+    hospital = models.ForeignKey('Hospital', unique=False, default=None, related_name='hospital_slot')
+    disease = models.ForeignKey('Disease', unique=False, default=None, related_name='disease_slot')
     default_slots = models.IntegerField(default=20)
     slots_open_0 = models.IntegerField(default=20)
     slots_open_1 = models.IntegerField(default=20)
@@ -123,8 +123,8 @@ class Slot(models.Model):
 
 
 class Price(models.Model):
-    hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_price')
-    disease = models.ForeignKey(Disease, unique=False, default=None, related_name='disease_price')
+    hospital = models.ForeignKey('Hospital', unique=False, default=None, related_name='hospital_price')
+    disease = models.ForeignKey('Disease', unique=False, default=None, related_name='disease_price')
     deposit = models.IntegerField(default=10000)
     full_price = models.IntegerField(default=100000)
 
@@ -134,8 +134,8 @@ class Price(models.Model):
 
 class Rank(models.Model):
     rank = models.IntegerField(default=0)
-    hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_rank')
-    disease = models.ForeignKey(Disease, unique=False, default=None, related_name='disease_rank')
+    hospital = models.ForeignKey('Hospital', unique=False, default=None, related_name='hospital_rank')
+    disease = models.ForeignKey('Disease', unique=False, default=None, related_name='disease_rank')
 
     class Meta:
         db_table = 'rank'
@@ -145,9 +145,9 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
     patient_order = models.ForeignKey('OrderPatient', on_delete=models.CASCADE, null=True)
-    translator_C2E = models.ForeignKey('Staff', on_delete=models.CASCADE, null=True,
+    translator_C2E = models.ForeignKey('Staff', on_delete=models.SET(1), null=True,
                                        related_name='chinese_translator')
-    translator_E2C = models.ForeignKey('Staff', on_delete=models.CASCADE, null=True,
+    translator_E2C = models.ForeignKey('Staff', on_delete=models.SET(1), null=True,
                                        related_name='english_translator')
     hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, null=True)
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
@@ -278,7 +278,7 @@ def order_directory_path(instance, filename):
 
 
 class Document(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True)
+    order = models.ForeignKey('Order', on_delete=models.CASCADE, null=True)
     description = models.CharField(max_length=50, blank=True)
     required = models.BooleanField(default=False)
     is_origin = models.BooleanField(default=True)
@@ -424,16 +424,16 @@ class OrderPatient(models.Model):
 
 class LikeHospital(models.Model):
     customer = models.ForeignKey(Customer, unique=False, default=None, related_name='customer_liked')
-    hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_liked')
-    disease = models.ForeignKey(Disease, unique=False, default=None, related_name='disease_liked')
+    hospital = models.ForeignKey('Hospital', unique=False, default=None, related_name='hospital_liked')
+    disease = models.ForeignKey('Disease', unique=False, default=None, related_name='disease_liked')
 
     class Meta:
         db_table = 'like_hospital'
 
 
 class HospitalReview(models.Model):
-    hospital = models.ForeignKey(Hospital, unique=False, default=None, related_name='hospital_review')
-    order = models.OneToOneField(Order, default=None, related_name='order_review')
+    hospital = models.ForeignKey('Hospital', unique=False, default=None, related_name='hospital_review')
+    order = models.OneToOneField('Order', default=None, related_name='order_review')
     score = models.IntegerField(default=0)
     comment = models.CharField(max_length=200, blank=True)
 
@@ -446,13 +446,12 @@ class HospitalReview(models.Model):
 
 
 class Questionnaire(models.Model):
-    hospital = models.ForeignKey(Hospital, unique=False, default=None)
-    disease = models.ForeignKey(Disease, unique=False, default=None)
+    hospital = models.ForeignKey('Hospital', unique=False, default=None)
+    disease = models.ForeignKey('Disease', unique=False, default=None)
     category = models.CharField(max_length = 200,blank = True)
     questions = models.FileField(upload_to=util.questions_path, null=True)
-    is_created = models.BooleanField(default = False)
     is_translated = models.BooleanField(default = False)
-    translator = models.ForeignKey(Staff,on_delete=models.CASCADE, null = False)
+    translator = models.ForeignKey('Staff',on_delete=models.SET(1), null = False)
 
     class Meta:
         db_table = 'questionnaire'
