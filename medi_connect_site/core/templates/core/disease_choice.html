@@ -23,19 +23,17 @@
 {% endif %}
 
 <br>
-Choose HERE folk.
 
-{% for dis in all_dis %}
-    <div class="media" style="border-style:solid">
-        <a href="{% url 'choose_hospital' disease_id=dis.id %}">
-            <div class="media-left media-middle">
-            </div>
-            <div class="media-body">
-                <h4 class="media-heading">{{dis.name}}</h4>
-                <p>{{dis.introduction}}</p>
-            </div>
-        </a>
-    </div>
-{% endfor %}
+<div class="dropdown">
+    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    Click Here to Check more Diseases
+    <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    {% for dis in all_dis %}
+        <li><a href="{% url 'choose_hospital' disease_id=dis.id %}">{{dis.name}}</a></li>
+    {% endfor %}
+    </ul>
+</div>
 
 {% endblock %}
