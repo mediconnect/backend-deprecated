@@ -136,29 +136,24 @@ class TransSignUpForm(forms.ModelForm):
         model = User
         exclude = ['last_login', 'date_joined']
         # specify fields to automatically include different inputs on website
-        fields = ['username', 'email', 'password', 'first_name', 'last_name']
+        fields = ['email', 'password', 'first_name', 'last_name']
 
     def __init__(self, *args, **kwargs):
         super(TransSignUpForm, self).__init__(*args, **kwargs)
         # specifiy the fields order on front end
         self.field_order = [
-            'username',
+            'email',
             'password',
             'confirm_password',
             'first_name',
             'last_name',
-            'email',
             'role'
         ]
         self.order_fields(self.field_order)
         # append validators for fields
-        self.fields['username'].validators.append(forbidden_username_validator)
-        self.fields['username'].validators.append(invalid_username_validator)
-        self.fields['username'].validators.append(unique_email_validator)
         self.fields['email'].validators.append(unique_email_validator)
         self.fields['password'].widget = forms.PasswordInput()
         self.fields['password'].required = True
-        self.fields['username'].required = True
         self.fields['email'].required = True
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True

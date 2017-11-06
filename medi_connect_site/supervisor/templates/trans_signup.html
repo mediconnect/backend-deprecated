@@ -1,11 +1,28 @@
 {% extends 'supervisor_base.html' %}
 
 {% block content %}
-  <h2>Create Translator</h2>
-  <form method="post">
+<h2>Create Translator</h2>
+<form method="post" role="form">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create</button>
-  </form>
-  <p><a href="{% url 'supervisor_home' id=supervisor.id %}">Return to home</a></p>
+    {{form.as_p}}
+    <button type="submit" class="btn btn-default">Sign Up</button>
+</form>
+<p><a href="{% url 'supervisor_home' id=supervisor.user_id %}">Return to home</a></p>
+
+<script>
+
+$("input[name='password']").keyup(function(){
+    $("#password-error").remove();
+    var password = $("input[name='password']").val();
+    var strength = 1;
+    var arr = [/.{8,}/, /[a-z]+/, /[0-9]+/, /[A-Z]+/];
+    jQuery.map(arr, function(regexp) {
+    if(password.match(regexp))
+     strength++;
+    });
+    $("input[name='password']").after("<label id='password-error' class='control-label'>密码强度:"+strength+"<br>密码长度至少为8，包含1个大写，1个小写，1个数字，1个特殊字符</label>");
+    if (strength == 5) $("#password-error").html('密码强度足够');
+    if (password.length == 0) $("#password-error").html('密码不能为空');
+})
+</script>
 {% endblock %}

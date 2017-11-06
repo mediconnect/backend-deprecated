@@ -197,17 +197,17 @@ def trans_signup(request, id):
                            'supervisor': supervisor,
                            })
         else:
-            username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             role = form.cleaned_data.get('role')
             email = form.cleaned_data.get('email')
             first_name = form.cleaned_data.get('first_name')
             last_name = form.cleaned_data.get('last_name')
-            User.objects.create_user(username=username, password=password,
+            User.objects.create_user(username=email, password=password,
                                      email=email, first_name=first_name, last_name=last_name, is_staff=True)
-            user = authenticate(username=username, password=password)
-            login(request, user)
+            user = User.objects.get(username = email)
+            #login(request, user)
             translator = Staff(user=user,role=role)
+            print translator.user_id
             translator.save()
             return render(request, 'translator_list.html',
                           {

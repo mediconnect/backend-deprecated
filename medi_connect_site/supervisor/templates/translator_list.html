@@ -23,7 +23,7 @@
             <td>{{obj.user.email}}</td>
             <td>{{obj.get_assignment_number}}</td>
             <td>
-                <form action="{% url 'send_password'%}">
+                <form  action="{% url 'send_password' id=supervisor.user_id trans_id=obj.user_id%}">
                     {% csrf_token %}
                     <input type="submit" value="重置" />
                 </form>
@@ -57,7 +57,7 @@
             <td>{{obj.user.email}}</td>
             <td>{{obj.get_assignment_number}}</td>
             <td>
-                <form  action="{% url 'password_reset' %}">
+                <form  action="{% url 'send_password' id=supervisor.user_id trans_id=obj.user_id%}">
                     {% csrf_token %}
                     <input type="submit" value="重置" />
                 </form>
