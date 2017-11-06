@@ -4,17 +4,35 @@
 
 {% block content %}
 
-{% for hospital in hospital_list %}
-<div class="media" style="border-style:solid">
-    <a href="{% url 'hospital_detail' hospital_id=hospital.id %}">
-        <div class="media-left media-middle">
+<div class="container-fluid">
+    {% if hospital_length and disease_length %}
+    {{message}}
+    {% for hospital in hospital_list %}
+    <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
+            <div class="media" style="border-style:solid">
+                <div class="media-left media-middle">
+                    <img src="{{ hospital.image }}" height="128" width="128">
+                </div>
+                <div class="media-body">
+                    <p>Specialty Rank: {{ hospital.rank }}</p>
+                    <p>Review Score: {{ hospital.average_score }}</p>
+                    <h4 class="media-heading">Hospital Name: {{ hospital.name }}</h4>
+                    <p>Introduction: {{ hospital.introduction }}</p>
+                    <p>Feedback: {{ hospital.feedback_time }} week</p>
+                    <p>Total price:  {{ hospital.full_price }}</p>
+                    <p>Deposit:  {{ hospital.deposit_price }}</p>
+                    <a href="{% url 'auth' %}">Login to view full detail</a>
+                </div>
+            </div>
         </div>
-        <div class="media-body">
-            <h4 class="media-heading">{{hospital.name}}</h4>
-            <p>{{hospital.introduction}}</p>
-        </div>
-    </a>
+    </div>
+    <br>
+    {% endfor %}
+    {% else %}
+    Result Not Found
+    {% endif %}
 </div>
-{% endfor %}
 
 {% endblock %}

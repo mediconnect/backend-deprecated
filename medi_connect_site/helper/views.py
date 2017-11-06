@@ -8,6 +8,10 @@ from helper.models import auto_assign
 from dynamic_form.forms import create_form, get_fields
 import info.utility as util
 from django.core.paginator import Paginator, EmptyPage
+import datetime
+from time import sleep
+from threading import Thread
+import pytz
 
 
 # Status
@@ -85,6 +89,7 @@ def hospital(request, hospital_id, disease_id):
     except EmptyPage:
         comments = False
 
+    Thread(target=clean_order, args=(order.id,)).start()
     return render(request, "hospital_order.html", {
         'hospital': hosp,
         'rank': Rank.objects.get(disease=dis, hospital=hosp).rank,
@@ -94,6 +99,21 @@ def hospital(request, hospital_id, disease_id):
         'order_id': order.id,
         'comments': comments,
     })
+
+
+def clean_order(order_id):
+    order = Order.objects.get(id=order_id)
+    if order is None:
+        return
+    while True:
+        if int(order.status) > 0:
+            break
+        naive = order.submit
+        diff = datetime.datetime.now(tz=pytz.utc) - naive
+        if diff.total_seconds() / 60 > 5:
+            order.delete()
+            break
+        sleep(60)
 
 
 @login_required

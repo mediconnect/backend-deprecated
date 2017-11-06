@@ -229,13 +229,13 @@ def result_guest(request):
                             break
 
             if len(dis) == 0:
-                return render(request, 'disease_choice_guest.html', {
+                return render(request, 'disease_choice.html', {
                     'all_dis': Disease.objects.all(),
                     'disease_length': False,
                 })
 
             if len(dis) > 1 or not exact_match:
-                return render(request, 'disease_choice_guest.html', {
+                return render(request, 'disease_choice.html', {
                     'disease_list': dis,
                     'all_dis': Disease.objects.all(),
                     'disease_length': True,
@@ -243,16 +243,31 @@ def result_guest(request):
 
             rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
             hospital_list = []
+            rank = 1
             for r in rank_list:
-                hospital_list.append(r.hospital)
-                if len(hospital_list) >= 5:
-                    break
+                hosp = r.hospital
+                single_hopital = dict()
+                single_hopital['id'] = hosp.id
+                single_hopital['name'] = hosp.name
+                single_hopital['rank'] = rank
+                single_hopital['score'] = hosp.average_score
+                single_hopital['introduction'] = hosp.introduction
+                single_hopital['feedback_time'] = hosp.feedback_time
+                single_hopital['image'] = hosp.image.url
+                single_hopital['full_price'] = Price.objects.get(hospital=hosp, disease=dis[0]).full_price
+                single_hopital['deposit_price'] = Price.objects.get(hospital=hosp, disease=dis[0]).deposit
+                rank += 1
+                slot = Slot.objects.get(disease=dis[0], hospital=hosp)
+                single_hopital['slot'] = {0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2,
+                                          3: slot.slots_open_3}
+                hospital_list.append(single_hopital)
 
-            return render(request, 'result_guest.html', {
+            return render(request, 'result.html', {
                 'hospital_list': hospital_list,
                 'disease': dis[0],
                 'hospital_length': len(hospital_list) > 0,
                 'disease_length': dis is not None,
+                'message': u'你是不是在搜索这个疾病: ' + dis[0].name,
             })
     else:
         return render(request, 'result_guest.html')
