@@ -1,21 +1,26 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+from django.utils.encoding import force_bytes
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.tokens import default_token_generator
 from django.core.files.storage import FileSystemStorage,default_storage
-from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from django.views.decorators.csrf import csrf_exempt
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.paginator import Paginator
+from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
 from customer.models import Customer
 from django.apps import apps
-from supervisor.forms import TransSignUpForm, E2C_AssignForm, C2E_AssignForm, ApproveForm,PasswordResetForm,GenerateQuestionnaireForm,ChoiceForm
-from django.forms import formset_factory
+from supervisor.forms import (
+    TransSignUpForm, E2C_AssignForm, C2E_AssignForm, ApproveForm,GenerateQuestionnaireForm,ChoiceForm
+)
+from django.utils.http import urlsafe_base64_encode
 from info import utility as util
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.template import loader, Context
-from django.urls import reverse
+from django.urls import reverse,reverse_lazy
 import json
 from django.core.files.base import ContentFile
 from helper.models import auto_assign,manual_assign
@@ -207,7 +212,6 @@ def trans_signup(request, id):
             user = User.objects.get(username = email)
             #login(request, user)
             translator = Staff(user=user,role=role)
-            print translator.user_id
             translator.save()
             return render(request, 'translator_list.html',
                           {
@@ -374,6 +378,54 @@ def manage_files(request, id, order_id):
             'assignment': assignment
         })
 
+@login_required
+def send_reset_link(request):
+    email_template_name = 'registration/password_reset_email.html'
+    extra_email_context = None
+    form_class = PasswordResetForm
+    from_email = None
+    html_email_template_name = None
+    subject_template_name = 'registration/password_reset_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
+    template_name = 'registration/password_reset_form.html'
+    title = _('Password reset')
+    token_generator = default_token_generator
+
+
+    user = User.objects.get(id=request.GET.get('user',None))
+    domain_override = None
+    use_https = False
+    to_email = user.email
+    if not domain_override:
+        current_site = get_current_site(request)
+        site_name = current_site.name
+        domain = current_site.domain
+    else:
+        site_name = domain = domain_override
+    context = {
+        'email': user.email,
+        'domain': domain,
+        'site_name': site_name,
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'user': user,
+        'token': token_generator.make_token(user),
+        'protocol': 'https' if use_https else 'http',
+    }
+
+    subject = loader.render_to_string(subject_template_name, context)
+    # Email subject *must not* contain newlines
+    subject = ''.join(subject.splitlines())
+    body = loader.render_to_string(email_template_name, context)
+
+    email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
+    if html_email_template_name is not None:
+        html_email = loader.render_to_string(html_email_template_name, context)
+        email_message.attach_alternative(html_email, 'text/html')
+
+    email_message.send()
+    return JsonResponse({
+        "Error": "Email Sent"
+    })
 
 @login_required
 def customer_list(request, id):
@@ -483,7 +535,6 @@ def render_questionnaire(request,questionnaire_id):
     q = Questionnaire.objects.get(id = - questionnaire_id)
     template = q.questions
     content = default_storage.open(template).read()
-    print content
     return render(request,'render_questionnaire.html'),{
         'questionnaire_id':questionnaire_id
     }
