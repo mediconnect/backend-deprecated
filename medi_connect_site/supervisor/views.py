@@ -388,11 +388,11 @@ def send_reset_link(request):
     subject_template_name = 'registration/password_reset_subject.txt'
     success_url = reverse_lazy('password_reset_done')
     template_name = 'registration/password_reset_form.html'
-    title = _('Password reset')
+    title = ('Password reset')
     token_generator = default_token_generator
 
 
-    user = User.objects.get(id=request.GET.get('user',None))
+    user = User.objects.get(id=request.GET.get('user_id',None))
     domain_override = None
     use_https = False
     to_email = user.email

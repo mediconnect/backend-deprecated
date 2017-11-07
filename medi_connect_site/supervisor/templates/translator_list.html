@@ -23,7 +23,7 @@
             <td>{{obj.user.email}}</td>
             <td>{{obj.get_assignment_number}}</td>
             <td>
-                <button onclick = "sendResetLink('{{obj.user_id}}')">"重置" </button>
+                <button onclick = "sendResetLink('{{obj.user_id}}')">重置</button>
             </td>
             <td>
                 <form role="POST">
@@ -54,10 +54,7 @@
             <td>{{obj.user.email}}</td>
             <td>{{obj.get_assignment_number}}</td>
             <td>
-                <form  action="{% url 'send_password' id=supervisor.user_id trans_id=obj.user_id%}">
-                    {% csrf_token %}
-                    <input type="submit" value="重置" />
-                </form>
+                <button onclick = "sendResetLink('{{obj.user_id}}')">重置 </button>
             </td>
             <td><button  onclick='check()'  class ='btn' name = 'delete' >删除</button></td>
         </tr>
@@ -75,9 +72,9 @@
             });
     }
     function sendResetLink(user_id){
-
+        alert('click');
         $.getJSON("{% url 'send_reset_link'%}",{'user_id':user_id},function(data){
-                alert(data["Error"];
+                alert(data["Error"]);
             });
     }
 </script>
