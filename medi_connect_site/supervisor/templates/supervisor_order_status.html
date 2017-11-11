@@ -15,7 +15,7 @@
         width:70px;
     }
   </style>
-  <button id="include" onclick="startedFilter()">显示未开始订单</button>
+
 
 
 
@@ -101,10 +101,8 @@
 
   </table>
 
-
-
 </div>
-
+<a href="{% url 'export_csv' %}">Export</a>
   <script>
     var result_length;
     var dic={}
@@ -240,6 +238,7 @@
             select.appendChild(option);
           }
     }
+
 </script>
 
 

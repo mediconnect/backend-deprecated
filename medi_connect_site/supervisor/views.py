@@ -22,6 +22,10 @@ from django.http import JsonResponse
 from django.template import loader, Context
 from django.urls import reverse,reverse_lazy
 import json
+import csv
+from django.utils.six.moves import range
+from django.http import StreamingHttpResponse
+from django.forms.models import model_to_dict
 from django.core.files.base import ContentFile
 from helper.models import auto_assign,manual_assign
 
@@ -69,7 +73,30 @@ def validate_pwd(request):
 
     return JsonResponse(data)
 
+class Echo(object):
+    """An object that implements just the write method of the file-like
+    interface.
+    """
+    def write(self, value):
+        """Write the value by returning it, instead of storing in a buffer."""
+        return value
 
+@login_required
+def export_csv(request):
+    """A view that streams a large CSV file."""
+    # Generate a sequence of rows. The range is based on the maximum number of
+    # rows that can be handled by a single sheet in most spreadsheet
+    # applications.
+    rows = ()
+    for each in Order.objects.all():
+        rows+=tuple(model_to_dict(each,fields='customer,disease,hospital').items())
+    pseudo_buffer = Echo()
+    writer = csv.writer(pseudo_buffer)
+    response = StreamingHttpResponse((writer.writerow(row) for row in rows),
+                                     content_type="text/csv")
+    response['Content-Disposition'] = 'attachment; filename="backup.csv"'
+
+    return response
 
 @login_required()
 def update_result(request):
@@ -147,7 +174,6 @@ def update_result(request):
     data['result_length'] = result_length
 
     for each in result:
-        print each.get_translator_C2E()
         data['result']['Order_Id'].append(each.id)
         data['result']['Customer'].append((each.customer.id, each.customer.get_name()))
         data['result']['Patient'].append(each.get_patient())
