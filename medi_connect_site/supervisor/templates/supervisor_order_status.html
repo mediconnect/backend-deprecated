@@ -159,8 +159,14 @@
             createCell(row,data.result.Patient[i][1]);
             createCell(row,data.result.Hospital[i][1]);
             createCell(row,data.result.Disease[i][1]);
-            createCell(row,data.result.Translator_C2E[i][1]);
-            createCell(row,data.result.Translator_E2C[i][1]);
+            c2e_cell = createCell(row,data.result.Translator_C2E[i][1]);
+            if(data.result.Translator_C2E[i][0] < 0){
+                c2e_cell.style.backgroundColor = '#f00';
+            }
+            e2c_cell = createCell(row,data.result.Translator_E2C[i][1]);
+            if(data.result.Translator_E2C[i][0] < 0){
+                e2c_cell.style.backgroundColor = '#f00';
+            }
             createCell(row,data.result.Status[i][1]);
             createCell(row,data.result.Trans_Status[i][1]);
             createCell(row,data.result.Deadline[i]);
@@ -190,11 +196,12 @@
     }
     function formatDate(time){
         var d = new Date(time);
-        return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日'+d.getHours()+'点'
+        return d.getFullYear()+'年'+(d.getMonth()+1)+'月'+d.getDate()+'日'+d.getHours()+'点';
     }
     function createCell(row,value){
         var cell = row.insertCell(-1);
         cell.innerHTML=value;
+        return cell;
     }
     function createLink(row,href){
         var cell = row.insertCell(-1);

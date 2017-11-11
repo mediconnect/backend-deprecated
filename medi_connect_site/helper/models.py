@@ -164,6 +164,7 @@ class Order(models.Model):
     status = models.CharField(blank=True, max_length=20, choices=util.STATUS_CHOICES)
     trans_status = models.CharField(default=0, max_length=20, choices=util.TRANS_STATUS_CHOICE)
     auto_assigned = models.BooleanField(default=False)
+    re_assigned = models.BooleanField(default = False)
     document_complete = models.BooleanField(default=False)
     full_payment_paid = models.BooleanField(default=False)
 
@@ -176,6 +177,8 @@ class Order(models.Model):
     def get_translator_C2E(self):
         if self.translator_C2E is None:
             return -1, '未分配'
+        elif self.re_assigned:
+            return -self.translator_C2E.id,self.translator_C2E.get_name()
         else:
             return self.translator_C2E.id, self.translator_C2E.get_name()
 
@@ -186,6 +189,8 @@ class Order(models.Model):
     def get_translator_E2C(self):
         if self.translator_E2C is None:
             return -1, '未分配'
+        elif self.re_assigned:
+            return -self.translator_E2C.id,self.translator_E2C.get_name()
         else:
             return self.translator_E2C.id, self.translator_E2C.get_name()
 

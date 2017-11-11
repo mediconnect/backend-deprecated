@@ -57,7 +57,6 @@ def validate_pwd(request):
         data['msg'] = '密码错误'
         return JsonResponse(data)
 
-
     translator = Staff.objects.get(user_id = id)
     user = translator.user
     assignments = translator.get_assignments()
@@ -65,6 +64,7 @@ def validate_pwd(request):
     user.delete()
     for each in assignments:
         auto_assign(each)
+        each.re_assigned = True
     data['msg']='操作成功'
 
     return JsonResponse(data)
@@ -147,6 +147,7 @@ def update_result(request):
     data['result_length'] = result_length
 
     for each in result:
+        print each.get_translator_C2E()
         data['result']['Order_Id'].append(each.id)
         data['result']['Customer'].append((each.customer.id, each.customer.get_name()))
         data['result']['Patient'].append(each.get_patient())
