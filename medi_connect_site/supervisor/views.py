@@ -48,22 +48,25 @@ def validate_pwd(request):
     password = request.GET.get('password',None)
     id = request.GET.get('trans_id',None)
     supervisor = Staff.objects.get(user = request.user)
+    if password is '':
+        data['msg'] = '密码不能为空'
+        return JsonResponse(data)
+    if check_password(password,supervisor.user.password):
+        data['validate']=True
+    else:
+        data['msg'] = '密码错误'
+        return JsonResponse(data)
+
+
     translator = Staff.objects.get(user_id = id)
     user = translator.user
-    #print translator
     assignments = translator.get_assignments()
     translator.delete()
     user.delete()
     for each in assignments:
-        util.assign_auto(each)
-    if check_password(password,supervisor.user.password):
-        data['validate']=True
+        auto_assign(each)
+    data['msg']='操作成功'
 
-        data['msg']='操作成功'
-    else:
-        data['msg']='密码错误'
-    if password is '':
-        data['msg']='密码不能为空'
     return JsonResponse(data)
 
 
@@ -383,19 +386,30 @@ def manage_files(request, id, order_id):
 
 @login_required
 def send_reset_link(request):
+    data = {
+        'validate': False,
+        'msg': ''
+    }
+    password = request.GET.get('password', None)
+    trans_id = request.GET.get('user_id',None)
+    print trans_id,password
+    user = User.objects.get(id = trans_id)
+    supervisor = Staff.objects.get(user=request.user)
+
+    if password is '':
+        data['msg'] = '密码不能为空'
+        return JsonResponse(data)
+    if check_password(password, supervisor.user.password):
+        data['validate'] = True
+    else:
+        data['msg'] = '密码错误'
+        return JsonResponse(data)
+
     email_template_name = 'registration/password_reset_email.html'
-    extra_email_context = None
-    form_class = PasswordResetForm
     from_email = None
     html_email_template_name = None
     subject_template_name = 'registration/password_reset_subject.txt'
-    success_url = reverse_lazy('password_reset_done')
-    template_name = 'registration/password_reset_form.html'
-    title = ('Password reset')
     token_generator = default_token_generator
-
-
-    user = User.objects.get(id=request.GET.get('user_id ',None))
     domain_override = None
     use_https = False
     to_email = user.email
@@ -416,7 +430,6 @@ def send_reset_link(request):
     }
 
     subject = loader.render_to_string(subject_template_name, context)
-    # Email subject *must not* contain newlines
     subject = ''.join(subject.splitlines())
     body = loader.render_to_string(email_template_name, context)
 
@@ -427,7 +440,7 @@ def send_reset_link(request):
 
     email_message.send()
     return JsonResponse({
-        "Error": "Email Sent"
+        "msg": "Email Sent"
     })
 
 @login_required
