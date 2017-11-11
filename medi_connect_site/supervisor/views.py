@@ -49,8 +49,11 @@ def validate_pwd(request):
     id = request.GET.get('trans_id',None)
     supervisor = Staff.objects.get(user = request.user)
     translator = Staff.objects.get(user_id = id)
+    user = translator.user
+    #print translator
     assignments = translator.get_assignments()
     translator.delete()
+    user.delete()
     for each in assignments:
         util.assign_auto(each)
     if check_password(password,supervisor.user.password):
@@ -392,7 +395,7 @@ def send_reset_link(request):
     token_generator = default_token_generator
 
 
-    user = User.objects.get(id=request.GET.get('user_id',None))
+    user = User.objects.get(id=request.GET.get('user_id ',None))
     domain_override = None
     use_https = False
     to_email = user.email
