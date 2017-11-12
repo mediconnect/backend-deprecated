@@ -194,3 +194,78 @@ AUTHENTICATION_BACKENDS = ['backend.email_login.EmailLoginBackend']
 #
 # SOCIAL_AUTH_WEIXIN_KEY = 'wxeb25ffbff85039ec'
 # SOCIAL_AUTH_WEIXIN_SECRET = '4eb522c55dfb9a84cc4a702656a4036b'
+
+
+
+#Logging Configuration:
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'simple': {
+            'format': '[%(asctime)s] %(levelname)s %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        },
+        'verbose': {
+            'format': '[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'development_logfile': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.FileHandler',
+            'filename': 'C:\Users\gabri\Desktop\Project\website\medi_connect_site/info/django_dev.log',
+            'formatter': 'verbose'
+        },
+        'production_logfile': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'C:\Users\gabri\Desktop\Project\website\medi_connect_site/info/django_production.log',
+            'maxBytes' : 1024*1024*100, # 100MB
+            'backupCount' : 5,
+            'formatter': 'simple'
+        },
+        'dba_logfile': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_false','require_debug_true'],
+            'class': 'logging.handlers.WatchedFileHandler',
+            'filename': 'C:\Users\gabri\Desktop\Project\website\medi_connect_site/info/django_dba.log',
+            'formatter': 'simple'
+        },
+    },
+    'root': {
+        'level': 'DEBUG',
+        'handlers': ['console'],
+    },
+    'loggers': {
+        'mediconnect': {
+            'handlers': ['development_logfile','production_logfile'],
+         },
+        'dba': {
+            'handlers': ['dba_logfile'],
+        },
+        'django': {
+            'handlers': ['development_logfile','production_logfile'],
+        },
+        'py.warnings': {
+            'handlers': ['development_logfile'],
+        },
+    }
+}

@@ -1,0 +1,10 @@
+[2017-11-12 08:35:32] INFO [mediconnect.test_log:17] Call to contactform method
+[2017-11-12 08:35:32] DEBUG [mediconnect.test_log:20] Entering store_id conditional block
+[2017-11-12 08:35:32] INFO [mediconnect.test_log:24] Starting search on DB
+[2017-11-12 08:35:32] INFO [mediconnect.test_log:26] About to search db
+[2017-11-12 08:36:18] DEBUG [mediconnect.index:13] Entering index method
+[2017-11-12 08:36:34] INFO [mediconnect.test_log:17] Call to contactform method
+[2017-11-12 08:36:34] DEBUG [mediconnect.test_log:20] Entering store_id conditional block
+[2017-11-12 08:36:34] INFO [mediconnect.test_log:24] Starting search on DB
+[2017-11-12 08:36:34] INFO [mediconnect.test_log:26] About to search db
+[2017-11-12 08:36:44] DEBUG [mediconnect.index:13] Entering index method

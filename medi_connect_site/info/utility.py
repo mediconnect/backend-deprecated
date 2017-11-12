@@ -1,6 +1,33 @@
 # -*- coding: utf-8 -*-
 #======This file can only contain non-order dependant functions======#
 import datetime
+import logging
+
+# Standard instance of a logger with __name__
+stdlogger = logging.getLogger('mediconnect')
+# Custom instance logging with explicit name
+dbalogger = logging.getLogger('dba')
+
+
+def index():
+    stdlogger.debug("Entering index method")
+
+
+def test_log():
+    stdlogger.info("Call to contactform method")
+
+    try:
+        stdlogger.debug("Entering store_id conditional block")
+        # Logic to handle store_id
+    except Exception, e:
+        stdlogger.exception(e)
+    stdlogger.info("Starting search on DB")
+    try:
+        stdlogger.info("About to search db")
+        # Loging to search db
+    except Exception, e:
+        stdlogger.error("Error in searchdb method")
+        dbalogger.error("Error in searchdb method, stack %s" % (e))
 
 
 def hospital_directory_path(instance, filename):
@@ -145,3 +172,5 @@ utc_8 = UTC_8()
 NOT_PAID = 0
 DEPOSIT_PAID = 1
 FULL_PAYMENT = 2
+
+
