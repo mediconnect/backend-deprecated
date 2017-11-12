@@ -230,14 +230,14 @@ LOGGING = {
             'level': 'DEBUG',
             'filters': ['require_debug_true'],
             'class': 'logging.FileHandler',
-            'filename': 'C:\Users\gabri\Desktop\Project\website\medi_connect_site/info/django_dev.log',
+            'filename': 'media/django_dev.log',
             'formatter': 'verbose'
         },
         'production_logfile': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'C:\Users\gabri\Desktop\Project\website\medi_connect_site/info/django_production.log',
+            'filename': 'media/django_production.log',
             'maxBytes' : 1024*1024*100, # 100MB
             'backupCount' : 5,
             'formatter': 'simple'
@@ -246,7 +246,7 @@ LOGGING = {
             'level': 'DEBUG',
             'filters': ['require_debug_false','require_debug_true'],
             'class': 'logging.handlers.WatchedFileHandler',
-            'filename': 'C:\Users\gabri\Desktop\Project\website\medi_connect_site/info/django_dba.log',
+            'filename': 'media/django_dba.log',
             'formatter': 'simple'
         },
     },
