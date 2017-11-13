@@ -53,3 +53,43 @@ Traceback (most recent call last):
     self.model._meta.object_name
 DoesNotExist: User matching query does not exist.
 [2017-11-13 09:01:43] ERROR [django.server.log_message:124] "GET /supervisor/ajax/send_reset_link/?trans_id=42&password=1234567 HTTP/1.1" 500 17933
+[2017-11-13 09:04:07] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 3503
+[2017-11-13 09:04:07] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 09:04:07] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-13 09:04:07] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 09:04:16] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/send_reset_link/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 468, in send_reset_link
+    email_message.send()
+  File "C:\Python27\lib\site-packages\django\core\mail\message.py", line 348, in send
+    return self.get_connection(fail_silently).send_messages([self])
+  File "C:\Python27\lib\site-packages\django\core\mail\backends\smtp.py", line 104, in send_messages
+    new_conn_created = self.open()
+  File "C:\Python27\lib\site-packages\django\core\mail\backends\smtp.py", line 71, in open
+    self.connection.login(force_str(self.username), force_str(self.password))
+  File "C:\Python27\lib\smtplib.py", line 622, in login
+    raise SMTPAuthenticationError(code, resp)
+SMTPAuthenticationError: (451, '4.7.0 Temporary server error. Please try again later. PRX4  [MWHPR22CA0071.namprd22.prod.outlook.com]')
+[2017-11-13 09:04:16] ERROR [django.server.log_message:124] "GET /supervisor/ajax/send_reset_link/?trans_id=42&password=1234567 HTTP/1.1" 500 18372
+[2017-11-13 09:06:42] INFO [django.server.log_message:124] "GET /supervisor/customer_list/13/ HTTP/1.1" 200 4460
+[2017-11-13 09:06:42] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 09:06:42] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-13 09:06:42] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 09:06:43] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 3503
+[2017-11-13 09:06:44] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 09:06:44] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-13 09:06:44] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 09:06:46] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9603
+[2017-11-13 09:06:46] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 09:06:46] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-13 09:06:46] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 09:06:46] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1672
+[2017-11-13 09:06:46] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1672

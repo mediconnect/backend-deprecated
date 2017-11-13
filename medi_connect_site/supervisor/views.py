@@ -340,8 +340,9 @@ def approve(request, id, order_id):
                         assignment.save()
 
                 if assignment.get_status() == util.TRANSLATING_FEEDBACK:
-                    assignment.change_status(util.FEEDBACK)
-                    assignment.change_trans_status(util.E2C_FINISHED)
+                    assignment.change_status(util.DONE) #should be feedback, disable the function for now
+                    assignment.change_trans_status(util.ALL_FINISHED)#should be E2C finished, disable the functin for now
+
                     for document in assignment.pending.all():
                         assignment.feedback.add(document)
                         assignment.save()
