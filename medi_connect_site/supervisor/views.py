@@ -418,7 +418,7 @@ def send_reset_link(request):
         'msg': ''
     }
     password = request.GET.get('password', None)
-    trans_id = request.GET.get('user_id',None)
+    trans_id = request.GET.get('trans_id',None)
     print trans_id,password
     user = User.objects.get(id = trans_id)
     supervisor = Staff.objects.get(user=request.user)

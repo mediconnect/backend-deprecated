@@ -67,7 +67,7 @@
             });
     }
     function sendResetLink(trans_id){
-        console.log(user_id)
+        console.log(trans_id)
         var pwd = window.prompt("请输入密码以确认操作");
         $.getJSON("{% url 'send_reset_link'%}",{"trans_id":trans_id,"password":pwd},function(data){
                 alert(data["msg"]);
