@@ -93,3 +93,25 @@ SMTPAuthenticationError: (451, '4.7.0 Temporary server error. Please try again l
 [2017-11-13 09:06:46] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
 [2017-11-13 09:06:46] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1672
 [2017-11-13 09:06:46] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1672
+[2017-11-13 09:49:44] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 1971
+[2017-11-13 09:49:44] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 09:49:44] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-13 09:49:45] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 09:49:48] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9603
+[2017-11-13 09:49:48] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 09:49:48] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-13 09:49:48] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 09:49:48] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1638
+[2017-11-13 09:49:48] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1638
+[2017-11-13 09:52:08] INFO [django.server.log_message:124] "GET /supervisor/export_csv/ HTTP/1.1" 200 37
+[2017-11-13 20:18:02] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 1971
+[2017-11-13 20:18:03] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 20:18:03] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-13 20:18:03] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 20:18:04] WARNING [django.request.get_response:152] Not Found: /favicon.ico
+[2017-11-13 20:18:04] WARNING [django.server.log_message:124] "GET /favicon.ico HTTP/1.1" 404 4140
+[2017-11-13 20:18:04] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4105
+[2017-11-13 20:18:05] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 20:18:05] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-13 20:18:05] WARNING [django.server.log_message:124] "GET /static/js/table2CSV.js HTTP/1.1" 404 1772
+[2017-11-13 20:18:06] INFO [django.server.log_message:124] "GET /supervisor/ajax/send_reset_link/?trans_id=42&password= HTTP/1.1" 200 66
