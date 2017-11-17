@@ -83,6 +83,7 @@ class Echo(object):
 
 @login_required
 def export_csv(request):
+    util.log("CSV exported")
     """A view that streams a large CSV file."""
     # Generate a sequence of rows. The range is based on the maximum number of
     # rows that can be handled by a single sheet in most spreadsheet

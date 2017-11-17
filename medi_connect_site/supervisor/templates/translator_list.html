@@ -97,7 +97,6 @@
             });
     }
     function sendResetLink(trans_id){
-        var pwd = document.getElementById("pass").value;
         $.getJSON("{% url 'send_reset_link'%}",{"trans_id":trans_id,"password":pwd},function(data){
                 alert(data["msg"]);
             });

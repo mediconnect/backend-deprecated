@@ -145,9 +145,9 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
     patient_order = models.ForeignKey('OrderPatient', on_delete=models.CASCADE, null=True)
-    translator_C2E = models.ForeignKey('Staff', on_delete=models.SET(1), null=True,
+    translator_C2E = models.ForeignKey('Staff', on_delete=models.CASCADE, null=True,
                                        related_name='chinese_translator')
-    translator_E2C = models.ForeignKey('Staff', on_delete=models.SET(1), null=True,
+    translator_E2C = models.ForeignKey('Staff', on_delete=models.CASCADE, null=True,
                                        related_name='english_translator')
     hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, null=True)
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)

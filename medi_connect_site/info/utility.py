@@ -12,22 +12,8 @@ dbalogger = logging.getLogger('dba')
 def index():
     stdlogger.debug("Entering index method")
 
-
-def test_log():
-    stdlogger.info("Call to contactform method")
-
-    try:
-        stdlogger.debug("Entering store_id conditional block")
-        # Logic to handle store_id
-    except Exception, e:
-        stdlogger.exception(e)
-    stdlogger.info("Starting search on DB")
-    try:
-        stdlogger.info("About to search db")
-        # Loging to search db
-    except Exception, e:
-        stdlogger.error("Error in searchdb method")
-        dbalogger.error("Error in searchdb method, stack %s" % (e))
+def log(msg):
+    stdlogger.debug(msg)
 
 
 def hospital_directory_path(instance, filename):
