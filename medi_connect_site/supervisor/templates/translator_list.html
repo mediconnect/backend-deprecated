@@ -35,7 +35,7 @@
             <td>
                 <button onclick = "sendResetLink('{{obj.user_id}}')">重置</button>
             </td>
-            <td><button  onclick="check('{{obj.user_id}}')"  class ='btn' name = 'delete' >删除</button></td>
+            <td><button  onclick="showPopup('{{obj.user_id}}')"  class ='btn' name = 'delete' >删除</button></td>
         </tr>
 
   	{%endfor%}
@@ -61,23 +61,34 @@
             <td>
                 <button onclick = "sendResetLink('{{obj.user_id}}')">重置 </button>
             </td>
-            <td><button  onclick="check('{{obj.user_id}}')"  class ='btn' name = 'delete' >删除</button></td>
+            <td><button  onclick="showPopup('{{obj.user_id}}')"  class ='btn' name = 'delete' >删除</button></td>
+
         </tr>
   	{%endfor%}
     </table>
-<p><a href="{% url 'trans_signup' id=supervisor.user.id %}">添加翻译员</a></p>
 
 <div id="popup">
+
     <div>输入密码:</div>
     <input id="pass" type="password"/>
-    <button onclick="done()">完成</button>
+    <button>完成</button>
 </div>
+
+<p><a href="{% url 'trans_signup' id=supervisor.user.id %}">添加翻译员</a></p>
+
+
 
 
 <script>
-
+    function showPopup(trans_id){
+        popUp = document.getElementById("popup");
+        call = "check("+JSON.stringify(trans_id)+")";
+        popUp.getElementsByTagName("button")[0].setAttribute("onclick",call);
+        popUp.style.display = "block";
+        console.log(popUp);
+    }
     function check(trans_id){
-        document.getElementById("popup").style.display = "block";
+        console.log("aaa");
         document.getElementById("popup").style.display = "none";
         var pwd = document.getElementById("pass").value;
         $.getJSON("{% url 'validate_pwd'%}",{"password":pwd,"trans_id":trans_id},function(data){
@@ -86,8 +97,6 @@
             });
     }
     function sendResetLink(trans_id){
-        document.getElementById("popup").style.display = "block";
-        document.getElementById("popup").style.display = "none";
         var pwd = document.getElementById("pass").value;
         $.getJSON("{% url 'send_reset_link'%}",{"trans_id":trans_id,"password":pwd},function(data){
                 alert(data["msg"]);
