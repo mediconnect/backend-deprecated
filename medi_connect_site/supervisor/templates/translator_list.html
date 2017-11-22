@@ -33,7 +33,7 @@
             <td>{{obj.user.email}}</td>
             <td>{{obj.get_assignment_number}}</td>
             <td>
-                <button onclick = "sendResetLink('{{obj.user_id}}')">重置</button>
+                <button onclick = "showPopupReset('{{obj.user_id}}')">重置</button>
             </td>
             <td><button  onclick="showPopup('{{obj.user_id}}')"  class ='btn' name = 'delete' >删除</button></td>
         </tr>
@@ -59,7 +59,7 @@
             <td>{{obj.user.email}}</td>
             <td>{{obj.get_assignment_number}}</td>
             <td>
-                <button onclick = "sendResetLink('{{obj.user_id}}')">重置 </button>
+                <button onclick = "showPopupReset('{{obj.user_id}}')">重置 </button>
             </td>
             <td><button  onclick="showPopup('{{obj.user_id}}')"  class ='btn' name = 'delete' >删除</button></td>
 
@@ -72,6 +72,7 @@
     <div>输入密码:</div>
     <input id="pass" type="password"/>
     <button>完成</button>
+    <button onclick="this.parentElement.style.display='none'">取消</button>
 </div>
 
 <p><a href="{% url 'trans_signup' id=supervisor.user.id %}">添加翻译员</a></p>
@@ -87,18 +88,29 @@
         popUp.style.display = "block";
         console.log(popUp);
     }
+    function showPopupReset(trans_id){
+        popUp = document.getElementById("popup");
+        call = "sendResetLink("+JSON.stringify(trans_id)+")";
+        popUp.getElementsByTagName("button")[0].setAttribute("onclick",call);
+        popUp.style.display = "block";
+        console.log(popUp);
+    }
+
     function check(trans_id){
         console.log("aaa");
         document.getElementById("popup").style.display = "none";
         var pwd = document.getElementById("pass").value;
         $.getJSON("{% url 'validate_pwd'%}",{"password":pwd,"trans_id":trans_id},function(data){
                 alert(data["msg"]);
-                location.reload()
+                location.reload();
             });
     }
     function sendResetLink(trans_id){
+        document.getElementById("popup").style.display = "none";
+        var pwd = document.getElementById("pass").value;
         $.getJSON("{% url 'send_reset_link'%}",{"trans_id":trans_id,"password":pwd},function(data){
                 alert(data["msg"]);
+                location.reload();
             });
     }
 </script>

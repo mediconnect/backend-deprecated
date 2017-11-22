@@ -83,7 +83,11 @@ class Echo(object):
 
 @login_required
 def export_csv(request):
+
     util.log("CSV exported")
+
+    # TODO: Add more log to where database operation is needed;
+
     """A view that streams a large CSV file."""
     # Generate a sequence of rows. The range is based on the maximum number of
     # rows that can be handled by a single sheet in most spreadsheet
@@ -91,11 +95,14 @@ def export_csv(request):
     rows = ()
     for each in Order.objects.all():
         rows+=tuple(model_to_dict(each,fields='customer,disease,hospital').items())
+
+    #TODO: Fomrat output csv
+
     pseudo_buffer = Echo()
     writer = csv.writer(pseudo_buffer)
     response = StreamingHttpResponse((writer.writerow(row) for row in rows),
                                      content_type="text/csv")
-    response['Content-Disposition'] = 'attachment; filename="backup.csv"'
+    response['Content-Disposition'] = 'attachment; filename="backup.csv"'#download no need to change
 
     return response
 
