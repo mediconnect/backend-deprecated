@@ -53,10 +53,6 @@ class SignUpForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label="Address",
         required=False)
-    zipcode = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'}),
-        label="Zipcode",
-        required=False)
 
     class Meta:
         model = User
@@ -75,7 +71,6 @@ class SignUpForm(forms.ModelForm):
             'last_name',
             'telephone',
             'address',
-            'zipcode'
         ]
         self.order_fields(self.field_order)
         # append validators for fields

@@ -71,12 +71,11 @@ def signup(request):
             last_name = form.cleaned_data.get('last_name')
             telephone = form.cleaned_data.get('telephone')
             address = form.cleaned_data.get('address')
-            zipcode = form.cleaned_data.get('zipcode')
             User.objects.create_user(username=email, password=password,
                                      email=email, first_name=first_name, last_name=last_name)
             user = authenticate(email=email, password=password)
             login(request, user)
-            customer = Customer(user=user, tel=telephone, address=address, zipcode=zipcode)
+            customer = Customer(user=user, tel=telephone, address=address)
             customer.save()
             return redirect('/')
 
