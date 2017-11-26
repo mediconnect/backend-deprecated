@@ -1147,3 +1147,15 @@ NoReverseMatch: Reverse for 'login' not found. 'login' is not a valid view funct
 [2017-11-26 09:13:42] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
 [2017-11-26 09:13:44] INFO [django.server.log_message:124] "GET /core/password_reset/ HTTP/1.1" 200 2956
 [2017-11-26 09:13:44] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:15:10] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3073
+[2017-11-26 09:15:10] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:15:12] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4262
+[2017-11-26 09:15:12] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:15:16] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3073
+[2017-11-26 09:15:16] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:15:20] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4262
+[2017-11-26 09:15:20] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:15:26] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3073
+[2017-11-26 09:15:26] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:15:31] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4634
+[2017-11-26 09:15:31] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485

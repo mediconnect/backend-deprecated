@@ -4,7 +4,7 @@
 {% block content %}
 
 {% if disease_length %}
-    Are You Looking For This????????????
+    <p>您是否要查询：</p>
 
     {% for disease in disease_list %}
     <div class="media" style="border-style:solid">
@@ -18,8 +18,9 @@
         </a>
     </div>
     {% endfor %}
+    <p>如果以上不是您寻找的疾病，请在疾病列表中选择</p>
 {% else %}
-    Not Found
+    <p>未找到您所搜索的疾病，请在疾病列表中选择</p>
 {% endif %}
 
 <br>
