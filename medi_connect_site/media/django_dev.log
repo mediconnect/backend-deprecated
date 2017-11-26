@@ -1075,3 +1075,75 @@ DoesNotExist: Staff matching query does not exist.
 [2017-11-26 09:06:47] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
 [2017-11-26 09:06:47] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1173
 [2017-11-26 09:06:47] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1173
+[2017-11-26 09:10:19] INFO [django.server.log_message:124] "GET /supervisor/logout/ HTTP/1.1" 302 0
+[2017-11-26 09:10:19] INFO [django.server.log_message:124] "GET /supervisor/login HTTP/1.1" 301 0
+[2017-11-26 09:10:19] INFO [django.server.log_message:124] "GET /supervisor/login/ HTTP/1.1" 200 3855
+[2017-11-26 09:10:20] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:10:22] INFO [django.server.log_message:124] "GET /signup/ HTTP/1.1" 200 5989
+[2017-11-26 09:10:22] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:11:04] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /signup/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\core\views.py", line 84, in signup
+    {'form': SignUpForm()})
+  File "C:\Python27\lib\site-packages\django\shortcuts.py", line 30, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Python27\lib\site-packages\django\template\loader.py", line 68, in render_to_string
+    return template.render(context, request)
+  File "C:\Python27\lib\site-packages\django\template\backends\django.py", line 66, in render
+    return self.template.render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 207, in render
+    return self._render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 199, in _render
+    return self.nodelist.render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 990, in render
+    bit = node.render_annotated(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 957, in render_annotated
+    return self.render(context)
+  File "C:\Python27\lib\site-packages\django\template\loader_tags.py", line 177, in render
+    return compiled_parent._render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 199, in _render
+    return self.nodelist.render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 990, in render
+    bit = node.render_annotated(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 957, in render_annotated
+    return self.render(context)
+  File "C:\Python27\lib\site-packages\django\template\loader_tags.py", line 177, in render
+    return compiled_parent._render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 199, in _render
+    return self.nodelist.render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 990, in render
+    bit = node.render_annotated(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 957, in render_annotated
+    return self.render(context)
+  File "C:\Python27\lib\site-packages\django\template\loader_tags.py", line 72, in render
+    result = block.nodelist.render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 990, in render
+    bit = node.render_annotated(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 957, in render_annotated
+    return self.render(context)
+  File "C:\Python27\lib\site-packages\django\template\loader_tags.py", line 72, in render
+    result = block.nodelist.render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 990, in render
+    bit = node.render_annotated(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 957, in render_annotated
+    return self.render(context)
+  File "C:\Python27\lib\site-packages\django\template\defaulttags.py", line 458, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+  File "C:\Python27\lib\site-packages\django\urls\base.py", line 91, in reverse
+    return force_text(iri_to_uri(resolver._reverse_with_prefix(view, prefix, *args, **kwargs)))
+  File "C:\Python27\lib\site-packages\django\urls\resolvers.py", line 497, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+NoReverseMatch: Reverse for 'login' not found. 'login' is not a valid view function or pattern name.
+[2017-11-26 09:11:04] ERROR [django.server.log_message:124] "GET /signup/ HTTP/1.1" 500 196029
+[2017-11-26 09:13:37] INFO [django.server.log_message:124] "GET /signup/ HTTP/1.1" 200 6119
+[2017-11-26 09:13:37] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:13:41] INFO [django.server.log_message:124] "GET /login/ HTTP/1.1" 200 3855
+[2017-11-26 09:13:42] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:13:44] INFO [django.server.log_message:124] "GET /core/password_reset/ HTTP/1.1" 200 2956
+[2017-11-26 09:13:44] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
