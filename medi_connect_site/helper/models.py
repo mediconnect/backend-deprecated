@@ -15,19 +15,29 @@ from info import utility as util
 # Function to move the position of a translator in sequence
 def auto_assign(order):
     if order.get_status() <= util.TRANSLATING_ORIGIN:
-        assignee = Staff.objects.filter(role=1).order_by('sequence')[0]
-        order.set_translator_C2E(assignee)
-        order.change_status(util.TRANSLATING_ORIGIN)
-        order.change_trans_status(util.C2E_NOT_STARTED)
-        assignee.set_sequence(timezone.now())
+        try:
+            assignee = Staff.objects.filter(role=1).order_by('sequence')[0]
+            order.set_translator_C2E(assignee)
+            order.change_status(util.TRANSLATING_ORIGIN)
+            order.change_trans_status(util.C2E_NOT_STARTED)
+            assignee.set_sequence(timezone.now())
+
+        except IndexError:
+            order.set_translator_C2E(None)
 
     if order.get_status() >= util.RETURN:
-        assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
-        order.set_translator_E2C(assignee)
-        order.change_status(util.TRANSLATING_FEEDBACK)
-        order.change_trans_status(util.E2C_NOT_STARTED)
-        order.auto_assigned = 1
-        assignee.set_sequence(timezone.now())
+        try:
+            assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
+            order.set_translator_E2C(assignee)
+            order.change_status(util.TRANSLATING_FEEDBACK)
+            order.change_trans_status(util.E2C_NOT_STARTED)
+            order.auto_assigned = 1
+            assignee.set_sequence(timezone.now())
+
+        except IndexError:
+            order.set_translator_C2E(None)
+
+
     order.save()
     #print order.auto_assigned,order.translator_C2E,order.status,order.trans_status,order.translator_E2C
 
@@ -164,7 +174,8 @@ class Order(models.Model):
     status = models.CharField(blank=True, max_length=20, choices=util.STATUS_CHOICES)
     trans_status = models.CharField(default=0, max_length=20, choices=util.TRANS_STATUS_CHOICE)
     auto_assigned = models.BooleanField(default=False)
-    re_assigned = models.BooleanField(default = False)
+    c2e_re_assigned = models.BooleanField(default = False)
+    e2c_re_assigned = models.BooleanField(default = False)
     document_complete = models.BooleanField(default=False)
     full_payment_paid = models.BooleanField(default=False)
 
@@ -175,24 +186,30 @@ class Order(models.Model):
         return 'Order id is ' + str(self.id) + ' Deadline is :' + self.get_deadline()
 
     def get_translator_C2E(self):
+        result = ()
         if self.translator_C2E is None:
-            return -1, '未分配'
-        elif self.re_assigned:
-            return -self.translator_C2E.id,self.translator_C2E.get_name()
+            result = ( 1, '未分配')
         else:
-            return self.translator_C2E.id, self.translator_C2E.get_name()
+            result =( self.translator_C2E.id, self.translator_C2E.get_name())
+        if self.c2e_re_assigned:
+            result =(-result[0],result[1]) #if reassigned return negative value
+
+        return result
 
     def set_translator_C2E(self, assignee):
         self.translator_C2E = assignee
         self.save()
 
     def get_translator_E2C(self):
+        result = ()
         if self.translator_E2C is None:
-            return -1, '未分配'
-        elif self.re_assigned:
-            return -self.translator_E2C.id,self.translator_E2C.get_name()
+            result = (1, '未分配')
         else:
-            return self.translator_E2C.id, self.translator_E2C.get_name()
+            result = (self.translator_E2C.id, self.translator_E2C.get_name())
+        if self.e2c_re_assigned:
+            result = (-result[0], result[1])  # if reassigned return negative value
+
+        return result
 
     def set_translator_E2C(self, assignee):
         self.translator_E2C = assignee

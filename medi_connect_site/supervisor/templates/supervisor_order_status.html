@@ -158,11 +158,11 @@
             createCell(row,data.result.Hospital[i][1]);
             createCell(row,data.result.Disease[i][1]);
             c2e_cell = createCell(row,data.result.Translator_C2E[i][1]);
-            if(data.result.Translator_C2E[i][0] < -1){
+            if(data.result.Translator_C2E[i][0] < 0){
                 c2e_cell.style.backgroundColor = '#f00';
             }
             e2c_cell = createCell(row,data.result.Translator_E2C[i][1]);
-            if(data.result.Translator_E2C[i][0] < -1){
+            if(data.result.Translator_E2C[i][0] < 0){
                 e2c_cell.style.backgroundColor = '#f00';
             }
             createCell(row,data.result.Status[i][1]);

@@ -417,3 +417,661 @@ DoesNotExist: Staff matching query does not exist.
 [2017-11-25 09:03:14] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
 [2017-11-25 09:03:33] INFO [django.server.log_message:124] "GET /login/ HTTP/1.1" 200 3855
 [2017-11-25 09:03:33] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:10:33] INFO [django.server.log_message:124] "POST /login/ HTTP/1.1" 302 0
+[2017-11-25 09:10:33] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 1919
+[2017-11-25 09:10:33] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:10:36] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-25 09:10:36] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:10:36] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1662
+[2017-11-25 09:10:36] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1662
+[2017-11-25 09:10:38] INFO [django.server.log_message:124] "GET /supervisor/detail/13/163/ HTTP/1.1" 200 4084
+[2017-11-25 09:10:38] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:10:40] INFO [django.server.log_message:124] "GET /supervisor/generate_questionnaire/3/10/ HTTP/1.1" 200 6608
+[2017-11-25 09:10:40] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:11:01] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/create_questionnaire/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 559, in create_questionnaire
+    tuple_= ("Question Number: ",each,"Question: ",data[each]["question"],"Question Format: ",data[each]["format"],"Choices: ",)
+KeyError: u'format'
+[2017-11-25 09:11:02] ERROR [django.server.log_message:124] "GET /supervisor/ajax/create_questionnaire/?data=%7B%220%22%3A%7B%22format%22%3A%221%22%2C%22question%22%3A%22%22%2C%22choices%22%3A%5B%22%22%2C%22%22%2C%22%22%2C%22%22%5D%7D%2C%221%22%3A%7B%22format%22%3A%222%22%2C%22question%22%3A%22%22%2C%22choices%22%3A%5B%5D%7D%2C%222%22%3A%7B%22question%22%3A%22%22%2C%22choices%22%3A%5B%5D%7D%7D&hospital=3&disease=10&category=unknown HTTP/1.1" 500 18395
+[2017-11-25 09:11:19] INFO [django.server.log_message:124] "GET /static/css/bootstrap.min.css.map HTTP/1.1" 200 542194
+[2017-11-25 09:13:01] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/create_questionnaire/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 568, in create_questionnaire
+    assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 289, in __getitem__
+    return list(qs)[0]
+IndexError: list index out of range
+[2017-11-25 09:13:01] ERROR [django.server.log_message:124] "GET /supervisor/ajax/create_questionnaire/?data=%7B%220%22%3A%7B%22format%22%3A%221%22%2C%22question%22%3A%22%22%2C%22choices%22%3A%5B%22%22%2C%22%22%2C%22%22%2C%22%22%5D%7D%2C%221%22%3A%7B%22format%22%3A%222%22%2C%22question%22%3A%22%22%2C%22choices%22%3A%5B%5D%7D%2C%222%22%3A%7B%22question%22%3A%22%22%2C%22choices%22%3A%5B%5D%2C%22format%22%3A%220%22%7D%7D&hospital=3&disease=10&category=unknown HTTP/1.1" 500 18538
+[2017-11-25 09:13:06] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/create_questionnaire/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 568, in create_questionnaire
+    assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 289, in __getitem__
+    return list(qs)[0]
+IndexError: list index out of range
+[2017-11-25 09:13:06] ERROR [django.server.log_message:124] "GET /supervisor/ajax/create_questionnaire/?data=%7B%220%22%3A%7B%22format%22%3A%221%22%2C%22question%22%3A%22%22%2C%22choices%22%3A%5B%22%22%2C%22%22%2C%22%22%2C%22%22%5D%7D%2C%221%22%3A%7B%22format%22%3A%222%22%2C%22question%22%3A%22%22%2C%22choices%22%3A%5B%5D%7D%2C%222%22%3A%7B%22question%22%3A%22%22%2C%22choices%22%3A%5B%5D%2C%22format%22%3A%220%22%7D%7D&hospital=3&disease=10&category=unknown HTTP/1.1" 500 18538
+[2017-11-25 09:14:20] INFO [django.server.log_message:124] "GET /supervisor/generate_questionnaire/3/10/ HTTP/1.1" 200 6718
+[2017-11-25 09:14:20] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:15:35] INFO [django.server.log_message:124] "GET /supervisor/generate_questionnaire/3/10/ HTTP/1.1" 200 6745
+[2017-11-25 09:15:36] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:16:03] INFO [django.server.log_message:124] "GET /supervisor/ajax/create_questionnaire/?data=%7B%220%22%3A%7B%22format%22%3A%220%22%2C%22question%22%3A%22aaa%22%2C%22choices%22%3A%5B%22123%22%2C%22333%22%5D%7D%2C%221%22%3A%7B%22format%22%3A%221%22%2C%22question%22%3A%22bbb%22%2C%22choices%22%3A%5B%22444%22%2C%22555%22%5D%7D%2C%222%22%3A%7B%22format%22%3A%222%22%2C%22question%22%3A%22ccc%22%2C%22choices%22%3A%5B%5D%7D%7D&hospital=3&disease=10&category=unknown HTTP/1.1" 200 5
+[2017-11-25 09:23:00] INFO [django.server.log_message:124] "GET /supervisor/generate_questionnaire/3/10/ HTTP/1.1" 200 6745
+[2017-11-25 09:23:00] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:23:08] INFO [django.server.log_message:124] "GET /supervisor/ajax/create_questionnaire/?data=%7B%220%22%3A%7B%22format%22%3A%220%22%2C%22question%22%3A%22aaa%22%2C%22choices%22%3A%5B%2222%22%2C%2233%22%5D%7D%7D&hospital=3&disease=10&category=unknown HTTP/1.1" 200 43
+[2017-11-25 09:23:29] INFO [django.server.log_message:124] "GET /supervisor/ajax/create_questionnaire/?data=%7B%220%22%3A%7B%22format%22%3A%220%22%2C%22question%22%3A%22aaa%22%2C%22choices%22%3A%5B%2222%22%2C%2233%22%5D%7D%7D&hospital=3&disease=10&category=unknown HTTP/1.1" 200 43
+[2017-11-25 09:23:32] INFO [django.server.log_message:124] "GET /supervisor/ajax/create_questionnaire/?data=%7B%220%22%3A%7B%22format%22%3A%220%22%2C%22question%22%3A%22aaa%22%2C%22choices%22%3A%5B%2222%22%2C%2233%22%5D%7D%7D&hospital=3&disease=10&category=unknown HTTP/1.1" 200 43
+[2017-11-25 09:23:33] INFO [django.server.log_message:124] "GET /supervisor/ajax/create_questionnaire/?data=%7B%220%22%3A%7B%22format%22%3A%220%22%2C%22question%22%3A%22aaa%22%2C%22choices%22%3A%5B%2222%22%2C%2233%22%5D%7D%7D&hospital=3&disease=10&category=unknown HTTP/1.1" 200 43
+[2017-11-25 09:28:01] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:28:01] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:28:07] INFO [django.server.log_message:124] "GET /supervisor/ajax/validate_pwd/?password=1234567&trans_id=34 HTTP/1.1" 200 53
+[2017-11-25 09:28:08] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-25 09:28:08] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:28:30] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-25 09:28:30] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:28:31] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1662
+[2017-11-25 09:28:31] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1662
+[2017-11-25 09:29:07] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-25 09:29:07] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:29:09] INFO [django.server.log_message:124] "GET /supervisor/trans_signup/13/ HTTP/1.1" 200 3808
+[2017-11-25 09:29:09] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:29:33] INFO [django.server.log_message:124] "POST /supervisor/trans_signup/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:29:33] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:29:56] INFO [django.server.log_message:124] "GET /supervisor/ajax/validate_pwd/?password=1234567&trans_id=35 HTTP/1.1" 200 53
+[2017-11-25 09:29:58] INFO [django.server.log_message:124] "POST /supervisor/trans_signup/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:29:58] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:30:03] INFO [django.server.log_message:124] "POST /supervisor/trans_signup/13/ HTTP/1.1" 200 3947
+[2017-11-25 09:30:03] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:30:05] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:30:05] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:30:26] INFO [django.server.log_message:124] "GET /supervisor/ajax/validate_pwd/?password=1234567&trans_id=36 HTTP/1.1" 200 53
+[2017-11-25 09:30:28] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-25 09:30:28] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:40:06] INFO [django.server.log_message:124] "GET /supervisor/trans_signup/13/ HTTP/1.1" 200 3808
+[2017-11-25 09:40:06] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:40:27] INFO [django.server.log_message:124] "POST /supervisor/trans_signup/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:40:27] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:40:28] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:40:28] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:40:56] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/validate_pwd/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 70, in validate_pwd
+    auto_assign(each)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\helper\models.py", line 18, in auto_assign
+    assignee = Staff.objects.filter(role=1).order_by('sequence')[0]
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 289, in __getitem__
+    return list(qs)[0]
+IndexError: list index out of range
+[2017-11-25 09:40:56] ERROR [django.server.log_message:124] "GET /supervisor/ajax/validate_pwd/?password=1234567&trans_id=37 HTTP/1.1" 500 17943
+[2017-11-25 09:41:00] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/validate_pwd/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 64, in validate_pwd
+    translator = Staff.objects.get(user_id = id)
+  File "C:\Python27\lib\site-packages\django\db\models\manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 380, in get
+    self.model._meta.object_name
+DoesNotExist: Staff matching query does not exist.
+[2017-11-25 09:41:00] ERROR [django.server.log_message:124] "GET /supervisor/ajax/validate_pwd/?password=1234567&trans_id=37 HTTP/1.1" 500 17996
+[2017-11-25 09:41:01] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-25 09:41:01] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:41:04] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-25 09:41:04] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:41:04] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1662
+[2017-11-25 09:41:04] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1662
+[2017-11-25 09:47:26] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-25 09:47:26] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:47:26] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1627
+[2017-11-25 09:47:26] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1627
+[2017-11-25 09:47:27] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-25 09:47:27] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:47:28] INFO [django.server.log_message:124] "GET /supervisor/trans_signup/13/ HTTP/1.1" 200 3808
+[2017-11-25 09:47:28] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:47:46] INFO [django.server.log_message:124] "POST /supervisor/trans_signup/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:47:46] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:47:48] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:47:48] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:47:50] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-25 09:47:50] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:47:50] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1627
+[2017-11-25 09:47:50] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1627
+[2017-11-25 09:47:51] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:47:51] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:48:13] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-25 09:48:13] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:48:13] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1640
+[2017-11-25 09:48:13] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1640
+[2017-11-25 09:48:28] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-25 09:48:29] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:48:29] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1639
+[2017-11-25 09:48:29] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1639
+[2017-11-25 09:48:33] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:48:33] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:48:39] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/validate_pwd/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 70, in validate_pwd
+    auto_assign(each)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\helper\models.py", line 27, in auto_assign
+    assignee.set_sequence(timezone.now())
+AttributeError: 'NoneType' object has no attribute 'set_sequence'
+[2017-11-25 09:48:39] ERROR [django.server.log_message:124] "GET /supervisor/ajax/validate_pwd/?password=1234567&trans_id=38 HTTP/1.1" 500 17864
+[2017-11-25 09:48:40] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-25 09:48:41] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:48:44] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-25 09:48:44] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:48:44] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1633
+[2017-11-25 09:48:44] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1633
+[2017-11-25 09:51:39] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-25 09:51:40] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:51:42] INFO [django.server.log_message:124] "GET /supervisor/trans_signup/13/ HTTP/1.1" 200 3808
+[2017-11-25 09:51:42] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:52:05] INFO [django.server.log_message:124] "POST /supervisor/trans_signup/13/ HTTP/1.1" 200 3998
+[2017-11-25 09:52:05] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:52:14] INFO [django.server.log_message:124] "POST /supervisor/trans_signup/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:52:14] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:52:17] INFO [django.server.log_message:124] "GET /supervisor/home/13/ HTTP/1.1" 200 1919
+[2017-11-25 09:52:17] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:52:19] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-25 09:52:19] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:52:19] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1633
+[2017-11-25 09:52:20] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1633
+[2017-11-25 09:52:35] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-25 09:52:35] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:52:36] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1645
+[2017-11-25 09:52:36] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1645
+[2017-11-25 09:52:38] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:52:38] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:52:43] INFO [django.server.log_message:124] "GET /supervisor/ajax/validate_pwd/?password=1234567&trans_id=39 HTTP/1.1" 200 53
+[2017-11-25 09:52:44] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-25 09:52:44] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:52:46] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-25 09:52:46] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:52:46] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1633
+[2017-11-25 09:52:47] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1633
+[2017-11-25 09:54:19] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-25 09:54:19] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:54:21] INFO [django.server.log_message:124] "GET /supervisor/trans_signup/13/ HTTP/1.1" 200 3808
+[2017-11-25 09:54:21] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:54:43] INFO [django.server.log_message:124] "POST /supervisor/trans_signup/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:54:43] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:54:45] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:54:45] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:55:00] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-25 09:55:00] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:55:01] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/update_result/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 191, in update_result
+    data['result']['Translator_C2E'].append(each.get_translator_C2E())
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\helper\models.py", line 190, in get_translator_C2E
+    if self.translator_C2E is None:
+  File "C:\Python27\lib\site-packages\django\db\models\fields\related_descriptors.py", line 184, in __get__
+    rel_obj = self.get_object(instance)
+  File "C:\Python27\lib\site-packages\django\db\models\fields\related_descriptors.py", line 159, in get_object
+    return qs.get(self.field.get_reverse_related_filter(instance))
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 380, in get
+    self.model._meta.object_name
+DoesNotExist: Staff matching query does not exist.
+[2017-11-25 09:55:01] ERROR [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 500 18322
+[2017-11-25 09:55:22] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-25 09:55:22] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:55:22] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1645
+[2017-11-25 09:55:22] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1645
+[2017-11-25 09:55:26] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4597
+[2017-11-25 09:55:26] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:55:30] INFO [django.server.log_message:124] "GET /supervisor/ajax/validate_pwd/?password=1234567&trans_id=40 HTTP/1.1" 200 53
+[2017-11-25 09:55:31] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-25 09:55:31] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:55:33] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-25 09:55:33] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:55:33] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/update_result/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 191, in update_result
+    data['result']['Translator_C2E'].append(each.get_translator_C2E())
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\helper\models.py", line 190, in get_translator_C2E
+    if self.translator_C2E is None:
+  File "C:\Python27\lib\site-packages\django\db\models\fields\related_descriptors.py", line 184, in __get__
+    rel_obj = self.get_object(instance)
+  File "C:\Python27\lib\site-packages\django\db\models\fields\related_descriptors.py", line 159, in get_object
+    return qs.get(self.field.get_reverse_related_filter(instance))
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 380, in get
+    self.model._meta.object_name
+DoesNotExist: Staff matching query does not exist.
+[2017-11-25 09:55:33] ERROR [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 500 18322
+[2017-11-25 09:56:48] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-25 09:56:48] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-25 09:56:50] INFO [django.server.log_message:124] "GET /supervisor/home/13/ HTTP/1.1" 200 1919
+[2017-11-25 09:56:50] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:40:41] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 1919
+[2017-11-26 08:40:41] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:40:45] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-26 08:40:45] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:40:46] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/update_result/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 191, in update_result
+    data['result']['Translator_C2E'].append(each.get_translator_C2E())
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\helper\models.py", line 190, in get_translator_C2E
+    print self.translator_C2E
+  File "C:\Python27\lib\site-packages\django\db\models\fields\related_descriptors.py", line 184, in __get__
+    rel_obj = self.get_object(instance)
+  File "C:\Python27\lib\site-packages\django\db\models\fields\related_descriptors.py", line 159, in get_object
+    return qs.get(self.field.get_reverse_related_filter(instance))
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 380, in get
+    self.model._meta.object_name
+DoesNotExist: Staff matching query does not exist.
+[2017-11-26 08:40:46] ERROR [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 500 18316
+[2017-11-26 08:41:25] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-26 08:41:25] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:41:26] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1668
+[2017-11-26 08:41:26] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1668
+[2017-11-26 08:41:40] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9553
+[2017-11-26 08:41:41] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:41:41] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1668
+[2017-11-26 08:41:41] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1668
+[2017-11-26 08:42:36] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9555
+[2017-11-26 08:42:36] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:42:37] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1668
+[2017-11-26 08:42:37] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1668
+[2017-11-26 08:46:35] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-26 08:46:35] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:46:37] INFO [django.server.log_message:124] "GET /supervisor/trans_signup/13/ HTTP/1.1" 200 3808
+[2017-11-26 08:46:37] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:46:55] INFO [django.server.log_message:124] "POST /supervisor/trans_signup/13/ HTTP/1.1" 200 3998
+[2017-11-26 08:46:55] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:47:05] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/trans_signup/13/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 266, in trans_signup
+    'supervisor': supervisor
+  File "C:\Python27\lib\site-packages\django\shortcuts.py", line 30, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Python27\lib\site-packages\django\template\loader.py", line 68, in render_to_string
+    return template.render(context, request)
+  File "C:\Python27\lib\site-packages\django\template\backends\django.py", line 66, in render
+    return self.template.render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 207, in render
+    return self._render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 199, in _render
+    return self.nodelist.render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 990, in render
+    bit = node.render_annotated(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 957, in render_annotated
+    return self.render(context)
+  File "C:\Python27\lib\site-packages\django\template\loader_tags.py", line 177, in render
+    return compiled_parent._render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 199, in _render
+    return self.nodelist.render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 990, in render
+    bit = node.render_annotated(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 957, in render_annotated
+    return self.render(context)
+  File "C:\Python27\lib\site-packages\django\template\loader_tags.py", line 177, in render
+    return compiled_parent._render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 199, in _render
+    return self.nodelist.render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 990, in render
+    bit = node.render_annotated(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 957, in render_annotated
+    return self.render(context)
+  File "C:\Python27\lib\site-packages\django\template\loader_tags.py", line 72, in render
+    result = block.nodelist.render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 990, in render
+    bit = node.render_annotated(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 957, in render_annotated
+    return self.render(context)
+  File "C:\Python27\lib\site-packages\django\template\loader_tags.py", line 72, in render
+    result = block.nodelist.render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 990, in render
+    bit = node.render_annotated(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 957, in render_annotated
+    return self.render(context)
+  File "C:\Python27\lib\site-packages\django\template\defaulttags.py", line 216, in render
+    nodelist.append(node.render_annotated(context))
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 957, in render_annotated
+    return self.render(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 1040, in render
+    output = self.filter_expression.resolve(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 708, in resolve
+    obj = self.var.resolve(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 849, in resolve
+    value = self._resolve_lookup(context)
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 911, in _resolve_lookup
+    current = current()
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\helper\models.py", line 383, in get_assignment_number
+    return len(self.get_assignments())
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\helper\models.py", line 339, in get_assignments
+    for order in Order.objects.filter(Q(translator_C2E=self.id)).order_by('submit'):
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 250, in __iter__
+    self._fetch_all()
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 1118, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 53, in __iter__
+    results = compiler.execute_sql(chunked_fetch=self.chunked_fetch)
+  File "C:\Python27\lib\site-packages\django\db\models\sql\compiler.py", line 894, in execute_sql
+    raise original_exception
+OperationalError: (1054, "Unknown column 'order.c2e_re_assigned' in 'field list'")
+[2017-11-26 08:47:06] ERROR [django.server.log_message:124] "POST /supervisor/trans_signup/13/ HTTP/1.1" 500 236613
+[2017-11-26 08:48:13] INFO [django.server.log_message:124] "POST /supervisor/trans_signup/13/ HTTP/1.1" 200 3947
+[2017-11-26 08:48:13] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:48:22] INFO [django.server.log_message:124] "POST /supervisor/trans_signup/13/ HTTP/1.1" 200 3947
+[2017-11-26 08:48:22] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:48:27] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4597
+[2017-11-26 08:48:27] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:48:31] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9555
+[2017-11-26 08:48:31] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:48:32] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1668
+[2017-11-26 08:48:32] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1668
+[2017-11-26 08:48:34] INFO [django.server.log_message:124] "GET /supervisor/detail/13/163/ HTTP/1.1" 200 4084
+[2017-11-26 08:48:34] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:48:37] INFO [django.server.log_message:124] "GET /supervisor/assign/13/163/ HTTP/1.1" 200 2290
+[2017-11-26 08:48:37] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:48:46] INFO [django.server.log_message:124] "GET /supervisor/home/13/ HTTP/1.1" 200 1919
+[2017-11-26 08:48:46] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:48:48] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9555
+[2017-11-26 08:48:48] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:48:49] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1668
+[2017-11-26 08:48:49] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1668
+[2017-11-26 08:49:15] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9555
+[2017-11-26 08:49:15] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:49:15] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1680
+[2017-11-26 08:49:15] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1680
+[2017-11-26 08:49:18] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4597
+[2017-11-26 08:49:18] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:49:24] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/validate_pwd/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 70, in validate_pwd
+    print each.get_translator_C2E()
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\helper\models.py", line 191, in get_translator_C2E
+    if self.translator_C2E is None:
+  File "C:\Python27\lib\site-packages\django\db\models\fields\related_descriptors.py", line 184, in __get__
+    rel_obj = self.get_object(instance)
+  File "C:\Python27\lib\site-packages\django\db\models\fields\related_descriptors.py", line 159, in get_object
+    return qs.get(self.field.get_reverse_related_filter(instance))
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 380, in get
+    self.model._meta.object_name
+DoesNotExist: Staff matching query does not exist.
+[2017-11-26 08:49:24] ERROR [django.server.log_message:124] "GET /supervisor/ajax/validate_pwd/?password=1234567&trans_id=41 HTTP/1.1" 500 18305
+[2017-11-26 08:49:44] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-26 08:49:44] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:50:32] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-26 08:50:32] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:50:42] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4587
+[2017-11-26 08:50:42] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:51:10] INFO [django.server.log_message:124] "GET /supervisor/ajax/validate_pwd/?password=1234567&trans_id=33 HTTP/1.1" 200 53
+[2017-11-26 08:51:11] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-26 08:51:11] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:51:14] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9555
+[2017-11-26 08:51:14] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:51:14] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/update_result/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 194, in update_result
+    data['result']['Translator_C2E'].append(each.get_translator_C2E())
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\helper\models.py", line 191, in get_translator_C2E
+    if self.translator_C2E is None:
+  File "C:\Python27\lib\site-packages\django\db\models\fields\related_descriptors.py", line 184, in __get__
+    rel_obj = self.get_object(instance)
+  File "C:\Python27\lib\site-packages\django\db\models\fields\related_descriptors.py", line 159, in get_object
+    return qs.get(self.field.get_reverse_related_filter(instance))
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 380, in get
+    self.model._meta.object_name
+DoesNotExist: Staff matching query does not exist.
+[2017-11-26 08:51:15] ERROR [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 500 18322
+[2017-11-26 08:52:34] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9555
+[2017-11-26 08:52:34] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:52:35] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/update_result/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 194, in update_result
+    data['result']['Translator_C2E'].append(each.get_translator_C2E())
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\helper\models.py", line 189, in get_translator_C2E
+    if self.translator_C2E is None:
+  File "C:\Python27\lib\site-packages\django\db\models\fields\related_descriptors.py", line 184, in __get__
+    rel_obj = self.get_object(instance)
+  File "C:\Python27\lib\site-packages\django\db\models\fields\related_descriptors.py", line 159, in get_object
+    return qs.get(self.field.get_reverse_related_filter(instance))
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 380, in get
+    self.model._meta.object_name
+DoesNotExist: Staff matching query does not exist.
+[2017-11-26 08:52:35] ERROR [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 500 18322
+[2017-11-26 08:54:10] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9555
+[2017-11-26 08:54:10] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:54:11] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1668
+[2017-11-26 08:54:11] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1668
+[2017-11-26 08:54:11] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9555
+[2017-11-26 08:54:11] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:54:12] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1668
+[2017-11-26 08:54:12] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1668
+[2017-11-26 08:55:03] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9555
+[2017-11-26 08:55:03] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:55:04] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1666
+[2017-11-26 08:55:04] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1666
+[2017-11-26 08:56:05] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9555
+[2017-11-26 08:56:05] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:56:06] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1675
+[2017-11-26 08:56:06] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1675
+[2017-11-26 08:56:49] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4592
+[2017-11-26 08:56:49] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:56:54] INFO [django.server.log_message:124] "GET /supervisor/ajax/validate_pwd/?password=1234567&trans_id=31 HTTP/1.1" 200 53
+[2017-11-26 08:56:56] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-26 08:56:56] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:56:58] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9555
+[2017-11-26 08:56:58] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 08:56:59] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1666
+[2017-11-26 08:56:59] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1666
+[2017-11-26 09:02:22] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9551
+[2017-11-26 09:02:22] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:02:22] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/update_result/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 194, in update_result
+    data['result']['Translator_C2E'].append(each.get_translator_C2E())
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\helper\models.py", line 190, in get_translator_C2E
+    if self.translator_C2E is None:
+  File "C:\Python27\lib\site-packages\django\db\models\fields\related_descriptors.py", line 184, in __get__
+    rel_obj = self.get_object(instance)
+  File "C:\Python27\lib\site-packages\django\db\models\fields\related_descriptors.py", line 159, in get_object
+    return qs.get(self.field.get_reverse_related_filter(instance))
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 380, in get
+    self.model._meta.object_name
+DoesNotExist: Staff matching query does not exist.
+[2017-11-26 09:02:22] ERROR [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 500 18322
+[2017-11-26 09:03:16] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9551
+[2017-11-26 09:03:16] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:03:16] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1671
+[2017-11-26 09:03:17] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1671
+[2017-11-26 09:03:19] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4594
+[2017-11-26 09:03:20] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:03:48] INFO [django.server.log_message:124] "GET /supervisor/ajax/validate_pwd/?password=1234567&trans_id=30 HTTP/1.1" 200 53
+[2017-11-26 09:03:49] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-26 09:03:49] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:03:51] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9551
+[2017-11-26 09:03:51] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:03:52] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1666
+[2017-11-26 09:03:52] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1666
+[2017-11-26 09:04:29] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9551
+[2017-11-26 09:04:29] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:04:30] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1666
+[2017-11-26 09:04:30] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1666
+[2017-11-26 09:04:44] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-26 09:04:44] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:04:54] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9551
+[2017-11-26 09:04:54] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:04:55] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1666
+[2017-11-26 09:04:55] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1666
+[2017-11-26 09:06:18] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9551
+[2017-11-26 09:06:18] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:06:19] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1663
+[2017-11-26 09:06:19] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1663
+[2017-11-26 09:06:20] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4590
+[2017-11-26 09:06:20] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:06:26] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/validate_pwd/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 74, in validate_pwd
+    each.c2e_reassigned = True
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\helper\models.py", line 26, in auto_assign
+    order.set_translator_C2E(None)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\helper\models.py", line 201, in set_translator_C2E
+    self.save()
+  File "C:\Python27\lib\site-packages\django\db\models\base.py", line 807, in save
+    force_update=force_update, update_fields=update_fields)
+  File "C:\Python27\lib\site-packages\django\db\models\base.py", line 837, in save_base
+    updated = self._save_table(raw, cls, force_insert, force_update, using, update_fields)
+  File "C:\Python27\lib\site-packages\django\db\models\base.py", line 923, in _save_table
+    result = self._do_insert(cls._base_manager, using, fields, update_pk, raw)
+  File "C:\Python27\lib\site-packages\django\db\models\base.py", line 962, in _do_insert
+    using=using, raw=raw)
+  File "C:\Python27\lib\site-packages\django\db\models\manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 1076, in _insert
+    return query.get_compiler(using=using).execute_sql(return_id)
+  File "C:\Python27\lib\site-packages\django\db\models\sql\compiler.py", line 1107, in execute_sql
+    cursor.execute(sql, params)
+  File "C:\Python27\lib\site-packages\django\db\backends\utils.py", line 80, in execute
+    return super(CursorDebugWrapper, self).execute(sql, params)
+  File "C:\Python27\lib\site-packages\django\db\backends\utils.py", line 65, in execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python27\lib\site-packages\django\db\utils.py", line 94, in __exit__
+    six.reraise(dj_exc_type, dj_exc_value, traceback)
+  File "C:\Python27\lib\site-packages\django\db\backends\utils.py", line 65, in execute
+    return self.cursor.execute(sql, params)
+  File "C:\Python27\lib\site-packages\django\db\backends\mysql\base.py", line 101, in execute
+    return self.cursor.execute(query, args)
+  File "C:\Python27\lib\site-packages\MySQLdb\cursors.py", line 205, in execute
+    self.errorhandler(self, exc, value)
+  File "C:\Python27\lib\site-packages\MySQLdb\connections.py", line 36, in defaulterrorhandler
+    raise errorclass, errorvalue
+IntegrityError: (1452, 'Cannot add or update a child row: a foreign key constraint fails (`mediconnect`.`order`, CONSTRAINT `order_customer_id_9da9253f_fk_auth_customer_id` FOREIGN KEY (`customer_id`) REFERENCES `auth_customer` (`id`))')
+[2017-11-26 09:06:41] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/ajax/validate_pwd/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 64, in validate_pwd
+    translator = Staff.objects.get(user_id = id)
+  File "C:\Python27\lib\site-packages\django\db\models\manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "C:\Python27\lib\site-packages\django\db\models\query.py", line 380, in get
+    self.model._meta.object_name
+DoesNotExist: Staff matching query does not exist.
+[2017-11-26 09:06:41] ERROR [django.server.log_message:124] "GET /supervisor/ajax/validate_pwd/?password=1234567&trans_id=32 HTTP/1.1" 500 17996
+[2017-11-26 09:06:44] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-26 09:06:44] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:06:46] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9551
+[2017-11-26 09:06:47] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:06:47] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1173
+[2017-11-26 09:06:47] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1173

@@ -85,13 +85,16 @@
                 var content = question.getElementsByClassName("content")[0].getElementsByTagName("input")[0].value;
                 data[i]["question"]=content;
                 data[i]["choices"]=[];
+                if(!("format" in data[i])){
+                    alert("One of the questions doesn't have a format yet.");
+                    return;
+                }
                 var choices = question.getElementsByClassName("choice");
                 for(j=0;j<choices.length;j++){
                     var choice = choices[j].getElementsByTagName("input")[0].value;
                     data[i]["choices"][j]=choice;
                 }
             }
-            console.log(data);
             $.getJSON("{% url 'create_questionnaire'%}",{"data":JSON.stringify(data), "hospital":{{hospital}}, "disease":{{disease}}, "category":"{{category}}" },function(data){
                 console.log(data);
             });

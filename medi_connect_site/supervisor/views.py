@@ -65,10 +65,15 @@ def validate_pwd(request):
     user = translator.user
     assignments = translator.get_assignments()
     translator.delete()
-    user.delete()
+    #user.delete()
     for each in assignments:
+        print each.get_status()
+        if each.get_status() <= util.C2E_FINISHED:
+            each.c2e_reassigned = True
+        else:
+            each.c2e_reassigned = True
         auto_assign(each)
-        each.re_assigned = True
+        each.save()
     data['msg']='操作成功'
 
     return JsonResponse(data)
@@ -428,7 +433,6 @@ def send_reset_link(request):
     }
     password = request.GET.get('password', None)
     trans_id = request.GET.get('trans_id',None)
-    print trans_id,password
     user = User.objects.get(id = trans_id)
     supervisor = Staff.objects.get(user=request.user)
 
@@ -545,7 +549,7 @@ def rank_manage(request,id):
 def create_questionnaire(request):
 
     #TODO: Add error message and output pdf.
-
+    msg = ""
     data = request.GET.get('data',None)
     hospital_id = request.GET.get('hospital',None)
     disease_id = request.GET.get('disease',None)
@@ -565,10 +569,12 @@ def create_questionnaire(request):
     }
     myFile = default_storage.save(util.questions_path(q, 'questions.txt'), ContentFile(t.render(c)))
     q.questions = myFile
-    assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
-    q.translator = assignee
+    #assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
+    #q.translator = assignee
     q.save()
-    return JsonResponse('000',safe=False)
+    response = StreamingHttpResponse(myFile)
+    response['Content-Disposition'] = 'attachment; filename="questions.txt"'  # download no need to change
+    return response
 
 def generate_questionnaire(request,hospital_id,disease_id):
     supervisor = Staff.objects.get(user = request.user)
