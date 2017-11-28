@@ -41,8 +41,19 @@
     <br>
     {% endfor %}
     {% else %}
-    Result Not Found
+    We don't have a hospital for this kind of disease yet. You can check other diseases from the list below.
     {% endif %}
+    <div class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        Click Here to Check more Diseases
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        {% for dis in all_dis %}
+            <li><a href="{% url 'choose_hospital' disease_id=dis.id %}">{{dis.name}}</a></li>
+        {% endfor %}
+        </ul>
+    </div>
 </div>
 
 {% endblock %}

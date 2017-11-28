@@ -4,9 +4,13 @@
 {% block content %}
 
     <p>翻译员分配</p>
+
     <form  method="post">
-      {% csrf_token %}
-      {{ form.as_p}}
+      <select id = 'assignee_choices'>
+          {% for each in assignee_names %}
+            <option>{{each}}</option>
+          {% endfor %}
+      </select>
       <input type="submit",name = 'assignee', value = 'Assign'/>
     </form>
 
@@ -14,4 +18,5 @@
 
   <p><a href="{% url 'supervisor_home' id=supervisor.user.id %}">Return to home</a></p>
   <p><a href="{% url 'detail' id=supervisor.user.id order_id=assignment.id %}">Return to detail</a></p>
+
 {% endblock %}

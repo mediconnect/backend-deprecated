@@ -151,6 +151,7 @@ def result(request):
             return render(request, 'result.html', {
                 'hospital_list': hospital_list,
                 'disease': dis[0],
+                'all_dis': Disease.objects.all(),
                 'hospital_length': len(hospital_list) > 0,
                 'disease_length': dis is not None,
                 'customer': Customer.objects.get(user=request.user),
@@ -186,6 +187,7 @@ def choose_hospital(request, disease_id):
     if request.user.is_authenticated():
         return render(request, 'result.html', {
             'hospital_list': hospital_list,
+            'all_dis': Disease.objects.all(),
             'disease': dis,
             'hospital_length': len(hospital_list) > 0,
             'disease_length': dis is not None,
@@ -264,6 +266,7 @@ def result_guest(request):
             return render(request, 'result.html', {
                 'hospital_list': hospital_list,
                 'disease': dis[0],
+                'all_dis': Disease.objects.all(),
                 'hospital_length': len(hospital_list) > 0,
                 'disease_length': dis is not None,
                 'message': u'你是不是在搜索这个疾病: ' + dis[0].name,

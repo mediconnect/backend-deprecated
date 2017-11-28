@@ -110,7 +110,6 @@
         $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic)},function(data){
             createResult(data);
             createChoice(data);
-
         });
     });
     function test(){

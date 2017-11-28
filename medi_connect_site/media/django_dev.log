@@ -1159,3 +1159,269 @@ NoReverseMatch: Reverse for 'login' not found. 'login' is not a valid view funct
 [2017-11-26 09:15:26] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
 [2017-11-26 09:15:31] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4634
 [2017-11-26 09:15:31] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:17:11] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4696
+[2017-11-26 09:17:11] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:17:57] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4706
+[2017-11-26 09:17:57] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:18:05] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4626
+[2017-11-26 09:18:05] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:18:11] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4710
+[2017-11-26 09:18:11] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:18:35] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4626
+[2017-11-26 09:18:35] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:18:53] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4629
+[2017-11-26 09:18:53] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:18:59] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4634
+[2017-11-26 09:18:59] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:19:40] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4699
+[2017-11-26 09:19:40] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:20:23] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4699
+[2017-11-26 09:20:23] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:20:24] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3073
+[2017-11-26 09:20:24] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:20:26] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4393
+[2017-11-26 09:20:26] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:20:40] INFO [django.server.log_message:124] "POST /result_guest/ HTTP/1.1" 200 4320
+[2017-11-26 09:20:40] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:22:53] WARNING [django.request.get_response:152] Not Found: /info/review
+[2017-11-26 09:22:53] WARNING [django.server.log_message:124] "GET /info/review HTTP/1.1" 404 7192
+[2017-11-26 09:22:57] INFO [django.server.log_message:124] "GET /logout/ HTTP/1.1" 302 0
+[2017-11-26 09:22:57] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3073
+[2017-11-26 09:22:58] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:22:59] INFO [django.server.log_message:124] "GET /login/ HTTP/1.1" 200 3855
+[2017-11-26 09:22:59] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:23:27] INFO [django.server.log_message:124] "POST /login/ HTTP/1.1" 302 0
+[2017-11-26 09:23:28] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3998
+[2017-11-26 09:23:28] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:23:31] INFO [django.server.log_message:124] "GET /info/order/ HTTP/1.1" 200 3541
+[2017-11-26 09:23:31] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:23:33] INFO [django.server.log_message:124] "GET /info/order/finished/ HTTP/1.1" 200 3541
+[2017-11-26 09:23:33] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-26 09:23:34] INFO [django.server.log_message:124] "GET /info/order/ HTTP/1.1" 200 3541
+[2017-11-26 09:23:34] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:02:47] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3998
+[2017-11-28 11:02:48] INFO [django.server.log_message:124] "GET /static/js/jquery.js HTTP/1.1" 200 86711
+[2017-11-28 11:02:48] INFO [django.server.log_message:124] "GET /static/css/bootstrap.min.css HTTP/1.1" 200 121205
+[2017-11-28 11:02:48] INFO [django.server.log_message:124] "GET /static/js/jquery.twbsPagination.js HTTP/1.1" 200 11819
+[2017-11-28 11:02:48] INFO [django.server.log_message:124] "GET /static/js/jquery-ui.js HTTP/1.1" 200 539419
+[2017-11-28 11:02:48] INFO [django.server.log_message:124] "GET /static/js/vue.js HTTP/1.1" 200 279117
+[2017-11-28 11:02:48] INFO [django.server.log_message:124] "GET /static/js/bootstrap.min.js HTTP/1.1" 200 37051
+[2017-11-28 11:02:48] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:02:49] WARNING [django.request.get_response:152] Not Found: /favicon.ico
+[2017-11-28 11:02:49] WARNING [django.server.log_message:124] "GET /favicon.ico HTTP/1.1" 404 4140
+[2017-11-28 11:03:09] INFO [django.server.log_message:124] "GET /logout/ HTTP/1.1" 302 0
+[2017-11-28 11:03:09] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3073
+[2017-11-28 11:03:09] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:03:11] INFO [django.server.log_message:124] "GET /login/ HTTP/1.1" 200 3855
+[2017-11-28 11:03:11] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:03:18] INFO [django.server.log_message:124] "POST /login/ HTTP/1.1" 302 0
+[2017-11-28 11:03:19] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 1919
+[2017-11-28 11:03:19] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:03:21] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9551
+[2017-11-28 11:03:21] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:03:22] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1173
+[2017-11-28 11:03:22] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1173
+[2017-11-28 11:03:25] INFO [django.server.log_message:124] "GET /supervisor/logout/ HTTP/1.1" 302 0
+[2017-11-28 11:03:25] INFO [django.server.log_message:124] "GET /supervisor/login HTTP/1.1" 301 0
+[2017-11-28 11:03:25] INFO [django.server.log_message:124] "GET /supervisor/login/ HTTP/1.1" 200 3855
+[2017-11-28 11:03:25] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:03:37] INFO [django.server.log_message:124] "POST /login/ HTTP/1.1" 302 0
+[2017-11-28 11:03:37] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3998
+[2017-11-28 11:03:37] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:03:38] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4331
+[2017-11-28 11:03:39] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:03:43] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 6104
+[2017-11-28 11:03:43] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:03:43] INFO [django.server.log_message:124] "GET /media/hospital_1/lenna.png HTTP/1.1" 200 473831
+[2017-11-28 11:03:43] INFO [django.server.log_message:124] "GET /media/hospital_3/lenna.png HTTP/1.1" 200 473831
+[2017-11-28 11:03:43] INFO [django.server.log_message:124] "GET /media/hospital_2/lenna.png HTTP/1.1" 200 473831
+[2017-11-28 11:03:45] INFO [django.server.log_message:124] "GET /helper/order/basic/10/3/1 HTTP/1.1" 302 0
+[2017-11-28 11:03:46] INFO [django.server.log_message:124] "GET /helper/order/basic/1/1 HTTP/1.1" 200 6451
+[2017-11-28 11:03:46] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:04:00] INFO [django.server.log_message:124] "POST /helper/order/disease/1/ HTTP/1.1" 200 4992
+[2017-11-28 11:04:00] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:04:24] INFO [django.server.log_message:124] "POST /helper/order/document/1/ HTTP/1.1" 200 3442
+[2017-11-28 11:04:24] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:04:27] INFO [django.server.log_message:124] "GET /helper/order/deposit/1/?csrfmiddlewaretoken=gtDAIr61fQ2jQpJU5icMT2BZEOUV82ihEGhGGpSaDCrjeHl0HAzaCE9Fba5lcohP HTTP/1.1" 200 2980
+[2017-11-28 11:04:27] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:04:30] INFO [django.server.log_message:124] "POST /helper/order/deposit/1/?csrfmiddlewaretoken=gtDAIr61fQ2jQpJU5icMT2BZEOUV82ihEGhGGpSaDCrjeHl0HAzaCE9Fba5lcohP HTTP/1.1" 302 0
+[2017-11-28 11:04:30] INFO [django.server.log_message:124] "GET /helper/order/submit/1/ HTTP/1.1" 200 2550
+[2017-11-28 11:04:30] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:04:33] INFO [django.server.log_message:124] "GET /logout/ HTTP/1.1" 302 0
+[2017-11-28 11:04:33] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3073
+[2017-11-28 11:04:33] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:04:36] INFO [django.server.log_message:124] "GET /login/ HTTP/1.1" 200 3855
+[2017-11-28 11:04:36] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:04:41] INFO [django.server.log_message:124] "POST /login/ HTTP/1.1" 302 0
+[2017-11-28 11:04:41] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 1919
+[2017-11-28 11:04:41] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:04:43] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9551
+[2017-11-28 11:04:43] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:04:43] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1622
+[2017-11-28 11:04:43] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1622
+[2017-11-28 11:04:48] INFO [django.server.log_message:124] "GET /supervisor/translator_list/13/ HTTP/1.1" 200 4261
+[2017-11-28 11:04:48] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:04:50] INFO [django.server.log_message:124] "GET /supervisor/trans_signup/13/ HTTP/1.1" 200 3808
+[2017-11-28 11:04:50] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:05:08] INFO [django.server.log_message:124] "POST /supervisor/trans_signup/13/ HTTP/1.1" 200 4597
+[2017-11-28 11:05:08] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:05:12] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9551
+[2017-11-28 11:05:12] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:05:12] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1622
+[2017-11-28 11:05:12] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1622
+[2017-11-28 11:05:14] INFO [django.server.log_message:124] "GET /supervisor/detail/13/1/ HTTP/1.1" 200 3326
+[2017-11-28 11:05:14] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:05:16] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2093
+[2017-11-28 11:05:16] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:05:43] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2134
+[2017-11-28 11:05:43] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:05:57] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2134
+[2017-11-28 11:05:57] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:06:17] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2163
+[2017-11-28 11:06:18] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:06:31] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/assign/13/1/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 324, in assign
+    'assignee_choices': C2E_assignee_choice
+  File "C:\Python27\lib\site-packages\django\shortcuts.py", line 30, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Python27\lib\site-packages\django\template\loader.py", line 67, in render_to_string
+    template = get_template(template_name, using=using)
+  File "C:\Python27\lib\site-packages\django\template\loader.py", line 21, in get_template
+    return engine.get_template(template_name)
+  File "C:\Python27\lib\site-packages\django\template\backends\django.py", line 39, in get_template
+    return Template(self.engine.get_template(template_name), self)
+  File "C:\Python27\lib\site-packages\django\template\engine.py", line 162, in get_template
+    template, origin = self.find_template(template_name)
+  File "C:\Python27\lib\site-packages\django\template\engine.py", line 136, in find_template
+    name, template_dirs=dirs, skip=skip,
+  File "C:\Python27\lib\site-packages\django\template\loaders\base.py", line 44, in get_template
+    contents, origin, origin.template_name, self.engine,
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 191, in __init__
+    self.nodelist = self.compile_nodelist()
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 230, in compile_nodelist
+    return parser.parse()
+  File "C:\Python27\lib\site-packages\django\template\base.py", line 515, in parse
+    raise self.error(token, e)
+TemplateSyntaxError: Could not parse the remainder: '[0]' from 'obj[0]'
+[2017-11-28 11:06:31] ERROR [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 500 126539
+[2017-11-28 11:06:48] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2163
+[2017-11-28 11:06:48] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:25:09] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2107
+[2017-11-28 11:25:10] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:25:12] INFO [django.server.log_message:124] "GET /static/css/bootstrap.min.css.map HTTP/1.1" 200 542194
+[2017-11-28 11:25:14] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2107
+[2017-11-28 11:25:14] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:25:34] INFO [django.server.log_message:124] "GET /supervisor/orders/13/All/ HTTP/1.1" 200 9551
+[2017-11-28 11:25:34] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:25:35] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D HTTP/1.1" 200 1622
+[2017-11-28 11:25:35] INFO [django.server.log_message:124] "GET /supervisor/ajax/update_result/?status=All&query=%7B%7D&page=1 HTTP/1.1" 200 1622
+[2017-11-28 11:25:36] INFO [django.server.log_message:124] "GET /supervisor/detail/13/1/ HTTP/1.1" 200 3326
+[2017-11-28 11:25:36] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:25:38] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2107
+[2017-11-28 11:25:38] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:25:50] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2107
+[2017-11-28 11:25:50] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:26:14] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2107
+[2017-11-28 11:26:15] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:28:04] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2254
+[2017-11-28 11:28:04] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:28:24] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2213
+[2017-11-28 11:28:24] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:28:31] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2226
+[2017-11-28 11:28:31] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:31:22] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2296
+[2017-11-28 11:31:22] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:35:49] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2476
+[2017-11-28 11:35:49] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:36:02] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2355
+[2017-11-28 11:36:02] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:37:02] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2355
+[2017-11-28 11:37:02] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:40:52] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2355
+[2017-11-28 11:40:52] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:45:00] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /supervisor/assign/13/1/
+Traceback (most recent call last):
+  File "C:\Python27\lib\site-packages\django\core\handlers\exception.py", line 41, in inner
+    response = get_response(request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "C:\Python27\lib\site-packages\django\core\handlers\base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Python27\lib\site-packages\django\contrib\auth\decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "C:\Users\gabri\Desktop\Project\website\medi_connect_site\supervisor\views.py", line 282, in assign
+    C2E_assignee_choice.append((e.user.id, e.get_name()))
+AttributeError: 'str' object has no attribute 'append'
+[2017-11-28 11:45:01] ERROR [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 500 76895
+[2017-11-28 11:45:21] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2233
+[2017-11-28 11:45:21] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:45:50] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2264
+[2017-11-28 11:45:50] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:46:23] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2295
+[2017-11-28 11:46:23] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:47:12] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2307
+[2017-11-28 11:47:12] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:47:29] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2269
+[2017-11-28 11:47:29] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:50:11] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2269
+[2017-11-28 11:50:11] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:53:23] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2203
+[2017-11-28 11:53:23] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 11:53:47] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2260
+[2017-11-28 11:53:47] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:01:39] INFO [django.server.log_message:124] "GET /supervisor/assign/13/1/ HTTP/1.1" 200 2170
+[2017-11-28 12:01:39] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:07:27] INFO [django.server.log_message:124] "GET /supervisor/logout/ HTTP/1.1" 302 0
+[2017-11-28 12:07:27] INFO [django.server.log_message:124] "GET /supervisor/login/ HTTP/1.1" 200 3855
+[2017-11-28 12:07:27] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:07:37] INFO [django.server.log_message:124] "POST /login/ HTTP/1.1" 302 0
+[2017-11-28 12:07:37] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3998
+[2017-11-28 12:07:37] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:07:41] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 2595
+[2017-11-28 12:07:41] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:08:12] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3998
+[2017-11-28 12:08:16] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4331
+[2017-11-28 12:08:16] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:08:21] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4331
+[2017-11-28 12:08:21] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:08:27] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 6104
+[2017-11-28 12:08:27] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:10:01] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 3001
+[2017-11-28 12:10:01] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:10:16] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4331
+[2017-11-28 12:10:16] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:10:19] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 6483
+[2017-11-28 12:10:19] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:10:57] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 3001
+[2017-11-28 12:10:57] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:11:30] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 3062
+[2017-11-28 12:11:30] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:11:44] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 3062
+[2017-11-28 12:11:44] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:12:08] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 3062
+[2017-11-28 12:12:08] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:12:11] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3998
+[2017-11-28 12:12:11] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:12:14] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4331
+[2017-11-28 12:12:14] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:12:20] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 3062
+[2017-11-28 12:12:20] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:13:24] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 3062
+[2017-11-28 12:13:24] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:13:58] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 3062
+[2017-11-28 12:13:58] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:14:45] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4570
+[2017-11-28 12:14:45] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:14:48] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3998
+[2017-11-28 12:14:48] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485
+[2017-11-28 12:14:51] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4570
+[2017-11-28 12:14:51] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7485

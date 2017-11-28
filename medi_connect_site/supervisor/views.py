@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.utils.encoding import force_bytes
-from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.tokens import default_token_generator
+from django.core import serializers
 from django.core.files.storage import FileSystemStorage,default_storage
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from customer.models import Customer
 from django.apps import apps
 from supervisor.forms import (
-    TransSignUpForm, E2C_AssignForm, C2E_AssignForm, ApproveForm,GenerateQuestionnaireForm,ChoiceForm
+    TransSignUpForm,ApproveForm,GenerateQuestionnaireForm,ChoiceForm
 )
 from django.utils.http import urlsafe_base64_encode
 from info import utility as util
@@ -23,11 +23,11 @@ from django.template import loader, Context
 from django.urls import reverse,reverse_lazy
 import json
 import csv
-from django.utils.six.moves import range
 from django.http import StreamingHttpResponse
 from django.forms.models import model_to_dict
 from django.core.files.base import ContentFile
 from helper.models import auto_assign,manual_assign
+
 
 
 
@@ -277,8 +277,16 @@ def trans_signup(request, id):
 def assign(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     supervisor = Staff.objects.get(user_id=id)
+    C2E_assignee_ids = []
+    C2E_assignee_names = []
+
+    for e in Staff.objects.filter(role=1):
+        C2E_assignee_ids.append(e.user_id)
+        C2E_assignee_names.append( e.get_name())
+
     customer = Customer.objects.get(id=assignment.customer_id)
     status = util.status_dict[int(assignment.status)]
+    """
     if request.method == 'POST':
         if assignment.get_status() <= util.TRANSLATING_ORIGIN:
             form = C2E_AssignForm(request.POST)
@@ -308,6 +316,13 @@ def assign(request, id, order_id):
             'supervisor': supervisor,
             'assignment': assignment
         })
+    """
+    return render(request, 'assign.html', {
+        'supervisor': supervisor,
+        'assignment': assignment,
+        'assignee_names': C2E_assignee_names,
+        'assignee_ids':C2E_assignee_ids
+    })
 
 
 def detail(request, id, order_id):
