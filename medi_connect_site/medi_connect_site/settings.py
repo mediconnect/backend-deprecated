@@ -43,11 +43,12 @@ INSTALLED_APPS = [
     'customer',
     'translator',
     'supervisor',
-    'helper',
+    'placement',
     'info',
     'django_js_reverse',
     'db_manager',
     'dynamic_form',
+    'helper',
 ]
 
 MIDDLEWARE = [

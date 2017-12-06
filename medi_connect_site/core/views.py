@@ -36,7 +36,7 @@ def home(request):
 
 
 def auth(request):
-    # TODO: add more eror info
+    # TODO: add more error info
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if not form.is_valid():
@@ -46,11 +46,7 @@ def auth(request):
         password = form.cleaned_data.get('password')
         user = authenticate(email=email, password=password)
         if user is None:
-            return render(request, 'login.html',
-                          {
-                            'form': form,
-                            'error': 'Invalid Login'
-                           })
+            return render(request, 'login.html', {'form': form, 'error': 'Invalid Login'})
         login(request, user)
         return redirect('/')
     return render(request, 'login.html', {

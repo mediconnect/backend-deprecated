@@ -94,13 +94,7 @@ class DocAddForm(forms.ModelForm):
     class Meta:
         model = Document
         exclude = []
-        fields = ['description', 'comment', 'document']
+        fields = []
 
     def __init__(self, *args, **kwargs):
         super(DocAddForm, self).__init__(*args, **kwargs)
-        self.field_order = [
-            'description',
-            'document',
-            'comment'
-        ]
-        self.order_fields(self.field_order)

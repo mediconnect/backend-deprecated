@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^translator/', include('translator.urls')),
     url(r'^supervisor/', include('supervisor.urls')),
     url(r'^customer/', include('customer.urls')),
-    url(r'^helper/', include('helper.urls')),
+    url(r'^placement/', include('placement.urls')),
     url(r'^info/', include('info.urls')),
     # javascript plugin reverse look up url
     url(r'^jsreverse/$', js_views.urls_js, name='js_reverse'),

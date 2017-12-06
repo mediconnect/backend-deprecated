@@ -9,6 +9,7 @@ from forms import ProfileForm, PasswordResetForm, PatientAddForm, DocAddForm
 from django.contrib.auth.hashers import check_password, make_password
 from django.utils.http import urlquote
 from django.template.defaultfilters import register
+from dynamic_form.forms import create_form, get_fields
 
 
 # Create your views here.
@@ -203,16 +204,15 @@ def add_doc(request, order_id):
                 'customer': customer,
                 'order': order,
             })
-        document = form.cleaned_data.get('document')
-        description = form.cleaned_data.get('description')
-        comment = form.cleaned_data.get('comment')
-        doc = Document(document=urlquote(document), comment=comment,
-                       description=description, order=order)
-        doc.save()
-        order.origin.add(doc)
-        return redirect('info_order', customer.id)
+        required, optional = get_fields(order.hospital.id, order.disease.id)
+        for field in optional:
+            for f in request.FILES.getlist(field):
+                doc = Document(document=f, description=field, order=order)
+                doc.save()
+                order.origin.add(doc)
+        return redirect('info_order_detail', order.id)
     return render(request, 'add_doc.html', {
-        'form': DocAddForm(),
+        'form': create_form(int(order.hospital.id), int(order.disease.id), DocAddForm(), only_optional=True),
         'customer': customer,
         'order': order,
     })
