@@ -71,7 +71,7 @@ TEMPLATES = [
             'core/templates/core',
             'customer/templates/customer',
             'translator/templates/translator',
-            'helper/templates/helper',
+            'placement/templates/placement',
             'info/templates/info',
             'core/templates/registration',
             'chisim',

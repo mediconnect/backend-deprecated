@@ -1897,3 +1897,27 @@ DoesNotExist: Order matching query does not exist.
 [2017-12-05 20:45:59] INFO [django.server.log_message:124] "GET /info/order/ HTTP/1.1" 200 5484
 [2017-12-05 20:46:12] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
 [2017-12-05 20:46:12] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-07 10:26:30] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/hospital/3/10/
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 46, in hospital_detail
+    'comments': comments,
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/shortcuts.py", line 30, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/template/loader.py", line 67, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/template/loader.py", line 25, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+TemplateDoesNotExist: hospital_order.html
+[2017-12-07 10:26:30] ERROR [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 500 95787
+[2017-12-07 10:27:03] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-07 10:27:03] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-07 10:27:03] INFO [django.server.log_message:124] "GET /static/fonts/glyphicons-halflings-regular.woff2 HTTP/1.1" 200 18028
+[2017-12-07 10:27:03] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
