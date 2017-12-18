@@ -15,8 +15,6 @@ import json
 
 
 # Create your views here
-
-
 def home(request):
     if request.user.is_authenticated():
         # render a user specified web page
@@ -36,17 +34,20 @@ def home(request):
 
 
 def auth(request):
-    # TODO: add more error info
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if not form.is_valid():
-            return render(request, 'login.html',
-                          {'form': form})
+            return render(request, 'login.html', {
+                'form': form
+            })
         email = form.cleaned_data.get('email')
         password = form.cleaned_data.get('password')
         user = authenticate(email=email, password=password)
         if user is None:
-            return render(request, 'login.html', {'form': form, 'error': 'Invalid Login'})
+            return render(request, 'login.html', {
+                'form': form,
+                'error': 'Invalid Login'
+            })
         login(request, user)
         return redirect('/')
     return render(request, 'login.html', {
@@ -58,9 +59,11 @@ def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if not form.is_valid():
-            return render(request, 'signup.html',
-                          {'form': form})
+            return render(request, 'signup.html', {
+                'form': form
+            })
         else:
+            # fetch data from inputs of form
             email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
             first_name = form.cleaned_data.get('first_name')
@@ -76,18 +79,23 @@ def signup(request):
             return redirect('/')
 
     else:
-        return render(request, 'signup.html',
-                      {'form': SignUpForm()})
+        return render(request, 'signup.html', {
+            'form': SignUpForm()
+        })
 
 
 def result(request):
     """
-    :param request:
-    :return:
-    this method fetch diseases keyword and compare with user input. the matching
-    part can be improved later. if found multiple matching diseases, return
-    multiple options and let user choose. if no result, return all diseases and
-    let user choose. if exactly one disease is found, directly go to relevant hospital.
+    This function tries to find matching query.
+    The logic works on 3 levels.
+        1. The user input exactly matches to the keyword stored in the database. The
+            view will then fetch hospital information and direct the user to hospital
+            detail information page.
+        2. The user input contains the keyword stored in the database. Try to fetch
+            all diseases with keyword matching to user query input. Direct user to
+            disease selection page, but put matched disease at front.
+        3. The user input does not match to any keyword. Direct user to a disease
+            selection page.
     """
     if request.method == 'POST':
         form = SearchForm(request.POST)
@@ -98,6 +106,8 @@ def result(request):
             dis_list = Disease.objects.all()
             dis = []
             exact_match = False
+            # find exact match word. check if the user input contains keyword and then
+            # check if it is exact match
             for unit in dis_list:
                 # split according to unicode chinese letter
                 keywords = unit.keyword.split(u'\uff0c')
@@ -107,26 +117,22 @@ def result(request):
                         dis.append(unit)
                         if exact_match:
                             break
+                if exact_match:
+                    dis = [unit]
+                    break
 
-            if len(dis) == 0:
+            # if no match or if multiple matched found
+            if len(dis) == 0 or len(dis) > 1 or not exact_match:
                 return render(request, 'disease_choice.html', {
-                    'customer': Customer.objects.get(user=request.user),
-                    'all_dis': Disease.objects.all(),
-                    'disease_length': False,
-                })
-
-            if len(dis) > 1 or not exact_match:
-                return render(request, 'disease_choice.html', {
-                    'customer': Customer.objects.get(user=request.user),
                     'disease_list': dis,
                     'all_dis': Disease.objects.all(),
-                    'disease_length': True,
+                    'disease_length': True if len(dis) > 1 else False  # if diseases are found
                 })
 
+            # handle data for exact match
             rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
             hospital_list = []
-            rank = 1
-            for r in rank_list:
+            for r, rank in enumerate(rank_list, 1):
                 hosp = r.hospital
                 single_hopital = dict()
                 single_hopital['id'] = hosp.id
@@ -138,10 +144,10 @@ def result(request):
                 single_hopital['image'] = hosp.image.url
                 single_hopital['full_price'] = Price.objects.get(hospital=hosp, disease=dis[0]).full_price
                 single_hopital['deposit_price'] = Price.objects.get(hospital=hosp, disease=dis[0]).deposit
-                rank += 1
                 slot = Slot.objects.get(disease=dis[0], hospital=hosp)
-                single_hopital['slot'] = {0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2,
-                                          3: slot.slots_open_3}
+                single_hopital['slot'] = {
+                    0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2, 3: slot.slots_open_3
+                }
                 hospital_list.append(single_hopital)
 
             return render(request, 'result.html', {
@@ -155,6 +161,86 @@ def result(request):
             })
     else:
         return render(request, 'result.html')
+
+
+def result_guest(request):
+    """
+        This function tries to find matching query.
+        The logic works on 3 levels.
+            1. The user input exactly matches to the keyword stored in the database. The
+                view will then fetch hospital information and direct the user to hospital
+                detail information page.
+            2. The user input contains the keyword stored in the database. Try to fetch
+                all diseases with keyword matching to user query input. Direct user to
+                disease selection page, but put matched disease at front.
+            3. The user input does not match to any keyword. Direct user to a disease
+                selection page.
+        This function is for guest user.
+        """
+    if request.method == 'POST':
+        form = SearchForm(request.POST)
+        if not form.is_valid():
+            return render(request, 'index.html', {
+                'form': form,
+            })
+        else:
+            query = form.cleaned_data.get('query')
+            dis_list = Disease.objects.all()
+            dis = []
+            exact_match = False
+            # find exact match word. check if the user input contains keyword and then
+            # check if it is exact match
+            for unit in dis_list:
+                # split according to unicode chinese letter
+                keywords = unit.keyword.split(u'\uff0c')
+                for keyword in keywords:
+                    if keyword in query:
+                        exact_match = exact_match or keyword == query
+                        dis.append(unit)
+                        if exact_match:
+                            break
+                if exact_match:
+                    dis = [unit]
+                    break
+
+            # if no match or if multiple matched found
+            if len(dis) == 0 or len(dis) > 1 or not exact_match:
+                return render(request, 'disease_choice.html', {
+                    'disease_list': dis,
+                    'all_dis': Disease.objects.all(),
+                    'disease_length': True if len(dis) > 1 else False  # if diseases are found
+                })
+
+            rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
+            hospital_list = []
+            for r, rank in enumerate(rank_list, 1):
+                hosp = r.hospital
+                single_hopital = dict()
+                single_hopital['id'] = hosp.id
+                single_hopital['name'] = hosp.name
+                single_hopital['rank'] = rank
+                single_hopital['score'] = hosp.average_score
+                single_hopital['introduction'] = hosp.introduction
+                single_hopital['feedback_time'] = hosp.feedback_time
+                single_hopital['image'] = hosp.image.url
+                single_hopital['full_price'] = Price.objects.get(hospital=hosp, disease=dis[0]).full_price
+                single_hopital['deposit_price'] = Price.objects.get(hospital=hosp, disease=dis[0]).deposit
+                slot = Slot.objects.get(disease=dis[0], hospital=hosp)
+                single_hopital['slot'] = {
+                    0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2, 3: slot.slots_open_3
+                }
+                hospital_list.append(single_hopital)
+
+            return render(request, 'result.html', {
+                'hospital_list': hospital_list,
+                'disease': dis[0],
+                'all_dis': Disease.objects.all(),
+                'hospital_length': len(hospital_list) > 0,
+                'disease_length': dis is not None,
+                'message': u'你是不是在搜索这个疾病: ' + dis[0].name,
+            })
+    else:
+        return render(request, 'result_guest.html')
 
 
 def choose_hospital(request, disease_id):
@@ -198,79 +284,6 @@ def choose_hospital(request, disease_id):
         })
 
 
-def result_guest(request):
-    """
-    result guest is search function used for customers not login.
-    this function can be optimized in the future, the algorithm of how
-    search is implemented.
-    """
-    if request.method == 'POST':
-        form = SearchForm(request.POST)
-        if not form.is_valid():
-            return render(request, 'index.html', {
-                'form': form,
-            })
-        else:
-            query = form.cleaned_data.get('query')
-            dis_list = Disease.objects.all()
-            dis = []
-            exact_match = False
-            for unit in dis_list:
-                # split according to unicode chinese letter
-                keywords = unit.keyword.split(u'\uff0c')
-                for keyword in keywords:
-                    if keyword in query:
-                        exact_match = exact_match or keyword == query
-                        dis.append(unit)
-                        if exact_match:
-                            break
-
-            if len(dis) == 0:
-                return render(request, 'disease_choice.html', {
-                    'all_dis': Disease.objects.all(),
-                    'disease_length': False,
-                })
-
-            if len(dis) > 1 or not exact_match:
-                return render(request, 'disease_choice.html', {
-                    'disease_list': dis,
-                    'all_dis': Disease.objects.all(),
-                    'disease_length': True,
-                })
-
-            rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
-            hospital_list = []
-            rank = 1
-            for r in rank_list:
-                hosp = r.hospital
-                single_hopital = dict()
-                single_hopital['id'] = hosp.id
-                single_hopital['name'] = hosp.name
-                single_hopital['rank'] = rank
-                single_hopital['score'] = hosp.average_score
-                single_hopital['introduction'] = hosp.introduction
-                single_hopital['feedback_time'] = hosp.feedback_time
-                single_hopital['image'] = hosp.image.url
-                single_hopital['full_price'] = Price.objects.get(hospital=hosp, disease=dis[0]).full_price
-                single_hopital['deposit_price'] = Price.objects.get(hospital=hosp, disease=dis[0]).deposit
-                rank += 1
-                slot = Slot.objects.get(disease=dis[0], hospital=hosp)
-                single_hopital['slot'] = {0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2,
-                                          3: slot.slots_open_3}
-                hospital_list.append(single_hopital)
-
-            return render(request, 'result.html', {
-                'hospital_list': hospital_list,
-                'disease': dis[0],
-                'all_dis': Disease.objects.all(),
-                'hospital_length': len(hospital_list) > 0,
-                'disease_length': dis is not None,
-                'message': u'你是不是在搜索这个疾病: ' + dis[0].name,
-            })
-    else:
-        return render(request, 'result_guest.html')
-
-
 def disease(request):
     diseases = Disease.objects.all()
     return render(request, 'disease.html', {
@@ -286,11 +299,6 @@ def hospital(request):
 
 
 def username_check(request):
-    """
-    :param request:
-    :return: JsonResponse with exist == True or False
-    this method used by front end Ajax call to check if user name exists
-    """
     name = request.GET.get('username', None)
     users = User.objects.filter(username=name)
     if len(users) > 0:
@@ -299,11 +307,6 @@ def username_check(request):
 
 
 def email_check(request):
-    """
-    :param request:
-    :return: JsonResponse with exist == True or False
-    this method used by front end Ajax call to check if email exists
-    """
     name = request.GET.get('email', None)
     users = User.objects.filter(email=name)
     if len(users) > 0:
@@ -327,11 +330,6 @@ def contact(request):
 
 
 def send_response(request):
-    """
-    :param request:
-    :return:
-    send customer response to according emails
-    """
     form = ContactForm(request.POST)
     if not form.is_valid():
         if request.user.is_authenticated():

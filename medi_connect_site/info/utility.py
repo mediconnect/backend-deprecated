@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#======This file can only contain non-order dependant functions======#
+# ======This file can only contain non-order dependant functions======#
 import datetime
 import logging
 
@@ -11,6 +11,7 @@ dbalogger = logging.getLogger('dba')
 
 def index():
     stdlogger.debug("Entering index method")
+
 
 def log(msg):
     stdlogger.debug(msg)
@@ -25,7 +26,8 @@ def order_directory_path(instance, filename):
 
 
 def questions_path(instance, filename):
-    return 'hospital_{0}/disease_{1}/{2}'.format(instance.hospital.get_id(), instance.disease.get_id(),  filename)
+    return 'hospital_{0}/disease_{1}/{2}'.format(instance.hospital.get_id(), instance.disease.get_id(), filename)
+
 
 # Gender
 MALE = 'M'
@@ -49,30 +51,28 @@ RELATION_CHOICES = (
     (SELF, '本人'),
     (PARENT, '父母'),
     (CHILD, '子女'),
-    (SPOUSE,'配偶'),
-    (RELATIVE,'其他亲属'),
-    (FRIEND,'朋友'),
-    (OTHER,'其他')
+    (SPOUSE, '配偶'),
+    (RELATIVE, '其他亲属'),
+    (FRIEND, '朋友'),
+    (OTHER, '其他')
 )
 
 # Status
 STARTED = 0  # 下单中
-RECEIVED = 1  # paid 已付款
-PAID = 2  # order received 已接单
-TRANSLATING_ORIGIN = 3  # translator starts translating origin documents 翻译原件中
-SUBMITTED = 4  # origin documents translated, approved and submitted to hospitals 已提交
+PAID = 1  # order paid 已付款
+TRANSLATING_ORIGIN = 2  # translator starts translating origin documents 翻译原件中
+SUBMITTED = 3  # origin documents translated, approved and submitted to hospitals 已提交
 # ============ Above is C2E status =============#
 # ============Below is E2C status ==============#
-RETURN = 5  # hospital returns feedback
-TRANSLATING_FEEDBACK = 6  # translator starts translating feedback documents 翻译反馈中
-FEEDBACK = 7  # feedback documents translated, approved, and feedback to customer 已反馈
-DONE = 8  # customer confirm all process done 完成
+RETURN = 4  # hospital returns feedback
+TRANSLATING_FEEDBACK = 5  # translator starts translating feedback documents 翻译反馈中
+FEEDBACK = 6  # feedback documents translated, approved, and feedback to customer 已反馈
+DONE = 7  # customer confirm all process done 完成
 
 STATUS_CHOICES = (
     (STARTED, 'started'),
     (SUBMITTED, 'submitted'),
     (TRANSLATING_ORIGIN, 'translating_origin'),
-    (RECEIVED, 'received'),
     (RETURN, 'return'),
     (TRANSLATING_FEEDBACK, 'translating_feedback'),
     (FEEDBACK, 'feedback'),
@@ -82,7 +82,7 @@ STATUS_CHOICES = (
 status_dict = ['客户未提交', '客户已提交', '已付款', '原件翻译中', '提交至医院', '上传反馈', '反馈翻译中',
                '反馈已上传', '订单完成']
 # Trans_status
-#Temporarily hold status
+# Temporarily hold status
 
 C2E_NOT_STARTED = 0  # c2e translation not started yet 未开始
 C2E_ONGOING = 1  # c2e translation started not submitted to supervisor 翻译中
@@ -131,12 +131,11 @@ MULTIPLE_CHOICE = 0
 CHOOSE_ONE = 1
 TEXT = 2
 
-FORMAT_CHOICE=(
-    (MULTIPLE_CHOICE,'多项选择'),
-    (CHOOSE_ONE,'单选'),
-    (TEXT,'简答')
+FORMAT_CHOICE = (
+    (MULTIPLE_CHOICE, '多项选择'),
+    (CHOOSE_ONE, '单选'),
+    (TEXT, '简答')
 )
-
 
 EIGHT = datetime.timedelta(hours=8)
 
@@ -154,9 +153,7 @@ class UTC_8(datetime.tzinfo):
 
 utc_8 = UTC_8()
 
-#Payment Status
+# Payment Status
 NOT_PAID = 0
 DEPOSIT_PAID = 1
 FULL_PAYMENT = 2
-
-

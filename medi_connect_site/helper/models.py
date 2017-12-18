@@ -37,9 +37,8 @@ def auto_assign(order):
         except IndexError:
             order.set_translator_C2E(None)
 
-
     order.save()
-    #print order.auto_assigned,order.translator_C2E,order.status,order.trans_status,order.translator_E2C
+    # print order.auto_assigned,order.translator_C2E,order.status,order.trans_status,order.translator_E2C
 
 
 def manual_assign(order, assignee):
@@ -174,8 +173,8 @@ class Order(models.Model):
     status = models.CharField(blank=True, max_length=20, choices=util.STATUS_CHOICES)
     trans_status = models.CharField(default=0, max_length=20, choices=util.TRANS_STATUS_CHOICE)
     auto_assigned = models.BooleanField(default=False)
-    c2e_re_assigned = models.BooleanField(default = False)
-    e2c_re_assigned = models.BooleanField(default = False)
+    c2e_re_assigned = models.BooleanField(default=False)
+    e2c_re_assigned = models.BooleanField(default=False)
     document_complete = models.BooleanField(default=False)
     full_payment_paid = models.BooleanField(default=False)
 
@@ -188,11 +187,11 @@ class Order(models.Model):
     def get_translator_C2E(self):
         result = ()
         if self.translator_C2E is None:
-            result = ( 1, '未分配')
+            result = (1, '未分配')
         else:
-            result =( self.translator_C2E.id, self.translator_C2E.get_name())
+            result = (self.translator_C2E.id, self.translator_C2E.get_name())
         if self.c2e_re_assigned:
-            result =(-result[0],result[1]) #if reassigned return negative value
+            result = (-result[0], result[1])  # if reassigned return negative value
 
         return result
 
@@ -240,9 +239,9 @@ class Order(models.Model):
 
     def get_submit_deadline(self):
         total_sec = (
-            self.submit + datetime.timedelta(
-                days=7 * (int(self.week_number_at_submit) + 1)) - datetime.datetime.now(
-                util.utc_8)).total_seconds()
+                self.submit + datetime.timedelta(
+            days=7 * (int(self.week_number_at_submit) + 1)) - datetime.datetime.now(
+            util.utc_8)).total_seconds()
         days = int(total_sec / (3600 * 24))
         hours = int((total_sec - 3600 * 24 * days) / 3600)
         submit_deadline = str(days) + '  days,  ' + str(hours) + '  hours'
@@ -252,15 +251,16 @@ class Order(models.Model):
 
     def get_estimate(self):
         if not self.document_complete:
-            date = (self.submit + datetime.timedelta(weeks=self.week_number_at_submit, days=int(self.hospital.feedback_time),
-                                                      hours=8))
+            date = (self.submit + datetime.timedelta(weeks=self.week_number_at_submit,
+                                                     days=int(self.hospital.feedback_time),
+                                                     hours=8))
         else:
             date = (
-                self.get_submit() + datetime.timedelta(weeks=self.week_number_at_submit,
-                                                        days=self.hospital.feedback_time,
-                                                        hours=8))
+                    self.get_submit() + datetime.timedelta(weeks=self.week_number_at_submit,
+                                                           days=self.hospital.feedback_time,
+                                                           hours=8))
         return str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '-' + str(date.year) + '/' + str(
-             date.month) + '/' + str(date.day + 3)
+            date.month) + '/' + str(date.day + 3)
 
     def get_upload(self):
         if self.latest_upload is None:
@@ -470,10 +470,10 @@ class HospitalReview(models.Model):
 class Questionnaire(models.Model):
     hospital = models.ForeignKey('Hospital', unique=False, default=None)
     disease = models.ForeignKey('Disease', unique=False, default=None)
-    category = models.CharField(max_length = 200,blank = True)
+    category = models.CharField(max_length=200, blank=True)
     questions = models.FileField(upload_to=util.questions_path, null=True)
-    is_translated = models.BooleanField(default = False)
-    translator = models.ForeignKey('Staff',on_delete=models.SET(1), null = False)
+    is_translated = models.BooleanField(default=False)
+    translator = models.ForeignKey('Staff', on_delete=models.SET(1), null=False)
 
     class Meta:
         db_table = 'questionnaire'

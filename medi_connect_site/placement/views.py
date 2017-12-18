@@ -8,6 +8,7 @@ from helper.models import auto_assign
 from dynamic_form.forms import create_form, get_fields
 from django.core.paginator import Paginator, EmptyPage
 import datetime
+import calendar
 from time import sleep
 from threading import Thread
 import pytz
@@ -35,6 +36,7 @@ def hospital_detail(request, hospital_id, disease_id):
     except EmptyPage:
         comments = False
 
+    # start thread for 5 minutes order cleaning
     Thread(target=clean_order, args=(order.id,)).start()
     return render(request, "hospital_order.html", {
         'hospital': hosp,
@@ -57,6 +59,15 @@ def clean_order(order_id):
         naive = order.submit
         diff = datetime.datetime.now(tz=pytz.utc) - naive
         if diff.total_seconds() / 60 > 5:
+            if order.week_number_at_submit != 0:
+                if slot_num == 0:
+                    slot.slots_open_0 += 1
+                elif slot_num == 1:
+                    slot.slots_open_1 += 1
+                elif slot_num == 2:
+                    slot.slots_open_2 += 1
+                else:
+                    slot.slots_open_3 += 1
             order.delete()
             break
         sleep(60)
@@ -86,6 +97,9 @@ def get_comment(request):
 
 @login_required
 def fast_order(request, disease_id, hospital_id, slot_num):
+    """
+    Handle order request with entering hospital detail page.
+    """
     hosp = Hospital.objects.get(id=hospital_id)
     dis = Disease.objects.get(id=disease_id)
     customer = Customer.objects.get(user=request.user)
@@ -109,22 +123,23 @@ def order_info_first(request, order_id, slot_num):
     hosp = order.hospital
     slot_num = int(slot_num)
     slot = Slot.objects.get(disease=order.disease, hospital=order.hospital)
+    # check if order chosen slot before
     if order.week_number_at_submit != 0:
-        if slot_num == 1:
+        if slot_num == 0:
             slot.slots_open_0 += 1
-        elif slot_num == 2:
+        elif slot_num == 1:
             slot.slots_open_1 += 1
-        elif slot_num == 3:
+        elif slot_num == 2:
             slot.slots_open_2 += 1
         else:
             slot.slots_open_3 += 1
     order.week_number_at_submit = slot_num
     order.save()
     avail_slot = {
-        1: slot.slots_open_0,
-        2: slot.slots_open_1,
-        3: slot.slots_open_2,
-        4: slot.slots_open_3,
+        0: slot.slots_open_0,
+        1: slot.slots_open_1,
+        2: slot.slots_open_2,
+        3: slot.slots_open_3,
     }[slot_num]
     if avail_slot < 1:
         return render(request, "hospital_order.html", {
@@ -133,11 +148,11 @@ def order_info_first(request, order_id, slot_num):
             'order_id': order.id,
             'error': 'the hospital does not have available slot'
         })
-    if slot_num == 1:
+    if slot_num == 0:
         slot.slots_open_0 -= 1
-    elif slot_num == 2:
+    elif slot_num == 1:
         slot.slots_open_1 -= 1
-    elif slot_num == 3:
+    elif slot_num == 2:
         slot.slots_open_2 -= 1
     else:
         slot.slots_open_3 -= 1
@@ -162,6 +177,7 @@ def order_info_first(request, order_id, slot_num):
             'last_name_pin_yin': pin_yin[1],
         }),
         'order_id': order.id,
+        'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
     })
 
 
@@ -176,6 +192,7 @@ def order_submit_first(request, order_id):
                 'form': form,
                 'order_id': order.id,
                 'customer': customer,
+                'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
             })
         else:
             first_name = form.cleaned_data.get('first_name')
@@ -227,6 +244,7 @@ def order_submit_first(request, order_id):
                 'customer': customer,
                 'form': form,
                 'order_id': order.id,
+                'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
             })
     else:
         customer = Customer.objects.get(user=request.user)
@@ -245,6 +263,7 @@ def order_submit_first(request, order_id):
             'customer': customer,
             'form': form,
             'order_id': order_id,
+            'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
         })
 
 
@@ -257,6 +276,7 @@ def order_patient_select(request, order_id):
         'customer': customer,
         'order_id': order.id,
         'patients': patients,
+        'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
     })
 
 
@@ -286,6 +306,7 @@ def order_patient_finish(request, order_id, patient_id):
         'customer': customer,
         'form': form,
         'order_id': order.id,
+        'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
     })
 
 
@@ -300,6 +321,7 @@ def order_submit_second(request, order_id):
                 'form': form,
                 'order_id': order.id,
                 'customer': customer,
+                'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
             })
         else:
             required, optional = get_fields(order.hospital.id, order.disease.id)
@@ -325,10 +347,12 @@ def order_submit_second(request, order_id):
             return render(request, 'order_review.html', {
                 'customer': customer,
                 'order': order,
+                'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
             })
     return render(request, 'order_review.html', {
         'customer': customer,
         'order': order,
+        'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
     })
 
 
@@ -348,6 +372,7 @@ def pay_deposit(request, order_id, amount=-1):
     return render(request, 'order_deposit.html', {
         'order': order,
         'customer': customer,
+        'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
     })
 
 
@@ -358,6 +383,7 @@ def finish(request, order_id):
     auto_assign(order)
     return render(request, 'finish.html', {
         'customer': customer,
+        'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
     })
 
 

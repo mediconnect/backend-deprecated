@@ -1921,3 +1921,572 @@ TemplateDoesNotExist: hospital_order.html
 [2017-12-07 10:27:03] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
 [2017-12-07 10:27:03] INFO [django.server.log_message:124] "GET /static/fonts/glyphicons-halflings-regular.woff2 HTTP/1.1" 200 18028
 [2017-12-07 10:27:03] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 11:15:05] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 11:15:05] INFO [django.server.log_message:124] "GET /static/js/jquery.twbsPagination.js HTTP/1.1" 304 0
+[2017-12-18 11:15:05] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:15:05] INFO [django.server.log_message:124] "GET /static/js/vue.js HTTP/1.1" 200 268934
+[2017-12-18 11:15:05] INFO [django.server.log_message:124] "GET /static/js/jquery-ui.js HTTP/1.1" 200 520714
+[2017-12-18 11:15:05] WARNING [django.request.get_response:152] Not Found: /favicon.ico
+[2017-12-18 11:15:05] WARNING [django.server.log_message:124] "GET /favicon.ico HTTP/1.1" 404 4143
+[2017-12-18 11:15:05] WARNING [django.request.get_response:152] Not Found: /apple-touch-icon-precomposed.png
+[2017-12-18 11:15:05] WARNING [django.server.log_message:124] "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 4206
+[2017-12-18 11:15:05] WARNING [django.request.get_response:152] Not Found: /apple-touch-icon.png
+[2017-12-18 11:15:05] WARNING [django.server.log_message:124] "GET /apple-touch-icon.png HTTP/1.1" 404 4170
+[2017-12-18 11:15:12] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 11:15:12] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:15:15] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 11:15:15] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:15:15] INFO [django.server.log_message:124] "GET /media/hospital_3/lenna.png HTTP/1.1" 200 473831
+[2017-12-18 11:15:15] INFO [django.server.log_message:124] "GET /media/hospital_1/lenna.png HTTP/1.1" 200 473831
+[2017-12-18 11:15:15] INFO [django.server.log_message:124] "GET /media/hospital_2/lenna.png HTTP/1.1" 200 473831
+[2017-12-18 11:15:17] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 11:15:17] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:15:18] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 11:15:22] INFO [django.server.log_message:124] "GET /static/css/bootstrap.min.css.map HTTP/1.1" 200 542194
+[2017-12-18 11:15:44] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 11:15:44] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:15:44] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 11:16:02] INFO [django.server.log_message:124] "POST /placement/order/basic/186/1 HTTP/1.1" 200 6568
+[2017-12-18 11:16:02] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:16:34] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/186/1
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 171, in order_info_first
+    'order_id': order.id,
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/shortcuts.py", line 30, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/template/loader.py", line 67, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/template/loader.py", line 21, in get_template
+    return engine.get_template(template_name)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/template/backends/django.py", line 39, in get_template
+    return Template(self.engine.get_template(template_name), self)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/template/engine.py", line 162, in get_template
+    template, origin = self.find_template(template_name)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/template/engine.py", line 136, in find_template
+    name, template_dirs=dirs, skip=skip,
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/template/loaders/base.py", line 44, in get_template
+    contents, origin, origin.template_name, self.engine,
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/template/base.py", line 191, in __init__
+    self.nodelist = self.compile_nodelist()
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/template/base.py", line 230, in compile_nodelist
+    return parser.parse()
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/template/base.py", line 515, in parse
+    raise self.error(token, e)
+TemplateSyntaxError: Invalid block tag on line 24: 'time', expected 'endblock'. Did you forget to register or load this tag?
+[2017-12-18 11:16:34] ERROR [django.server.log_message:124] "POST /placement/order/basic/186/1 HTTP/1.1" 500 126185
+[2017-12-18 11:18:33] INFO [django.server.log_message:124] "POST /placement/order/basic/186/1 HTTP/1.1" 200 6580
+[2017-12-18 11:18:33] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:19:07] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 11:19:07] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:19:10] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 11:19:10] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:19:17] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 11:19:17] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:19:18] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 11:19:18] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:19:18] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 11:19:21] INFO [django.server.log_message:124] "POST /placement/order/basic/186/1 HTTP/1.1" 200 6580
+[2017-12-18 11:19:22] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:23:46] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:23:47] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 11:23:48] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 11:23:49] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:23:51] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:23:51] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 11:23:52] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:23:52] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 11:23:52] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 11:23:55] INFO [django.server.log_message:124] "POST /placement/order/basic/187/1 HTTP/1.1" 200 6573
+[2017-12-18 11:23:55] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:27:42] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:27:42] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 11:27:44] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:27:44] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 11:27:48] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 11:27:48] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:27:50] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:27:51] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 11:27:52] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:27:52] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 11:27:52] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 11:27:56] INFO [django.server.log_message:124] "POST /placement/order/basic/187/1 HTTP/1.1" 200 6563
+[2017-12-18 11:27:56] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:29:43] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/187/1
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 111, in order_info_first
+    order = Order.objects.get(id=order_id)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/query.py", line 379, in get
+    self.model._meta.object_name
+DoesNotExist: Order matching query does not exist.
+[2017-12-18 11:29:43] ERROR [django.server.log_message:124] "POST /placement/order/basic/187/1 HTTP/1.1" 500 82689
+[2017-12-18 11:29:47] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 11:29:51] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/187/2
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 111, in order_info_first
+    order = Order.objects.get(id=order_id)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/query.py", line 379, in get
+    self.model._meta.object_name
+DoesNotExist: Order matching query does not exist.
+[2017-12-18 11:29:51] ERROR [django.server.log_message:124] "POST /placement/order/basic/187/2 HTTP/1.1" 500 82689
+[2017-12-18 11:29:54] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:29:54] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 11:29:54] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 11:29:55] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:29:55] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 11:29:58] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 11:29:58] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:30:00] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:30:00] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 11:30:01] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:30:01] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 11:30:01] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 11:30:04] INFO [django.server.log_message:124] "POST /placement/order/basic/188/2 HTTP/1.1" 200 6580
+[2017-12-18 11:30:04] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:30:53] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:30:53] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 11:38:01] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 11:38:01] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:38:03] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 11:38:03] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:38:04] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 11:38:04] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:38:04] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 11:38:07] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/188/3
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 111, in order_info_first
+    order = Order.objects.get(id=order_id)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/query.py", line 379, in get
+    self.model._meta.object_name
+DoesNotExist: Order matching query does not exist.
+[2017-12-18 11:38:07] ERROR [django.server.log_message:124] "POST /placement/order/basic/188/3 HTTP/1.1" 500 82689
+[2017-12-18 11:38:13] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/188/3
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 111, in order_info_first
+    order = Order.objects.get(id=order_id)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/query.py", line 379, in get
+    self.model._meta.object_name
+DoesNotExist: Order matching query does not exist.
+[2017-12-18 11:38:13] ERROR [django.server.log_message:124] "POST /placement/order/basic/188/3 HTTP/1.1" 500 82689
+[2017-12-18 11:38:16] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/188/1
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 111, in order_info_first
+    order = Order.objects.get(id=order_id)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/query.py", line 379, in get
+    self.model._meta.object_name
+DoesNotExist: Order matching query does not exist.
+[2017-12-18 11:38:16] ERROR [django.server.log_message:124] "POST /placement/order/basic/188/1 HTTP/1.1" 500 82689
+[2017-12-18 11:38:20] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/188/2
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 111, in order_info_first
+    order = Order.objects.get(id=order_id)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/query.py", line 379, in get
+    self.model._meta.object_name
+DoesNotExist: Order matching query does not exist.
+[2017-12-18 11:38:20] ERROR [django.server.log_message:124] "POST /placement/order/basic/188/2 HTTP/1.1" 500 82689
+[2017-12-18 11:38:59] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:38:59] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 11:38:59] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 11:39:02] INFO [django.server.log_message:124] "POST /placement/order/basic/189/2 HTTP/1.1" 200 6635
+[2017-12-18 11:39:02] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:40:35] INFO [django.server.log_message:124] "POST /placement/order/basic/189/2 HTTP/1.1" 200 6643
+[2017-12-18 11:40:35] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:46:25] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/189/2
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 111, in order_info_first
+    order = Order.objects.get(id=order_id)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/query.py", line 379, in get
+    self.model._meta.object_name
+DoesNotExist: Order matching query does not exist.
+[2017-12-18 11:46:25] ERROR [django.server.log_message:124] "POST /placement/order/basic/189/2 HTTP/1.1" 500 82689
+[2017-12-18 11:46:30] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 11:46:30] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 11:46:31] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:46:32] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 11:46:32] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:46:34] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:46:34] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 11:46:35] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:46:35] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 11:46:35] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 11:46:38] INFO [django.server.log_message:124] "POST /placement/order/basic/190/1 HTTP/1.1" 200 6652
+[2017-12-18 11:46:38] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:56:22] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/190/1
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 111, in order_info_first
+    order = Order.objects.get(id=order_id)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/query.py", line 379, in get
+    self.model._meta.object_name
+DoesNotExist: Order matching query does not exist.
+[2017-12-18 11:56:22] ERROR [django.server.log_message:124] "POST /placement/order/basic/190/1 HTTP/1.1" 500 82689
+[2017-12-18 11:56:27] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:56:27] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 11:56:29] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 11:56:29] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:56:31] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:56:31] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 11:56:33] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:56:33] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 11:56:33] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 11:56:36] INFO [django.server.log_message:124] "POST /placement/order/basic/191/1 HTTP/1.1" 200 6658
+[2017-12-18 11:56:36] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 11:58:26] INFO [django.server.log_message:124] "POST /placement/order/basic/191/1 HTTP/1.1" 200 6646
+[2017-12-18 11:58:26] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:04:06] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/191/1
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 111, in order_info_first
+    order = Order.objects.get(id=order_id)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/query.py", line 379, in get
+    self.model._meta.object_name
+DoesNotExist: Order matching query does not exist.
+[2017-12-18 12:04:06] ERROR [django.server.log_message:124] "POST /placement/order/basic/191/1 HTTP/1.1" 500 82689
+[2017-12-18 12:04:09] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 12:04:10] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:04:10] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 12:04:11] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 12:04:11] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:04:13] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:04:13] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 12:04:14] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:04:14] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 12:04:14] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 12:04:17] INFO [django.server.log_message:124] "POST /placement/order/basic/192/2 HTTP/1.1" 200 6843
+[2017-12-18 12:04:17] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:04:42] INFO [django.server.log_message:124] "POST /placement/order/basic/192/2 HTTP/1.1" 200 6817
+[2017-12-18 12:04:42] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:12:52] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:12:52] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 12:12:53] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 12:12:53] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:12:55] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:12:55] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 12:13:02] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:13:02] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 12:13:02] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 12:13:04] INFO [django.server.log_message:124] "POST /placement/order/basic/193/1 HTTP/1.1" 200 6817
+[2017-12-18 12:13:04] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:22:30] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:22:30] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 12:22:34] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 12:22:34] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:22:36] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:22:36] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 12:22:38] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:22:38] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 12:22:38] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 12:22:40] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/193/2
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 111, in order_info_first
+    order = Order.objects.get(id=order_id)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/query.py", line 379, in get
+    self.model._meta.object_name
+DoesNotExist: Order matching query does not exist.
+[2017-12-18 12:22:40] ERROR [django.server.log_message:124] "POST /placement/order/basic/193/2 HTTP/1.1" 500 82689
+[2017-12-18 12:22:42] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/193/2
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 111, in order_info_first
+    order = Order.objects.get(id=order_id)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/query.py", line 379, in get
+    self.model._meta.object_name
+DoesNotExist: Order matching query does not exist.
+[2017-12-18 12:22:42] ERROR [django.server.log_message:124] "POST /placement/order/basic/193/2 HTTP/1.1" 500 82689
+[2017-12-18 12:22:45] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:22:45] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 12:22:45] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 12:22:47] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/194/2
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 171, in order_info_first
+    'time': calender.timegm(order.submit.timetuple()),
+NameError: global name 'calender' is not defined
+[2017-12-18 12:22:47] ERROR [django.server.log_message:124] "POST /placement/order/basic/194/2 HTTP/1.1" 500 75407
+[2017-12-18 12:23:01] INFO [django.server.log_message:124] "POST /placement/order/basic/194/2 HTTP/1.1" 200 6815
+[2017-12-18 12:23:01] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:35:26] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:35:26] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 12:35:27] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 12:35:28] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:35:30] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:35:30] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 12:35:32] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:35:32] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 12:35:32] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 12:35:34] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/194/3
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 111, in order_info_first
+    order = Order.objects.get(id=order_id)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/query.py", line 379, in get
+    self.model._meta.object_name
+DoesNotExist: Order matching query does not exist.
+[2017-12-18 12:35:34] ERROR [django.server.log_message:124] "POST /placement/order/basic/194/3 HTTP/1.1" 500 82689
+[2017-12-18 12:35:37] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/194/3
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 111, in order_info_first
+    order = Order.objects.get(id=order_id)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/manager.py", line 85, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/db/models/query.py", line 379, in get
+    self.model._meta.object_name
+DoesNotExist: Order matching query does not exist.
+[2017-12-18 12:35:37] ERROR [django.server.log_message:124] "POST /placement/order/basic/194/3 HTTP/1.1" 500 82689
+[2017-12-18 12:35:40] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:35:40] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 12:35:40] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 12:35:42] INFO [django.server.log_message:124] "POST /placement/order/basic/195/3 HTTP/1.1" 200 6733
+[2017-12-18 12:35:42] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:42:29] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:42:29] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 12:42:31] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 12:42:31] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:42:34] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:42:34] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 12:42:36] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:42:36] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 12:42:36] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 12:42:38] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/196/2
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 171, in order_info_first
+    'time': datetime.utcnow() - order.submit,
+AttributeError: 'module' object has no attribute 'utcnow'
+[2017-12-18 12:42:38] ERROR [django.server.log_message:124] "POST /placement/order/basic/196/2 HTTP/1.1" 500 75501
+[2017-12-18 12:43:01] ERROR [django.request.handle_uncaught_exception:135] Internal Server Error: /placement/order/basic/196/2
+Traceback (most recent call last):
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/jiashenc/Library/Python/2.7/lib/python/site-packages/django/contrib/auth/decorators.py", line 23, in _wrapped_view
+    return view_func(request, *args, **kwargs)
+  File "/Users/jiashenc/Dropbox/website/medi_connect_site/placement/views.py", line 171, in order_info_first
+    'time': datetime.datetime.utcnow() - order.submit,
+TypeError: can't subtract offset-naive and offset-aware datetimes
+[2017-12-18 12:43:02] ERROR [django.server.log_message:124] "POST /placement/order/basic/196/2 HTTP/1.1" 500 75485
+[2017-12-18 12:43:35] INFO [django.server.log_message:124] "POST /placement/order/basic/196/2 HTTP/1.1" 200 6533
+[2017-12-18 12:43:35] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:44:48] INFO [django.server.log_message:124] "POST /placement/order/basic/196/2 HTTP/1.1" 200 6529
+[2017-12-18 12:44:48] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:45:44] INFO [django.server.log_message:124] "POST /placement/order/basic/196/2 HTTP/1.1" 200 6577
+[2017-12-18 12:45:44] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:50:23] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 12:50:23] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 13:00:45] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 13:00:45] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:00:47] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:00:47] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 13:00:49] INFO [django.server.log_message:124] "GET /placement/hospital/1/10/ HTTP/1.1" 200 6448
+[2017-12-18 13:00:49] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:00:49] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=1&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 13:00:52] INFO [django.server.log_message:124] "POST /placement/order/basic/183/2 HTTP/1.1" 200 6711
+[2017-12-18 13:00:52] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:01:03] INFO [django.server.log_message:124] "POST /placement/order/basic/183/2 HTTP/1.1" 200 6711
+[2017-12-18 13:01:03] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:03:39] INFO [django.server.log_message:124] "POST /placement/order/basic/183/2 HTTP/1.1" 200 6743
+[2017-12-18 13:03:39] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:03:53] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:03:53] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 13:03:56] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 13:03:56] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:03:58] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:03:58] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 13:04:00] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:04:00] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 13:04:00] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 13:04:02] INFO [django.server.log_message:124] "POST /placement/order/basic/196/1 HTTP/1.1" 200 6740
+[2017-12-18 13:04:03] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:04:22] INFO [django.server.log_message:124] "POST /placement/order/basic/196/3 HTTP/1.1" 200 6741
+[2017-12-18 13:04:23] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:07:57] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:07:57] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 13:07:58] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 13:07:58] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:08:00] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:08:00] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 13:08:02] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:08:02] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 13:08:02] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 13:08:05] INFO [django.server.log_message:124] "POST /placement/order/basic/197/3 HTTP/1.1" 200 6738
+[2017-12-18 13:08:06] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:09:15] INFO [django.server.log_message:124] "POST /placement/order/basic/197/3 HTTP/1.1" 200 6763
+[2017-12-18 13:09:15] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:10:55] INFO [django.server.log_message:124] "POST /placement/order/basic/197/3 HTTP/1.1" 200 6846
+[2017-12-18 13:10:55] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:11:34] INFO [django.server.log_message:124] "POST /placement/order/basic/197/3 HTTP/1.1" 200 6849
+[2017-12-18 13:11:34] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:12:14] INFO [django.server.log_message:124] "POST /placement/order/basic/197/3 HTTP/1.1" 200 6809
+[2017-12-18 13:12:14] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:13:39] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:13:39] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
+[2017-12-18 13:13:46] INFO [django.server.log_message:124] "POST /result/ HTTP/1.1" 200 4254
+[2017-12-18 13:13:46] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:13:48] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:13:48] INFO [django.server.log_message:124] "GET /core/disease_choice/10/ HTTP/1.1" 200 7931
+[2017-12-18 13:13:50] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:13:50] INFO [django.server.log_message:124] "GET /placement/hospital/bookmark/?hospital_id=3&disease_id=10&mark=false HTTP/1.1" 200 19
+[2017-12-18 13:13:50] INFO [django.server.log_message:124] "GET /placement/hospital/3/10/ HTTP/1.1" 200 6563
+[2017-12-18 13:13:53] INFO [django.server.log_message:124] "POST /placement/order/basic/198/1 HTTP/1.1" 200 6807
+[2017-12-18 13:13:53] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:14:09] INFO [django.server.log_message:124] "POST /placement/order/disease/198/ HTTP/1.1" 200 5618
+[2017-12-18 13:14:09] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:15:05] INFO [django.server.log_message:124] "POST /placement/order/disease/198/ HTTP/1.1" 200 5627
+[2017-12-18 13:15:05] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:15:47] INFO [django.server.log_message:124] "POST /placement/order/document/198/ HTTP/1.1" 200 3917
+[2017-12-18 13:15:47] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:15:57] INFO [django.server.log_message:124] "GET /placement/order/deposit/198/?csrfmiddlewaretoken=It9sENY49SFsui3C7tuxRdQXGEo5kmCdHKzmr2gytwmUs26RAAmYak77jBU9FQGC HTTP/1.1" 200 3372
+[2017-12-18 13:15:57] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:16:00] INFO [django.server.log_message:124] "POST /placement/order/deposit/198/?csrfmiddlewaretoken=It9sENY49SFsui3C7tuxRdQXGEo5kmCdHKzmr2gytwmUs26RAAmYak77jBU9FQGC HTTP/1.1" 302 0
+[2017-12-18 13:16:00] INFO [django.server.log_message:124] "GET /placement/order/submit/198/ HTTP/1.1" 200 2542
+[2017-12-18 13:16:00] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:16:05] INFO [django.server.log_message:124] "GET /jsreverse/ HTTP/1.1" 200 7521
+[2017-12-18 13:16:05] INFO [django.server.log_message:124] "GET / HTTP/1.1" 200 3990
