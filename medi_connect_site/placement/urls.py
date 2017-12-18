@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^order/deposit/(?P<order_id>\d+)/$', views.pay_deposit, name="order_deposit"),
     url(r'^order/deposit/(?P<order_id>\d+)/(?P<amount>\d+)/$', views.pay_deposit, name="order_deposit"),
     url(r'^order/submit/(?P<order_id>\d+)/$', views.finish, name="order_finish"),
+    url(r'^order/order_check/$', views.order_check, name="order_check"),
 ]

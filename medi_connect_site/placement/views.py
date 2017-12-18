@@ -408,3 +408,12 @@ def like_hospital(request):
     add = LikeHospital(customer=customer, hospital=hosp, disease=dis)
     add.save()
     return JsonResponse({'status': 'liked'})
+
+
+@login_required
+def order_check(request):
+    order_id = request.GET.get('order_id', None)
+    orders = Order.objects.filter(id=order_id)
+    if len(orders) > 0:
+        return JsonResponse({'exist': True})
+    return JsonResponse({'exist': False})
