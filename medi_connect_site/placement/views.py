@@ -22,7 +22,7 @@ def hospital_detail(request, hospital_id, disease_id):
     order_list = Order.objects.filter(customer=customer, hospital=hosp, disease=dis)
     order = None
     for each in order_list:
-        if int(each.status) == 0:
+        if int(each.status) <= 0:
             order = each
             break
     order = Order(hospital=hosp, status=0, disease=dis, customer=customer) if order is None else order
@@ -38,6 +38,15 @@ def hospital_detail(request, hospital_id, disease_id):
 
     # start thread for 5 minutes order cleaning
     Thread(target=clean_order, args=(order.id,)).start()
+    status = int(order.status)
+    if status == -1:
+        return redirect('order_info_first', order.id, order.week_number_at_submit)
+    elif status == -2:
+        return redirect('order_submit_first', order.id)
+    elif status == -3:
+        return redirect('order_submit_second', order.id)
+    elif status == -4:
+        return redirect('pay_deposit', order.id)
     return render(request, "hospital_order.html", {
         'hospital': hosp,
         'rank': Rank.objects.get(disease=dis, hospital=hosp).rank,
@@ -46,6 +55,7 @@ def hospital_detail(request, hospital_id, disease_id):
         'customer': customer,
         'order_id': order.id,
         'comments': comments,
+        'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
     })
 
 
@@ -54,11 +64,12 @@ def clean_order(order_id):
     if order is None:
         return
     while True:
-        if int(order.status) > 1:
+        if int(order.status) >= 1:
             break
         naive = order.submit
         diff = datetime.datetime.now(tz=pytz.utc) - naive
-        if diff.total_seconds() / 60 > 5:
+        slot = Slot.objects.get(disease=order.disease, hospital=order.hospital)
+        if diff.total_seconds() / 60.0 > 5:
             if order.week_number_at_submit != 0:
                 if slot_num == 0:
                     slot.slots_open_0 += 1
@@ -68,6 +79,7 @@ def clean_order(order_id):
                     slot.slots_open_2 += 1
                 else:
                     slot.slots_open_3 += 1
+                slot.save()
             order.delete()
             break
         sleep(60)
@@ -119,22 +131,9 @@ def order_info_first(request, order_id, slot_num):
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
     order.customer = customer
-    order.status = 0
     hosp = order.hospital
     slot_num = int(slot_num)
     slot = Slot.objects.get(disease=order.disease, hospital=order.hospital)
-    # check if order chosen slot before
-    if order.week_number_at_submit != 0:
-        if slot_num == 0:
-            slot.slots_open_0 += 1
-        elif slot_num == 1:
-            slot.slots_open_1 += 1
-        elif slot_num == 2:
-            slot.slots_open_2 += 1
-        else:
-            slot.slots_open_3 += 1
-    order.week_number_at_submit = slot_num
-    order.save()
     avail_slot = {
         0: slot.slots_open_0,
         1: slot.slots_open_1,
@@ -148,6 +147,19 @@ def order_info_first(request, order_id, slot_num):
             'order_id': order.id,
             'error': 'the hospital does not have available slot'
         })
+    # check if order chosen slot before
+    if order.week_number_at_submit != 0:
+        if slot_num == 0:
+            slot.slots_open_0 += 1
+        elif slot_num == 1:
+            slot.slots_open_1 += 1
+        elif slot_num == 2:
+            slot.slots_open_2 += 1
+        else:
+            slot.slots_open_3 += 1
+    order.week_number_at_submit = slot_num
+    order.status = int(order.status) - 1
+    order.save()
     if slot_num == 0:
         slot.slots_open_0 -= 1
     elif slot_num == 1:
@@ -216,7 +228,7 @@ def order_submit_first(request, order_id):
             patient.save()
             order.patient = patient
 
-            order.status = 0
+            order.status = int(order.status) - 1
 
             order_patient = OrderPatient() if order.patient_order is None else order.patient_order
             order_patient.first_name = first_name
@@ -343,6 +355,7 @@ def order_submit_second(request, order_id):
             patient.diagnose_hospital = hospital
             patient.contact = contact
             patient.save()
+            order.status = int(order.status) - 1
             order.save()
             return render(request, 'order_review.html', {
                 'customer': customer,
@@ -365,7 +378,7 @@ def pay_deposit(request, order_id, amount=-1):
             order.full_payment_paid = False
         else:
             order.full_payment_paid = True
-        order.status = 2
+        order.status = 1
         order.save()
         return redirect('order_finish', order_id=order.id)
     # noinspection PyInterpreter

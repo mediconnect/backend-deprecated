@@ -38,7 +38,25 @@
         document.getElementById("timer").innerHTML = "距离你的订单结束还有：" +  minutes + " : " + seconds;
         timer(offset + 0.5);
     }, 500);
-})(0)
+})(0);
+
+(function check () {
+    setTimeout(function () {
+        $.ajax({
+            url: "{% url 'order_check' %}",
+            data: {
+                'order_id': {{ order_id }}
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (!data.exist) {
+                    window.location.href = "{% url 'home' %}";
+                }
+            }
+        });
+        check();
+    }, 1000);
+})();
 </script>
 
 {% endblock %}
