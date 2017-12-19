@@ -1,7 +1,8 @@
-.DS_STORE
-/.DS_STORE
+**/.DS_STORE
 
 # ignore python compiler files
 *.pyc
 *.xml
 *.iml
+
+**/media/*

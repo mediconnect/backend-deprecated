@@ -49,21 +49,21 @@
 </ul>
 
 <script>
-    jQuery(document).ready(function($) {
+jQuery(document).ready(function($) {
     $(".clickable-row").click(function() {
         window.location = $(this).data("href");
     });
 
     $('.clickable-row').hover(
-    function(){
-      var $this = $(this);
-      $this.data('bgcolor', $this.css('background-color')).css('background-color', '#888888');
-    },
-    function(){
-      var $this = $(this);
-      $this.css('background-color', $this.data('bgcolor'));
-    }
-  );
+        function(){
+          var $this = $(this);
+          $this.data('bgcolor', $this.css('background-color')).css('background-color', '#888888');
+        },
+        function(){
+          var $this = $(this);
+          $this.css('background-color', $this.data('bgcolor'));
+        }
+    );
 });
 
 </script>
