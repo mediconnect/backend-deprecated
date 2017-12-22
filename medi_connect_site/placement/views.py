@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from helper.models import Hospital, Patient, Disease, Order, Document, HospitalReview, LikeHospital, OrderPatient, Rank, Slot
+from helper.models import Hospital, Patient, Disease, Order, Document, HospitalReview, LikeHospital, OrderPatient, Rank, \
+    Slot
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from helper.forms import PatientInfo, AppointmentInfo
 from helper.models import auto_assign
 from dynamic_form.forms import create_form, get_fields
 from django.core.paginator import Paginator, EmptyPage
+from django.views.generic.base import TemplateView
 import datetime
 import calendar
 from time import sleep
@@ -69,7 +71,7 @@ def clean_order(order_id):
         naive = order.submit
         diff = datetime.datetime.now(tz=pytz.utc) - naive
         slot = Slot.objects.get(disease=order.disease, hospital=order.hospital)
-        if diff.total_seconds() / 60.0 > 5:
+        if diff.total_seconds() > 300:
             if order.week_number_at_submit != 0:
                 if slot_num == 0:
                     slot.slots_open_0 += 1
@@ -127,49 +129,51 @@ def fast_order(request, disease_id, hospital_id, slot_num):
 
 
 @login_required
-def order_info_first(request, order_id, slot_num):
+def order_info_first(request, order_id, slot_num=-1):
+    order_expire(order_id)
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
-    order.customer = customer
     hosp = order.hospital
     slot_num = int(slot_num)
-    slot = Slot.objects.get(disease=order.disease, hospital=order.hospital)
-    avail_slot = {
-        0: slot.slots_open_0,
-        1: slot.slots_open_1,
-        2: slot.slots_open_2,
-        3: slot.slots_open_3,
-    }[slot_num]
-    if avail_slot < 1:
-        return render(request, "hospital_order.html", {
-            'hospital': hosp,
-            'customer': customer,
-            'order_id': order.id,
-            'error': 'the hospital does not have available slot'
-        })
-    # check if order chosen slot before
-    if order.week_number_at_submit != 0:
+    if slot_num != -1:
+        slot = Slot.objects.get(disease=order.disease, hospital=order.hospital)
+        avail_slot = {
+            0: slot.slots_open_0,
+            1: slot.slots_open_1,
+            2: slot.slots_open_2,
+            3: slot.slots_open_3,
+        }[slot_num]
+        if avail_slot < 1:
+            return render(request, "hospital_order.html", {
+                'hospital': hosp,
+                'customer': customer,
+                'order_id': order.id,
+                'error': 'the hospital does not have available slot'
+            })
+        # check if order chosen slot before
+        if order.week_number_at_submit != 0:
+            if slot_num == 0:
+                slot.slots_open_0 += 1
+            elif slot_num == 1:
+                slot.slots_open_1 += 1
+            elif slot_num == 2:
+                slot.slots_open_2 += 1
+            else:
+                slot.slots_open_3 += 1
+        order.week_number_at_submit = slot_num
+        order.status = -1
+        order.save()
         if slot_num == 0:
-            slot.slots_open_0 += 1
+            slot.slots_open_0 -= 1
         elif slot_num == 1:
-            slot.slots_open_1 += 1
+            slot.slots_open_1 -= 1
         elif slot_num == 2:
-            slot.slots_open_2 += 1
+            slot.slots_open_2 -= 1
         else:
-            slot.slots_open_3 += 1
-    order.week_number_at_submit = slot_num
-    order.status = int(order.status) - 1
-    order.save()
-    if slot_num == 0:
-        slot.slots_open_0 -= 1
-    elif slot_num == 1:
-        slot.slots_open_1 -= 1
-    elif slot_num == 2:
-        slot.slots_open_2 -= 1
-    else:
-        slot.slots_open_3 -= 1
-    slot.save()
-    pin_yin = order.patient_order.pin_yin.split() if order.patient_order is not None and len(order.patient_order.pin_yin) >= 3 else ['', '']
+            slot.slots_open_3 -= 1
+        slot.save()
+    pin_yin = order.patient_order.pin_yin.split() if order.patient_order is not None and len(
+        order.patient_order.pin_yin) >= 3 else ['', '']
     return render(request, 'order_info_first.html', {
         'customer': customer,
         'form': PatientInfo(instance=request.user, initial={
@@ -195,6 +199,7 @@ def order_info_first(request, order_id, slot_num):
 
 @login_required
 def order_submit_first(request, order_id):
+    order_expire(order_id)
     if request.method == 'POST':
         form = PatientInfo(request.POST)
         order = Order.objects.get(id=order_id)
@@ -228,7 +233,7 @@ def order_submit_first(request, order_id):
             patient.save()
             order.patient = patient
 
-            order.status = int(order.status) - 1
+            order.status = -2
 
             order_patient = OrderPatient() if order.patient_order is None else order.patient_order
             order_patient.first_name = first_name
@@ -281,6 +286,7 @@ def order_submit_first(request, order_id):
 
 @login_required
 def order_patient_select(request, order_id):
+    order_expire(order_id)
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
     patients = Patient.objects.filter(customer=customer)
@@ -294,6 +300,7 @@ def order_patient_select(request, order_id):
 
 @login_required
 def order_patient_finish(request, order_id, patient_id):
+    order_expire(order_id)
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
     patient = Patient.objects.get(id=patient_id)
@@ -324,6 +331,7 @@ def order_patient_finish(request, order_id, patient_id):
 
 @login_required
 def order_submit_second(request, order_id):
+    order_expire(order_id)
     order = Order.objects.get(id=order_id)
     customer = Customer.objects.get(user=request.user)
     if request.method == 'POST':
@@ -355,7 +363,7 @@ def order_submit_second(request, order_id):
             patient.diagnose_hospital = hospital
             patient.contact = contact
             patient.save()
-            order.status = int(order.status) - 1
+            order.status = -3
             order.save()
             return render(request, 'order_review.html', {
                 'customer': customer,
@@ -371,6 +379,7 @@ def order_submit_second(request, order_id):
 
 @login_required
 def pay_deposit(request, order_id, amount=-1):
+    order_expire(order_id)
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
@@ -381,7 +390,7 @@ def pay_deposit(request, order_id, amount=-1):
         order.status = 1
         order.save()
         return redirect('order_finish', order_id=order.id)
-    # noinspection PyInterpreter
+    order.status = -4
     return render(request, 'order_deposit.html', {
         'order': order,
         'customer': customer,
@@ -430,3 +439,8 @@ def order_check(request):
     if len(orders) > 0:
         return JsonResponse({'exist': True})
     return JsonResponse({'exist': False})
+
+
+def order_expire(order_id):
+    if len(Order.objects.filter(id=order_id)) <= 0:
+        return TemplateView(template_name='order_expire.html')

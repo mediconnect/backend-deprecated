@@ -186,7 +186,7 @@ def process_order(request, order_id):
 def order_detail(request, order_id):
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
-    if int(order.status) >= 1:
+    if int(order.status) <= 1:
         return redirect('hospital_order', order.hospital, order.disease)
     return render(request, 'info_order_detail.html', {
         'customer': customer,

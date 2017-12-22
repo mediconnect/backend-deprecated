@@ -48,93 +48,96 @@
 </div>
 
 <script type="text/javascript">
-    var hosp_id = {{hospital.id}};
-    $(function() {
-        like(false);
-    });
-    $("#like-button").click(function() {
-        like(true);
-    });
+var hosp_id = {{hospital.id}};
+$(function() {
+    like(false);
+});
+$("#like-button").click(function() {
+    like(true);
+});
 
-    function like(mark) {
-        var dis_id = {{disease.id}};
-        $.ajax({
-            url: "{% url 'like_hospital' %}",
-            data: {
-                "hospital_id": hosp_id,
-                "disease_id": dis_id,
-                "mark": mark,
-            },
-            dataType: 'json',
-            success: function(data) {
-                if (data.status == "liked") {
-                    $("#like-statement").text("You have MARKED this hospital, Click to unMark");
-                    $("#like-button span").attr("class", "glyphicon glyphicon-star-empty");
-                } else {
-                    $("#like-statement").text("Bookmark this Hospital");
-                    $("#like-button span").attr("class", "glyphicon glyphicon-star");
-                }
+function like(mark) {
+    var dis_id = {{disease.id}};
+    $.ajax({
+        url: "{% url 'like_hospital' %}",
+        data: {
+            "hospital_id": hosp_id,
+            "disease_id": dis_id,
+            "mark": mark,
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.status == "liked") {
+                $("#like-statement").text("You have MARKED this hospital, Click to unMark");
+                $("#like-button span").attr("class", "glyphicon glyphicon-star-empty");
+            } else {
+                $("#like-statement").text("Bookmark this Hospital");
+                $("#like-button span").attr("class", "glyphicon glyphicon-star");
             }
-        });
-    }
+        }
+    });
+}
 
-    var id = {{order_id}};
-    $("#radio0").change(function() {
-        if ( this.checked ) {
-            $("#order_placement_form").attr("action", url_generator(id, 0));
-        }
-    });
-    $("#radio1").change(function() {
-        if ( this.checked ) {
-            $("#order_placement_form").attr("action", url_generator(id, 1));
-        }
-    });
-    $("#radio2").change(function() {
-        if ( this.checked ) {
-            $("#order_placement_form").attr("action", url_generator(id, 2));
-        }
-    });
-    $("#radio3").change(function() {
-        if ( this.checked ) {
-            $("#order_placement_form").attr("action", url_generator(id, 3));
-        }
-    });
-    function url_generator(order, num) {
-        $("#order_placement_form").attr("action", Urls.order_info_first(order, num));
+var id = {{order_id}};
+$("#radio0").change(function() {
+    if ( this.checked ) {
+        $("#order_placement_form").attr("action", url_generator(id, 0));
     }
+});
+$("#radio1").change(function() {
+    if ( this.checked ) {
+        $("#order_placement_form").attr("action", url_generator(id, 1));
+    }
+});
+$("#radio2").change(function() {
+    if ( this.checked ) {
+        $("#order_placement_form").attr("action", url_generator(id, 2));
+    }
+});
+$("#radio3").change(function() {
+    if ( this.checked ) {
+        $("#order_placement_form").attr("action", url_generator(id, 3));
+    }
+});
+function url_generator(order, num) {
+    $("#order_placement_form").attr("action", Urls.order_info_first(order, num));
+}
 
-    var page = 1;
-    $('#more-comment').click(function() {
-        $.ajax({
-            url: "{% url 'get_comment' %}",
-            data: {
-                "hospital_id": hosp_id,
-                "page": page,
-            },
-            dataType: 'json',
-            success: function(data) {
-                if (data.status == "empty") {
-                    $('#more-comment').prop('value', 'No More Comments');
-                    $('#more-comment').prop('disabled', true);
-                } else {
-                    $.each(data.comments, function(i, comment) {
-                        $('#comments-container').append("<li class='list-group-item'>" + comment + "</li>");
-                    });
-                }
+var page = 1;
+$('#more-comment').click(function() {
+    $.ajax({
+        url: "{% url 'get_comment' %}",
+        data: {
+            "hospital_id": hosp_id,
+            "page": page,
+        },
+        dataType: 'json',
+        success: function(data) {
+            if (data.status == "empty") {
+                $('#more-comment').prop('value', 'No More Comments');
+                $('#more-comment').prop('disabled', true);
+            } else {
+                $.each(data.comments, function(i, comment) {
+                    $('#comments-container').append("<li class='list-group-item'>" + comment + "</li>");
+                });
             }
-        });
-        page += 1;
+        }
     });
+    page += 1;
+});
 
-    (function timer (offset) {
-        setTimeout(function () {
-            var timestamp = {{ time }};
-            timestamp = 5 * 60 - timestamp - offset;
-            var minutes =  Math.floor(timestamp / 60);
-            var seconds =  Math.floor(timestamp % 60);
-            document.getElementById("timer").innerHTML = "距离你的订单结束还有：" +  minutes + " : " + seconds;
-            timer(offset + 0.5);
-        }, 500);
-    })(0)
+(function timer (offset) {
+    setTimeout(function () {
+        var timestamp = {{ time }};
+        timestamp = 5 * 60 - timestamp - offset;
+        var minutes =  Math.floor(timestamp / 60);
+        var seconds =  Math.floor(timestamp % 60);
+        document.getElementById("timer").innerHTML = "距离你的订单结束还有：" +  minutes + " : " + seconds;
+        if (timestamp <= 0) {
+            window.location = "{% url 'order_expire' %}";
+        }
+        timer(offset + 0.5);
+    }, 500);
+})(0)
 </script>
 {% endblock %}

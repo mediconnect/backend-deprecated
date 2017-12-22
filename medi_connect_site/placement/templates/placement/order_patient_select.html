@@ -2,6 +2,21 @@
 
 {% block content %}
 
+<div class="btn-group btn-group-justified" role="group" aria-label="...">
+  <div class="btn-group" role="group">
+    <a type="button" class="btn btn-default" href="{% url 'order_info_first' order_id=order_id %}">01 Patient Info</a>
+  </div>
+  <div class="btn-group" role="group">
+    <a style="pointer-events: none;" type="button" class="btn btn-primary" href="{% url 'order_submit_first' order_id=order_id %}">02 Disease Info</a>
+  </div>
+  <div class="btn-group" role="group">
+    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_submit_second' order_id=order_id %}">03 Review</a>
+  </div>
+  <div class="btn-group" role="group">
+    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_deposit' order_id=order_id %}">04 Deposit</a>
+  </div>
+</div>
+
 <div>
     <h3 id="timer"></h3>
 </div>
@@ -36,27 +51,12 @@
         var minutes =  Math.floor(timestamp / 60);
         var seconds =  Math.floor(timestamp % 60);
         document.getElementById("timer").innerHTML = "距离你的订单结束还有：" +  minutes + " : " + seconds;
+        if (timestamp <= 0) {
+            window.location = "{% url 'order_expire' %}";
+        }
         timer(offset + 0.5);
     }, 500);
 })(0);
-
-(function check () {
-    setTimeout(function () {
-        $.ajax({
-            url: "{% url 'order_check' %}",
-            data: {
-                'order_id': {{ order_id }}
-            },
-            dataType: 'json',
-            success: function(data) {
-                if (!data.exist) {
-                    window.location.href = "{% url 'home' %}";
-                }
-            }
-        });
-        check();
-    }, 1000);
-})();
 </script>
 
 {% endblock %}
