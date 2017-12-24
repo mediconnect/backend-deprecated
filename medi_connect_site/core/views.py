@@ -126,7 +126,9 @@ def result(request):
                 return render(request, 'disease_choice.html', {
                     'disease_list': dis,
                     'all_dis': Disease.objects.all(),
-                    'disease_length': True if len(dis) > 1 else False  # if diseases are found
+                    'disease_length': True if len(dis) > 1 else False,  # if diseases are found
+                    'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
+                    'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
                 })
 
             # handle data for exact match
@@ -156,91 +158,12 @@ def result(request):
                 'all_dis': Disease.objects.all(),
                 'hospital_length': len(hospital_list) > 0,
                 'disease_length': dis is not None,
-                'customer': Customer.objects.get(user=request.user),
+                'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
                 'message': u'你是不是在搜索这个疾病: ' + dis[0].name,
+                'template': 'customer_header.html' if request.user.is_authenticated else 'index.html'
             })
     else:
         return render(request, 'result.html')
-
-
-def result_guest(request):
-    """
-        This function tries to find matching query.
-        The logic works on 3 levels.
-            1. The user input exactly matches to the keyword stored in the database. The
-                view will then fetch hospital information and direct the user to hospital
-                detail information page.
-            2. The user input contains the keyword stored in the database. Try to fetch
-                all diseases with keyword matching to user query input. Direct user to
-                disease selection page, but put matched disease at front.
-            3. The user input does not match to any keyword. Direct user to a disease
-                selection page.
-        This function is for guest user.
-        """
-    if request.method == 'POST':
-        form = SearchForm(request.POST)
-        if not form.is_valid():
-            return render(request, 'index.html', {
-                'form': form,
-            })
-        else:
-            query = form.cleaned_data.get('query')
-            dis_list = Disease.objects.all()
-            dis = []
-            exact_match = False
-            # find exact match word. check if the user input contains keyword and then
-            # check if it is exact match
-            for unit in dis_list:
-                # split according to unicode chinese letter
-                keywords = unit.keyword.split(u'\uff0c')
-                for keyword in keywords:
-                    if keyword in query:
-                        exact_match = exact_match or keyword == query
-                        dis.append(unit)
-                        if exact_match:
-                            break
-                if exact_match:
-                    dis = [unit]
-                    break
-
-            # if no match or if multiple matched found
-            if len(dis) == 0 or len(dis) > 1 or not exact_match:
-                return render(request, 'disease_choice.html', {
-                    'disease_list': dis,
-                    'all_dis': Disease.objects.all(),
-                    'disease_length': True if len(dis) > 1 else False  # if diseases are found
-                })
-
-            rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
-            hospital_list = []
-            for r, rank in enumerate(rank_list, 1):
-                hosp = r.hospital
-                single_hopital = dict()
-                single_hopital['id'] = hosp.id
-                single_hopital['name'] = hosp.name
-                single_hopital['rank'] = rank
-                single_hopital['score'] = hosp.average_score
-                single_hopital['introduction'] = hosp.introduction
-                single_hopital['feedback_time'] = hosp.feedback_time
-                single_hopital['image'] = hosp.image.url
-                single_hopital['full_price'] = Price.objects.get(hospital=hosp, disease=dis[0]).full_price
-                single_hopital['deposit_price'] = Price.objects.get(hospital=hosp, disease=dis[0]).deposit
-                slot = Slot.objects.get(disease=dis[0], hospital=hosp)
-                single_hopital['slot'] = {
-                    0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2, 3: slot.slots_open_3
-                }
-                hospital_list.append(single_hopital)
-
-            return render(request, 'result.html', {
-                'hospital_list': hospital_list,
-                'disease': dis[0],
-                'all_dis': Disease.objects.all(),
-                'hospital_length': len(hospital_list) > 0,
-                'disease_length': dis is not None,
-                'message': u'你是不是在搜索这个疾病: ' + dis[0].name,
-            })
-    else:
-        return render(request, 'result_guest.html')
 
 
 def choose_hospital(request, disease_id):
@@ -266,28 +189,23 @@ def choose_hospital(request, disease_id):
                                   3: slot.slots_open_3}
         hospital_list.append(single_hopital)
 
-    if request.user.is_authenticated():
-        return render(request, 'result.html', {
-            'hospital_list': hospital_list,
-            'all_dis': Disease.objects.all(),
-            'disease': dis,
-            'hospital_length': len(hospital_list) > 0,
-            'disease_length': dis is not None,
-            'customer': Customer.objects.get(user=request.user)
-        })
-    else:
-        return render(request, 'result_guest.html', {
-            'hospital_list': hospital_list,
-            'disease': dis,
-            'hospital_length': len(hospital_list) > 0,
-            'disease_length': dis is not None,
-        })
+    return render(request, 'result.html', {
+        'hospital_list': hospital_list,
+        'all_dis': Disease.objects.all(),
+        'disease': dis,
+        'hospital_length': len(hospital_list) > 0,
+        'disease_length': dis is not None,
+        'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
+        'template': 'customer_header.html' if request.user.is_authenticated else 'index.html'
+    })
 
 
 def disease(request):
     diseases = Disease.objects.all()
     return render(request, 'disease.html', {
         'diseases': diseases,
+        'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
+        'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
     })
 
 
@@ -295,6 +213,8 @@ def hospital(request):
     hospitals = Hospital.objects.all()[0:20]
     return render(request, 'hospital.html', {
         'hospitals': hospitals,
+        'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
+        'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
     })
 
 
@@ -316,17 +236,12 @@ def email_check(request):
 
 def contact(request):
     form = ContactForm()
-    if request.user.is_authenticated():
-        customer = Customer.objects.get(user=request.user)
-        form.initial.update({'email': customer.user.email})
-        return render(request, 'contact.html', {
-            'customer': customer,
-            'form': form,
-        })
-    else:
-        return render(request, 'contact.html', {
-            'form': form,
-        })
+    form.initial.update({'email': request.user.email})
+    return render(request, 'contact.html', {
+        'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
+        'form': form,
+        'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
+    })
 
 
 def send_response(request):
@@ -360,14 +275,15 @@ def send_response(request):
     except smtplib.SMTPException:
         print "Error: unable to send email"
 
-    if request.user.is_authenticated():
-        return render(request, 'success.html', {
-            'customer': Customer.objects.get(user=request.user)
-        })
-    return render(request, 'success_guest.html')
+    return render(request, 'success.html', {
+        'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
+        'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
+    })
 
 
 def hospital_detail(request, hospital_id):
     return render(request, 'hospital_detail.html', {
-        'hospital': Hospital.objects.get(id=hospital_id)
+        'hospital': Hospital.objects.get(id=hospital_id),
+        'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
+        'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
     })

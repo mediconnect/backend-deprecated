@@ -14,7 +14,6 @@ urlpatterns = [
     url(r'^logout/', auth_views.logout, {'next_page': '/'}, name='logout'),
     url(r'^signup/', core_views.signup, name='signup'),
     url(r'^result/', core_views.result, name='result'),
-    url(r'^result_guest/', core_views.result_guest, name='result_guest'),
     url(r'^hospital/', core_views.hospital, name='hospital_list'),
     url(r'^disease/', core_views.disease, name='disease_list'),
     url(r'^contact/$', core_views.contact, name='contact'),

@@ -45,7 +45,7 @@
 </nav>
 
 {% block content %}
-<form action="{% url 'result_guest' %}" method="post" role="form">
+<form action="{% url 'result' %}" method="post" role="form">
     {% csrf_token %}
     {% for field in form.visible_fields %}
     <div class="form-group{% if field.errors %} has-error{% endif %}">
