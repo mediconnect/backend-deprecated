@@ -115,9 +115,7 @@ def order(request):
     customer = Customer.objects.get(user=request.user)
     orders = Order.objects.filter(customer=customer)
     order_list = []
-    status_dict = [u'未提交', u'未付款', u'翻译中', u'翻译中',
-                   u'医院研究反馈中', u'医院研究反馈中', u'医院研究反馈中',
-                   u'医院反馈翻译完成', u'订单完成']
+    status_dict = ['客户未提交', '已付款', '原件翻译中', '提交至医院', '上传反馈', '反馈翻译中', '反馈已上传', '订单完成']
     for order in orders:
         if int(order.status) == 8:
             continue
@@ -141,9 +139,7 @@ def order_finished(request):
     customer = Customer.objects.get(user=request.user)
     orders = Order.objects.filter(customer=customer)
     order_list = []
-    status_dict = [u'未提交', u'未付款', u'翻译中', u'翻译中',
-                   u'医院研究反馈中', u'医院研究反馈中', u'医院研究反馈中',
-                   u'医院反馈翻译完成', u'订单完成']
+    status_dict = ['客户未提交', '已付款', '原件翻译中', '提交至医院', '上传反馈', '反馈翻译中', '反馈已上传', '订单完成']
     for order in orders:
         if int(order.status) != 8:
             continue
@@ -187,7 +183,15 @@ def order_detail(request, order_id):
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
     if int(order.status) <= 1:
-        return redirect('hospital_order', order.hospital, order.disease)
+        status = int(order.status)
+        if status == 0:
+            return redirect('order_patient_info', order.id)
+        elif status == -1:
+            return redirect('order_document_info', order.id)
+        elif status == -2:
+            return redirect('order_review', order.id)
+        elif status == -3:
+            return redirect('order_deposit', order.id)
     return render(request, 'info_order_detail.html', {
         'customer': customer,
         'order': order,

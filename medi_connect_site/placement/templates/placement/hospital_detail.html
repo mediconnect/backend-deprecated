@@ -2,10 +2,6 @@
 
 {% block content %}
 
-<div>
-    <h3 id="timer"></h3>
-</div>
-
 {{error}}
 <button type="button" class="btn btn-default" id="like-button">
     <span style="font-size:1.5em;" class="glyphicon glyphicon-star"></span>
@@ -27,8 +23,11 @@
 {% if error %}
 {{error}}
 {% endif %}
-<form action="{% url 'order_info_first' order_id=order_id slot_num=1 %}" method="post" id="order_placement_form">
+<form method="post" id="order_placement_form">
     {% csrf_token %}
+    <input type="hidden" name="disease_id" value="{{ disease.id }}">
+    <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
+    <input id="slot" type="hidden" name="slot" value=0>
     <button class="btn btn-default" type="submit">Place Order</button>
 </form>
 
@@ -78,30 +77,26 @@ function like(mark) {
     });
 }
 
-var id = {{order_id}};
 $("#radio0").change(function() {
     if ( this.checked ) {
-        $("#order_placement_form").attr("action", url_generator(id, 0));
+        $("#slot").val(0);
     }
 });
 $("#radio1").change(function() {
     if ( this.checked ) {
-        $("#order_placement_form").attr("action", url_generator(id, 1));
+        $("#slot").val(1);
     }
 });
 $("#radio2").change(function() {
     if ( this.checked ) {
-        $("#order_placement_form").attr("action", url_generator(id, 2));
+        $("#slot").val(2);
     }
 });
 $("#radio3").change(function() {
     if ( this.checked ) {
-        $("#order_placement_form").attr("action", url_generator(id, 3));
+        $("#slot").val(3);
     }
 });
-function url_generator(order, num) {
-    $("#order_placement_form").attr("action", Urls.order_info_first(order, num));
-}
 
 var page = 1;
 $('#more-comment').click(function() {
@@ -125,19 +120,5 @@ $('#more-comment').click(function() {
     });
     page += 1;
 });
-
-(function timer (offset) {
-    setTimeout(function () {
-        var timestamp = {{ time }};
-        timestamp = 5 * 60 - timestamp - offset;
-        var minutes =  Math.floor(timestamp / 60);
-        var seconds =  Math.floor(timestamp % 60);
-        document.getElementById("timer").innerHTML = "距离你的订单结束还有：" +  minutes + " : " + seconds;
-        if (timestamp <= 0) {
-            window.location = "{% url 'order_expire' %}";
-        }
-        timer(offset + 0.5);
-    }, 500);
-})(0)
 </script>
 {% endblock %}

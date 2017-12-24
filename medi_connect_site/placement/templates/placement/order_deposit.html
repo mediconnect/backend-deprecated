@@ -4,16 +4,16 @@
 
 <div class="btn-group btn-group-justified" role="group" aria-label="...">
   <div class="btn-group" role="group">
-    <a type="button" class="btn btn-default" href="{% url 'order_info_first' order_id=order_id %}">01 Patient Info</a>
+    <a type="button" class="btn btn-default" href="{% url 'order_patient_info' order_id=order.id %}">01 Patient Info</a>
   </div>
   <div class="btn-group" role="group">
-    <a type="button" class="btn btn-default" href="{% url 'order_submit_first' order_id=order_id %}">02 Disease Info</a>
+    <a type="button" class="btn btn-default" href="{% url 'order_document_info' order_id=order.id %}">02 Disease Info</a>
   </div>
   <div class="btn-group" role="group">
-    <a type="button" class="btn btn-default" href="{% url 'order_submit_second' order_id=order_id %}">03 Review</a>
+    <a type="button" class="btn btn-default" href="{% url 'order_review' order_id=order.id %}">03 Review</a>
   </div>
   <div class="btn-group" role="group">
-    <a type="button" class="btn btn-primary" href="{% url 'order_deposit' order_id=order_id %}">04 Deposit</a>
+    <a type="button" class="btn btn-primary" href="{% url 'order_deposit' order_id=order.id %}">04 Deposit</a>
   </div>
 </div>
 
@@ -22,10 +22,11 @@
 </div>
 
 <input type="radio" name="deposit" id="full-option">All<br>
-<input type="radio" name="deposit" id="half-option">Half
+<input type="radio" name="deposit" id="half-option" checked>Half
 
 <form method="post" role="form" id="deposit">
     {% csrf_token %}
+    <input type="hidden" name="amount" value=-1 id="value">
     <button type="submit" class="btn btn-default" id="submit">Deposit</button>
 </form>
 
@@ -43,6 +44,17 @@
         timer(offset + 0.5);
     }, 500);
 })(0);
+
+$("#full-option").change(function() {
+    if ( this.checked ) {
+        $("#value").val(0);
+    }
+});
+$("#half-option").change(function() {
+    if ( this.checked ) {
+        $("#value").val(-1);
+    }
+});
 </script>
 
 {% endblock %}

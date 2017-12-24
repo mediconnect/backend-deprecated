@@ -79,7 +79,7 @@ STATUS_CHOICES = (
     (PAID, 'PAID'),
 )
 
-status_dict = ['客户未提交', '客户已提交', '已付款', '原件翻译中', '提交至医院', '上传反馈', '反馈翻译中',
+status_dict = ['客户未提交', '已付款', '原件翻译中', '提交至医院', '上传反馈', '反馈翻译中',
                '反馈已上传', '订单完成']
 # Trans_status
 # Temporarily hold status

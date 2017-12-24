@@ -160,7 +160,7 @@ class Order(models.Model):
                                        related_name='english_translator')
     hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, null=True)
     disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
-    week_number_at_submit = models.IntegerField(default=0)
+    week_number_at_submit = models.IntegerField(default=-1)
     submit = models.DateTimeField(default=timezone.now)  # datetime of receiving the order
     # all origin document uploaded by customer
     origin = models.ManyToManyField('Document', related_name='original_file')

@@ -282,7 +282,7 @@ def send_response(request):
 
 
 def hospital_detail(request, hospital_id):
-    return render(request, 'hospital_detail.html', {
+    return render(request, 'hospital_view.html', {
         'hospital': Hospital.objects.get(id=hospital_id),
         'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
         'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,

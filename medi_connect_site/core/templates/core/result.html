@@ -6,42 +6,70 @@
 
 <div class="container-fluid">
     {% if hospital_length and disease_length %}
-    {{message}}
-    {% for hospital in hospital_list %}
-    <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-8">
-            <div class="media" style="border-style:solid">
-                <div class="media-left media-middle">
-                    <img src="{{ hospital.image }}" height="128" width="128">
-                </div>
-                <div class="media-body">
-                    <p>Specialty Rank: {{ hospital.rank }}</p>
-                    <p>Review Score: {{ hospital.average_score }}</p>
-                    <h4 class="media-heading">Hospital Name: {{ hospital.name }}</h4>
-                    <p>Introduction: {{ hospital.introduction }}</p>
-                    <p>Feedback: {{ hospital.feedback_time }} week</p>
-                    <p>Total price:  {{ hospital.full_price }}</p>
-                    <p>Deposit:  {{ hospital.deposit_price }}</p>
-                    {% if hospital.slot.0 > 0 %}
-                        <a href="{% url 'fast_order' disease_id=disease.id hospital_id=hospital.id slot_num=1 %}">First week is Available</a>
-                    {% elif hospital.slot.1 > 0 %}
-                        <a href="{% url 'fast_order' disease_id=disease.id hospital_id=hospital.id slot_num=2 %}">Second week is Available</a>
-                    {% elif hospital.slot.2 > 0 %}
-                        <a href="{% url 'fast_order' disease_id=disease.id hospital_id=hospital.id slot_num=3 %}">Third week is Available</a>
-                    {% elif hospital.slot.3 > 0 %}
-                        <a href="{% url 'fast_order' disease_id=disease.id hospital_id=hospital.id slot_num=4 %}">Fourth week is Available</a>
-                    {% endif %}
-                    <p></p>
-                    <a href="{% url 'hospital_order' hospital_id=hospital.id disease_id=disease.id%}">Go To Detail</a>
+        {{message}}
+        {% for hospital in hospital_list %}
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <div class="media" style="border-style:solid">
+                    <div class="media-left media-middle">
+                        <img src="{{ hospital.image }}" height="128" width="128">
+                    </div>
+                    <div class="media-body">
+                        <p>Specialty Rank: {{ hospital.rank }}</p>
+                        <p>Review Score: {{ hospital.average_score }}</p>
+                        <h4 class="media-heading">Hospital Name: {{ hospital.name }}</h4>
+                        <p>Introduction: {{ hospital.introduction }}</p>
+                        <p>Feedback: {{ hospital.feedback_time }} week</p>
+                        <p>Total price:  {{ hospital.full_price }}</p>
+                        <p>Deposit:  {{ hospital.deposit_price }}</p>
+                        {% if hospital.slot.0 > 0 %}
+                            <form action="{% url 'hospital_detail' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
+                                <input type="hidden" name="disease_id" value="{{ disease.id }}">
+                                <input type="hidden" name="slot" value=0>
+                                <button type="submit" class="btn btn-link">First week is Available</button>
+                            </form>
+                        {% elif hospital.slot.1 > 0 %}
+                            <form action="{% url 'hospital_detail' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
+                                <input type="hidden" name="disease_id" value="{{ disease.id }}">
+                                <input type="hidden" name="slot" value=1>
+                                <button type="submit" class="btn btn-link">Second week is Available</button>
+                            </form>
+                        {% elif hospital.slot.2 > 0 %}
+                            <form action="{% url 'hospital_detail' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
+                                <input type="hidden" name="disease_id" value="{{ disease.id }}">
+                                <input type="hidden" name="slot" value=2>
+                                <button type="submit" class="btn btn-link">Third week is Available</button>
+                            </form>
+                        {% elif hospital.slot.3 > 0 %}
+                            <form action="{% url 'hospital_detail' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
+                                <input type="hidden" name="disease_id" value="{{ disease.id }}">
+                                <input type="hidden" name="slot" value=3>
+                                <button type="submit" class="btn btn-link">Fourth week is Available</button>
+                            </form>
+                        {% endif %}
+                        <p></p>
+                        <form action="{% url 'hospital_detail' %}" method="get">
+                            <input type="hidden" name="disease_id" value="{{ disease.id }}">
+                            <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
+                            <button type="submit" class="btn btn-link">View Detail</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <br>
-    {% endfor %}
+        <br>
+        {% endfor %}
     {% else %}
-    We don't have a hospital for this kind of disease yet. You can check other diseases from the list below.
+        We don't have a hospital for this kind of disease yet. You can check other diseases from the list below.
     {% endif %}
     <div class="dropdown">
         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

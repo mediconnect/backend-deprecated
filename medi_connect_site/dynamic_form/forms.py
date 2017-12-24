@@ -10,7 +10,10 @@ def create_form(hospital_id, disease_id, form, only_optional=False):
     fields = [x for x in fields.split('|')]
     required, optional = (fields[0], fields[1]) if len(fields) == 2 else (fields[0], None)
     required = [x for x in required.split()]
-    optional = [x for x in optional.split()]
+    if optional is not None:
+        optional = [x for x in optional.split()]
+    else:
+        optional = []
     if not only_optional:
         for field in required:
             form.fields[field] = forms.FileField()
@@ -32,5 +35,8 @@ def get_fields(hospital_id, disease_id):
     fields = [x for x in fields.split('|')]
     required, optional = (fields[0], fields[1]) if len(fields) == 2 else (fields[0], None)
     required = [x for x in required.split()]
-    optional = [x for x in optional.split()]
+    if optional is not None:
+        optional = [x for x in optional.split()]
+    else:
+        optional = []
     return required, optional

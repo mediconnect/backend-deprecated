@@ -1,19 +1,18 @@
 {% extends "customer_header.html" %}
 
 {% block content %}
-
 <div class="btn-group btn-group-justified" role="group" aria-label="...">
   <div class="btn-group" role="group">
-    <a type="button" class="btn btn-default" href="{% url 'order_info_first' order_id=order_id %}">01 Patient Info</a>
+    <a type="button" class="btn btn-default" href="{% url 'order_patient_info' order_id=order.id %}">01 Patient Info</a>
   </div>
   <div class="btn-group" role="group">
-    <a type="button" class="btn btn-default" href="{% url 'order_submit_first' order_id=order_id %}">02 Disease Info</a>
+    <a type="button" class="btn btn-default" href="{% url 'order_document_info' order_id=order.id %}">02 Disease Info</a>
   </div>
   <div class="btn-group" role="group">
-    <a type="button" class="btn btn-primary" href="{% url 'order_submit_second' order_id=order_id %}">03 Review</a>
+    <a type="button" class="btn btn-primary" href="{% url 'order_review' order_id=order.id %}">03 Review</a>
   </div>
   <div class="btn-group" role="group">
-    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_deposit' order_id=order_id %}">04 Deposit</a>
+    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_deposit' order_id=order.id %}">04 Deposit</a>
   </div>
 </div>
 
