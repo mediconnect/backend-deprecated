@@ -117,7 +117,7 @@ def order(request):
     order_list = []
     status_dict = ['客户未提交', '已付款', '原件翻译中', '提交至医院', '上传反馈', '反馈翻译中', '反馈已上传', '订单完成']
     for order in orders:
-        if int(order.status) == 8:
+        if int(order.status) == 7:
             continue
         order_dict = dict()
         order_dict['patient'] = order.patient_order.get_name() if order.patient_order is not None else 'unknown'
@@ -141,7 +141,7 @@ def order_finished(request):
     order_list = []
     status_dict = ['客户未提交', '已付款', '原件翻译中', '提交至医院', '上传反馈', '反馈翻译中', '反馈已上传', '订单完成']
     for order in orders:
-        if int(order.status) != 8:
+        if int(order.status) != 7:
             continue
         order_dict = dict()
         order_dict['patient'] = order.patient_order.get_name() if order.patient_order is not None else 'unknown'
@@ -196,6 +196,8 @@ def order_detail(request, order_id):
         'customer': customer,
         'order': order,
         'pay': int(order.status) < 2,
+        'comment': int(order.status) == 6,
+        'incomplete': int(order.status) != 7,
     })
 
 
@@ -319,7 +321,7 @@ def profile_patient_edit(request, patient_id):
 def hospital_review(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
-        order.status = 8
+        order.status = 7
         order.save()
         score = request.POST.get('score')
         comment = request.POST.get('comment')
