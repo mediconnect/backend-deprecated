@@ -18,7 +18,7 @@ import pytz
 
 def hospital_detail(request):
     if not request.user.is_authenticated:
-        return redirect('login')
+        return redirect('auth')
 
     if request.method == 'GET':
         hospital_id = request.GET.get('hospital_id')
@@ -121,14 +121,15 @@ def clean_order(order_id):
         diff = datetime.datetime.now(tz=pytz.utc) - naive
         slot = Slot.objects.get(disease=order.disease, hospital=order.hospital)
         if diff.total_seconds() > 300:
-            if order.week_number_at_submit != 0:
-                if slot_num == 0:
+            submit_slot = int(order.week_number_at_submit)
+            if submit_slot != -1:
+                if submit_slot == 0:
                     slot.slots_open_0 += 1
-                elif slot_num == 1:
+                elif submit_slot == 1:
                     slot.slots_open_1 += 1
-                elif slot_num == 2:
+                elif submit_slot == 2:
                     slot.slots_open_2 += 1
-                else:
+                elif submit_slot == 3:
                     slot.slots_open_3 += 1
                 slot.save()
             order.delete()

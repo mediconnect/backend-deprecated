@@ -46,20 +46,39 @@
     {% endfor %}
 </table>
 
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal" >
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title">提醒</h4>
+          </div>
+          <div class="modal-body">
+              <p>你的订单已过期</p>
+          </div>
+          <div class="modal-footer">
+              <a type="button" class="btn btn-primary" href="{% url 'home' %}">确认</a>
+          </div>
+        </div>
+    </div>
+</div>
+
 <script>
 (function timer (offset) {
     setTimeout(function () {
         var timestamp = {{ time }};
-        timestamp = 5 * 60 - timestamp - offset;
+        var diff = Math.floor((performance.now() - offset) / 1000);
+        timestamp = 5 * 60 - timestamp - diff;
         var minutes =  Math.floor(timestamp / 60);
         var seconds =  Math.floor(timestamp % 60);
         document.getElementById("timer").innerHTML = "距离你的订单结束还有：" +  minutes + " : " + seconds;
+        console.log(performance.now());
         if (timestamp <= 0) {
-            window.location = "{% url 'order_expire' %}";
+            $('#myModal').modal('show');
+            return;
         }
-        timer(offset + 0.5);
+        timer(offset);
     }, 500);
-})(0);
+})(performance.now());
 </script>
 
 {% endblock %}

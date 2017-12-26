@@ -159,8 +159,8 @@ def result(request):
                 'hospital_length': len(hospital_list) > 0,
                 'disease_length': dis is not None,
                 'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
-                'message': u'你是不是在搜索这个疾病: ' + dis[0].name,
-                'template': 'customer_header.html' if request.user.is_authenticated else 'index.html'
+                'message': u'搜索匹配到这个疾病: ' + dis[0].name,
+                'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
             })
     else:
         return render(request, 'result.html')
@@ -196,7 +196,8 @@ def choose_hospital(request, disease_id):
         'hospital_length': len(hospital_list) > 0,
         'disease_length': dis is not None,
         'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
-        'template': 'customer_header.html' if request.user.is_authenticated else 'index.html'
+        'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
+        'message': u'你选择了这个疾病: ' + dis.name,
     })
 
 
