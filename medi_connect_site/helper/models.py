@@ -151,30 +151,21 @@ class Rank(models.Model):
 
 
 class Order(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
-    patient = models.ForeignKey('Patient', on_delete=models.CASCADE, null=True)
-    patient_order = models.ForeignKey('OrderPatient', on_delete=models.CASCADE, null=True)
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    patient = models.ForeignKey('Patient', on_delete=models.SET_NULL, null=True)
+    patient_order = models.ForeignKey('OrderPatient', on_delete=models.SET_NULL, null=True)
     translator_C2E = models.ForeignKey('Staff', on_delete=models.SET_NULL, null=True,
                                        related_name='chinese_translator')
     translator_E2C = models.ForeignKey('Staff', on_delete=models.SET_NULL, null=True,
                                        related_name='english_translator')
-    hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, null=True)
-    disease = models.ForeignKey('Disease', on_delete=models.CASCADE, null=True)
+    hospital = models.ForeignKey('Hospital', on_delete=models.SET_NULL, null=True)
+    disease = models.ForeignKey('Disease', on_delete=models.SET_NULL, null=True)
     week_number_at_submit = models.IntegerField(default=-1)
     submit = models.DateTimeField(default=timezone.now)  # datetime of receiving the order
-    # all origin document uploaded by customer
-    origin = models.ManyToManyField('Document', related_name='original_file')
-    # all feedback document TRANSLATED and APPROVED
-    feedback = models.ManyToManyField('Document', related_name='feedback_file')
-    latest_upload = models.DateTimeField(null=True)
-    # all pending document, make sure this NOT VISIBLE to customers
-    pending = models.ManyToManyField('Document', related_name='pending_file')
-    receive = models.DateField(default=datetime.date.today)
-    status = models.CharField(blank=True, max_length=20, choices=util.STATUS_CHOICES)
+    status = models.IntegerField(null=True)
     trans_status = models.CharField(default=0, max_length=20, choices=util.TRANS_STATUS_CHOICE)
-    auto_assigned = models.BooleanField(default=False)
-    c2e_re_assigned = models.BooleanField(default=False)
-    e2c_re_assigned = models.BooleanField(default=False)
+    c2e_re_assigned = models.IntegerField(default=0)
+    e2c_re_assigned = models.IntegerField(default=0)
     document_complete = models.BooleanField(default=False)
     full_payment_paid = models.BooleanField(default=False)
 
@@ -303,12 +294,16 @@ class Document(models.Model):
     order = models.ForeignKey('Order', on_delete=models.CASCADE, null=True)
     description = models.CharField(max_length=50, blank=True)
     required = models.BooleanField(default=False)
-    is_origin = models.BooleanField(default=True)
     is_translated = models.BooleanField(default=False)
-    is_feedback = models.BooleanField(default=False)
     upload_at = models.DateTimeField(default=timezone.now)
     comment = models.CharField(max_length=255, blank=True)
     document = models.FileField(upload_to=order_directory_path, null=True)
+    """
+        0: origin
+        1: pending
+        2: feedback
+    """
+    type = models.IntegerField(default=-1)
 
     class Meta:
         db_table = 'document'

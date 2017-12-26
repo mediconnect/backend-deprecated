@@ -304,14 +304,12 @@ def order_document_info(request, order_id):
         required, optional = get_fields(order.hospital.id, order.disease.id)
         for field in required:
             for f in request.FILES.getlist(field):
-                doc = Document(document=f, description=field, order=order)
+                doc = Document(document=f, description=field, order=order, type=0)
                 doc.save()
-                order.origin.add(doc)
         for field in optional:
             for f in request.FILES.getlist(field):
-                doc = Document(document=f, description=field, order=order)
+                doc = Document(document=f, description=field, order=order, type=0)
                 doc.save()
-                order.origin.add(doc)
         doctor = form.cleaned_data.get('doctor')
         hospital = form.cleaned_data.get('diagnose_hospital')
         contact = form.cleaned_data.get('contact')
@@ -332,6 +330,7 @@ def order_review(request, order_id):
     order = Order.objects.get(id=order_id)
     return render(request, 'order_review.html', {
         'order': order,
+        'document': Document.objects.filter(order=order, type=0),
         'customer': customer,
         'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
     })

@@ -195,6 +195,7 @@ def order_detail(request, order_id):
     return render(request, 'info_order_detail.html', {
         'customer': customer,
         'order': order,
+        'document': Document.objects.filter(order=order, type=0),
         'pay': int(order.status) < 2,
         'comment': int(order.status) == 6,
         'incomplete': int(order.status) != 7,
@@ -215,9 +216,8 @@ def add_doc(request, order_id):
         required, optional = get_fields(order.hospital.id, order.disease.id)
         for field in optional:
             for f in request.FILES.getlist(field):
-                doc = Document(document=f, description=field, order=order)
+                doc = Document(document=f, description=field, order=order, type=0)
                 doc.save()
-                order.origin.add(doc)
         return redirect('info_order_detail', order.id)
     return render(request, 'add_doc.html', {
         'form': create_form(int(order.hospital.id), int(order.disease.id), DocAddForm(), only_optional=True),

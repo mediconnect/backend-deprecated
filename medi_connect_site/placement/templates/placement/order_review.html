@@ -28,8 +28,8 @@
 <p>Disease: {{order.disease.name}}</p>
 <p>Hospital: {{order.hospital.name}}</p>
 
-{% for obj in order.origin.all %}
-    <a href={{obj.document.url}}>{{ obj.description }}</a>
+{% for doc in document %}
+    <a href={{doc.document.url}}>{{ doc.description }}</a>
     <br>
 {% endfor %}
 
