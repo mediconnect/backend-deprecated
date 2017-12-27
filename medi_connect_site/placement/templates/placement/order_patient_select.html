@@ -71,7 +71,6 @@
         var minutes =  Math.floor(timestamp / 60);
         var seconds =  Math.floor(timestamp % 60);
         document.getElementById("timer").innerHTML = "距离你的订单结束还有：" +  minutes + " : " + seconds;
-        console.log(performance.now());
         if (timestamp <= 0) {
             $('#myModal').modal('show');
             return;

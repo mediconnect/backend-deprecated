@@ -124,7 +124,7 @@ def order(request):
         order_dict['time'] = str(order.submit)
         order_dict['disease'] = order.disease.name if order.disease is not None else 'unknown'
         order_dict['hospital'] = order.hospital.name if order.hospital is not None else 'unknown'
-        order_dict['status'] = status_dict[int(order.status)] if order.status is not None else 0
+        order_dict['status'] = status_dict[order.status] if order.status >= 1 else '客户未提交'
         order_dict['id'] = int(order.id)
         order_list.append(order_dict)
     return render(request, 'info_order.html', {
@@ -148,7 +148,7 @@ def order_finished(request):
         order_dict['time'] = str(order.submit)
         order_dict['disease'] = order.disease.name if order.disease is not None else 'unknown'
         order_dict['hospital'] = order.hospital.name if order.hospital is not None else 'unknown'
-        order_dict['status'] = status_dict[int(order.status)] if order.status is not None else 0
+        order_dict['status'] = status_dict[order.status]
         order_dict['id'] = int(order.id)
         order_list.append(order_dict)
     return render(request, 'info_order_finished.html', {

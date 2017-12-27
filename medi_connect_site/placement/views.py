@@ -9,6 +9,7 @@ from helper.models import auto_assign
 from dynamic_form.forms import create_form, get_fields
 from django.core.paginator import Paginator, EmptyPage
 from django.views.generic.base import TemplateView
+from django.core.files.uploadedfile import SimpleUploadedFile
 import datetime
 import calendar
 from time import sleep
@@ -289,6 +290,7 @@ def order_document_info(request, order_id):
             'form': form,
             'order_id': order.id,
             'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
+            'documents': Document.objects.filter(order=order, type=0),
         })
     else:
         order = Order.objects.get(id=order_id)
@@ -373,9 +375,9 @@ def finish(request, order_id):
 @login_required
 def like_hospital(request):
     customer = Customer.objects.get(user=request.user)
-    hospital_id = int(request.GET.get('hospital_id', None))
-    disease_id = int(request.GET.get('disease_id', None))
-    mark = True if request.GET.get('mark', 'false') == 'true' else False
+    hospital_id = int(request.POST.get('hospital_id', None))
+    disease_id = int(request.POST.get('disease_id', None))
+    mark = True if request.POST.get('mark', 'false') == 'true' else False
     hosp = Hospital.objects.get(id=hospital_id)
     dis = Disease.objects.get(id=disease_id)
     data = LikeHospital.objects.filter(customer=customer, hospital=hosp, disease=dis)
@@ -400,6 +402,18 @@ def order_check(request):
     if len(orders) > 0:
         return JsonResponse({'exist': True})
     return JsonResponse({'exist': False})
+
+
+@login_required
+def delete_document(request):
+    document_id = request.POST.get('document_id', None)
+    try:
+        document = Document.objects.get(id=document_id)
+        document.delete()
+    except Document.DoesNotExist:
+        pass
+    return JsonResponse({'status': 'deleted'})
+
 
 
 def order_expire(order_id):
