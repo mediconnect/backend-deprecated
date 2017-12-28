@@ -67,7 +67,7 @@ $('#confirm').click(function() {
     setTimeout(function () {
         var timestamp = {{ time }};
         var diff = Math.floor((performance.now() - offset) / 1000);
-        timestamp = 5 * 60 - timestamp - diff;
+        timestamp = 1800 - timestamp - diff;
         var minutes =  Math.floor(timestamp / 60);
         var seconds =  Math.floor(timestamp % 60);
         document.getElementById("timer").innerHTML = "距离你的订单结束还有：" +  minutes + " : " + seconds;

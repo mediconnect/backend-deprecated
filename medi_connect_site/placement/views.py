@@ -15,6 +15,7 @@ import calendar
 from time import sleep
 from threading import Thread
 import pytz
+from util import delete_order
 
 
 def hospital_detail(request):
@@ -43,25 +44,35 @@ def hospital_detail(request):
             'disease': dis,
             'customer': customer,
             'comments': comments,
+            'duplicate': 0,
         })
     else:
         hospital_id = request.POST.get('hospital_id')
         disease_id = request.POST.get('disease_id')
         slot_num = int(request.POST.get('slot'))
+        delete = request.POST.get('delete', None)
         hosp = Hospital.objects.get(id=hospital_id)
         dis = Disease.objects.get(id=disease_id)
         customer = Customer.objects.get(user=request.user)
-        order_list = Order.objects.filter(customer=customer, hospital=hosp, disease=dis)
         order = None
-        for each in order_list:
-            if int(each.status) <= 0:
-                order = each
-                break
-        order = Order(hospital=hosp, status=0, disease=dis, customer=customer) if order is None else order
-        order.save()
-        # start thread for 5 minutes order cleaning
-        Thread(target=clean_order, args=(order.id,)).start()
-        slot = Slot.objects.get(disease=order.disease, hospital=order.hospital)
+        try:
+            order = Order.objects.get(customer=customer, status__lte=0)
+            if delete is None:
+                return render(request, "hospital_detail.html", {
+                    'choose_hospital': hospital_id,
+                    'choose_disease': disease_id,
+                    'choose_slot': slot_num,
+                    'order': order,
+                    'duplicate': 1,
+                    'disease': dis,
+                    'hospital': hosp,
+                })
+            elif delete == 'delete':
+                delete_order(order.id)
+                order = None
+        except Order.DoesNotExist:
+            pass
+        slot = Slot.objects.get(disease=dis, hospital=hosp)
         avail_slot = {
             0: slot.slots_open_0,
             1: slot.slots_open_1,
@@ -85,8 +96,13 @@ def hospital_detail(request):
                 'disease': dis,
                 'customer': customer,
                 'comments': comments,
-                'error': 'the hospital does not have available slot'
+                'error': 'the hospital does not have available slot',
+                'duplicate': 0,
             })
+        order = Order(hospital=hosp, status=0, disease=dis, customer=customer) if order is None else order
+        order.save()
+        # start thread for 5 minutes order cleaning
+        Thread(target=clean_order, args=(order.id,)).start()
         # check if order chosen slot before
         if order.week_number_at_submit != -1:
             if slot_num == 0:
@@ -112,28 +128,17 @@ def hospital_detail(request):
 
 
 def clean_order(order_id):
-    order = Order.objects.get(id=order_id)
-    if order is None:
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
         return
     while True:
         if int(order.status) >= 1:
             break
         naive = order.submit
         diff = datetime.datetime.now(tz=pytz.utc) - naive
-        slot = Slot.objects.get(disease=order.disease, hospital=order.hospital)
-        if diff.total_seconds() > 300:
-            submit_slot = int(order.week_number_at_submit)
-            if submit_slot != -1:
-                if submit_slot == 0:
-                    slot.slots_open_0 += 1
-                elif submit_slot == 1:
-                    slot.slots_open_1 += 1
-                elif submit_slot == 2:
-                    slot.slots_open_2 += 1
-                elif submit_slot == 3:
-                    slot.slots_open_3 += 1
-                slot.save()
-            order.delete()
+        if diff.total_seconds() > 1800:
+            delete_order(order.id)
             break
         sleep(60)
 
@@ -266,7 +271,7 @@ def order_patient_select(request):
         order.patient_order = order_patient
         order.status = -1
         order.save()
-        return redirect('order_document_info', order.id)
+        return redirect('order_patient_info', order.id)
 
 
 @login_required
@@ -413,7 +418,6 @@ def delete_document(request):
     except Document.DoesNotExist:
         pass
     return JsonResponse({'status': 'deleted'})
-
 
 
 def order_expire(order_id):
