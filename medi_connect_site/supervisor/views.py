@@ -67,7 +67,6 @@ def validate_pwd(request):
     translator.delete()
     #user.delete()
     for each in assignments:
-        print each.get_status()
         if each.get_status() <= util.C2E_FINISHED:
             each.c2e_reassigned = True
         else:
@@ -359,31 +358,31 @@ def approve(request, id, order_id):
             })
         else:
             approval = form.cleaned_data.get('approval')
-            if approval:
+            if approval: #if approval, remove all untranslated files
                 if assignment.get_status() == util.TRANSLATING_ORIGIN:
+                    Document.objects.filter(order_id = assignment.id, type = 0).delete()
                     assignment.change_status(util.SUBMITTED)
                     assignment.change_trans_status(util.C2E_FINISHED)
-                    for document in assignment.pending.all():
-                        assignment.origin.add(document)
-                        assignment.save()
 
                 if assignment.get_status() == util.TRANSLATING_FEEDBACK:
-                    assignment.change_status(util.DONE) #should be feedback, disable the function for now
-                    assignment.change_trans_status(util.ALL_FINISHED)#should be E2C finished, disable the functin for now
+                    Document.objects.filter(order_id=assignment.id, type=2).delete()
+                    assignment.change_status(util.DONE)  # TODO: Customer check order complete function
+                    assignment.change_trans_status(util.ALL_FINISHED)
 
-                    for document in assignment.pending.all():
-                        assignment.feedback.add(document)
-                        assignment.save()
+            if assignment.get_status() == util.TRANSLATING_ORIGIN:
+                for document in Document.objects.filter(order_id=assignment.id,
+                                                        type=1):  # put all pending documents back to origin
+                    document.type = 0
+                    document.save()
 
-                assignment.pending.clear()
-                assignment.save()
+            if assignment.get_status() == util.TRANSLATING_FEEDBACK:
+
+                for document in Document.objects.filter(order_id=assignment.id,
+                                                        type=1):  # put all pending documents back to feedback
+                    document.type = 2
+                    document.save()
 
             if not approval:
-                for document in assignment.pending.all():
-                    if document.is_origin:
-                        assignment.origin.add(document)
-                    if document.is_feedback:
-                        assignment.feedback.add(document)
                 if assignment.get_status() == 3:
                     assignment.change_trans_status(util.C2E_DISAPPROVED)
                 if assignment.get_status() == 6:
@@ -422,9 +421,8 @@ def manage_files(request, id, order_id):
         file = request.FILES['feedback_files']
         fs = FileSystemStorage()
         filename = fs.save(file.name, file)
-        document = Document(order=assignment, document=file, is_origin=True)
+        document = Document(order=assignment, document=file, is_translated = False, type = 2) #create feedback file
         document.save()
-        assignment.feedback.add(document)
         if not assignment.auto_assigned:
             assignment.change_status(util.RETURN)
             auto_assign(assignment)
