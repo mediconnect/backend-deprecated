@@ -23,7 +23,6 @@
 {{error}}
 <form method="post" id="order_placement_form">
     {% csrf_token %}
-    <input type="hidden" name="disease_id" value="{{ disease.id }}">
     <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
     <input id="slot" type="hidden" name="slot" value=0>
     <button class="btn btn-default" type="submit">Place Order</button>
@@ -56,17 +55,11 @@
           <div class="modal-footer">
               <form method="post">
                   {% csrf_token %}
-                  <input type="hidden" name="disease_id" value="{{ choose_disease }}">
-                  <input type="hidden" name="hospital_id" value="{{ choose_hospital }}">
-                  <input type="hidden" name="slot" value="{{ choose_slot }}">
                   <input type="hidden" name="delete" value="continue">
                   <button type="submit" class="btn btn-secondary">继续订单</button>
               </form>
               <form method="post">
                   {% csrf_token %}
-                  <input type="hidden" name="disease_id" value="{{ choose_disease }}">
-                  <input type="hidden" name="hospital_id" value="{{ choose_hospital }}">
-                  <input type="hidden" name="slot" value="{{ choose_slot }}">
                   <input type="hidden" name="delete" value="delete">
                   <button type="submit" class="btn btn-primary">确认删除</button>
               </form>

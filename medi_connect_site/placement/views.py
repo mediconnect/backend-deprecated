@@ -19,12 +19,16 @@ from util import delete_order
 
 
 def hospital_detail(request):
-    if not request.user.is_authenticated:
-        return redirect('auth')
+    if request.method == 'GET' and request.session.get('order_status_request', None) != 'POST':
+        hospital_id = request.GET.get('hospital_id', None)
+        hospital_id = request.session.get('hospital_id', None) if hospital_id is None else hospital_id
+        disease_id = request.session.get('disease_id', None)
+        request.session['hospital_id'] = hospital_id
+        request.session['order_status'] = 'view'
 
-    if request.method == 'GET':
-        hospital_id = request.GET.get('hospital_id')
-        disease_id = request.GET.get('disease_id')
+        if not request.user.is_authenticated:
+            return redirect('auth')
+
         hosp = Hospital.objects.get(id=hospital_id)
         dis = Disease.objects.get(id=disease_id)
         customer = Customer.objects.get(user=request.user)
@@ -36,7 +40,6 @@ def hospital_detail(request):
             comments = pages.page(1)
         except EmptyPage:
             comments = False
-
         return render(request, "hospital_detail.html", {
             'hospital': hosp,
             'rank': Rank.objects.get(disease=dis, hospital=hosp).rank,
@@ -47,10 +50,20 @@ def hospital_detail(request):
             'duplicate': 0,
         })
     else:
-        hospital_id = request.POST.get('hospital_id')
-        disease_id = request.POST.get('disease_id')
-        slot_num = int(request.POST.get('slot'))
+        hospital_id = request.POST.get('hospital_id', None)
+        slot_num = request.POST.get('slot', None)
+        hospital_id = request.session.get('hospital_id', None) if hospital_id is None else hospital_id
+        slot_num = request.session.get('slot_num', None) if slot_num is None else slot_num
+        slot_num = int(slot_num)
+        disease_id = request.session.get('disease_id', None)
+        request.session['hospital_id'] = hospital_id
+        request.session['slot_num'] = slot_num
+        request.session['order_status'] = 'placement'
         delete = request.POST.get('delete', None)
+
+        if not request.user.is_authenticated:
+            return redirect('auth')
+
         hosp = Hospital.objects.get(id=hospital_id)
         dis = Disease.objects.get(id=disease_id)
         customer = Customer.objects.get(user=request.user)

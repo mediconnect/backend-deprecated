@@ -13,7 +13,10 @@
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
         {% for dis in all_dis %}
-            <li><a href="{% url 'choose_hospital' disease_id=dis.id %}">{{dis.name}}</a></li>
+            <form action="{% url 'choose_hospital' %}">
+                <input type="hidden" name="disease_id" value="{{dis.id}}">
+                <button type="submit" class="btn btn-link">{{dis.name}}</button>
+            </form>
         {% endfor %}
         </ul>
     </div>
@@ -37,7 +40,6 @@
                         <form action="{% url 'hospital_detail' %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
-                            <input type="hidden" name="disease_id" value="{{ disease.id }}">
                             <input type="hidden" name="slot" value=0>
                             <button type="submit" class="btn btn-link">First week is Available</button>
                         </form>
@@ -45,7 +47,6 @@
                         <form action="{% url 'hospital_detail' %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
-                            <input type="hidden" name="disease_id" value="{{ disease.id }}">
                             <input type="hidden" name="slot" value=1>
                             <button type="submit" class="btn btn-link">Second week is Available</button>
                         </form>
@@ -53,7 +54,6 @@
                         <form action="{% url 'hospital_detail' %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
-                            <input type="hidden" name="disease_id" value="{{ disease.id }}">
                             <input type="hidden" name="slot" value=2>
                             <button type="submit" class="btn btn-link">Third week is Available</button>
                         </form>
@@ -61,14 +61,12 @@
                         <form action="{% url 'hospital_detail' %}" method="post">
                             {% csrf_token %}
                             <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
-                            <input type="hidden" name="disease_id" value="{{ disease.id }}">
                             <input type="hidden" name="slot" value=3>
                             <button type="submit" class="btn btn-link">Fourth week is Available</button>
                         </form>
                     {% endif %}
                     <p></p>
                     <form action="{% url 'hospital_detail' %}" method="get">
-                        <input type="hidden" name="disease_id" value="{{ disease.id }}">
                         <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
                         <button type="submit" class="btn btn-link">View Detail</button>
                     </form>

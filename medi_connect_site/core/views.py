@@ -49,7 +49,13 @@ def auth(request):
                 'error': 'Invalid Login'
             })
         login(request, user)
-        return redirect('/')
+        if request.session.get('order_status', None) is None:
+            return redirect('/')
+        elif request.session['order_status'] == 'view':
+            return redirect('hospital_detail')
+        elif request.session['order_status'] == 'placement':
+            request.session['order_status_request'] = 'POST'
+            return redirect('hospital_detail')
     return render(request, 'login.html', {
         'form': LoginForm(),
     })
@@ -131,6 +137,7 @@ def result(request):
                     'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
                 })
 
+            request.session['disease_id'] = dis[0].id
             # handle data for exact match
             rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
             hospital_list = []
@@ -166,39 +173,43 @@ def result(request):
         return render(request, 'result.html')
 
 
-def choose_hospital(request, disease_id):
-    dis = Disease.objects.get(id=disease_id)
-    rank_list = Rank.objects.filter(disease=dis).order_by('rank')
-    hospital_list = []
-    rank = 1
-    for r in rank_list:
-        hosp = r.hospital
-        single_hopital = dict()
-        single_hopital['id'] = hosp.id
-        single_hopital['name'] = hosp.name
-        single_hopital['rank'] = rank
-        single_hopital['score'] = hosp.average_score
-        single_hopital['introduction'] = hosp.introduction
-        single_hopital['feedback_time'] = hosp.feedback_time
-        single_hopital['image'] = hosp.image.url
-        single_hopital['full_price'] = Price.objects.get(hospital=hosp, disease=dis).full_price
-        single_hopital['deposit_price'] = Price.objects.get(hospital=hosp, disease=dis).deposit
-        rank += 1
-        slot = Slot.objects.get(disease=dis, hospital=hosp)
-        single_hopital['slot'] = {0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2,
-                                  3: slot.slots_open_3}
-        hospital_list.append(single_hopital)
+def choose_hospital(request):
+    if request.method == 'GET':
+        disease_id = request.GET.get('disease_id')
+        print disease_id
+        dis = Disease.objects.get(id=disease_id)
+        request.session['disease_id'] = disease_id
+        rank_list = Rank.objects.filter(disease=dis).order_by('rank')
+        hospital_list = []
+        rank = 1
+        for r in rank_list:
+            hosp = r.hospital
+            single_hopital = dict()
+            single_hopital['id'] = hosp.id
+            single_hopital['name'] = hosp.name
+            single_hopital['rank'] = rank
+            single_hopital['score'] = hosp.average_score
+            single_hopital['introduction'] = hosp.introduction
+            single_hopital['feedback_time'] = hosp.feedback_time
+            single_hopital['image'] = hosp.image.url
+            single_hopital['full_price'] = Price.objects.get(hospital=hosp, disease=dis).full_price
+            single_hopital['deposit_price'] = Price.objects.get(hospital=hosp, disease=dis).deposit
+            rank += 1
+            slot = Slot.objects.get(disease=dis, hospital=hosp)
+            single_hopital['slot'] = {0: slot.slots_open_0, 1: slot.slots_open_1, 2: slot.slots_open_2,
+                                      3: slot.slots_open_3}
+            hospital_list.append(single_hopital)
 
-    return render(request, 'result.html', {
-        'hospital_list': hospital_list,
-        'all_dis': Disease.objects.all(),
-        'disease': dis,
-        'hospital_length': len(hospital_list) > 0,
-        'disease_length': dis is not None,
-        'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
-        'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
-        'message': u'你选择了这个疾病: ' + dis.name,
-    })
+        return render(request, 'result.html', {
+            'hospital_list': hospital_list,
+            'all_dis': Disease.objects.all(),
+            'disease': dis,
+            'hospital_length': len(hospital_list) > 0,
+            'disease_length': dis is not None,
+            'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
+            'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
+            'message': u'你选择了这个疾病: ' + dis.name,
+        })
 
 
 def disease(request):

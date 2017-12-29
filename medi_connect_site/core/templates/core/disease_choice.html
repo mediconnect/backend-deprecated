@@ -3,39 +3,28 @@
 {% block title %}Choose Disease{% endblock %}
 
 {% block content %}
-
-{% if disease_length %}
-    <p>您是否要查询：</p>
-
-    {% for disease in disease_list %}
-    <div class="media" style="border-style:solid">
-        <a href="{% url 'choose_hospital' disease_id=disease.id %}">
-            <div class="media-left media-middle">
-            </div>
-            <div class="media-body">
-                <h4 class="media-heading">{{disease.name}}</h4>
-                <p>{{disease.introduction}}</p>
-            </div>
-        </a>
-    </div>
-    {% endfor %}
-    <p>如果以上不是您寻找的疾病，请在疾病列表中选择</p>
-{% else %}
-    <p>未找到您所搜索的疾病，请在疾病列表中选择</p>
-{% endif %}
-
-<br>
-
+<p>您是否要查询：</p>
+{% for disease in disease_list %}
+<div class="media" style="border-style:solid">
+    <form action="{% url 'choose_hospital' %}">
+        <input type="hidden" name="disease_id" value="{{disease.id}}">
+        <button type="submit" class="btn btn-link">{{disease.name}}</button>
+    </form>
+</div>
+{% endfor %}
+<p>未找到您所搜索的疾病，请在疾病列表中选择</p>
 <div class="dropdown">
     <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-    Click Here to Check more Diseases
+    查看更多疾病
     <span class="caret"></span>
     </button>
     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
     {% for dis in all_dis %}
-        <li><a href="{% url 'choose_hospital' disease_id=dis.id %}">{{dis.name}}</a></li>
+        <form action="{% url 'choose_hospital' %}">
+            <input type="hidden" name="disease_id" value="{{dis.id}}">
+            <button type="submit" class="btn btn-link">{{dis.name}}</button>
+        </form>
     {% endfor %}
     </ul>
 </div>
-
 {% endblock %}
