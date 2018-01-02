@@ -330,12 +330,12 @@ class Staff(models.Model):
     def get_assignments(self):  # return order of all assignments
         assignments = []
         if self.get_role() == 1:  # if translator_C2E
-            for order in Order.objects.filter(Q(translator_C2E=self.id)).order_by('submit'):
+            for order in Order.objects.filter(Q(translator_C2E=self.id)).order_by('-id'):
                 assignments.append(order)
             return assignments
 
         if self.get_role() == 2:  # if translator_E2C
-            for order in Order.objects.filter(Q(translator_E2C=self.id)).order_by('submit'):
+            for order in Order.objects.filter(Q(translator_E2C=self.id)).order_by('-id'):
                 assignments.append(order)
 
             return assignments
@@ -344,12 +344,14 @@ class Staff(models.Model):
         assignments = []
         if self.get_role() == 0:
             if status == 'All':
-                assignments = list(Order.objects.order_by('submit'))
+                assignments = list(Order.objects.order_by('-id'))
+
             elif status == 'PENDING':
                 assignments = list(
-                    Order.objects.filter(status=util.SUBMITTED) | Order.objects.filter(status=util.RETURN))
+                    Order.objects.filter(status=util.SUBMITTED).order_by('-id') |
+                    Order.objects.filter(status=util.RETURN).order_by('-id'))
             else:
-                for assignment in Order.objects.order_by('submit'):
+                for assignment in Order.objects.order_by('-id'):
                     if assignment.get_trans_status() == int(status):
                         assignments.append(assignment)
         elif self.get_role() == 1:
@@ -458,7 +460,7 @@ class HospitalReview(models.Model):
 
 
 class Questionnaire(models.Model):
-    
+
     hospital = models.ForeignKey('Hospital', on_delete=models.SET_NULL, null = True, unique=False, default=None)
     disease = models.ForeignKey('Disease', on_delete=models.SET_NULL, null = True, unique=False, default=None)
     category = models.CharField(max_length=200, blank=True)

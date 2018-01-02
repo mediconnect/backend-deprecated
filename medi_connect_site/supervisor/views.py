@@ -116,7 +116,7 @@ def export_csv(request):
 def update_result(request):
     query = request.GET.get('query', None)
     status = request.GET.get('status', None)
-    sort = request.GET.get('sort','Deadline')
+    sort = request.GET.get('sort',None)
     page = request.GET.get('page', 1)
     supervisor = Staff.objects.get(user=request.user)
     data = {
