@@ -5,7 +5,7 @@ import datetime
 
 # Create your models here.
 class Customer(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User,on_delete= models.CASCADE)
     wechat = models.CharField(blank=True, max_length=50)
     weibo = models.CharField(blank=True, max_length=50)
     qq = models.CharField(blank=True, max_length=50)

@@ -23,6 +23,8 @@ from django.template import loader, Context
 from django.urls import reverse,reverse_lazy
 import json
 import csv
+import datetime
+from django.utils import timezone
 from django.http import StreamingHttpResponse
 from django.forms.models import model_to_dict
 from django.core.files.base import ContentFile
@@ -183,9 +185,17 @@ def update_result(request):
     p = Paginator(result, 5)
     result_length = len(result)
     result = p.page(page)
-    data['result_length'] = result_length
+    data['result_length'] = result_length #pagination
+
+
 
     for each in result:
+        # Latest Upload
+        upload = timezone.now()
+        for doc in Document.objects.filter(order_id = each.id):
+            if doc.upload_at < upload:
+                upload = doc.upload_at
+
         data['result']['Order_Id'].append(each.id)
         data['result']['Customer'].append((each.customer.id, each.customer.get_name()))
         data['result']['Patient'].append(each.get_patient())
@@ -197,9 +207,9 @@ def update_result(request):
         data['result']['Trans_Status'].append((each.get_trans_status(),util.trans_status_dict[int(each.get_trans_status())]))
         data['result']['Deadline'].append(each.get_submit_deadline())
         data['result']['Trans_Deadline'].append(each.get_deadline())
-        data['result']['Upload'].append(each.get_upload())
+        data['result']['Upload'].append(upload)
         data['result']['Link'].append(reverse('detail', args=[supervisor.user.id, each.id]))
-
+    #prepare data for display
     data['choices']['customer_choice'] = list(map(lambda x:(int(x),Customer.objects.get(id=x).get_name()),Order.objects.values_list('customer_id',flat=True).distinct()))
     data['choices']['disease_choice'] = list(map(lambda x:(int(x),Disease.objects.get(id=x).get_name()),Order.objects.values_list('disease_id',flat=True).distinct()))
     data['choices']['patient_choice'] = list(map(lambda x:(int(x),Patient_Order.objects.get(id=x).get_name()),Order.objects.exclude(patient_order__isnull=True).values_list('patient_order_id',flat=True).distinct()))

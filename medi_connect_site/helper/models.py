@@ -78,9 +78,10 @@ class Hospital(models.Model):
     area = models.CharField(blank=True, max_length=50)
     overall_rank = models.IntegerField(default=0)
     website = models.URLField(blank=True)
-    introduction = models.TextField(default='intro')
+    introduction = models.TextField(default='intro') # short intro
+    # info = models.TextField(default='info') # long info
     specialty = models.TextField(default='specialty')
-    feedback_time = models.IntegerField(default=1)
+    feedback_time = models.IntegerField(default=1) # average number of weeks for feedback
     average_score = models.FloatField(null=True)
     review_number = models.IntegerField(blank=True)
 
@@ -101,11 +102,12 @@ class Hospital(models.Model):
         else:
             self.average_score = (self.average_score * self.review_number + score) / (self.review_number + 1)
             self.review_number += 1
+        self.save()
 
 
 class Slot(models.Model):
-    hospital = models.ForeignKey('Hospital', unique=False, default=None, related_name='hospital_slot')
-    disease = models.ForeignKey('Disease', unique=False, default=None, related_name='disease_slot')
+    hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, unique=False, default=None, related_name='hospital_slot')
+    disease = models.ForeignKey('Disease', on_delete=models.CASCADE, unique=False, default=None, related_name='disease_slot')
     default_slots = models.IntegerField(default=20)
     slots_open_0 = models.IntegerField(default=20)
     slots_open_1 = models.IntegerField(default=20)
@@ -132,8 +134,8 @@ class Slot(models.Model):
 
 
 class Price(models.Model):
-    hospital = models.ForeignKey('Hospital', unique=False, default=None, related_name='hospital_price')
-    disease = models.ForeignKey('Disease', unique=False, default=None, related_name='disease_price')
+    hospital = models.ForeignKey('Hospital', unique=False, on_delete=models.CASCADE,default=None, related_name='hospital_price')
+    disease = models.ForeignKey('Disease', unique=False, on_delete=models.CASCADE, default=None, related_name='disease_price')
     deposit = models.IntegerField(default=10000)
     full_price = models.IntegerField(default=100000)
 
@@ -143,8 +145,8 @@ class Price(models.Model):
 
 class Rank(models.Model):
     rank = models.IntegerField(default=0)
-    hospital = models.ForeignKey('Hospital', unique=False, default=None, related_name='hospital_rank')
-    disease = models.ForeignKey('Disease', unique=False, default=None, related_name='disease_rank')
+    hospital = models.ForeignKey('Hospital', unique=False, default=None, on_delete=models.CASCADE, related_name='hospital_rank')
+    disease = models.ForeignKey('Disease', unique=False, default=None, on_delete=models.CASCADE, related_name='disease_rank')
 
     class Meta:
         db_table = 'rank'
@@ -253,11 +255,6 @@ class Order(models.Model):
         return str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '-' + str(date.year) + '/' + str(
             date.month) + '/' + str(date.day + 3)
 
-    def get_upload(self):
-        if self.latest_upload is None:
-            return '未上传'
-        return self.latest_upload
-
     def set_upload(self, time):
         self.latest_upload = time
         self.save()
@@ -316,7 +313,7 @@ class Document(models.Model):
 
 
 class Staff(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
     role = models.IntegerField(default=0)
     sequence = models.DateTimeField(default=timezone.now)
 
@@ -412,7 +409,7 @@ class Patient(models.Model):
 
 
 class OrderPatient(models.Model):
-    # Order Patient table to store patient nformation
+    # Order Patient table to store patient information
     # This is created everytime an order is placed
     # Do not change this table when edit patient
     # Fetch patient info for display order-related info
@@ -440,17 +437,17 @@ class OrderPatient(models.Model):
 
 
 class LikeHospital(models.Model):
-    customer = models.ForeignKey(Customer, unique=False, default=None, related_name='customer_liked')
-    hospital = models.ForeignKey('Hospital', unique=False, default=None, related_name='hospital_liked')
-    disease = models.ForeignKey('Disease', unique=False, default=None, related_name='disease_liked')
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, unique=False, default=None, related_name='customer_liked')
+    hospital = models.ForeignKey('Hospital',on_delete=models.CASCADE, unique=False, default=None, related_name='hospital_liked')
+    disease = models.ForeignKey('Disease', on_delete=models.CASCADE, unique=False, default=None, related_name='disease_liked')
 
     class Meta:
         db_table = 'like_hospital'
 
 
 class HospitalReview(models.Model):
-    hospital = models.ForeignKey('Hospital', unique=False, default=None, related_name='hospital_review')
-    order = models.OneToOneField('Order', default=None, related_name='order_review')
+    hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, unique=False, default=None, related_name='hospital_review')
+    order = models.OneToOneField('Order', default=None, on_delete=models.CASCADE, related_name='order_review')
     score = models.IntegerField(default=0)
     comment = models.CharField(max_length=200, blank=True)
 
@@ -463,8 +460,8 @@ class HospitalReview(models.Model):
 
 
 class Questionnaire(models.Model):
-    hospital = models.ForeignKey('Hospital', unique=False, default=None)
-    disease = models.ForeignKey('Disease', unique=False, default=None)
+    hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, unique=False, default=None)
+    disease = models.ForeignKey('Disease', on_delete=models.CASCADE, unique=False, default=None)
     category = models.CharField(max_length=200, blank=True)
     questions = models.FileField(upload_to=util.questions_path, null=True)
     is_translated = models.BooleanField(default=False)

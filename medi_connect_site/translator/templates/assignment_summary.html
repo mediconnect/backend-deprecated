@@ -36,7 +36,7 @@
     {%if not assignment.get_trans_status == 0 or not assignment.get_trans_status == 6%}
         <p>已上传文件</p>
         <ul>
-            {%for obj in assignment.pending.all%}
+            {%for obj in Document.objects.all%}
             <li><a href ="{{obj.document.url}}">{{obj.document}}</a> {{obj.upload_at}}</li>
 
             {%endfor%}

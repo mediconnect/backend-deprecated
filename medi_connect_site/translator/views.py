@@ -12,6 +12,7 @@ from django.apps import apps
 from django.http import JsonResponse
 import json
 import datetime
+from django.utils import timezone
 
 # Create your models here.
 #Get Order and Document Model from helper.models
@@ -92,6 +93,11 @@ def update_result(request):
     raw_page = p.page(page)
 
     for each in result:
+        # Latest Upload
+        upload = timezone.now()
+        for doc in Document.objects.filter(order_id=each.id):
+            if doc.upload_at < upload:
+                upload = doc.upload_at
         data['result']['Order_Id'].append(each.id)
         data['result']['Customer'].append((each.customer.id,each.customer.get_name()))
         data['result']['Disease'].append((each.disease.id,each.disease.name))
@@ -99,7 +105,7 @@ def update_result(request):
         data['result']['Deadline'].append(each.get_remaining()) # translate deadline
         data['result']['Status'].append(util.trans_status_dict[int(each.get_trans_status_for_translator(translator))])
         data['result']['Remaining'].append(each.get_deadline())
-        data['result']['Upload'].append(each.get_upload())
+        data['result']['Upload'].append(upload)
         data['result']['Link'].append(reverse('assignment_summary',args=[translator.user.id,each.id]))
 
 
@@ -179,9 +185,8 @@ def assignment_summary(request, id, order_id):
         file = request.FILES['trans_files']
         fs = FileSystemStorage()
         filename = fs.save(file.name, file)
-        document = Document(order=assignment, document=file, is_origin=False)
+        document = Document(order=assignment, document=file, is_translated=True,type = 1) #upload to pending documents
         document.save()
-        assignment.pending.add(document)
         assignment.set_upload(datetime.datetime.now(utc_8))
         assignment.save()
         return render(request, 'assignment_summary.html', {
