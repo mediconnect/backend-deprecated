@@ -138,6 +138,12 @@ def translator_status(request,id,status):
 def assignment_summary(request, id, order_id):
     translator = Staff.objects.get(user_id = id)
     assignment = Order.objects.get(id=order_id)
+    if translator.get_role() == util.TRANS_C2E:
+        origin_documents = Document.objects.filter(order_id = order_id,type = 0 )
+        pending_documents = Document.objects.filter(order_id = order_id, is_translated = 1)
+    if translator.get_role() == util.TRANS_E2C:
+        origin_documents = Document.objects.filter(order_id = order_id, type = 3)
+        pending_documents = Document.objects.filter(order_id = order_id, type = 4)
     if (request.POST.get('accept')):
         if translator.get_role() == 1:
             assignment.change_status(util.TRANSLATING_ORIGIN)
@@ -147,40 +153,27 @@ def assignment_summary(request, id, order_id):
             assignment.change_trans_status(util.E2C_ONGOING)
         assignment.save()
 
-        return render(request, 'assignment_summary.html', {
-            'translator': translator,
-            'assignment': assignment
-        })
     if(request.POST.get('approval')):
         if translator.get_role() == 1:
             assignment.change_trans_status(util.C2E_APPROVING)
         if translator.get_role() == 2:
             assignment.change_trans_status(util.E2C_APPROVING)
         assignment.save()
-        return render(request, 'assignment_summary.html', {
-            'translator': translator,
-            'assignment': assignment
-        })
+
     if (request.POST.get('finish')):
         if translator.get_role() == 1:
             assignment.change_trans_status(util.C2E_FINISHED)
         if translator.get_role() == 2:
             assignment.change_trans_status(util.E2C_FINISHED)
         assignment.save()
-        return render(request, 'assignment_summary.html', {
-            'translator': translator,
-            'assignment': assignment
-        })
+
     if (request.POST.get('redo')):
         if translator.get_role() == 1:
             assignment.change_trans_status(util.C2E_ONGOING)
         if translator.get_role() == 2:
             assignment.change_trans_status(util.E2C_ONGOING)
         assignment.save()
-        return render(request, 'assignment_summary.html', {
-            'translator': translator,
-            'assignment': assignment
-        })
+
     if request.method == 'POST' and request.FILES.get('trans_files',False):
         file = request.FILES['trans_files']
         fs = FileSystemStorage()
@@ -189,14 +182,10 @@ def assignment_summary(request, id, order_id):
         document.save()
         assignment.set_upload(datetime.datetime.now(utc_8))
         assignment.save()
-        return render(request, 'assignment_summary.html', {
-            'translator': translator,
-            'assignment': assignment
-        })
 
-    else:
-
-        return render(request, 'assignment_summary.html', {
-            'translator': translator,
-            'assignment': assignment
-        })
+    return render(request, 'assignment_summary.html', {
+        'origin_documents': origin_documents,
+        'pending_documents': pending_documents,
+        'translator': translator,
+        'assignment': assignment
+    })

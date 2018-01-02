@@ -3,7 +3,7 @@
 {% block content %}
 <p id = 'order_id'>订单号: {{assignment.id}}</p>
 <p>申请人:   {{assignment.customer.get_name}}</p>
-<p>医院:   麻塞诸塞综合医院</p>
+<p>医院:   {{assignment.hospital.get_name}}</p>
 <p>病人:   病人</p>
 <p>疾病:   {{assignment.disease.name}}</p>
 <p>原始文件</p>

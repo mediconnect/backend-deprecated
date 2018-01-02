@@ -15,28 +15,16 @@
     {%endif%}
 
         <p>任务文件</p>
-        {%if translator.get_role == 1%}
-            <ul>
-                {%for obj in assignment.origin.all%}
-                <li><a href = {{obj.document.url}}>{{obj.document}}</a> 上传于：{{obj.upload_at}}</li>
-                {%endfor%}
-            </ul>
-        {%endif%}
-        {%if translator.get_role == 2%}
-            <ul>
-                {% for obj in assignment.feedback.all %}
-               <li>
-                 <a href="{{obj.document.url}}">{{obj.document}}</a>
-               </li>
-               {% endfor %}
-            </ul>
-        {%endif%}
-
+        <ul>
+            {%for obj in origin_documents%}
+            <li><a href ="{{obj.document.url}}">{{obj.document}}</a> {{obj.upload_at}}</li>
+            {%endfor%}
+        </ul>
 
     {%if not assignment.get_trans_status == 0 or not assignment.get_trans_status == 6%}
         <p>已上传文件</p>
         <ul>
-            {%for obj in Document.objects.all%}
+            {%for obj in pending_documents%}
             <li><a href ="{{obj.document.url}}">{{obj.document}}</a> {{obj.upload_at}}</li>
 
             {%endfor%}
