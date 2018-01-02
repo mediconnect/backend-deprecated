@@ -19,5 +19,5 @@ urlpatterns = [
     url(r'^bookmark/detail/(?P<hospital1_id>\d+)/(?P<hospital2_id>\d+)/$', views.bookmark_detail, name="info_bookmark_detail"),
     url(r'^unmark/(?P<hospital_id>\d+)/$', views.unmark, name="info_unmark"),
     url(r'^review/(?P<order_id>\d+)/$', views.hospital_review, name="info_hospital_review"),
-    url(r'^order/error/$', TemplateView.as_view(template_name="order_error.html"), name="order_error"),
+    url(r'^order/error/$', TemplateView.as_view(template_name="order_expire.html"), name="order_error"),
 ]

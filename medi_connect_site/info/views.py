@@ -160,6 +160,7 @@ def order_finished(request):
 
 @login_required
 def order_pay(request, order_id):
+    order_expire(order_id)
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
     return render(request, 'order_pay.html', {
@@ -170,6 +171,7 @@ def order_pay(request, order_id):
 
 @login_required
 def process_order(request, order_id):
+    order_expire(order_id)
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
     order.status = 2
@@ -180,6 +182,7 @@ def process_order(request, order_id):
 
 @login_required
 def order_detail(request, order_id):
+    order_expire(order_id)
     customer = Customer.objects.get(user=request.user)
     try:
         order = Order.objects.get(id=order_id)
@@ -205,7 +208,9 @@ def order_detail(request, order_id):
     })
 
 
+@login_required
 def add_doc(request, order_id):
+    order_expire(order_id)
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
@@ -322,6 +327,7 @@ def profile_patient_edit(request, patient_id):
 
 @login_required
 def hospital_review(request, order_id):
+    order_expire(order_id)
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
         order.status = 7
@@ -335,3 +341,8 @@ def hospital_review(request, order_id):
         'customer': Customer.objects.get(user=request.user),
         'order': order,
     })
+
+
+def order_expire(order_id):
+    if len(Order.objects.filter(id=order_id)) <= 0:
+        return TemplateView(template_name='order_expire.html')

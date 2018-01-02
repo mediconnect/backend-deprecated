@@ -6,26 +6,26 @@
 <button type="button" class="btn btn-default" id="like-button">
     <span style="font-size:1.5em;" class="glyphicon glyphicon-star"></span>
 </button>
-<p id="like-statement">Bookmark this Hospital</p>
+<p id="like-statement">收藏这家医院</p>
 
 <br>
 
-<p>Rank: {{rank}}</p>
-<h4 class="media-heading">Hospital Name: {{hospital.name}}</h4>
-<p>Introduction: {{hospital.introduction}}</p>
-<p>Feedback: {{hospital.feedback_time}}</p>
-<p>Price: {{hospital.price_range}}</p>
-<p> 1st week: {{slots.0}} <input id="radio0" type="radio" name="slots" checked>Choose 1st W<br></p>
-<p> 2nd week: {{slots.1}} <input id="radio1" type="radio" name="slots">Choose 2nd W<br></p>
-<p> 3rd week: {{slots.2}} <input id="radio2" type="radio" name="slots">Choose 3rd W<br></p>
-<p> 4th week: {{slots.3}} <input id="radio3" type="radio" name="slots">Choose 4th W<br></p>
+<p>排名: {{rank}}</p>
+<h4 class="media-heading">医院名字: {{hospital.name}}</h4>
+<p>介绍: {{hospital.introduction}}</p>
+<p>反馈: {{hospital.feedback_time}}</p>
+<p>价格: {{hospital.price_range}}</p>
+<p>第一个星期: {{slots.0}} <input id="radio0" type="radio" name="slots" checked>选择第一个星期<br></p>
+<p>第二个星期: {{slots.1}} <input id="radio1" type="radio" name="slots">选择第二个星期<br></p>
+<p>第三个星期: {{slots.2}} <input id="radio2" type="radio" name="slots">选择第三个星期<br></p>
+<p>第四个星期: {{slots.3}} <input id="radio3" type="radio" name="slots">选择第四个星期<br></p>
 
 {{error}}
 <form method="post" id="order_placement_form">
     {% csrf_token %}
     <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
     <input id="slot" type="hidden" name="slot" value=0>
-    <button class="btn btn-default" type="submit">Place Order</button>
+    <button class="btn btn-default" type="submit">下订单</button>
 </form>
 
 <br>
@@ -39,7 +39,7 @@
                 {% endfor %}
             </ul>
         </div>
-        <button class="btn btn-default" id="more-comment">Other Comments</button>
+        <button class="btn btn-default" id="more-comment">更多评价</button>
     </div>
 </div>
 
