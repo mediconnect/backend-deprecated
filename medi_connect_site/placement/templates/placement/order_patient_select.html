@@ -4,16 +4,16 @@
 
 <div class="btn-group btn-group-justified" role="group" aria-label="...">
   <div class="btn-group" role="group">
-    <a type="button" class="btn btn-primary" href="{% url 'order_patient_info' order_id=order_id %}">01 Patient Info</a>
+    <a type="button" class="btn btn-primary" href="{% url 'order_patient_info' %}">01 患者信息</a>
   </div>
   <div class="btn-group" role="group">
-    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_document_info' order_id=order_id %}">02 Disease Info</a>
+    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_document_info' %}">02 疾病信息</a>
   </div>
   <div class="btn-group" role="group">
-    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_review' order_id=order_id %}">03 Review</a>
+    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_review' %}">03 回顾订单</a>
   </div>
   <div class="btn-group" role="group">
-    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_deposit' order_id=order_id %}">04 Deposit</a>
+    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_deposit' %}">04 付款</a>
   </div>
 </div>
 
@@ -23,9 +23,9 @@
 
 <table class="table">
     <tr>
-        <th>Name</th>
-        <th>Birth</th>
-        <th>Gender</th>
+        <th>姓名</th>
+        <th>生日</th>
+        <th>性别</th>
         <th></th>
     </tr>
 
@@ -38,13 +38,14 @@
             <form method="post">
                 {% csrf_token %}
                 <input type="hidden" name="patient_id" value="{{ patient.id }}">
-                <input type="hidden" name="order_id" value="{{ order_id }}">
-                <button>Select This Patient</button>
+                <button>选择这个患者</button>
             </form>
         </td>
     </tr>
     {% endfor %}
 </table>
+
+<a class="btn btn-link" href="{% url 'order_patient_info' %}">后退</a>
 
 <div class="modal fade" tabindex="-1" role="dialog" id="myModal" >
     <div class="modal-dialog" role="document">

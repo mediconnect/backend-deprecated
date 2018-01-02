@@ -19,11 +19,11 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-left">
-                <li><a href="{% url 'hospital_list' %}">Hospital</a></li>
-                <li><a href="{% url 'disease_list' %}">Disease</a></li>
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">Service Info</a></li>
-                <li><a href="{% url 'contact' %}">Contact Us</a></li>
+                <li><a href="{% url 'hospital_list' %}">医院</a></li>
+                <li><a href="{% url 'disease_list' %}">疾病</a></li>
+                <li><a href="#">关于我们</a></li>
+                <li><a href="#">服务条款</a></li>
+                <li><a href="{% url 'contact' %}">联系我们</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
@@ -33,9 +33,9 @@
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="{% url 'info_order' %}">My Homepage</a></li>
+                        <li><a href="{% url 'info_order' %}">我的主页</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                        <li><a href="{% url 'logout' %}">退出</a></li>
                     </ul>
                 </li>
             </ul>

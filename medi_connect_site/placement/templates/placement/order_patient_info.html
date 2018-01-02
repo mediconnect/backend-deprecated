@@ -4,16 +4,16 @@
 
 <div class="btn-group btn-group-justified" role="group" aria-label="...">
   <div class="btn-group" role="group">
-    <a type="button" class="btn btn-primary" href="{% url 'order_patient_info' order_id=order_id %}">01 Patient Info</a>
+    <a type="button" class="btn btn-primary" href="{% url 'order_patient_info' %}">01 患者信息</a>
   </div>
   <div class="btn-group" role="group">
-    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_document_info' order_id=order_id %}">02 Disease Info</a>
+    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_document_info' %}">02 疾病信息</a>
   </div>
   <div class="btn-group" role="group">
-    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_review' order_id=order_id %}">03 Review</a>
+    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_review' %}">03 回顾订单</a>
   </div>
   <div class="btn-group" role="group">
-    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_deposit' order_id=order_id %}">04 Deposit</a>
+    <a style="pointer-events: none;" type="button" class="btn btn-default" href="{% url 'order_deposit' %}">04 付款</a>
   </div>
 </div>
 
@@ -35,10 +35,10 @@
         {% endfor %}
     </div>
     {% endfor %}
-    <button type="submit" class="btn btn-default">Next</button>
+    <a class="btn btn-link" href="{% url 'hospital_detail' %}">后退</a>
+    <button type="submit" class="btn btn-default">下一步</button>
 </form>
 <form action="{% url 'order_patient_select' %}" method="get">
-    <input type="hidden" name="order_id" value="{{ order_id }}">
     <button type="submit" class="btn btn-link">添加已经存在的病患</button>
 </form>
 

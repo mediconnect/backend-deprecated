@@ -137,7 +137,8 @@ def hospital_detail(request):
         else:
             slot.slots_open_3 -= 1
         slot.save()
-        return redirect('order_patient_info', order.id)
+        request.session['order_id'] = order.id
+        return redirect('order_patient_info')
 
 
 def clean_order(order_id):
@@ -179,7 +180,8 @@ def get_comment(request):
 
 
 @login_required
-def order_patient_info(request, order_id):
+def order_patient_info(request):
+    order_id = request.session['order_id']
     order_expire(order_id)
     if request.method == 'GET':
         customer = Customer.objects.get(user=request.user)
@@ -204,7 +206,6 @@ def order_patient_info(request, order_id):
                 'first_name_pin_yin': pin_yin[0],
                 'last_name_pin_yin': pin_yin[1],
             }),
-            'order_id': order.id,
             'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
         })
     else:
@@ -214,7 +215,6 @@ def order_patient_info(request, order_id):
         if not form.is_valid():
             return render(request, 'order_patient_info.html', {
                 'form': form,
-                'order_id': order.id,
                 'customer': customer,
                 'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
             })
@@ -252,25 +252,24 @@ def order_patient_info(request, order_id):
         order_patient.save()
         order.patient_order = order_patient
         order.save()
-        return redirect('order_document_info', order.id)
+        return redirect('order_document_info')
 
 
 @login_required
 def order_patient_select(request):
+    order_id = request.session['order_id']
+    order_expire(order_id)
     if request.method == 'GET':
-        order_id = request.GET.get('order_id')
         order_expire(order_id)
         customer = Customer.objects.get(user=request.user)
         order = Order.objects.get(id=order_id)
         patients = Patient.objects.filter(customer=customer)
         return render(request, 'order_patient_select.html', {
             'customer': customer,
-            'order_id': order.id,
             'patients': patients,
             'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
         })
     else:
-        order_id = request.POST.get('order_id')
         patient_id = request.POST.get('patient_id')
         order_expire(order_id)
         order = Order.objects.get(id=order_id)
@@ -284,11 +283,12 @@ def order_patient_select(request):
         order.patient_order = order_patient
         order.status = -1
         order.save()
-        return redirect('order_patient_info', order.id)
+        return redirect('order_patient_info')
 
 
 @login_required
-def order_document_info(request, order_id):
+def order_document_info(request):
+    order_id = request.session['order_id']
     order_expire(order_id)
     if request.method == 'GET':
         order = Order.objects.get(id=order_id)
@@ -307,7 +307,6 @@ def order_document_info(request, order_id):
         return render(request, 'order_document_info.html', {
             'customer': customer,
             'form': form,
-            'order_id': order.id,
             'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
             'documents': Document.objects.filter(order=order, type=0)
         })
@@ -318,7 +317,6 @@ def order_document_info(request, order_id):
         if not form.is_valid():
             return render(request, 'order_document_info.html', {
                 'form': form,
-                'order_id': order.id,
                 'customer': customer,
                 'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
             })
@@ -342,11 +340,12 @@ def order_document_info(request, order_id):
         patient.save()
         order.status = -2
         order.save()
-        return redirect('order_review', order.id)
+        return redirect('order_review')
 
 
 @login_required
-def order_review(request, order_id):
+def order_review(request):
+    order_id = request.session['order_id']
     order_expire(order_id)
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
@@ -359,7 +358,8 @@ def order_review(request, order_id):
 
 
 @login_required
-def pay_deposit(request, order_id):
+def pay_deposit(request):
+    order_id = request.session['order_id']
     order_expire(order_id)
     customer = Customer.objects.get(user=request.user)
     order = Order.objects.get(id=order_id)
@@ -373,7 +373,7 @@ def pay_deposit(request, order_id):
             order.full_payment_paid = True
         order.status = 1
         order.save()
-        return redirect('order_finish', order_id=order.id)
+        return redirect('order_finish')
     return render(request, 'order_deposit.html', {
         'order': order,
         'customer': customer,
@@ -382,7 +382,8 @@ def pay_deposit(request, order_id):
 
 
 @login_required
-def finish(request, order_id):
+def finish(request):
+    order_id = request.session['order_id']
     order = Order.objects.get(id=order_id)
     customer = Customer.objects.get(user=request.user)
     auto_assign(order)
@@ -417,7 +418,7 @@ def like_hospital(request):
 
 @login_required
 def order_check(request):
-    order_id = request.GET.get('order_id', None)
+    order_id = request.session['order_id']
     orders = Order.objects.filter(id=order_id)
     if len(orders) > 0:
         return JsonResponse({'exist': True})

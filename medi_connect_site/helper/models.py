@@ -78,10 +78,9 @@ class Hospital(models.Model):
     area = models.CharField(blank=True, max_length=50)
     overall_rank = models.IntegerField(default=0)
     website = models.URLField(blank=True)
-    introduction = models.TextField(default='intro') # short intro
-    # info = models.TextField(default='info') # long info
+    introduction = models.TextField(default='intro')
     specialty = models.TextField(default='specialty')
-    feedback_time = models.IntegerField(default=1) # average number of weeks for feedback
+    feedback_time = models.IntegerField(default=1)
     average_score = models.FloatField(null=True)
     review_number = models.IntegerField(blank=True)
 
@@ -102,7 +101,6 @@ class Hospital(models.Model):
         else:
             self.average_score = (self.average_score * self.review_number + score) / (self.review_number + 1)
             self.review_number += 1
-        self.save()
 
 
 class Slot(models.Model):
@@ -255,6 +253,11 @@ class Order(models.Model):
         return str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '-' + str(date.year) + '/' + str(
             date.month) + '/' + str(date.day + 3)
 
+    def get_upload(self):
+        if self.latest_upload is None:
+            return '未上传'
+        return self.latest_upload
+
     def set_upload(self, time):
         self.latest_upload = time
         self.save()
@@ -404,7 +407,7 @@ class Patient(models.Model):
 
 
 class OrderPatient(models.Model):
-    # Order Patient table to store patient information
+    # Order Patient table to store patient nformation
     # This is created everytime an order is placed
     # Do not change this table when edit patient
     # Fetch patient info for display order-related info
@@ -455,6 +458,7 @@ class HospitalReview(models.Model):
 
 
 class Questionnaire(models.Model):
+    
     hospital = models.ForeignKey('Hospital', on_delete=models.SET_NULL, null = True, unique=False, default=None)
     disease = models.ForeignKey('Disease', on_delete=models.SET_NULL, null = True, unique=False, default=None)
     category = models.CharField(max_length=200, blank=True)
