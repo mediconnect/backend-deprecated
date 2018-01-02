@@ -6,7 +6,7 @@ from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from helper.forms import PatientInfo, AppointmentInfo
 from helper.models import auto_assign
-from dynamic_form.forms import create_form, get_fields
+from dynamic_form.forms import create_form, get_fields, modify_form
 from django.core.paginator import Paginator, EmptyPage
 from django.views.generic.base import TemplateView
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -303,12 +303,13 @@ def order_document_info(request, order_id):
             'contact': order.patient_order.contact if order.patient_order is not None else '',
         })
         form = create_form(int(order.hospital.id), int(order.disease.id), appointment_form)
+        modify_form(order, form)
         return render(request, 'order_document_info.html', {
             'customer': customer,
             'form': form,
             'order_id': order.id,
             'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
-            'documents': Document.objects.filter(order=order, type=0),
+            'documents': Document.objects.filter(order=order, type=0)
         })
     else:
         order = Order.objects.get(id=order_id)
@@ -322,6 +323,7 @@ def order_document_info(request, order_id):
                 'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
             })
         required, optional = get_fields(order.hospital.id, order.disease.id)
+
         for field in required:
             for f in request.FILES.getlist(field):
                 doc = Document(document=f, description=field, order=order, type=0)

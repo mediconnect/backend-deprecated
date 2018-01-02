@@ -181,7 +181,10 @@ def process_order(request, order_id):
 @login_required
 def order_detail(request, order_id):
     customer = Customer.objects.get(user=request.user)
-    order = Order.objects.get(id=order_id)
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return redirect('order_error')
     if int(order.status) <= 1:
         status = int(order.status)
         if status == 0:

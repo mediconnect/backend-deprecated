@@ -1,6 +1,7 @@
 from helper.models import Hospital, Patient, Disease, Order, Document, HospitalReview, LikeHospital, OrderPatient, Rank, \
     Slot
 from customer.models import Customer
+from dynamic_form.forms import get_fields
 
 
 def delete_order(order_id):
