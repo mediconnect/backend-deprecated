@@ -1,6 +1,6 @@
 from django import forms
 from models import DynamicForm
-from helper.models import Hospital, Disease
+from helper.models import Hospital, Disease, Document
 
 
 def create_form(hospital_id, disease_id, form, only_optional=False):
@@ -40,3 +40,12 @@ def get_fields(hospital_id, disease_id):
     else:
         optional = []
     return required, optional
+
+
+def modify_form(order, form):
+    required, optional = get_fields(int(order.hospital.id), int(order.disease.id))
+    for doc in required:
+        documents = Document.objects.filter(type=0, order=order, description=doc)
+        if len(documents) > 0:
+            form.fields[doc].required = False
+    return form
