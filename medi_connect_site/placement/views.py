@@ -151,7 +151,7 @@ def clean_order(order_id):
             break
         naive = order.submit
         diff = datetime.datetime.now(tz=pytz.utc) - naive
-        if diff.total_seconds() > 1800:
+        if diff.total_seconds() > 300:
             delete_order(order.id)
             break
         sleep(60)
@@ -277,8 +277,7 @@ def order_patient_select(request):
         order.patient = patient
         order_patient = OrderPatient(first_name=patient.first_name, last_name=patient.last_name, birth=patient.birth,
                                      gender=patient.gender, relationship=patient.relationship,
-                                     passport=patient.passport,
-                                     contact=patient.contact)
+                                     passport=patient.passport, contact=patient.contact, pin_yin=patient.pin_yin)
         order_patient.save()
         order.patient_order = order_patient
         order.status = -1

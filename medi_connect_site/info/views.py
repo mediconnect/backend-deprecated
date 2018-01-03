@@ -190,14 +190,15 @@ def order_detail(request, order_id):
         return redirect('order_error')
     if int(order.status) <= 1:
         status = int(order.status)
+        request.session['order_id'] = order.id
         if status == 0:
-            return redirect('order_patient_info', order.id)
+            return redirect('order_patient_info')
         elif status == -1:
-            return redirect('order_document_info', order.id)
+            return redirect('order_document_info')
         elif status == -2:
-            return redirect('order_review', order.id)
+            return redirect('order_review')
         elif status == -3:
-            return redirect('order_deposit', order.id)
+            return redirect('order_deposit')
     return render(request, 'info_order_detail.html', {
         'customer': customer,
         'order': order,

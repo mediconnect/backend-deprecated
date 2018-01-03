@@ -45,13 +45,13 @@ class PatientInfo(forms.ModelForm):
     last_name_pin_yin = forms.CharField(
         label="Last Name Pin Yin",
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        required=False,
+        required=True,
     )
 
     first_name_pin_yin = forms.CharField(
         label="First Name Pin Yin",
         widget=forms.TextInput(attrs={'class': 'form-control'}),
-        required=False,
+        required=True,
     )
 
     class Meta:
