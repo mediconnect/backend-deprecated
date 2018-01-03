@@ -19,7 +19,7 @@ def create_form(hospital_id, disease_id, form, only_optional=False):
             form.fields[field] = forms.FileField()
             form.fields[field].label = field
             form.fields[field].widget = forms.ClearableFileInput(attrs={'multiple': True})
-            form.fields[field].required = True
+            form.fields[field].required = False
     for field in optional:
         form.fields[field] = forms.FileField()
         form.fields[field].label = field
@@ -41,11 +41,3 @@ def get_fields(hospital_id, disease_id):
         optional = []
     return required, optional
 
-
-def modify_form(order, form):
-    required, optional = get_fields(int(order.hospital.id), int(order.disease.id))
-    for doc in required:
-        documents = Document.objects.filter(type=0, order=order, description=doc)
-        if len(documents) > 0:
-            form.fields[doc].required = False
-    return form

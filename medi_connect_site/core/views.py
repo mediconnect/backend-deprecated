@@ -141,7 +141,7 @@ def result(request):
             # handle data for exact match
             rank_list = Rank.objects.filter(disease=dis[0]).order_by('rank')
             hospital_list = []
-            for r, rank in enumerate(rank_list, 1):
+            for rank, r in enumerate(rank_list, 1):
                 hosp = r.hospital
                 single_hopital = dict()
                 single_hopital['id'] = hosp.id

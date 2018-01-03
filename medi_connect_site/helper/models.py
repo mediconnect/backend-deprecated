@@ -391,17 +391,17 @@ class Staff(models.Model):
 
 class Patient(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
-    first_name = models.CharField(max_length=50, default='')
-    last_name = models.CharField(max_length=50, default='')
-    pin_yin = models.CharField(max_length=50, default='')
-    birth = models.DateField(default=datetime.date.today)
+    first_name = models.CharField(max_length=50, default=None, null=True)
+    last_name = models.CharField(max_length=50, default=None, null=True)
+    pin_yin = models.CharField(max_length=50, default=None, null=True)
+    birth = models.DateField(default=datetime.date.today, null=True)
     gender = models.CharField(max_length=5, choices=util.GENDER_CHOICES, default=util.MALE)  # birthdate
-    category = models.CharField(max_length=50, default='COLD')
-    diagnose_hospital = models.CharField(max_length=50, default='')
-    doctor = models.CharField(max_length=50, default='')
+    category = models.CharField(max_length=50, default=None, null=True)
+    diagnose_hospital = models.CharField(max_length=50, default=None, null=True)
+    doctor = models.CharField(max_length=50, default=None, null=True)
     relationship = models.CharField(max_length=50, choices=util.RELATION_CHOICES, default=util.SELF)
-    passport = models.CharField(max_length=50, default='')
-    contact = models.CharField(max_length=50, default='')
+    passport = models.CharField(max_length=50, default=None, null=True)
+    contact = models.CharField(max_length=50, default=None, null=True)
 
     class Meta:
         db_table = 'patient'
@@ -419,17 +419,17 @@ class OrderPatient(models.Model):
     # This is created everytime an order is placed
     # Do not change this table when edit patient
     # Fetch patient info for display order-related info
-    first_name = models.CharField(max_length=50, default='')
-    last_name = models.CharField(max_length=50, default='')
-    pin_yin = models.CharField(max_length=50, default='')
-    birth = models.DateField(datetime.date.today)
+    first_name = models.CharField(max_length=50, default=None, null=True)
+    last_name = models.CharField(max_length=50, default=None, null=True)
+    pin_yin = models.CharField(max_length=50, default=None, null=True)
+    birth = models.DateField(datetime.date.today, default=None, null=True)
     gender = models.CharField(max_length=5, choices=util.GENDER_CHOICES, default=util.MALE)
     category = models.CharField(max_length=50, default='COLD')
-    diagnose_hospital = models.CharField(max_length=50, default='')
-    doctor = models.CharField(max_length=50, default='')
+    diagnose_hospital = models.CharField(max_length=50, default=None, null=True)
+    doctor = models.CharField(max_length=50, default=None, null=True)
     relationship = models.CharField(max_length=50, choices=util.RELATION_CHOICES, default=util.SELF)
-    passport = models.CharField(max_length=50, default='')
-    contact = models.CharField(max_length=50, default='')
+    passport = models.CharField(max_length=50, default=None, null=True)
+    contact = models.CharField(max_length=50, default=None, null=True)
 
     class Meta:
         db_table = 'order_patient'

@@ -6,7 +6,7 @@ from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from helper.forms import PatientInfo, AppointmentInfo
 from helper.models import auto_assign
-from dynamic_form.forms import create_form, get_fields, modify_form
+from dynamic_form.forms import create_form, get_fields
 from django.core.paginator import Paginator, EmptyPage
 from django.views.generic.base import TemplateView
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -154,7 +154,7 @@ def clean_order(order_id):
         if diff.total_seconds() > 300:
             delete_order(order.id)
             break
-        sleep(60)
+        sleep(5)
 
 
 @login_required
@@ -187,10 +187,10 @@ def order_patient_info(request):
         customer = Customer.objects.get(user=request.user)
         order = Order.objects.get(id=order_id)
         pin_yin = order.patient_order.pin_yin.split() if order.patient_order is not None and len(
-            order.patient_order.pin_yin) >= 3 else ['', '']
+            order.patient_order.pin_yin) >= 3 and ' ' in order.patient_order.pin_yin else ['', '']
         return render(request, 'order_patient_info.html', {
             'customer': customer,
-            'form': PatientInfo(instance=request.user, initial={
+            'form': PatientInfo(instance=order, initial={
                 'contact': customer.get_name(),
                 'email': customer.user.email,
                 'address': customer.address,
@@ -292,7 +292,7 @@ def order_document_info(request):
     if request.method == 'GET':
         order = Order.objects.get(id=order_id)
         customer = Customer.objects.get(user=request.user)
-        appointment_form = AppointmentInfo(instance=customer, initial={
+        appointment_form = AppointmentInfo(instance=order, initial={
             'hospital': order.hospital.name,
             'hospital_address': order.hospital.area,
             'time': order.submit,
@@ -302,7 +302,6 @@ def order_document_info(request):
             'contact': order.patient_order.contact if order.patient_order is not None else '',
         })
         form = create_form(int(order.hospital.id), int(order.disease.id), appointment_form)
-        modify_form(order, form)
         return render(request, 'order_document_info.html', {
             'customer': customer,
             'form': form,
@@ -312,12 +311,14 @@ def order_document_info(request):
     else:
         order = Order.objects.get(id=order_id)
         customer = Customer.objects.get(user=request.user)
-        form = AppointmentInfo(request.POST, request.FILES, instance=customer)
+        form = AppointmentInfo(request.POST, request.FILES, instance=order)
+        form = create_form(int(order.hospital.id), int(order.disease.id), form)
         if not form.is_valid():
             return render(request, 'order_document_info.html', {
                 'form': form,
                 'customer': customer,
                 'time': (datetime.datetime.now(tz=pytz.utc) - order.submit).total_seconds(),
+                'documents': Document.objects.filter(order=order, type=0),
             })
         required, optional = get_fields(order.hospital.id, order.disease.id)
 
