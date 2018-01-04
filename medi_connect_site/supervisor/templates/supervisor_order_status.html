@@ -47,54 +47,54 @@
         </th>
         <th>
             <input type="text" id="customer_search" onkeyup="setTimeout(test,1000)" placeholder="搜索申请人">
-            <select class= 'select' id = 'customer_filter' onchange="filter()">
+            <select class= 'select' id = 'customer_filter' onchange="filter('customer', this)">
             </select>
         </th>
         <th>
             <input type="text" id="patient_search" onkeyup="search(2)" placeholder="搜索病人">
-            <select class='select' id ="patient_filter" >
+            <select class='select' id ="patient_filter" onchange = "filter('patient_order',this)" >
             </select>
         </th>
         <th>
             <input type="text" id="hospital_search" onkeyup="search(3)" placeholder="搜索医院">
-            <select class = 'select' id = 'hospital_filter'>
+            <select class = 'select' id = 'hospital_filter' onchange = "filter('hospital',this)">
 
             </select>
         </th>
         <th>
             <input type="text" id="disease_search" onkeyup="search(4)" placeholder="搜索疾病">
-            <select class = 'select' id = 'disease_filter'>
+            <select class = 'select' id = 'disease_filter' onchange = "filter('disease',this)">
 
             </select>
         </th>
         <th>
             <input type="text" id="trans_C2E_search" onkeyup="search(5)" placeholder="搜索汉译英翻译">
-            <select class = 'select' id = 'translator_C2E_filter'>
+            <select class = 'select' id = 'translator_C2E_filter' onchange = "filter('translator_c2e',this)">
             </select>
         </th>
         <th>
             <input type="text" id="trans_E2C_search" onkeyup="search(6)" placeholder="搜索英译汉翻译">
-            <select class = 'select' id = 'translator_E2C_filter'>
+            <select class = 'select' id = 'translator_E2C_filter' onchange = "filter('translator_e2c',this)">
             </select>
         </th>
         <th>
             <input type="text" id="status_search" onkeyup="search(7)" placeholder="搜索状态">
-            <select class = 'select' id = 'status_filter'>
+            <select class = 'select' id = 'status_filter' onchange = "filter('status',this)">
             </select>
         </th>
         <th>
             <input type="text" id="trans_status_search" onkeyup="search(8)" placeholder="搜索翻译状态">
-            <select class = 'select' id = 'trans_status_filter' >
+            <select class = 'select' id = 'trans_status_filter' onchange = "filter('trans_status',this)">
             </select>
         </th>
         <th>
-            <button onclick="sortDeadline()">排序</button>
+            <button onclick="sort('Deadline')">排序</button>
         </th>
         <th>
-            <button onclick="sortDeadline()">排序</button>
+            <button onclick="sort('Trans_Deadline')">排序</button>
         </th>
         <th>
-            <button onclick="sortDeadline()">排序</button>
+            <button onclick="sort('Last_Upload')">排序</button>
         </th>
         <th></th>
     </tr>
@@ -105,40 +105,17 @@
 <a href="{% url 'export_csv' %}">Export</a>
   <script>
     var result_length;
-    var dic={}
-    $( document ).ready(function() {
+    var dic = {};
+    var sort_by;
+    // read from json response
+
+    $( document ).ready(function() { // initiate result when page is first loaded
         $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic)},function(data){
             createResult(data);
             createChoice(data);
         });
     });
-    function test(){
-        if (document.getElementById('order_search').value==""){
-            dic['order_id']='All'
-        }
-        else{
-            dic['order_id']=document.getElementById('order_search').value;
-        }
-        buildQueryFromSearch('customer');
-        console.log(dic);
-        /*
-        buildQuery('customer');
-        buildQuery('patient');
-        buildQuery('hospital');
-        buildQuery('disease');
-        buildQuery('translator_C2E');
-        buildQuery('translator_E2C');
-        buildQuery('status');
-        buildQuery('trans_status');
-        */
-        $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic)},function(data){
-            createResult(data);
 
-        });
-    }
-    function filter(){
-
-    }
     function buildQueryFromSearch(x){
         str = x.toString()
         search_str = str+'_search';
@@ -174,8 +151,8 @@
 
         }
         result_length = data.result_length;
-
-        console.log(result_length);
+        dic = data.dic;
+        sort_by = data.sort_by;
         $('#pagination').twbsPagination({
             next: '下一页',
             last:'最后一页',
@@ -185,7 +162,6 @@
             visiblePages:10,
             onPageClick: function (event, page) {
                 $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic),'page':page},function(data){
-
                     createResult(data);
                 });
             }
@@ -221,7 +197,7 @@
     }
     function createOption(data,x){
         str = x.toString();
-        filter = str+'_filter'
+        var filter = str+'_filter'
         var select = document.getElementById(filter);
         choice = str+'_choice'
         choices = data.choices[choice]
@@ -237,7 +213,20 @@
             select.appendChild(option);
           }
     }
-
+    function sort(keyword){ // sort function
+        sort_by = keyword;
+        $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','sort':sort_by, 'query':JSON.stringify(dic)},function(data){
+                    createResult(data);
+                });
+    }
+    function filter(field,element){ //filter function
+        dic[field] = element.value;
+        console.log(dic);
+        $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','sort':sort_by, 'query':JSON.stringify(dic)},function(data){
+                    createResult(data);
+                    createChoice(data);
+                });
+    }
 </script>
 
 

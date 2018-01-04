@@ -259,15 +259,6 @@ class Order(models.Model):
         return str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '-' + str(date.year) + '/' + str(
             date.month) + '/' + str(date.day + 3)
 
-    def get_upload(self):
-        if self.latest_upload is None:
-            return '未上传'
-        return self.latest_upload
-
-    def set_upload(self, time):
-        self.latest_upload = time
-        self.save()
-
     def get_status(self):
         return int(self.status)
 
@@ -300,7 +291,6 @@ class Document(models.Model):
     order = models.ForeignKey('Order', on_delete=models.SET_NULL, null=True)
     description = models.CharField(max_length=50, blank=True)
     required = models.BooleanField(default=False)
-    is_translated = models.BooleanField(default=False)
     upload_at = models.DateTimeField(default=timezone.now)
     comment = models.CharField(max_length=255, blank=True)
     document = models.FileField(upload_to=order_directory_path, null=True)

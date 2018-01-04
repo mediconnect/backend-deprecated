@@ -31,9 +31,6 @@ from django.core.files.base import ContentFile
 from helper.models import auto_assign,manual_assign
 
 
-
-
-
 Order = apps.get_model('helper', 'Order')
 Document = apps.get_model('helper', 'Document')
 Hospital = apps.get_model('helper', 'Hospital')
@@ -45,8 +42,15 @@ Rank = apps.get_model('helper','Rank')
 Questionnaire = apps.get_model('helper','Questionnaire')
 Slot = apps.get_model('helper','Slot')
 
+
+"""
+Delete Translator Function:
+    1. delete translator
+    2. delete user
+    3. reassign assignment and mark reassigned
+"""
 @login_required
-def validate_pwd(request):
+def validate_pwd(request): # validate password for delete translatoe operation
     data = {
         'validate':False,
         'msg':''
@@ -54,7 +58,7 @@ def validate_pwd(request):
     password = request.GET.get('password',None)
     id = request.GET.get('trans_id',None)
     supervisor = Staff.objects.get(user = request.user)
-    if password is '':
+    if password is '': # password is empty
         data['msg'] = '密码不能为空'
         return JsonResponse(data)
     if check_password(password,supervisor.user.password):
@@ -67,18 +71,21 @@ def validate_pwd(request):
     user = translator.user
     assignments = translator.get_assignments()
     translator.delete()
-    #user.delete()
-    for each in assignments:
+    user.delete()
+    for each in assignments: # reassign all assignments assigned to the deleted translator
         if each.get_status() <= util.C2E_FINISHED:
-            each.c2e_reassigned = True
+            each.c2e_reassigned += 1
         else:
-            each.c2e_reassigned = True
+            each.c2e_reassigned += 1
         auto_assign(each)
         each.save()
-    data['msg']='操作成功'
+    data['msg']='操作成功' # return success only in reassign succeed
 
     return JsonResponse(data)
-
+"""
+Using buffer stream to handle CSV export
+    1. Need to format the output
+"""
 class Echo(object):
     """An object that implements just the write method of the file-like
     interface.
@@ -93,8 +100,6 @@ def export_csv(request):
     util.log("CSV exported")
 
     # TODO: Add more log to where database operation is needed;
-
-    """A view that streams a large CSV file."""
     # Generate a sequence of rows. The range is based on the maximum number of
     # rows that can be handled by a single sheet in most spreadsheet
     # applications.
@@ -112,6 +117,13 @@ def export_csv(request):
 
     return response
 
+
+"""
+Ajax function to update the result of home page of supervisor result
+    1. Reimplement sorting and filtering function. 
+"""
+
+
 @login_required()
 def update_result(request):
     query = request.GET.get('query', None)
@@ -119,7 +131,9 @@ def update_result(request):
     sort = request.GET.get('sort',None)
     page = request.GET.get('page', 1)
     supervisor = Staff.objects.get(user=request.user)
+
     data = {
+        'sort_by': 'None',
         'result': {
             'Order_Id': [],
             'Customer': [],
@@ -147,7 +161,7 @@ def update_result(request):
         }
 
     }
-    raw = supervisor.get_assignments_status(status)
+    raw = supervisor.get_assignments_status(status) # raw queryset unsorted, unfiltered
 
     if sort!=None:
         if sort == 'Deadline':
@@ -160,9 +174,23 @@ def update_result(request):
 
     json_acceptable_string = query.replace("'", "\"")
     d = json.loads(json_acceptable_string)
-    if d!={} and d['order_id']!= 'All':
-        result = [Order.objects.get(id=d['order_id'])]
+    if d == {}: # initiate the query
+        data['dic']={
+                  'order_id': 'All',
+                  'customer': 'All',
+                  'patient_order': 'All',
+                  'hospital': 'All',
+                  'disease': 'All',
+                  'translator_c2e': 'All',
+                  'translator_e2c': 'All',
+                  'status': 'All',
+                  'trans_status': 'All',
+              }
     else:
+        data['dic'] = d # read and store the query
+    if d!={} and d['order_id']!= 'All': #get one specific order using order id
+        result = [Order.objects.get(id=d['order_id'])]
+    else: # filter the queryset using the query
         if query != None and d != {}:
             result = []
             for each in raw:
@@ -170,12 +198,17 @@ def update_result(request):
                 for key in d:
                     if d[key] != 'All':
                         attr = getattr(each, key)
-                        if type(d[key])!=int:
+                        try :
+                            int(d[key])
+                            try:
+                                if attr.id != int(d[key]):
+                                     match = False
+                            except AttributeError:
+                               if attr != int (d[key]):
+                                   match = False
+                        except ValueError:
                             if str(d[key]) not in str(attr.get_name()):
                                 match = False
-                        else:
-                            if attr.id != int(d[key]):
-                                 match = False
 
                 if match:
                     result.append(each)
@@ -368,34 +401,29 @@ def approve(request, id, order_id):
             })
         else:
             approval = form.cleaned_data.get('approval')
-            if approval: #if approval, remove all untranslated files
+            if approval:
+                # if approval, change status, trans status, move document from pending to translated
                 if assignment.get_status() == util.TRANSLATING_ORIGIN:
-                    Document.objects.filter(order_id = assignment.id, type = 0).delete()
-                    assignment.change_status(util.SUBMITTED)
+                    for document in Document.objects.filter(order_id=assignment.id,
+                                                            type=util.C2E_PENDING):  # put all pending documents back to origin
+                        document.type = util.C2E_TRANSLATED
+                        document.save()
+                    assignment.change_status(util.SUBMITTED) # TODO: Supervisor confirm order uploaded to hospital
                     assignment.change_trans_status(util.C2E_FINISHED)
 
                 if assignment.get_status() == util.TRANSLATING_FEEDBACK:
-                    Document.objects.filter(order_id=assignment.id, type=2).delete()
+                    for document in Document.objects.filter(order_id=assignment.id,
+                                                            type=util.E2C_PENDING):  # put all pending documents back to feedback
+                        document.type = util.E2C_TRANSLATED
+                        document.save()
                     assignment.change_status(util.DONE)  # TODO: Customer check order complete function
-                    assignment.change_trans_status(util.ALL_FINISHED)
-
-            if assignment.get_status() == util.TRANSLATING_ORIGIN:
-                for document in Document.objects.filter(order_id=assignment.id,
-                                                        type=1):  # put all pending documents back to origin
-                    document.type = 0
-                    document.save()
-
-            if assignment.get_status() == util.TRANSLATING_FEEDBACK:
-
-                for document in Document.objects.filter(order_id=assignment.id,
-                                                        type=1):  # put all pending documents back to feedback
-                    document.type = 2
-                    document.save()
+                    assignment.change_trans_status(util.E2C_FINISHED)
 
             if not approval:
-                if assignment.get_status() == 3:
+                #if not approval, change trans status
+                if assignment.get_status() == util.TRANSLATING_ORIGIN:
                     assignment.change_trans_status(util.C2E_DISAPPROVED)
-                if assignment.get_status() == 6:
+                if assignment.get_status() == util.TRANSLATING_FEEDBACK:
                     assignment.change_trans_status(util.E2C_DISAPPROVED)
                 assignment.save()
             return render(request, 'detail.html', {

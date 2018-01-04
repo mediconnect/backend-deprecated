@@ -20,6 +20,7 @@ Order = apps.get_model('helper','Order')
 Document = apps.get_model('helper','Document')
 Staff = apps.get_model('helper','Staff')
 utc_8 = util.UTC_8()
+
 # Create your views here.
 
 def translator_auth(request):
@@ -176,11 +177,11 @@ def assignment_summary(request, id, order_id):
 
     if request.method == 'POST' and request.FILES.get('trans_files',False):
         file = request.FILES['trans_files']
-        fs = FileSystemStorage()
-        filename = fs.save(file.name, file)
-        document = Document(order=assignment, document=file, is_translated=True,type = 1) #upload to pending documents
+        if translator.get_role() == util.TRANS_C2E:
+            document = Document(order=assignment, document=file, type = util.C2E_PENDING) #upload to pending documents
+        if translator.get_role() == util.TRANS_E2C:
+            document = Document(order = assignment, document = file, type = util.E2C_PENDING)
         document.save()
-        assignment.set_upload(datetime.datetime.now(utc_8))
         assignment.save()
 
     return render(request, 'assignment_summary.html', {
