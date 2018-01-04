@@ -69,12 +69,12 @@
         </th>
         <th>
             <input type="text" id="trans_C2E_search" onkeyup="search(5)" placeholder="搜索汉译英翻译">
-            <select class = 'select' id = 'translator_C2E_filter' onchange = "filter('translator_c2e',this)">
+            <select class = 'select' id = 'translator_C2E_filter' onchange = "filter('translator_C2E',this)">
             </select>
         </th>
         <th>
             <input type="text" id="trans_E2C_search" onkeyup="search(6)" placeholder="搜索英译汉翻译">
-            <select class = 'select' id = 'translator_E2C_filter' onchange = "filter('translator_e2c',this)">
+            <select class = 'select' id = 'translator_E2C_filter' onchange = "filter('translator_E2C',this)">
             </select>
         </th>
         <th>
@@ -224,8 +224,10 @@
         console.log(dic);
         $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','sort':sort_by, 'query':JSON.stringify(dic)},function(data){
                     createResult(data);
-                    createChoice(data);
                 });
+    }
+    function search(field, element){ // search function
+
     }
 </script>
 

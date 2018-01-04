@@ -181,8 +181,8 @@ def update_result(request):
                   'patient_order': 'All',
                   'hospital': 'All',
                   'disease': 'All',
-                  'translator_c2e': 'All',
-                  'translator_e2c': 'All',
+                  'translator_C2E': 'All',
+                  'translator_E2C': 'All',
                   'status': 'All',
                   'trans_status': 'All',
               }
@@ -190,7 +190,7 @@ def update_result(request):
         data['dic'] = d # read and store the query
     if d!={} and d['order_id']!= 'All': #get one specific order using order id
         result = [Order.objects.get(id=d['order_id'])]
-    else: # filter the queryset using the query
+    else: # filter the queryset using the query exact match
         if query != None and d != {}:
             result = []
             for each in raw:
@@ -203,13 +203,18 @@ def update_result(request):
                             try:
                                 if attr.id != int(d[key]):
                                      match = False
+                                     break
                             except AttributeError:
-                               if attr != int (d[key]):
+                               if attr is None:
                                    match = False
+                                   break
+                               if int(attr) != int (d[key]):
+                                   match = False
+                                   break
                         except ValueError:
                             if str(d[key]) not in str(attr.get_name()):
                                 match = False
-
+                                break
                 if match:
                     result.append(each)
         else:
@@ -225,6 +230,8 @@ def update_result(request):
     for each in result:
         # Latest Upload
         upload = timezone.now()
+        if not Document.objects.filter(order_id = each.id).exists():
+            upload = 'No upload yet'
         for doc in Document.objects.filter(order_id = each.id):
             if doc.upload_at < upload:
                 upload = doc.upload_at

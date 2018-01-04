@@ -70,13 +70,14 @@ FEEDBACK = 6  # feedback documents translated, approved, and feedback to custome
 DONE = 7  # customer confirm all process done 完成
 
 STATUS_CHOICES = (
-    (STARTED, 'started'),
-    (SUBMITTED, 'submitted'),
-    (TRANSLATING_ORIGIN, 'translating_origin'),
-    (RETURN, 'return'),
-    (TRANSLATING_FEEDBACK, 'translating_feedback'),
-    (FEEDBACK, 'feedback'),
-    (PAID, 'PAID'),
+    (STARTED, '已下单'),
+    (PAID, '已付款'),
+    (TRANSLATING_ORIGIN, '原件翻译中'),
+    (SUBMITTED,'已提交至医院'),
+    (RETURN, '上传反馈'),
+    (TRANSLATING_FEEDBACK, '反馈翻译中'),
+    (FEEDBACK, '反馈已上传'),
+    (DONE,'订单已完成'),
 )
 
 status_dict = ['客户未提交', '已付款', '原件翻译中', '提交至医院', '上传反馈', '反馈翻译中',
@@ -114,10 +115,10 @@ TRANS_STATUS_CHOICE = (
     (C2E_FINISHED, '汉译英已完成'),
     (E2C_NOT_STARTED, '英译汉未开始'),
     (E2C_ONGOING, '英译汉进行中'),
-    (E2C_APPROVING, '汉译英审核中'),
-    (E2C_APPROVED, '汉译英已审核'),
-    (E2C_DISAPPROVED, '汉译英驳回'),
-    (E2C_FINISHED, '汉译英已完成'),
+    (E2C_APPROVING, '英译汉审核中'),
+    (E2C_APPROVED, '英译汉已审核'),
+    (E2C_DISAPPROVED, '英译汉驳回'),
+    (E2C_FINISHED, '英译汉完成'),
     (ALL_FINISHED, '订单完成')
 )
 trans_status_dict = [
