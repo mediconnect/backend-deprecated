@@ -1,33 +1,8 @@
+# -*- coding: utf-8 -*-
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.core.exceptions import ValidationError
-
-
-def forbidden_username_validator(value):
-    forbidden_username = ['admin', 'settings', 'news', 'about', 'help',
-                          'signin', 'signup', 'signout', 'terms', 'privacy',
-                          'cookie', 'new', 'login', 'logout', 'administrator',
-                          'join', 'account', 'username', 'root', 'blog',
-                          'user', 'users', 'billing', 'subscribe', 'reviews',
-                          'review', 'blog', 'blogs', 'edit', 'mail', 'email',
-                          'core', 'job', 'jobs', 'contribute', 'newsletter',
-                          'shop', 'profile', 'register', 'auth',
-                          'authentication', 'campaign', 'config', 'delete',
-                          'remove', 'forum', 'forums', 'download',
-                          'downloads', 'contact', 'blogs', 'feed', 'feeds',
-                          'faq', 'intranet', 'log', 'registration', 'search',
-                          'explore', 'rss', 'support', 'status', 'static',
-                          'media', 'setting', 'css', 'js', 'follow',
-                          'activity', 'questions', 'articles', 'network', ]
-
-    if value.lower() in forbidden_username:
-        raise ValidationError('This is a reserved word.')
-
-
-def invalid_username_validator(value):
-    if '@' in value or '+' in value or '-' in value:
-        raise ValidationError('Enter a valid username.')
 
 
 def unique_email_validator(value):
@@ -35,20 +10,15 @@ def unique_email_validator(value):
         raise ValidationError('User with this Email already exists.')
 
 
-def unique_username_ignore_case_validator(value):
-    if User.objects.filter(username__iexact=value).exists():
-        raise ValidationError('User with this Username already exists.')
-
-
 class SignUpForm(forms.ModelForm):
     confirm_password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
         label="Confirm your password",
-        required=True)
+        required=False)
     telephone = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label="Telephone",
-        required=True)
+        required=False)
     address = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'}),
         label="Address",
@@ -76,28 +46,43 @@ class SignUpForm(forms.ModelForm):
         # append validators for fields
         self.fields['email'].validators.append(unique_email_validator)
         self.fields['password'].widget = forms.PasswordInput()
-        self.fields['password'].required = True
-        self.fields['email'].required = True
-        self.fields['first_name'].required = True
-        self.fields['last_name'].required = True
+        self.fields['password'].required = False
+        self.fields['email'].required = False
+        self.fields['first_name'].required = False
+        self.fields['last_name'].required = False
 
     def clean(self):
-        """
-        the clean function is automatically called by Django framework during upon
-        data transformation to back end. developers can use it to append error, and
-        check the validity of user input.
-        """
         super(SignUpForm, self).clean()
         password = self.cleaned_data.get('password')
         confirm_password = self.cleaned_data.get('confirm_password')
-        if password and password != confirm_password:
-            self._errors['password'] = self.error_class(
-                ['Passwords don\'t match']
-            )
-            self._errors['confirm_password'] = self.error_class(
-                ['Passwords don\'t match']
-            )
-        return self.cleaned_data
+        if password is None or len(password) <= 0:
+            self.add_error('password', '请填写密码')
+        elif len(password) < 8:
+            self.add_error('password', '密码长度至少是8')
+        if confirm_password is None or len(confirm_password) <= 0:
+            self.add_error('confirm_password', '请填写确认密码')
+        if password is not None and confirm_password is not None and password != confirm_password:
+            self.add_error('confirm_password', '确认密码和原密码不匹配')
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email is None or len(email) <= 0:
+            self.add_error('email', '请填写邮箱地址')
+
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get('first_name')
+        if first_name is None or len(first_name) <= 0:
+            self.add_error('first_name', '请填写名字')
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get('last_name')
+        if last_name is None or len(last_name) <= 0:
+            self.add_error('last_name', '请填写姓氏')
+
+    def clean_telephone(self):
+        telephone = self.cleaned_data.get('telephone')
+        if telephone is None or len(telephone) <= 0:
+            self.add_error('telephone', '请填写常用电话号码')
 
 
 class LoginForm(forms.ModelForm):
@@ -109,7 +94,6 @@ class LoginForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)
         self.fields['password'].widget = forms.PasswordInput()
-
 
 
 class SearchForm(forms.ModelForm):
