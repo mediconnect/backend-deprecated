@@ -1,15 +1,11 @@
-{% extends "index.html" %}
-{% block title %}SignUp{% endblock %}
-
-{% block content %}
+{% extends "index.html" %} {% block title %}SignUp{% endblock %} {% block content %}
 
 <form action="{% url 'signup' %}" method="post" role="form">
     {% csrf_token %}
     {% for field in form.visible_fields %}
     <div class="form-group{% if field.errors %} has-error{% endif %}">
         <label for="{{ field.label }}">{{ field.label }}</label>
-        {{ field }}
-        {% if field.help_text %}
+        {{ field }} {% if field.help_text %}
         <span class="help-block">{{ field.help_text|safe }}</span>
         {% endif %}
         {% for error in field.errors %}
@@ -23,54 +19,48 @@
 </form>
 
 <script>
-$("input[name='username']").change(function() {
-    $("#username-error").remove();
-    var username = $("input[name='username']").val();
-    $.ajax({
-        url: "{% url 'username_check' %}",
-        data: {
-            'username': username
-        },
-        dataType: 'json',
-        success: function(data) {
-            if (data.exist) {
-                $("input[name='username']").after("<label id='username-error' class='control-label'>User already exists</label>");
+    $("input[name='email']").change(function() {
+        $("#email-error").remove();
+        var email = $("input[name='email']").val();
+        $.ajax({
+            url: "{% url 'email_check' %}",
+            data: {
+                'email': email
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data.exist) {
+                    var error_div = $("input[name='email']").parentsUntil("form").children(".control-label");
+                    if (error_div.length == 0) {
+                        $("input[name='email']").after("<label class='control-label'>此邮箱已经被使用</label>");
+                    } else {
+                        error_div.text("此邮箱已经被使用");
+                    }
+                }
             }
-        }
+        });
     });
-});
 
-
-$("input[name='email']").change(function() {
-    $("#email-error").remove();
-    var email = $("input[name='email']").val();
-    $.ajax({
-        url: "{% url 'email_check' %}",
-        data: {
-            'email': email
-        },
-        dataType: 'json',
-        success: function(data) {
-            if (data.exist) {
-                $("input[name='email']").after("<label id='email-error' class='control-label'>Email is being used</label>");
+    $("input[name='password']").keyup(function() {
+        var error_div = (function() {
+            var control_label = $("input[name='password']").parentsUntil("form").children(".control-label");
+            if (control_label.length == 0) {
+                $("input[name='password']").after("<label class='control-label'></label>");
+                return $("input[name='password']").parentsUntil("form").children(".control-label");
+            } else {
+                return control_label;
             }
-        }
-    });
-});
-
-$("input[name='password']").keyup(function(){
-    $("#password-error").remove();
-    var password = $("input[name='password']").val();
-    var strength = 1;
-    var arr = [/.{8,}/, /[a-z]+/, /[0-9]+/, /[A-Z]+/];
-    jQuery.map(arr, function(regexp) {
-    if(password.match(regexp))
-     strength++;
-    });
-    $("input[name='password']").after("<label id='password-error' class='control-label'>密码强度:"+strength+"<br>密码长度至少为8，包含1个大写，1个小写，1个数字，1个特殊字符</label>");
-    if (strength == 5) $("#password-error").html('密码强度足够');
-    if (password.length == 0) $("#password-error").html('密码不能为空');
-})
+        })();
+        var password = $("input[name='password']").val();
+        var strength = 1;
+        var arr = [/.{8,}/, /[a-z]+/, /[0-9]+/, /[A-Z]+/];
+        jQuery.map(arr, function(regexp) {
+            if (password.match(regexp))
+                strength++;
+        });
+        error_div.text("密码长度至少为8，包含1个大写，1个小写，1个数字，1个特殊字符");
+        if (password.length == 0) error_div.text('密码不能为空');
+    })
 </script>
 
 {% endblock %}
