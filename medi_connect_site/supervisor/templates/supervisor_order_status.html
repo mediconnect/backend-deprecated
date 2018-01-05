@@ -220,8 +220,8 @@
     }
     function search(field, element){ // search function
         search_dic[field] = element.value;
-        console.log(search_dic);
-        console.log(dic);
+        //console.log(search_dic);
+        //console.log(dic);
         $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic),'search_query':JSON.stringify(search_dic)},function(data){
                     createResult(data);
                 });

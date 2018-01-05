@@ -251,7 +251,10 @@ def update_result(request):
                 for key in search_d:
                     if search_d[key] != '':
                         attr = getattr(each,key)
-                        if str(attr.get_name()).lower().find(str(search_d[key]).lower())== -1:
+                        if attr!=None:
+                            if str(attr.get_name().encode('utf8')).lower().find(str(search_d[key].encode('utf8')).lower())== -1:
+                                match = False
+                        else:
                             match = False
                 if match:
                     tmp.append(each)
