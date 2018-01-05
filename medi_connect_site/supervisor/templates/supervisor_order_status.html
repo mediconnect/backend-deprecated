@@ -107,6 +107,7 @@
     var result_length;
     var dic = {};
     var sort_by;
+    var old_sort = "";
     // read from json response
 
     $( document ).ready(function() { // initiate result when page is first loaded
@@ -215,6 +216,11 @@
     }
     function sort(keyword){ // sort function
         sort_by = keyword;
+        if(old_sort != "" && sort_by == old_sort){
+            sort_by = "-"+ sort_by;
+            console.log(sort_by);
+        }
+        old_sort = sort_by;
         $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','sort':sort_by, 'query':JSON.stringify(dic)},function(data){
                     createResult(data);
                 });
