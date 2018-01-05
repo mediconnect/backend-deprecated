@@ -37,17 +37,25 @@
 
         </form><br>
 
-        {%if assignment.get_trans_status == 1 or assignment.get_trans_status == 7 %}
-            <form  method = 'post'>
-                {% csrf_token %}
-                {{form}}
-                <input onclick = success() type="submit" class="btn" value="提交审核" name="approval"/>
-            </form>
-        {%endif%}
+        {% if not assignment.document_complete %}
+            <p>客户尚未上传完整文件，请耐心等待</p>
 
-        {%if assignment.get_trans_status == 2 or assignment.get_trans_status == 8 %}
-            <p>正在审核中请耐心等待</p>
-        {%endif%}
+        {% else %}
+
+            {%if assignment.get_trans_status == 1 or assignment.get_trans_status == 7 %}
+                <form  method = 'post'>
+                    {% csrf_token %}
+                    {{form}}
+                    <input onclick = success() type="submit" class="btn" value="提交审核" name="approval"/>
+                </form>
+            {%endif%}
+
+            {%if assignment.get_trans_status == 2 or assignment.get_trans_status == 8 %}
+                <p>正在审核中请耐心等待</p>
+            {%endif%}
+        {% endif %}
+
+
 
         {%if assignment.get_trans_status in '39'%}
             <form  method = 'post'>

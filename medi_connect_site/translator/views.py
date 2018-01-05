@@ -141,7 +141,7 @@ def assignment_summary(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     if translator.get_role() == util.TRANS_C2E:
         origin_documents = Document.objects.filter(order_id = order_id,type = 0 )
-        pending_documents = Document.objects.filter(order_id = order_id, is_translated = 1)
+        pending_documents = Document.objects.filter(order_id = order_id, type = 0)
     if translator.get_role() == util.TRANS_E2C:
         origin_documents = Document.objects.filter(order_id = order_id, type = 3)
         pending_documents = Document.objects.filter(order_id = order_id, type = 4)

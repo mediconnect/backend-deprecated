@@ -4,30 +4,6 @@ from django.contrib.auth.models import User
 from helper.models import Document, Order, Staff, Questionnaire
 from django.core.exceptions import ValidationError
 import info.utility as util
-"""
-C2E_assignee_choice = []
-for e in Staff.objects.filter(role = 1):
-    C2E_assignee_choice.append((e.user.id,e.get_name()))
-
-E2C_assignee_choice = []
-for e in Staff.objects.filter(role = 2):
-
-    E2C_assignee_choice.append((e.user.id,e.get_name()))
-
-class C2E_AssignForm(forms.ModelForm):
-    assignee = forms.ChoiceField(choices=C2E_assignee_choice)
-    class Meta:
-        model = Order
-        fields = ['assignee']
-
-class E2C_AssignForm(forms.ModelForm):
-    E2C_new_assignee = forms.ChoiceField(choices=E2C_assignee_choice)
-
-    class Meta:
-        model = Order
-        fields = ['assignee']
-
-"""
 
 class ApproveForm(forms.ModelForm):
     approval = forms.TypedChoiceField(

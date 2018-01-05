@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
-from django.core import serializers
 from django.core.files.storage import FileSystemStorage,default_storage
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
@@ -326,52 +325,53 @@ def trans_signup(request, id):
 def assign(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     supervisor = Staff.objects.get(user_id=id)
-    C2E_assignee_ids = []
-    C2E_assignee_names = []
-
-    for e in Staff.objects.filter(role=1):
-        C2E_assignee_ids.append(e.user_id)
-        C2E_assignee_names.append( e.get_name())
-
-    customer = Customer.objects.get(id=assignment.customer_id)
     status = util.status_dict[int(assignment.status)]
-    """
-    if request.method == 'POST':
-        if assignment.get_status() <= util.TRANSLATING_ORIGIN:
-            form = C2E_AssignForm(request.POST)
-        else:
-            form = E2C_AssignForm(request.POST)
-        if not form.is_valid():
-            return render(request, 'assign.html', {
-                'form': form,
-                'assignment': assignment,
-                'supervisor': supervisor
-            })
-        else:
-            translator_id = form.cleaned_data.get('assignee')
-            manual_assign(assignment, Staff.objects.get(user_id=translator_id))
+
+    if assignment.get_status() <= util.SUBMITTED: # can reassign C2E translator until submitted to the hospital
+
+        if request.method == 'POST':
+            #print request.POST['assignee']
+            assignee = Staff.objects.get(user_id = request.POST['assignee'])
+            manual_assign(assignment,assignee)
+
             return render(request, 'detail.html', {
                 'assignment': assignment,
                 'supervisor': supervisor,
-
+            })
+        else:
+            C2E_assignee_ids = []
+            C2E_assignee_names = []
+            for e in Staff.objects.filter(role=1):
+                C2E_assignee_names.append((e.user_id,e.get_name()))
+            return render(request, 'assign.html', {
+                'supervisor': supervisor,
+                'assignment': assignment,
+                'assignee_names': C2E_assignee_names,
+                'assignee_ids': C2E_assignee_ids,
+                'status':status
             })
     else:
-        if assignment.get_status() <= 3:
-            form = C2E_AssignForm()
+        if assignment.get_status() <= util.SUBMITTED:  # can reassign C2E translator until submitted to the hospital
+            if request.method == 'POST':
+                assignee = Staff.objects.get(user_id=request.POST['assignee'])
+                manual_assign(assignment, assignee)
+                return render(request, 'detail.html', {
+                    'assignment': assignment,
+                    'supervisor': supervisor,
+                })
         else:
-            form = E2C_AssignForm()
-        return render(request, 'assign.html', {
-            'form': form,
-            'supervisor': supervisor,
-            'assignment': assignment
-        })
-    """
-    return render(request, 'assign.html', {
-        'supervisor': supervisor,
-        'assignment': assignment,
-        'assignee_names': C2E_assignee_names,
-        'assignee_ids':C2E_assignee_ids
-    })
+            E2C_assignee_ids = []
+            E2C_assignee_names = []
+            for e in Staff.objects.filter(role = 2):
+                E2C_assignee_names.append((e.user_id, e.get_name()))
+            return render(request, 'assign.html', {
+                'supervisor': supervisor,
+                'assignment': assignment,
+                'assignee_names': E2C_assignee_names,
+                'assignee_ids': E2C_assignee_ids,
+                'status':status
+            })
+
 
 
 def detail(request, id, order_id):
