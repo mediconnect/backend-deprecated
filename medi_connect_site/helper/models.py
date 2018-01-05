@@ -45,14 +45,14 @@ def manual_assign(order, assignee):
     if order.get_status() <= util.TRANSLATING_ORIGIN:
         order.set_translator_C2E(assignee)
         order.change_status(util.TRANSLATING_ORIGIN)
-        order.change_status(util.C2E_NOT_STARTED)
+        order.change_trans_status(util.C2E_NOT_STARTED)
         order.save()
         assignee.set_sequence(timezone.now())
 
     if order.get_status() >= util.RETURN and order.get_status <= util.FEEDBACK:
         order.set_translator_E2C(assignee)
         order.change_status(util.TRANSLATING_FEEDBACK)
-        order.change_status(util.E2C_NOT_STARTED)
+        order.change_trans_status(util.E2C_NOT_STARTED)
         order.save()
         assignee.set_sequence(timezone.now())
 
