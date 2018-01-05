@@ -125,14 +125,37 @@ Ajax function to update the result of home page of supervisor result
 
 @login_required()
 def update_result(request):
-    query = request.GET.get('query', None)
+    query = request.GET.get('query', None) # handle filter
+    search_query = request.GET.get('search_query',None) # handle search
     status = request.GET.get('status', None)
     sort = request.GET.get('sort',None)
     page = request.GET.get('page', 1)
     supervisor = Staff.objects.get(user=request.user)
 
+    raw = supervisor.get_assignments_status(status)  # raw queryset unsorted, unfiltered
+
+    if sort!=None:
+        if sort[0] == '-':
+            if sort[1:] == 'Deadline':
+                raw = reversed(sorted(raw, key=lambda x: x.get_submit_deadline()))
+            if sort[1:] == 'Trans_Deadline':
+                raw = reversed(sorted(raw, key=lambda x: x.get_deadline()))
+            if sort[1:] == 'Upload':
+                raw = reversed(sorted(raw, key=lambda x: x.get_upload()))
+        else:
+            if sort == 'Deadline':
+                raw = sorted(raw, key=lambda x: x.get_submit_deadline())
+            if sort == 'Trans_Deadline':
+                raw = sorted(raw,key = lambda x:x.get_deadline())
+            if sort == 'Upload':
+                raw = reversed(sorted(raw, key=lambda x: x.get_upload()))
+    # translate json to dictionary
+    json_acceptable_string = query.replace("'", "\"")
+    d = json.loads(json_acceptable_string)
+    json_acceptable_string = search_query.replace("'", "\"")
+    search_d = json.loads(json_acceptable_string)
     data = {
-        'sort_by': 'None',
+        'sort_by': sort,
         'result': {
             'Order_Id': [],
             'Customer': [],
@@ -160,22 +183,20 @@ def update_result(request):
         }
 
     }
-    raw = supervisor.get_assignments_status(status) # raw queryset unsorted, unfiltered
-
-    if sort!=None:
-        if sort == 'Deadline':
-            raw = sorted(raw, key=lambda x: x.get_submit_deadline())
-        if sort == 'Trans_Deadline':
-            raw = sorted(raw,key = lambda x:x.get_deadline())
-        if sort == 'Upload':
-            raw = sorted(raw,key = lambda x:x.get_upload())
-
-
-    json_acceptable_string = query.replace("'", "\"")
-    d = json.loads(json_acceptable_string)
+    if search_d == {}:
+        data['search_dic'] = {
+            'order_id': '',
+            'customer': '',
+            'patient_order': '',
+            'hospital': '',
+            'disease': '',
+            'translator_C2E': '',
+            'translator_E2C': '',
+        }
+    else:
+        data['search_dic'] = search_d
     if d == {}: # initiate the query
         data['dic']={
-                  'order_id': 'All',
                   'customer': 'All',
                   'patient_order': 'All',
                   'hospital': 'All',
@@ -187,38 +208,54 @@ def update_result(request):
               }
     else:
         data['dic'] = d # read and store the query
-    if d!={} and d['order_id']!= 'All': #get one specific order using order id
-        result = [Order.objects.get(id=d['order_id'])]
-    else: # filter the queryset using the query exact match
-        if query != None and d != {}:
-            result = []
-            for each in raw:
-                match = True
-                for key in d:
-                    if d[key] != 'All':
-                        attr = getattr(each, key)
-                        try :
-                            int(d[key])
-                            try:
-                                if attr.id != int(d[key]):
-                                     match = False
-                                     break
-                            except AttributeError:
-                               if attr is None:
-                                   match = False
-                                   break
-                               if int(attr) != int (d[key]):
-                                   match = False
-                                   break
-                        except ValueError:
-                            if str(d[key]) not in str(attr.get_name()):
-                                match = False
-                                break
-                if match:
-                    result.append(each)
-        else:
-            result = raw
 
+    if query != None and d != {}:
+        result = []
+        for each in raw:
+            match = True
+            for key in d:
+                if d[key] != 'All':
+                    attr = getattr(each, key)
+                    try :
+                        int(d[key])
+                        try:
+                            if attr.id != int(d[key]):
+                                 match = False
+                                 break
+                        except AttributeError:
+                           if attr is None:
+                               match = False
+                               break
+                           if int(attr) != int (d[key]):
+                               match = False
+                               break
+                    except ValueError:
+                        if str(d[key]) not in str(attr.get_name()):
+                            match = False
+                            break
+            if match:
+                result.append(each)
+    else:
+        result = raw
+
+    if search_query != None and search_d != {}:
+        if search_d['order_id']!='':
+            try:
+                result = [Order.objects.get(id = int(search_d['order_id'])),]
+            except Order.DoesNotExist:
+                result = []
+        else:
+            tmp = []
+            for each in result:
+                match = True
+                for key in search_d:
+                    if search_d[key] != '':
+                        attr = getattr(each,key)
+                        if str(attr.get_name()).lower().find(str(search_d[key]).lower())== -1:
+                            match = False
+                if match:
+                    tmp.append(each)
+            result = tmp
     p = Paginator(result, 5)
     result_length = len(result)
     result = p.page(page)
@@ -257,6 +294,7 @@ def update_result(request):
     data['choices']['translator_C2E_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.exclude(translator_C2E__isnull=True).values_list('translator_C2E_id',flat=True).distinct().exclude(translator_C2E__isnull=True)))
     data['choices']['status_choice'] = util.STATUS_CHOICES
     data['choices']['trans_status_choice'] = util.TRANS_STATUS_CHOICE
+
     return JsonResponse(data)
 
 
