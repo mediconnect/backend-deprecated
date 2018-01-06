@@ -227,6 +227,9 @@ def add_doc(request, order_id):
             for f in request.FILES.getlist(field):
                 doc = Document(document=f, description=field, order=order, type=0)
                 doc.save()
+        if all(Document.objects.filter(description=document, order=order, type=0).count() > 0 for document in
+               all_documents):
+            order.document_complete = True
         return redirect('info_order_detail', order.id)
     return render(request, 'add_doc.html', {
         'form': create_form(int(order.hospital.id), int(order.disease.id), DocAddForm(), only_optional=True),
