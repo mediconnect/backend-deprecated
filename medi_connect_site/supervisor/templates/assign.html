@@ -4,22 +4,24 @@
 {% block content %}
 
     <p>翻译员分配</p>
-    {% if assignment.get_status <= 3 %}
-        <p>分配汉译英</p>
+    {% if assignment.get_status >= 6 %}
+        <p>翻译已完成无法重新分配</p>
     {% else %}
-        <p>分配英译汉</p>
-    {% endif %}
-    <form  method="POST">
+        {% if assignment.get_status >= 3 %}
+            <p>分配汉译英</p>
+        {% else %}
+            <p>分配英译汉</p>
+        {% endif %}
+        <form  method="POST">
         {% csrf_token %}
-      <select name = 'assignee'>
-          {% for id, name in assignee_names %}
-            <option value = '{{id}}'> {{name}} </option>
-          {% endfor %}
-      </select>
-      <input type="submit",name = 'assignee', value = 'Assign'/>
-    </form>
-
-
+          <select name = 'assignee'>
+              {% for id, name in assignee_names %}
+                <option value = '{{id}}'> {{name}} </option>
+              {% endfor %}
+          </select>
+          <input type="submit",name = 'assignee', value = 'Assign'/>
+        </form>
+    {% endif %}
 
   <p><a href="{% url 'supervisor_home' id=supervisor.user.id %}">Return to home</a></p>
   <p><a href="{% url 'detail' id=supervisor.user.id order_id=assignment.id %}">Return to detail</a></p>

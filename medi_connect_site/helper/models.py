@@ -11,7 +11,6 @@ from django.utils import timezone, http
 from customer.models import Customer
 from info import utility as util
 
-
 # Function to move the position of a translator in sequence
 def auto_assign(order):
     if order.get_status() <= util.TRANSLATING_ORIGIN:
