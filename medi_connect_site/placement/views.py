@@ -321,7 +321,6 @@ def order_document_info(request):
                 'documents': Document.objects.filter(order=order, type=0),
             })
         required, optional = get_fields(order.hospital.id, order.disease.id)
-
         for field in required:
             for f in request.FILES.getlist(field):
                 doc = Document(document=f, description=field, order=order, type=0)
@@ -330,6 +329,10 @@ def order_document_info(request):
             for f in request.FILES.getlist(field):
                 doc = Document(document=f, description=field, order=order, type=0)
                 doc.save()
+        all_documents = required + optional
+        if all(Document.objects.filter(description=document, order=order, type=0).count() > 0 for document in
+               all_documents):
+            order.document_complete = True
         doctor = form.cleaned_data.get('doctor')
         hospital = form.cleaned_data.get('diagnose_hospital')
         contact = form.cleaned_data.get('contact')
@@ -419,8 +422,8 @@ def like_hospital(request):
 @login_required
 def order_check(request):
     order_id = request.session['order_id']
-    orders = Order.objects.filter(id=order_id)
-    if len(orders) > 0:
+    orders_length = Order.objects.filter(id=order_id).count()
+    if orders_length > 0:
         return JsonResponse({'exist': True})
     return JsonResponse({'exist': False})
 
@@ -437,5 +440,5 @@ def delete_document(request):
 
 
 def order_expire(order_id):
-    if len(Order.objects.filter(id=order_id)) <= 0:
+    if Order.objects.filter(id=order_id).count() <= 0:
         return TemplateView(template_name='order_expire.html')
