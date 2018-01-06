@@ -142,19 +142,20 @@ def hospital_detail(request):
 
 
 def clean_order(order_id):
-    try:
-        order = Order.objects.get(id=order_id)
-    except Order.DoesNotExist:
-        return
     while True:
-        if int(order.status) >= 1:
+        try:
+            order = Order.objects.get(id=order_id)
+        except Order.DoesNotExist:
+            return
+        if order.status >= 1:
             break
         naive = order.submit
         diff = datetime.datetime.now(tz=pytz.utc) - naive
+        print diff.total_seconds()
         if diff.total_seconds() > 300:
             delete_order(order.id)
             break
-        sleep(5)
+        sleep(60)
 
 
 @login_required
