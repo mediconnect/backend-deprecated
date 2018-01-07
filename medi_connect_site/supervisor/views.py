@@ -29,7 +29,6 @@ from django.forms.models import model_to_dict
 from django.core.files.base import ContentFile
 from helper.models import auto_assign,manual_assign
 
-
 Order = apps.get_model('helper', 'Order')
 Document = apps.get_model('helper', 'Document')
 Hospital = apps.get_model('helper', 'Hospital')
@@ -40,7 +39,6 @@ Staff = apps.get_model('helper','Staff')
 Rank = apps.get_model('helper','Rank')
 Questionnaire = apps.get_model('helper','Questionnaire')
 Slot = apps.get_model('helper','Slot')
-
 
 """
 Delete Translator Function:
@@ -252,17 +250,20 @@ def update_result(request):
                     if search_d[key] != '':
                         attr = getattr(each,key)
                         if attr!=None:
-                            if str(attr.get_name().encode('utf8')).lower().find(str(search_d[key].encode('utf8')).lower())== -1:
+                            if str(attr.get_name().encode('utf8')).lower().find(str(search_d[key].encode('utf8')).lower())== -1: # support Chinese search
                                 match = False
+                                break
                         else:
                             match = False
+                            break
                 if match:
                     tmp.append(each)
             result = tmp
+
     p = Paginator(result, 5)
     result_length = len(result)
     result = p.page(page)
-    data['result_length'] = result_length #pagination
+    data['result_length'] = result_length # pagination
 
 
 
@@ -695,3 +696,5 @@ def render_questionnaire(request,questionnaire_id):
     return render(request,'render_questionnaire.html'),{
         'questionnaire_id':questionnaire_id
     }
+
+
