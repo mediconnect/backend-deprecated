@@ -2,37 +2,56 @@
 
 {%block title%}Manage File{%endblock%}
 {% block content %}
-<p>Origin Files</p>
- <ul>
-   {% for obj in assignment.origin.all %}
-   <li>
-     <a href="{{obj.document.url}}">{{obj.document}}</a>
-   </li>
-   {% endfor %}
- </ul>
-<p>Feedback Files</p>
- <ul>
-   {% for obj in assignment.feedback.all %}
-     <form method = 'post'>
-         {% csrf_token %}
-         {{ form }}
-         <li>
-             <input style="border:none" type = 'text' name = 'document' value = '{{obj.document}}' size="30px" readonly><br>
-            <a href="{{obj.document.url}}" class="btn">Download</a>
-            <input type="submit" class="btn" value="Delete" name="delete"/>
-         </li>
-
-     </form>
-   {% endfor %}
- </ul>
-<p>Pending Files</p>
- <ul>
-   {% for obj in assignment.pending.all %}
-   <li>
-     <a href="{{obj.document.url}}">{{obj.document}}</a>
-   </li>
-   {% endfor %}
- </ul>
+<p>原始文件</p>
+<ul>
+{% for obj in c2e_origin_documents %}
+<li>
+ <a href="{{obj.document.url}}">{{obj.document}}</a>
+</li>
+{% endfor %}
+</ul>
+<p>反馈文件</p>
+<ul>
+{% for obj in e2c_origin_documents %}
+<li>
+ <a href="{{obj.document.url}}">{{obj.document}}</a>
+</li>
+{% endfor %}
+</ul>
+<p>汉译英翻译文件</p>
+<ul>
+{% for obj in c2e_translated_documents %}
+<li>
+<a href="{{obj.document.url}}">{{obj.document}}</a>{{obj.upload_at}}
+</li>
+{% endfor %}
+</ul>
+<p>英译汉翻译文件</p>
+<ul>
+{% for obj in c2e_translated_documents %}
+<li>
+<a href="{{obj.document.url}}">{{obj.document}}</a>{{obj.upload_at}}
+</li>
+{% endfor %}
+</ul>
+<p>待审核文件</p>
+{% if assignment.status <= 3 %}
+<ul>
+ {% for obj in c2e_pending_documents %}
+<li>
+ <a href="{{obj.document.url}}">{{obj.document}}</a>{{obj.upload_at}}
+</li>
+{% endfor %}
+</ul>
+{% else %}
+<ul>
+{% for obj in e2c_pending_documents %}
+<li>
+ <a href="{{obj.document.url}}">{{obj.document}}</a>{{obj.upload_at}}
+</li>
+{% endfor %}
+</ul>
+ {% endif %}
 
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}

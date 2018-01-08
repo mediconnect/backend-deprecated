@@ -419,16 +419,29 @@ def assign(request, id, order_id):
 def detail(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     supervisor = Staff.objects.get(user_id=id)
+    c2e_origin_documents = Document.objects.filter(order_id = order_id,type = 0)
+    c2e_pending_documents = Document.objects.filter(order_id = order_id, type = util.C2E_PENDING)
+    c2e_translated_documents = Document.objects.filter(order_id = order_id, type = util.C2E_TRANSLATED)
+    e2c_origin_documents = Document.objects.filter(order_id = order_id, type = util.E2C_ORIGIN)
+    e2c_pending_documents = Document.objects.filter(order_id=order_id, type=util.E2C_PENDING)
+    e2c_translated_documents = Document.objects.filter(order_id=order_id, type=util.E2C_TRANSLATED)
     if (request.POST.get('delete')):
         assignment.delete()
         return render(request, 'supervisor_order_status.html', {
             'status': 'All',
             'supervisor': supervisor,
         })
-
     return render(request, 'detail.html', {
         'assignment': assignment,
         'supervisor': supervisor,
+        'c2e_origin_documents':c2e_origin_documents,
+        'c2e_pending_documents': c2e_pending_documents,
+        'c2e_translated_documents': c2e_translated_documents,
+        'e2c_origin_documents': e2c_origin_documents,
+        'e2c_pending_documents': e2c_pending_documents,
+        'e2c_translated_documents': e2c_translated_documents,
+
+
     })
 
 
@@ -497,32 +510,56 @@ def approve(request, id, order_id):
 def manage_files(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     supervisor = Staff.objects.get(user_id=id)
+    c2e_origin_documents = Document.objects.filter(order_id=order_id, type=0)
+    c2e_pending_documents = Document.objects.filter(order_id=order_id, type=util.C2E_PENDING)
+    c2e_translated_documents = Document.objects.filter(order_id=order_id, type=util.C2E_TRANSLATED)
+    e2c_origin_documents = Document.objects.filter(order_id=order_id, type=util.E2C_ORIGIN)
+    e2c_pending_documents = Document.objects.filter(order_id=order_id, type=util.E2C_PENDING)
+    e2c_translated_documents = Document.objects.filter(order_id=order_id, type=util.E2C_TRANSLATED)
     if (request.POST.get('delete')):
         document = Document.objects.get(document=request.POST.get('document'))
         document.delete()
         return render(request, 'manage_files.html', {
             'supervisor': supervisor,
-            'assignment': assignment
+            'assignment': assignment,
+            'c2e_origin_documents': c2e_origin_documents,
+            'c2e_pending_documents': c2e_pending_documents,
+            'c2e_translated_documents': c2e_translated_documents,
+            'e2c_origin_documents': e2c_origin_documents,
+            'e2c_pending_documents': e2c_pending_documents,
+            'e2c_translated_documents': e2c_translated_documents,
         })
     if request.method == 'POST' and request.FILES['feedback_files']:
         file = request.FILES['feedback_files']
         fs = FileSystemStorage()
         filename = fs.save(file.name, file)
-        document = Document(order=assignment, document=file, is_translated = False, type = 2) #create feedback file
+        document = Document(order=assignment, document=file, type = util.E2C_ORIGIN) #create feedback file
         document.save()
-        if not assignment.auto_assigned:
+        if assignment.translator_E2C is None:
             assignment.change_status(util.RETURN)
             auto_assign(assignment)
         assignment.save()
         return render(request, 'manage_files.html', {
             'supervisor': supervisor,
-            'assignment': assignment
+            'assignment': assignment,
+            'c2e_origin_documents': c2e_origin_documents,
+            'c2e_pending_documents': c2e_pending_documents,
+            'c2e_translated_documents': c2e_translated_documents,
+            'e2c_origin_documents': e2c_origin_documents,
+            'e2c_pending_documents': e2c_pending_documents,
+            'e2c_translated_documents': e2c_translated_documents,
         })
     else:
 
         return render(request, 'manage_files.html', {
             'supervisor': supervisor,
-            'assignment': assignment
+            'assignment': assignment,
+            'c2e_origin_documents': c2e_origin_documents,
+            'c2e_pending_documents': c2e_pending_documents,
+            'c2e_translated_documents': c2e_translated_documents,
+            'e2c_origin_documents': e2c_origin_documents,
+            'e2c_pending_documents': e2c_pending_documents,
+            'e2c_translated_documents': e2c_translated_documents,
         })
 
 @login_required
