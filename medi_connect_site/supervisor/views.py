@@ -28,6 +28,12 @@ from django.http import StreamingHttpResponse
 from django.forms.models import model_to_dict
 from django.core.files.base import ContentFile
 from helper.models import auto_assign,manual_assign
+import os
+from django.conf import settings
+from django.http import HttpResponse,Http404
+import urllib
+import urlparse
+
 
 Order = apps.get_model('helper', 'Order')
 Document = apps.get_model('helper', 'Document')
@@ -90,6 +96,17 @@ class Echo(object):
     def write(self, value):
         """Write the value by returning it, instead of storing in a buffer."""
         return value
+
+@login_required
+def force_download(request,document_id):
+    path = Document.objects.get(id = document_id).document.url
+    file_path = urllib.url2pathname(os.path.join(settings.DEBUG_MEDIA_ROOT, path))
+    if os.path.exists(file_path):
+        with open(file_path,'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/liquid",charset = 'utf-8')
+            response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_path.encode('utf-8'))
+            return response
+    raise Http404
 
 @login_required
 def export_csv(request):

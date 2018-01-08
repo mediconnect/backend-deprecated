@@ -20,7 +20,7 @@
 <ul>
 {% for obj in e2c_origin_documents %}
 <li>
- <a href="{{obj.document.url}}">{{obj.document}}</a>
+ <a href="{% url 'force_download' document_id=obj.id %}">{{obj.document}}</a>{{obj.upload_at}}
 </li>
 {% endfor %}
 </ul>
@@ -53,7 +53,7 @@
 <ul>
 {% for obj in e2c_pending_documents %}
 <li>
- <a href="{{obj.document.url}}">{{obj.document}}</a>{{obj.upload_at}}
+  <a href="{% url 'force_download' document_id=obj.id %}">{{obj.document}}</a>{{obj.upload_at}}
 </li>
 {% endfor %}
 </ul>

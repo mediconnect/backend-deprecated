@@ -162,6 +162,7 @@ STATIC_ROOT = '/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+DEBUG_MEDIA_ROOT = 'C:\Users\gabri\Desktop\Project\website\medi_connect_site/media/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DEFAULT_FROM_EMAIL = 'abcdefgdontreplyme@outlook.com'
