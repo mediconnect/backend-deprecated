@@ -11,6 +11,7 @@ from django.utils import timezone, http
 from customer.models import Customer
 from info import utility as util
 
+
 # Function to move the position of a translator in sequence
 def auto_assign(order):
     if order.get_status() <= util.TRANSLATING_ORIGIN:
@@ -291,7 +292,6 @@ class Document(models.Model):
     description = models.CharField(max_length=50, blank=True)
     required = models.BooleanField(default=False)
     upload_at = models.DateTimeField(default=timezone.now)
-    comment = models.CharField(max_length=255, blank=True)
     document = models.FileField(upload_to=order_directory_path, null=True)
     type = models.IntegerField(default=-1)  # remeber to set the document type when upload
 
