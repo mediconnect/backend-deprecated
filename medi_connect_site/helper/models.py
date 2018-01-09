@@ -284,7 +284,7 @@ class Order(models.Model):
 
 
 def order_directory_path(instance, filename):
-    return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name(), instance.order.id, http.urlquote(filename))
+    return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name().strip(' '), instance.order.id, http.urlquote(filename))
 
 
 class Document(models.Model):
