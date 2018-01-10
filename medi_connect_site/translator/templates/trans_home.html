@@ -4,6 +4,10 @@
 
 {% block content %}
 <p>Welcome!</p>
-<li>订单数：{{order_count}}</li>
+<ul>
+    {% for key, value in order_count.items %}
+        <li>{{key}} : {{value}}</li>
+    {% endfor %}
+</ul>
 
 {% endblock %}

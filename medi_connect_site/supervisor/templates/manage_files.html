@@ -2,57 +2,16 @@
 
 {%block title%}Manage File{%endblock%}
 {% block content %}
-<p>原始文件</p>
+<p>Documents</p>
 <ul>
-{% for obj in c2e_origin_documents %}
-<li>
- <a href="{{obj.document.url}}">{{obj.document}}</a>
-</li>
-{% endfor %}
+    {%for key, value in documents.items %}
+        <ul>{{key}} :
+            {% for each in value %}
+                <li><a href="{{each.document.url}}">{{each.document}}</a>{{each.upload_at}}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
 </ul>
-<p>反馈文件</p>
-<ul>
-{% for obj in e2c_origin_documents %}
-<li>
- <a href="{{obj.document.url}}">{{obj.document}}</a>
-</li>
-{% endfor %}
-</ul>
-<p>汉译英翻译文件</p>
-<ul>
-{% for obj in c2e_translated_documents %}
-<li>
-<a href="{{obj.document.url}}">{{obj.document}}</a>{{obj.upload_at}}
-</li>
-{% endfor %}
-</ul>
-<p>英译汉翻译文件</p>
-<ul>
-{% for obj in c2e_translated_documents %}
-<li>
-<a href="{{obj.document.url}}">{{obj.document}}</a>{{obj.upload_at}}
-</li>
-{% endfor %}
-</ul>
-<p>待审核文件</p>
-{% if assignment.status <= 3 %}
-<ul>
- {% for obj in c2e_pending_documents %}
-<li>
- <a href="{{obj.document.url}}">{{obj.document}}</a>{{obj.upload_at}}
-</li>
-{% endfor %}
-</ul>
-{% else %}
-<ul>
-{% for obj in e2c_pending_documents %}
-<li>
- <a href="{{obj.document.url}}">{{obj.document}}</a>{{obj.upload_at}}
-</li>
-{% endfor %}
-</ul>
- {% endif %}
-
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="file" name="feedback_files">
