@@ -135,3 +135,24 @@ class ContactForm(forms.ModelForm):
             'message',
         ]
         self.order_fields(self.field_order)
+
+
+class ForgetPasswordForm(forms.ModelForm):
+    email = forms.EmailField(
+        label='Email Address for Response',
+    )
+
+    class Meta:
+        model = User
+        exclude = []
+        fields = []
+
+    def __init__(self, *args, **kwargs):
+        super(ForgetPasswordForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        super(SignUpForm, self).clean()
+        password = self.cleaned_data.get('password')
+        confirm_password = self.cleaned_data.get('confirm_password')
+        if password is None or len(password) <= 0:
+            self.add_error('password', '请填写密码')

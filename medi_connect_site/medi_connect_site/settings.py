@@ -143,7 +143,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-
 USE_I18N = True
 
 USE_L10N = True
@@ -165,41 +164,17 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 DEBUG_MEDIA_ROOT = 'C:\Users\gabri\Desktop\Project\website\medi_connect_site/media/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-DEFAULT_FROM_EMAIL = 'abcdefgdontreplyme@outlook.com'
-SERVER_EMAIL = 'abcdefgdontreplyme@outlook.com'
-EMAIL_HOST = 'smtp.office365.com'
-EMAIL_HOST_USER = 'abcdefgdontreplyme@outlook.com'
-EMAIL_HOST_PASSWORD = 'passwordABC'
+DEFAULT_FROM_EMAIL = 'no-reply@yiconfirmed.com'
+SERVER_EMAIL = 'no-reply@yiconfirmed.com'
+EMAIL_HOST = 'email-smtp.us-west-2.amazonaws.com'
+EMAIL_HOST_USER = 'AKIAI7GRYTRHVGEOEJGA'
+EMAIL_HOST_PASSWORD = 'AhJXa12t9LkAY2aeaVVNAqmVyll5HKNFnUmy+5AtLdPE'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 AUTHENTICATION_BACKENDS = ['backend.email_login.EmailLoginBackend']
 
-
-# SOCIAL_AUTH_PIPELINE = (
-#     'social.pipeline.social_auth.social_details',
-#     'social.pipeline.social_auth.social_uid',
-#     'social.pipeline.social_auth.auth_allowed',
-#     'social_auth.backends.pipeline.social.social_auth_user',
-#     'social_auth.backends.pipeline.misc.save_status_to_session',
-#     'social_auth.backends.pipeline.user.create_user',
-#     'social_auth.backends.pipeline.social.associate_user',
-#     'social_auth.backends.pipeline.social.load_extra_data',
-#     'social_auth.backends.pipeline.user.update_user_details',
-#     'social_auth.backends.pipeline.misc.save_status_to_session',
-# )
-#
-# AUTHENTICATION_BACKENDS = (
-#     'social.backends.weixin.WeixinOAuth2',
-#     'django.contrib.auth.backends.ModelBackend',
-# )
-#
-# SOCIAL_AUTH_WEIXIN_KEY = 'wxeb25ffbff85039ec'
-# SOCIAL_AUTH_WEIXIN_SECRET = '4eb522c55dfb9a84cc4a702656a4036b'
-
-
-
-#Logging Configuration:
+# Logging Configuration:
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -240,13 +215,13 @@ LOGGING = {
             'filters': ['require_debug_false'],
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': 'media/django_production.log',
-            'maxBytes' : 1024*1024*100, # 100MB
-            'backupCount' : 5,
+            'maxBytes': 1024 * 1024 * 100,  # 100MB
+            'backupCount': 5,
             'formatter': 'simple'
         },
         'dba_logfile': {
             'level': 'DEBUG',
-            'filters': ['require_debug_false','require_debug_true'],
+            'filters': ['require_debug_false', 'require_debug_true'],
             'class': 'logging.handlers.WatchedFileHandler',
             'filename': 'media/django_dba.log',
             'formatter': 'simple'
@@ -258,13 +233,13 @@ LOGGING = {
     },
     'loggers': {
         'mediconnect': {
-            'handlers': ['development_logfile','production_logfile'],
-         },
+            'handlers': ['development_logfile', 'production_logfile'],
+        },
         'dba': {
             'handlers': ['dba_logfile'],
         },
         'django': {
-            'handlers': ['development_logfile','production_logfile'],
+            'handlers': ['development_logfile', 'production_logfile'],
         },
         'py.warnings': {
             'handlers': ['development_logfile'],
