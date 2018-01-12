@@ -281,9 +281,11 @@ class Order(models.Model):
     def change_trans_status(self, status):
         self.trans_status = status
         self.save()
- 
+
+
 def order_directory_path(instance, filename):
-    return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name().strip(' '), instance.order.id, http.urlquote(filename))
+    return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name().strip(' '), instance.order.id,
+                                      http.urlquote(filename))
 
 
 class Document(models.Model):
@@ -292,7 +294,7 @@ class Document(models.Model):
     required = models.BooleanField(default=False)
     upload_at = models.DateTimeField(default=timezone.now)
     document = models.FileField(upload_to=order_directory_path, null=True)
-    type = models.IntegerField(default=-1)  # remeber to set the document type when upload
+    type = models.IntegerField(default=-1)  # remember to set the document type when upload
 
     class Meta:
         db_table = 'document'
@@ -358,7 +360,8 @@ class Staff(models.Model):
                         assignments.append(assignment)
         elif self.get_role() == 2:
             for assignment in self.get_assignments():
-                if assignment.get_trans_status_for_translator(self) == int(status) + util.E2C_NOT_STARTED: # use the base status defined in utility
+                if assignment.get_trans_status_for_translator(self) == int(
+                        status) + util.E2C_NOT_STARTED:  # use the base status defined in utility
                     assignments.append(assignment)
             if int(status) == 1:
                 for assignment in self.get_assignments():

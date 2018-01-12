@@ -30,6 +30,7 @@ def order_directory_path(instance, filename):
 def questions_path(instance, filename):
     return 'hospital_{0}/disease_{1}/{2}'.format(instance.hospital.get_id(), instance.disease.get_id(), filename)
 
+
 def url_fix(s, charset='utf-8'):
     """Sometimes you get an URL by a user that just isn't a real
     URL because it contains unsafe characters like ' ' and so on.  This
@@ -48,6 +49,8 @@ def url_fix(s, charset='utf-8'):
     path = urllib.quote(path, '/%')
     qs = urllib.quote_plus(qs, ':&=')
     return urlparse.urlunsplit((scheme, netloc, path, qs, anchor))
+
+
 # Gender
 MALE = 'M'
 FEMALE = 'F'
@@ -92,11 +95,11 @@ STATUS_CHOICES = (
     (STARTED, '已下单'),
     (PAID, '已付款'),
     (TRANSLATING_ORIGIN, '原件翻译中'),
-    (SUBMITTED,'已提交至医院'),
+    (SUBMITTED, '已提交至医院'),
     (RETURN, '上传反馈'),
     (TRANSLATING_FEEDBACK, '反馈翻译中'),
     (FEEDBACK, '反馈已上传'),
-    (DONE,'订单已完成'),
+    (DONE, '订单已完成'),
 )
 
 status_dict = ['客户未提交', '已付款', '原件翻译中', '提交至医院', '上传反馈', '反馈翻译中',
@@ -186,7 +189,7 @@ E2C_ORIGIN = 3
 E2C_PENDING = 4
 E2C_TRANSLATED = 5
 
-#Staff Role
+# Staff Role
 SUPERVISOR = 0
 TRANS_C2E = 1
 TRANS_E2C = 2

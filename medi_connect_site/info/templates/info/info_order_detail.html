@@ -18,7 +18,14 @@
 <p>Disease: {{order.disease.name}}</p>
 <p>Hospital: {{order.hospital.name}}</p>
 
-{% for doc in document %}
+<p>Origin Documents:</p>
+{% for doc in origin_documents %}
+    <a href={{doc.document.url}}>{{ doc.description }}</a>
+    <br>
+{% endfor %}
+
+<p>Feedback Documents:</p>
+{% for doc in feedback_documents %}
     <a href={{doc.document.url}}>{{ doc.description }}</a>
     <br>
 {% endfor %}

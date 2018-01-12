@@ -248,7 +248,7 @@ def email_check(request):
 
 def contact(request):
     form = ContactForm()
-    form.initial.update({'email': request.user.email})
+    form.initial.update({'email': request.user.email if request.user.is_authenticated else None})
     return render(request, 'contact.html', {
         'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
         'form': form,
@@ -257,40 +257,45 @@ def contact(request):
 
 
 def send_response(request):
-    form = ContactForm(request.POST)
-    if not form.is_valid():
-        if request.user.is_authenticated():
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if not form.is_valid():
             return render(request, 'contact.html', {
-                'customer': Customer.objects.get(user=request.user),
+                'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
                 'form': form,
+                'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
             })
-        else:
-            return render(request, 'contact.html', {
-                'form': form,
-            })
-    email = form.cleaned_data.get('email')
-    message = form.cleaned_data.get('message')
-    password = 'passwordABC'
+        email = form.cleaned_data.get('email')
+        message = form.cleaned_data.get('message')
+        password = 'passwordABC'
 
-    sender = 'abcdefgdontreplyme@outlook.com'
-    receivers = [email]
-    cc = ['cjs08091996@outlook.com']
+        sender = 'abcdefgdontreplyme@outlook.com'
+        receivers = [email]
+        cc = ['cjs08091996@outlook.com']
 
-    try:
-        buf = smtplib.SMTP('smtp-mail.outlook.com', 587)
-        buf.ehlo()
-        buf.starttls()
-        buf.login(sender, password)
-        buf.sendmail(sender, receivers + cc, message)
-        buf.close()
-        print "Successfully sent email"
-    except smtplib.SMTPException:
-        print "Error: unable to send email"
+        try:
+            buf = smtplib.SMTP('smtp-mail.outlook.com', 587)
+            buf.ehlo()
+            buf.starttls()
+            buf.login(sender, password)
+            buf.sendmail(sender, receivers + cc, message)
+            buf.close()
+            print "Successfully sent email"
+        except smtplib.SMTPException:
+            print "Error: unable to send email"
 
-    return render(request, 'success.html', {
-        'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
-        'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
-    })
+        return render(request, 'success.html', {
+            'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
+            'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
+        })
+    else:
+        form = ContactForm()
+        form.initial.update({'email': request.user.email if request.user.is_authenticated else None})
+        return render(request, 'contact.html', {
+            'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
+            'form': form,
+            'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
+        })
 
 
 def hospital_detail(request, hospital_id):
