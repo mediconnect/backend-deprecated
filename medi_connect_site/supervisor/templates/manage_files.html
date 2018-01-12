@@ -7,7 +7,7 @@
     {%for key, value in documents.items %}
         <ul>{{key}} :
             {% for each in value %}
-                <li><a href="{{each.document.url}}">{{each.document}}</a>{{each.upload_at}}</li>
+                <li><a href="{% url 'force_download' document_id=each.id %}">{{each.document}}</a>{{each.upload_at}}</li>
             {% endfor %}
         </ul>
     {% endfor %}

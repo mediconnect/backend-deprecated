@@ -13,6 +13,10 @@ from django.http import JsonResponse
 import json
 import datetime
 from django.utils import timezone
+import os
+from django.conf import settings
+from django.http import HttpResponse,Http404
+import urllib
 
 # Create your models here.
 #Get Order and Document Model from helper.models
@@ -45,6 +49,20 @@ def translator_auth(request):
     return render(request, 'trans_login.html', {
         'form': StaffLoginForm()
     })
+
+@login_required
+def force_download(request,document_id):
+    path = Document.objects.get(id = document_id).document.url
+    #print path
+    file_path = urllib.url2pathname(os.path.join(settings.DEBUG_MEDIA_ROOT, path))
+    #file_path = urllib.url2pathname(os.path.join(settings.MEDIA_ROOT, path))
+    if os.path.exists(file_path):
+        with open(file_path,'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/liquid",charset = 'utf-8')
+            response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_path.encode('utf-8'))
+            return response
+    #print file_path, settings.DEBUG_MEDIA_ROOT
+    raise Http404
 
 @login_required()
 def update_result(request):
@@ -121,9 +139,9 @@ def update_result(request):
 def translator(request, id):
     translator = Staff.objects.get(user_id = id)
     order_count = {
-        'NOT_STARTED':len(translator.get_assignments_status(util.NOT_STARTED)),
-        'ONGOING':len(translator.get_assignments_status(util.ONGOING)),
-        'APPROVING':len(translator.get_assignments_status(util.APPROVING))
+        '未开始任务':len(translator.get_assignments_status(util.NOT_STARTED)),
+        '翻译中任务':len(translator.get_assignments_status(util.ONGOING)),
+        '等待审核':len(translator.get_assignments_status(util.APPROVING))
     }
 
     return render(request, 'trans_home.html',
@@ -146,7 +164,7 @@ def assignment_summary(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     if translator.get_role() == util.TRANS_C2E:
         origin_documents = Document.objects.filter(order_id = order_id,type = 0 )
-        pending_documents = Document.objects.filter(order_id = order_id, type = 0)
+        pending_documents = Document.objects.filter(order_id = order_id, type = 1)
     if translator.get_role() == util.TRANS_E2C:
         origin_documents = Document.objects.filter(order_id = order_id, type = 3)
         pending_documents = Document.objects.filter(order_id = order_id, type = 4)
@@ -188,7 +206,7 @@ def assignment_summary(request, id, order_id):
             document = Document(order = assignment, document = file, type = util.E2C_PENDING)
         document.save()
         assignment.save()
-
+    print pending_documents
     return render(request, 'assignment_summary.html', {
         'origin_documents': origin_documents,
         'pending_documents': pending_documents,

@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^login/$', core_views.auth, name='translator_login'),
     url(r'^logout/', auth_views.logout, {'next_page': '/translator/login'}, name='translator_logout'),
     url(r'^ajax/update_result/$', trans_views.update_result, name='trans_update_result'),
+    url(r'^force_download/(?P<document_id>\d+)/$', trans_views.force_download, name='trans_force_download'),
 ]

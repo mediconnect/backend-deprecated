@@ -100,7 +100,8 @@ class Echo(object):
 @login_required
 def force_download(request,document_id):
     path = Document.objects.get(id = document_id).document.url
-    file_path = urllib.url2pathname(os.path.join(settings.DEBUG_MEDIA_ROOT, path))
+    #file_path = urllib.url2pathname(os.path.join(settings.DEBUG_MEDIA_ROOT, path))
+    file_path = urllib.url2pathname(os.path.join(settings.MEDIA_ROOT, path))
     if os.path.exists(file_path):
         with open(file_path,'rb') as fh:
             response = HttpResponse(fh.read(), content_type="application/liquid",charset = 'utf-8')
@@ -437,12 +438,12 @@ def detail(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     supervisor = Staff.objects.get(user_id=id)
     documents = {
-        'c2e_origin_documents' : Document.objects.filter(order_id=order_id, type=0),
-        'c2e_pending_documents' : Document.objects.filter(order_id=order_id, type=util.C2E_PENDING),
-        'c2e_translated_documents': Document.objects.filter(order_id=order_id, type=util.C2E_TRANSLATED),
-        'e2c_origin_documents' : Document.objects.filter(order_id=order_id, type=util.E2C_ORIGIN),
-        'e2c_pending_documents': Document.objects.filter(order_id=order_id, type=util.E2C_PENDING),
-        'e2c_translated_documents' : Document.objects.filter(order_id=order_id, type=util.E2C_TRANSLATED)
+        '汉译英原件' : Document.objects.filter(order_id=order_id, type=0),
+        '汉译英任务文件' : Document.objects.filter(order_id=order_id, type=util.C2E_PENDING),
+        '汉译英翻译': Document.objects.filter(order_id=order_id, type=util.C2E_TRANSLATED),
+        '英译汉原件' : Document.objects.filter(order_id=order_id, type=util.E2C_ORIGIN),
+        '英译汉任务文件': Document.objects.filter(order_id=order_id, type=util.E2C_PENDING),
+        '英译汉待审核' : Document.objects.filter(order_id=order_id, type=util.E2C_TRANSLATED)
     }
 
     if (request.POST.get('delete')):
@@ -469,12 +470,12 @@ def approve(request, id, order_id):
     customer = Customer.objects.get(id=assignment.customer_id)
     status = util.status_dict[int(assignment.status)]
     documents = {
-        'c2e_origin_documents' : Document.objects.filter(order_id=order_id, type=0),
-        'c2e_pending_documents' : Document.objects.filter(order_id=order_id, type=util.C2E_PENDING),
-        'c2e_translated_documents': Document.objects.filter(order_id=order_id, type=util.C2E_TRANSLATED),
-        'e2c_origin_documents' : Document.objects.filter(order_id=order_id, type=util.E2C_ORIGIN),
-        'e2c_pending_documents': Document.objects.filter(order_id=order_id, type=util.E2C_PENDING),
-        'e2c_translated_documents' : Document.objects.filter(order_id=order_id, type=util.E2C_TRANSLATED)
+        '汉译英原件' : Document.objects.filter(order_id=order_id, type=0),
+        '汉译英任务文件' : Document.objects.filter(order_id=order_id, type=util.C2E_PENDING),
+        '汉译英翻译': Document.objects.filter(order_id=order_id, type=util.C2E_TRANSLATED),
+        '英译汉原件' : Document.objects.filter(order_id=order_id, type=util.E2C_ORIGIN),
+        '英译汉任务文件': Document.objects.filter(order_id=order_id, type=util.E2C_PENDING),
+        '英译汉待审核' : Document.objects.filter(order_id=order_id, type=util.E2C_TRANSLATED)
     }
     if request.method == 'POST':
         form = ApproveForm(request.POST)
@@ -535,12 +536,12 @@ def manage_files(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     supervisor = Staff.objects.get(user_id=id)
     documents = {
-        'c2e_origin_documents' : Document.objects.filter(order_id=order_id, type=0),
-        'c2e_pending_documents' : Document.objects.filter(order_id=order_id, type=util.C2E_PENDING),
-        'c2e_translated_documents': Document.objects.filter(order_id=order_id, type=util.C2E_TRANSLATED),
-        'e2c_origin_documents' : Document.objects.filter(order_id=order_id, type=util.E2C_ORIGIN),
-        'e2c_pending_documents': Document.objects.filter(order_id=order_id, type=util.E2C_PENDING),
-        'e2c_translated_documents' : Document.objects.filter(order_id=order_id, type=util.E2C_TRANSLATED)
+        '汉译英原件' : Document.objects.filter(order_id=order_id, type=0),
+        '汉译英任务文件' : Document.objects.filter(order_id=order_id, type=util.C2E_PENDING),
+        '汉译英翻译': Document.objects.filter(order_id=order_id, type=util.C2E_TRANSLATED),
+        '英译汉原件' : Document.objects.filter(order_id=order_id, type=util.E2C_ORIGIN),
+        '英译汉任务文件': Document.objects.filter(order_id=order_id, type=util.E2C_PENDING),
+        '英译汉待审核' : Document.objects.filter(order_id=order_id, type=util.E2C_TRANSLATED)
     }
     if (request.POST.get('delete')):
         document = Document.objects.get(document=request.POST.get('document'))
