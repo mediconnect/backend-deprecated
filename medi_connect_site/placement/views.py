@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from helper.models import Hospital, Patient, Disease, Order, Document, HospitalReview, LikeHospital, OrderPatient, Rank, \
-    Slot
+from helper.models import Hospital, Patient, Disease, Order, Document, HospitalReview, LikeHospital, OrderPatient, \
+    Rank, Slot
 from customer.models import Customer
 from django.contrib.auth.decorators import login_required
 from helper.forms import PatientInfo, AppointmentInfo

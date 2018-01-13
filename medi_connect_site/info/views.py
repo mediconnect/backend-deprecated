@@ -202,7 +202,8 @@ def order_detail(request, order_id):
     return render(request, 'info_order_detail.html', {
         'customer': customer,
         'order': order,
-        'document': Document.objects.filter(order=order, type=0),
+        'origin_documents': Document.objects.filter(order=order, type=0),
+        'feedback_documents': Document.objects.filter(order=order, type=5),
         'pay': int(order.status) < 2,
         'comment': int(order.status) == 6,
         'incomplete': int(order.status) != 7,
