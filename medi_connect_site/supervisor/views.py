@@ -502,7 +502,7 @@ def approve(request, id, order_id):
                                                             type=util.E2C_PENDING):  # put all pending documents back to feedback
                         document.type = util.E2C_TRANSLATED
                         document.save()
-                    assignment.change_status(util.DONE)  # TODO: Customer check order complete function
+                    assignment.change_status(util.FEEDBACK)  # TODO: Customer check order complete function
                     assignment.change_trans_status(util.E2C_FINISHED)
 
             if not approval:
