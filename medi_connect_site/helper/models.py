@@ -282,6 +282,16 @@ class Order(models.Model):
         self.trans_status = status
         self.save()
 
+    def get_documents(self):
+        documents = {
+            '汉译英原件': Document.objects.filter(order_id=self.id, type=util.C2E_ORIGIN),
+            '汉译英任务文件': Document.objects.filter(order_id=self.id, type=util.C2E_PENDING),
+            '汉译英翻译': Document.objects.filter(order_id=self.id, type=util.C2E_TRANSLATED),
+            '英译汉原件': Document.objects.filter(order_id=self.id, type=util.E2C_ORIGIN),
+            '英译汉任务文件': Document.objects.filter(order_id=self.id, type=util.E2C_PENDING),
+            '英译汉待审核': Document.objects.filter(order_id=self.id, type=util.E2C_TRANSLATED)
+        }
+        return documents
 
 def order_directory_path(instance, filename):
     return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name().strip(' '), instance.order.id,

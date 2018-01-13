@@ -53,15 +53,12 @@ def translator_auth(request):
 @login_required
 def force_download(request,document_id):
     path = Document.objects.get(id = document_id).document.url
-    #print path
-    file_path = urllib.url2pathname(os.path.join(settings.DEBUG_MEDIA_ROOT, path))
-    #file_path = urllib.url2pathname(os.path.join(settings.MEDIA_ROOT, path))
+    file_path = urllib.url2pathname(os.path.join(settings.MEDIA_ROOT, path))
     if os.path.exists(file_path):
         with open(file_path,'rb') as fh:
             response = HttpResponse(fh.read(), content_type="application/liquid",charset = 'utf-8')
             response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_path.encode('utf-8'))
             return response
-    #print file_path, settings.DEBUG_MEDIA_ROOT
     raise Http404
 
 @login_required()
@@ -206,7 +203,6 @@ def assignment_summary(request, id, order_id):
             document = Document(order = assignment, document = file, type = util.E2C_PENDING)
         document.save()
         assignment.save()
-    print pending_documents
     return render(request, 'assignment_summary.html', {
         'origin_documents': origin_documents,
         'pending_documents': pending_documents,
