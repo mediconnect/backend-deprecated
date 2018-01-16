@@ -56,33 +56,60 @@ Delete Translator Function:
 def validate_pwd(request): # validate password for delete translatoe operation
     data = {
         'validate':False,
-        'msg':''
+        'msg':'',
+        'count':0
     }
     password = request.GET.get('password',None)
     id = request.GET.get('trans_id',None)
     supervisor = Staff.objects.get(user = request.user)
+    is_C2E = False
+    is_E2C = False
+    ERR_NO = 0
     if password is '': # password is empty
         data['msg'] = '密码不能为空'
         return JsonResponse(data)
     if check_password(password,supervisor.user.password):
         data['validate']=True
+        translator = Staff.objects.get(user_id=id)
+        user = translator.user
+        if translator.get_role() == util.TRANS_C2E:
+            is_C2E = True
+        elif translator.get_role() == util.TRANS_E2C:
+            is_E2C = True
+
+        assignments = translator.get_assignments()
+        translator.delete()
+        user.delete()
+        for each in assignments:  # reassign all assignments assigned to the deleted translator
+            if each.get_trans_status() <= util.C2E_FINISHED:
+                each.c2e_re_assigned += 1
+                if is_C2E:
+                    ERR_NO = auto_assign(each)
+                elif is_E2C:
+                    each.set_translator_E2C(None)
+                    each.save()
+                    ERR_NO = -1
+            else:
+                each.e2c_re_assigned += 1
+                if is_C2E:
+                    each.set_translator_C2E(None)
+                    each.save()
+                    ERR_NO = -1
+                elif is_E2C:
+                    ERR_NO = auto_assign(each)
+
+
+            each.save()
+            if ERR_NO == '1':
+                data['count']+=1
+                data['msg'] = '操作成功'  # return success only in reassign succeed
+            elif ERR_NO == '-1':
+                data['msg'] ='无法分配'
     else:
         data['msg'] = '密码错误'
         return JsonResponse(data)
 
-    translator = Staff.objects.get(user_id = id)
-    user = translator.user
-    assignments = translator.get_assignments()
-    translator.delete()
-    user.delete()
-    for each in assignments: # reassign all assignments assigned to the deleted translator
-        if each.get_status() <= util.C2E_FINISHED:
-            each.c2e_reassigned += 1
-        else:
-            each.c2e_reassigned += 1
-        auto_assign(each)
-        each.save()
-    data['msg']='操作成功' # return success only in reassign succeed
+
 
     return JsonResponse(data)
 """

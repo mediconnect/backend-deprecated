@@ -21,9 +21,15 @@ def auto_assign(order):
             order.change_status(util.TRANSLATING_ORIGIN)
             order.change_trans_status(util.C2E_NOT_STARTED)
             assignee.set_sequence(timezone.now())
-
+            order.save()
+            return 1
         except IndexError:
+            print 'bug'
             order.set_translator_C2E(None)
+
+            order.save()
+            print 'set null'
+            return -1
 
     if order.get_status() >= util.RETURN:
         try:
@@ -33,9 +39,15 @@ def auto_assign(order):
             order.change_trans_status(util.E2C_NOT_STARTED)
             order.auto_assigned = 1
             assignee.set_sequence(timezone.now())
+            order.save()
+            return 1
 
         except IndexError:
+            print 'bug'
             order.set_translator_C2E(None)
+            order.save()
+            print 'set null'
+            return -1
 
     order.save()
     # print order.auto_assigned,order.translator_C2E,order.status,order.trans_status,order.translator_E2C
@@ -160,9 +172,9 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
     patient = models.ForeignKey('Patient', on_delete=models.SET_NULL, null=True)
     patient_order = models.ForeignKey('OrderPatient', on_delete=models.SET_NULL, null=True)
-    translator_C2E = models.ForeignKey('Staff', on_delete=models.SET(1), null=True,
+    translator_C2E = models.ForeignKey('Staff', on_delete=models.SET_NULL, null=True,
                                        related_name='chinese_translator')  # Translator 1 is reserveed for unassigned
-    translator_E2C = models.ForeignKey('Staff', on_delete=models.SET(1), null=True,
+    translator_E2C = models.ForeignKey('Staff', on_delete=models.SET_NULL, null=True,
                                        related_name='english_translator')
     hospital = models.ForeignKey('Hospital', on_delete=models.SET_NULL, null=True)
     disease = models.ForeignKey('Disease', on_delete=models.SET_NULL, null=True)
