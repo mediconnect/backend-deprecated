@@ -43,7 +43,6 @@
         {% else %}
 
             {%if assignment.get_trans_status == 1 or assignment.get_trans_status == 7 %}
-
                 <form  method = 'post'>
                     {% csrf_token %}
                     {{form}}
