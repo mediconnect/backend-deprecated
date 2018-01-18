@@ -17,6 +17,7 @@ def auto_assign(order):
     if order.get_status() <= util.TRANSLATING_ORIGIN:
         try:
             assignee = Staff.objects.filter(role=1).order_by('sequence')[0]
+            print assignee
             order.set_translator_C2E(assignee)
             order.change_status(util.TRANSLATING_ORIGIN)
             order.change_trans_status(util.C2E_NOT_STARTED)

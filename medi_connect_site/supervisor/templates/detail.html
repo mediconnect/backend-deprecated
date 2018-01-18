@@ -7,7 +7,8 @@
 <p>医院:   {{assignment.hospital.get_name}}</p>
 <p>病人:   {{assignment.patient_order.get_name}}</p>
 <p>疾病:   {{assignment.disease.name}}</p>
-
+<p>状态：   {{assignment.get_status}}</p>
+<p>翻译状态： {{assignment.get_trans_status}}</p>
 <p>Documents</p>
 <ul>
     {%for key, value in documents.items %}

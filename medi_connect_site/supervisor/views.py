@@ -56,8 +56,12 @@ Delete Translator Function:
 def validate_pwd(request): # validate password for delete translatoe operation
     data = {
         'validate':False,
-        'msg':'',
-        'count':0
+        'msg':''
+    }
+    count = {
+        1:0,  # re_assignment success
+        -1:0,  # re_assignment failed
+        0:0  # re_assignment not needed
     }
     password = request.GET.get('password',None)
     id = request.GET.get('trans_id',None)
@@ -85,26 +89,24 @@ def validate_pwd(request): # validate password for delete translatoe operation
                 each.c2e_re_assigned += 1
                 if is_C2E:
                     ERR_NO = auto_assign(each)
+                    count[ERR_NO] += 1
                 elif is_E2C:
                     each.set_translator_E2C(None)
                     each.save()
-                    ERR_NO = -1
+                    count[0] += 1
             else:
                 each.e2c_re_assigned += 1
                 if is_C2E:
                     each.set_translator_C2E(None)
                     each.save()
-                    ERR_NO = -1
+                    count[0] += 1
                 elif is_E2C:
                     ERR_NO = auto_assign(each)
+                    count[ERR_NO] += 1
 
 
             each.save()
-            if ERR_NO == '1':
-                data['count']+=1
-                data['msg'] = '操作成功'  # return success only in reassign succeed
-            elif ERR_NO == '-1':
-                data['msg'] ='无法分配'
+            data['msg'] = '成功重新分配：' + str(count[1]) + '个文件, '+ '重新分配失败：' + str(count[-1]) + '个文件, '+ '无需分配：' + str(count[0]) + '个文件. '
     else:
         data['msg'] = '密码错误'
         return JsonResponse(data)
@@ -127,8 +129,8 @@ class Echo(object):
 @login_required
 def force_download(request,document_id):
     path = Document.objects.get(id = document_id).document.url
-    #file_path = urllib.url2pathname(os.path.join(settings.DEBUG_MEDIA_ROOT, path))
-    file_path = urllib.url2pathname(os.path.join(settings.MEDIA_ROOT, path))
+    file_path = urllib.url2pathname(os.path.join(settings.DEBUG_MEDIA_ROOT, path))
+    #file_path = urllib.url2pathname(os.path.join(settings.MEDIA_ROOT, path))
     if os.path.exists(file_path):
         with open(file_path,'rb') as fh:
             response = HttpResponse(fh.read(), content_type="application/liquid",charset = 'utf-8')
