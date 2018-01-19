@@ -44,9 +44,10 @@ def auth(request):
         password = form.cleaned_data.get('password')
         user = authenticate(email=email, password=password)
         if user is None:
+            form.add_error('email', '邮箱不正确')
+            form.add_error('password', '密码不正确')
             return render(request, 'login.html', {
                 'form': form,
-                'error': 'Invalid Login'
             })
         login(request, user)
         if request.session.get('order_status', None) is None:

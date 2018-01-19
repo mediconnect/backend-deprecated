@@ -151,7 +151,7 @@ class ForgetPasswordForm(forms.ModelForm):
         super(ForgetPasswordForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-        super(SignUpForm, self).clean()
+        super(ForgetPasswordForm, self).clean()
         password = self.cleaned_data.get('password')
         confirm_password = self.cleaned_data.get('confirm_password')
         if password is None or len(password) <= 0:
