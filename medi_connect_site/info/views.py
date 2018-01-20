@@ -113,7 +113,7 @@ def profile_patient(request):
 @login_required
 def order(request):
     customer = Customer.objects.get(user=request.user)
-    orders = Order.objects.filter(customer=customer)
+    orders = Order.objects.filter(customer=customer).order_by('-submit')
     order_list = []
     status_dict = ['客户未提交', '已付款', '原件翻译中', '提交至医院', '上传反馈', '反馈翻译中', '反馈已上传', '订单完成']
     for order in orders:
@@ -137,7 +137,7 @@ def order(request):
 @login_required
 def order_finished(request):
     customer = Customer.objects.get(user=request.user)
-    orders = Order.objects.filter(customer=customer)
+    orders = Order.objects.filter(customer=customer).order_by('-submit')
     order_list = []
     status_dict = ['客户未提交', '已付款', '原件翻译中', '提交至医院', '上传反馈', '反馈翻译中', '反馈已上传', '订单完成']
     for order in orders:
@@ -199,6 +199,7 @@ def order_detail(request, order_id):
             return redirect('order_review')
         elif status == -3:
             return redirect('order_deposit')
+    comments = HospitalReview.objects.filter(order=order)
     return render(request, 'info_order_detail.html', {
         'customer': customer,
         'order': order,
@@ -207,6 +208,7 @@ def order_detail(request, order_id):
         'pay': int(order.status) < 2,
         'comment': int(order.status) == 6,
         'incomplete': int(order.status) != 7,
+        'comments': comments,
     })
 
 
