@@ -176,9 +176,7 @@ def update_result(request):
     sort = request.GET.get('sort',None)
     page = request.GET.get('page', 1)
     supervisor = Staff.objects.get(user=request.user)
-
     raw = supervisor.get_assignments_status(status)  # raw queryset unsorted, unfiltered
-
     if sort!=None:
         if sort[0] == '-':
             if sort[1:] == 'Deadline':
@@ -201,21 +199,6 @@ def update_result(request):
     search_d = json.loads(json_acceptable_string)
     data = {
         'sort_by': sort,
-        'result': {
-            'Order_Id': [],
-            'Customer': [],
-            'Patient':[],
-            'Hospital':[],
-            'Disease':[],
-            'Translator_C2E':[],
-            'Translator_E2C':[],
-            'Status': [],
-            'Trans_Status':[],
-            'Deadline':[],
-            'Trans_Deadline':[],
-            'Upload':[],
-            'Link': []
-        },
         'choices': {
             'customer_choice': [],
             'patient_choice':[],
@@ -225,7 +208,8 @@ def update_result(request):
             'translator_E2C_choice':[],
             'status_choice':[],
             'trans_status_choice':[],
-        }
+        },
+        'message':'Error in order: '
 
     }
     if search_d == {}:
@@ -311,41 +295,61 @@ def update_result(request):
     result_length = len(result)
     result = p.page(page)
     data['result_length'] = result_length # pagination
+    data['result']={
+            'Order_Id': [(-1,'Error')]*len(result),
+            'Customer': [(-1,'Error')]*len(result),
+            'Patient':[(-1,'Error')]*len(result),
+            'Hospital':[(-1,'Error')]*len(result),
+            'Disease':[(-1,'Error')]*len(result),
+            'Translator_C2E':[(-1,'Error')]*len(result),
+            'Translator_E2C':[(-1,'Error')]*len(result),
+            'Status': [(-1,'Error')]*len(result),
+            'Trans_Status':[(-1,'Error')]*len(result),
+            'Deadline':['Error']*len(result),
+            'Trans_Deadline':['Error']*len(result),
+            'Upload':['Error']*len(result),
+            'Link': ['Error']*len(result)
+        }
 
-
-
-    for each in result:
-        # Latest Upload
-        upload = timezone.now()
-        if not Document.objects.filter(order_id = each.id).exists():
-            upload = 'No upload yet'
-        for doc in Document.objects.filter(order_id = each.id):
-            if doc.upload_at < upload:
-                upload = doc.upload_at
-
-        data['result']['Order_Id'].append(each.id)
-        data['result']['Customer'].append((each.customer.id, each.customer.get_name()))
-        data['result']['Patient'].append(each.get_patient())
-        data['result']['Hospital'].append((each.hospital.id,each.hospital.name))
-        data['result']['Disease'].append((each.disease.id, each.disease.name))
-        data['result']['Translator_C2E'].append(each.get_translator_C2E())
-        data['result']['Translator_E2C'].append(each.get_translator_E2C())
-        data['result']['Status'].append((each.get_status(),util.status_dict[int(each.get_status())]))
-        data['result']['Trans_Status'].append((each.get_trans_status(),util.trans_status_dict[int(each.get_trans_status())]))
-        data['result']['Deadline'].append(each.get_submit_deadline())
-        data['result']['Trans_Deadline'].append(each.get_deadline())
-        data['result']['Upload'].append(upload)
-        data['result']['Link'].append(reverse('detail', args=[supervisor.user.id, each.id]))
+    for x in range(0,len(result)):
+        each = result[x]
+        try:
+            # Latest Upload
+            upload = timezone.now()
+            if not Document.objects.filter(order_id = each.id).exists():
+                upload = 'No upload yet'
+            for doc in Document.objects.filter(order_id = each.id):
+                if doc.upload_at < upload:
+                    upload = doc.upload_at
+            data['result']['Order_Id'][x]=each.id
+            data['result']['Customer'][x]=((each.customer.id, each.customer.get_name()))
+            data['result']['Patient'][x]=(each.get_patient())
+            data['result']['Hospital'][x]=((each.hospital.id,each.hospital.name))
+            data['result']['Disease'][x]=((each.disease.id, each.disease.name))
+            data['result']['Translator_C2E'][x]=(each.get_translator_C2E())
+            data['result']['Translator_E2C'][x]=(each.get_translator_E2C())
+            data['result']['Status'][x]=((each.get_status(),util.status_dict[int(each.get_status())]))
+            data['result']['Trans_Status'][x]=((each.get_trans_status(),util.trans_status_dict[int(each.get_trans_status())]))
+            data['result']['Deadline'][x]=(each.get_submit_deadline())
+            data['result']['Trans_Deadline'][x]=(each.get_deadline())
+            data['result']['Upload'][x]=(upload)
+            data['result']['Link'][x]=(reverse('detail', args=[supervisor.user.id, each.id]))
+        except Exception as ex:
+            template = "\nAn exception of type {0} occurred. Arguments:\n{1!r}"
+            message = template.format(type(ex).__name__, ex.args)
+            data['message']+='\nID '+str(each.id)+message
     #prepare data for display
-    data['choices']['customer_choice'] = list(map(lambda x:(int(x),Customer.objects.get(id=x).get_name()),Order.objects.values_list('customer_id',flat=True).distinct()))
-    data['choices']['disease_choice'] = list(map(lambda x:(int(x),Disease.objects.get(id=x).get_name()),Order.objects.values_list('disease_id',flat=True).distinct()))
-    data['choices']['patient_choice'] = list(map(lambda x:(int(x),Patient_Order.objects.get(id=x).get_name()),Order.objects.exclude(patient_order__isnull=True).values_list('patient_order_id',flat=True).distinct()))
-    data['choices']['hospital_choice'] = list(map(lambda x:(int(x),Hospital.objects.get(id=x).get_name()),Order.objects.values_list('hospital_id',flat=True).distinct()))
-    data['choices']['translator_E2C_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.exclude(translator_E2C__isnull=True).values_list('translator_E2C_id',flat=True).distinct().exclude(translator_E2C__isnull=True)))
-    data['choices']['translator_C2E_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.exclude(translator_C2E__isnull=True).values_list('translator_C2E_id',flat=True).distinct().exclude(translator_C2E__isnull=True)))
-    data['choices']['status_choice'] = util.STATUS_CHOICES
-    data['choices']['trans_status_choice'] = util.TRANS_STATUS_CHOICE
-
+    try:
+        data['choices']['customer_choice'] = list(map(lambda x:(int(x),Customer.objects.get(id=x).get_name()),Order.objects.values_list('customer_id',flat=True).distinct()))
+        data['choices']['disease_choice'] = list(map(lambda x:(int(x),Disease.objects.get(id=x).get_name()),Order.objects.values_list('disease_id',flat=True).distinct()))
+        data['choices']['patient_choice'] = list(map(lambda x:(int(x),Patient_Order.objects.get(id=x).get_name()),Order.objects.exclude(patient_order__isnull=True).values_list('patient_order_id',flat=True).distinct()))
+        data['choices']['hospital_choice'] = list(map(lambda x:(int(x),Hospital.objects.get(id=x).get_name()),Order.objects.values_list('hospital_id',flat=True).distinct()))
+        data['choices']['translator_E2C_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.exclude(translator_E2C__isnull=True).values_list('translator_E2C_id',flat=True).distinct().exclude(translator_E2C__isnull=True)))
+        data['choices']['translator_C2E_choice'] = list(map(lambda x:(x,Staff.objects.get(id=x).get_name()),Order.objects.exclude(translator_C2E__isnull=True).values_list('translator_C2E_id',flat=True).distinct().exclude(translator_C2E__isnull=True)))
+        data['choices']['status_choice'] = util.STATUS_CHOICES
+        data['choices']['trans_status_choice'] = util.TRANS_STATUS_CHOICE
+    except:
+        data['message']+='\nError in choice'
     return JsonResponse(data)
 
 

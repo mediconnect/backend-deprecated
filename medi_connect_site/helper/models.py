@@ -17,7 +17,6 @@ def auto_assign(order):
     if order.get_status() <= util.TRANSLATING_ORIGIN:
         try:
             assignee = Staff.objects.filter(role=1).order_by('sequence')[0]
-            print assignee
             order.set_translator_C2E(assignee)
             order.change_status(util.TRANSLATING_ORIGIN)
             order.change_trans_status(util.C2E_NOT_STARTED)
@@ -25,11 +24,9 @@ def auto_assign(order):
             order.save()
             return 1
         except IndexError:
-            print 'bug'
             order.set_translator_C2E(None)
 
             order.save()
-            print 'set null'
             return -1
 
     if order.get_status() >= util.RETURN:
@@ -202,7 +199,6 @@ class Order(models.Model):
             result = (self.translator_C2E.id, self.translator_C2E.get_name())
         if self.c2e_re_assigned:
             result = (-result[0], result[1])  # if reassigned return negative value
-
         return result
 
     def set_translator_C2E(self, assignee):
@@ -217,7 +213,6 @@ class Order(models.Model):
             result = (self.translator_E2C.id, self.translator_E2C.get_name())
         if self.e2c_re_assigned:
             result = (-result[0], result[1])  # if reassigned return negative value
-
         return result
 
     def set_translator_E2C(self, assignee):

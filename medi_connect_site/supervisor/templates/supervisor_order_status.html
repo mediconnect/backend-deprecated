@@ -113,6 +113,7 @@
         $.getJSON("{% url 'update_result'%}",{'status':'{{status}}','query':JSON.stringify(dic),'search_query':JSON.stringify(search_dic)},function(data){
             createResult(data);
             createChoice(data);
+            console.log(data.message);
         });
     });
     function createResult(data){
