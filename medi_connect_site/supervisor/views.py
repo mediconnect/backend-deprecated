@@ -554,35 +554,50 @@ def manage_files(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     supervisor = Staff.objects.get(user_id=id)
     documents = assignment.get_documents()
-    if (request.POST.get('delete')):
-        document = Document.objects.get(document=request.POST.get('document'))
-        document.delete()
-        return render(request, 'manage_files.html', {
-            'supervisor': supervisor,
-            'assignment': assignment,
-            'documents': documents
-        })
-    if request.method == 'POST' and request.FILES['feedback_files']:
-        file = request.FILES['feedback_files']
-        fs = FileSystemStorage()
-        filename = fs.save(file.name, file)
-        document = Document(order=assignment, document=file, type = util.E2C_ORIGIN) #create feedback file
-        document.save()
-        if assignment.translator_E2C is None:
-            assignment.change_status(util.RETURN)
-            auto_assign(assignment)
-        assignment.save()
-        return render(request, 'manage_files.html', {
-            'supervisor': supervisor,
-            'assignment': assignment,
-            'documents': documents
-        })
-    else:
+    try:
+        if (request.POST.get('delete')):
+                document = Document.objects.get(document=request.POST.get('document'))
+                document_name = document.get_name()
+                document.delete()
+                msg =  '删除文件'+document_name
 
+                return render(request, 'manage_files.html', {
+                    'supervisor': supervisor,
+                    'assignment': assignment,
+                    'documents': documents,
+                    'message':msg
+                })
+        elif request.method == 'POST' and request.FILES['feedback_files']:
+            file = request.FILES['feedback_files']
+            document = Document(order=assignment, document=file, type = util.E2C_ORIGIN) #create feedback file
+            document_name = document.get_name()
+            document.save()
+            msg = '上传文件'+document_name
+            if assignment.translator_E2C is None:
+                assignment.change_status(util.RETURN)
+                auto_assign(assignment)
+            assignment.save()
+            return render(request, 'manage_files.html', {
+                'supervisor': supervisor,
+                'assignment': assignment,
+                'documents': documents,
+                'msg':msg,
+            })
+        else:
+            return render(request, 'manage_files.html', {
+                'supervisor': supervisor,
+                'assignment': assignment,
+                'documents': documents,
+                'msg': None,
+            })
+    except Exception as ex:
+        template = "An exception of type {0} occurred. Arguments:{1!r}"
+        msg = template.format(type(ex).__name__, ex.args)
         return render(request, 'manage_files.html', {
             'supervisor': supervisor,
             'assignment': assignment,
-            'documents': documents
+            'documents': documents,
+            'msg':msg
         })
 
 @login_required

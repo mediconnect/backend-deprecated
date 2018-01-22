@@ -321,8 +321,10 @@ class Document(models.Model):
         return self.upload_at
 
     def get_name(self):
-        return self.document
-
+        if self.description != None:
+            return self.description + ": "+str(self.document)
+        else:
+            return '未分类: '+ str(self.document)
 
 class Staff(models.Model):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)

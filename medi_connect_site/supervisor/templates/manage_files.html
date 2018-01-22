@@ -15,10 +15,17 @@
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <input type="file" name="feedback_files">
-    <button type="submit">Upload</button>
+    <button onclick = 'upload' type="submit">Upload</button>
   </form>
 
 
  <p><a href="{% url 'supervisor_home' id=supervisor.user.id %}">Return to home</a></p>
  <p><a href="{% url 'detail' id=supervisor.user.id order_id=assignment.id %}">Return to detail</a></p>
+<script>
+    $( document ).ready(function() {
+        if("{{msg}}"!='None'){
+            alert("{{msg}}");
+        };
+    });
+</script>
 {% endblock %}
