@@ -321,7 +321,7 @@ class Document(models.Model):
         return self.upload_at
 
     def get_name(self):
-        if self.description != None:
+        if self.description != "":
             return self.description + ": "+str(self.document)
         else:
             return '未分类: '+ str(self.document)
