@@ -10,11 +10,18 @@
 
 <br>
 
-<p>排名: {{rank}}</p>
+<div class="media-left media-middle">
+    <img src="{{ hospital.image }}" height="128" width="128">
+</div>
+
+<p>专业排名: {{rank}}</p>
+<p>综合排名：{{hospital.overall_rank}}</p>
 <h4 class="media-heading">医院名字: {{hospital.name}}</h4>
 <p>介绍: {{hospital.introduction}}</p>
-<p>反馈: {{hospital.feedback_time}}</p>
+<p>反馈: {{hospital.feedback_time}} week</p>
 <p>价格: {{hospital.price_range}}</p>
+<p>地址：{{hospital.area}}</p>
+<p>总体评分：{{hospital.average_score}}</p>
 <p>第一个星期: {{slots.0}} <input id="radio0" type="radio" name="slots" checked>选择第一个星期<br></p>
 <p>第二个星期: {{slots.1}} <input id="radio1" type="radio" name="slots">选择第二个星期<br></p>
 <p>第三个星期: {{slots.2}} <input id="radio2" type="radio" name="slots">选择第三个星期<br></p>
