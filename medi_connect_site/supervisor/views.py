@@ -569,7 +569,7 @@ def manage_files(request, id, order_id):
                 })
         elif request.method == 'POST' and request.FILES['feedback_files']:
             file = request.FILES['feedback_files']
-            document = Document(order=assignment, document=file, type = util.E2C_ORIGIN) #create feedback file
+            document = Document(order=assignment, document=file, type = util.E2C_ORIGIN,description = 'feedback') #create feedback file
             document_name = document.get_name()
             document.save()
             msg = '上传文件'+document_name

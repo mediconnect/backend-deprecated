@@ -208,7 +208,7 @@ def assignment_summary(request, id, order_id):
         for type in types_list:
 
             if 'trans_files_'+type in request.FILES is not None:
-                
+
                 file = request.FILES['trans_files_'+type]
                 if translator.get_role() == util.TRANS_C2E:
                     document = Document(order=assignment, document=file,
