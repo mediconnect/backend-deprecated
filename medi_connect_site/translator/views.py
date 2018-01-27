@@ -14,6 +14,7 @@ import json
 import datetime
 from django.utils import timezone
 import os
+import re
 from django.conf import settings
 from django.http import HttpResponse,Http404
 import urllib
@@ -23,6 +24,8 @@ import urllib
 Order = apps.get_model('helper','Order')
 Document = apps.get_model('helper','Document')
 Staff = apps.get_model('helper','Staff')
+Hospital = apps.get_model('helper','Hospital')
+Dynamic_Form = apps.get_model('dynamic_form','DynamicForm')
 utc_8 = util.UTC_8()
 
 # Create your views here.
@@ -157,8 +160,13 @@ def translator_status(request,id,status):
                   })
 @login_required
 def assignment_summary(request, id, order_id):
+
     translator = Staff.objects.get(user_id = id)
     assignment = Order.objects.get(id=order_id)
+    hospital = Hospital.objects.get(id = assignment.hospital_id )
+    dynamic_form = Dynamic_Form.objects.get(hospital_id = hospital.id,disease_id = assignment.disease_id)
+    types = dynamic_form.form
+    types_list = filter(lambda x: x.isalpha(), re.split(r'[ ;|,\s]\s*', str(types)))
     if translator.get_role() == util.TRANS_C2E:
         origin_documents = Document.objects.filter(order_id = order_id,type = 0 )
         pending_documents = Document.objects.filter(order_id = order_id, type = 1)
@@ -195,17 +203,30 @@ def assignment_summary(request, id, order_id):
             assignment.change_trans_status(util.E2C_ONGOING)
         assignment.save()
 
-    if request.method == 'POST' and request.FILES.get('trans_files',False):
-        file = request.FILES['trans_files']
-        if translator.get_role() == util.TRANS_C2E:
-            document = Document(order=assignment, document=file, type = util.C2E_PENDING) #upload to pending documents
-        if translator.get_role() == util.TRANS_E2C:
-            document = Document(order = assignment, document = file, type = util.E2C_PENDING)
-        document.save()
-        assignment.save()
+    if (request.POST.get('upload')):
+
+        for type in types_list:
+
+            if 'trans_files_'+type in request.FILES is not None:
+                
+                file = request.FILES['trans_files_'+type]
+                if translator.get_role() == util.TRANS_C2E:
+                    document = Document(order=assignment, document=file,
+                                        type=util.C2E_PENDING,description = type)  # upload to pending documents
+                if translator.get_role() == util.TRANS_E2C:
+                    document = Document(order=assignment, document=file, type=util.E2C_PENDING,description=type)
+
+                document.save()
+
+                assignment.save()
+
+
+
     return render(request, 'assignment_summary.html', {
         'origin_documents': origin_documents,
         'pending_documents': pending_documents,
         'translator': translator,
-        'assignment': assignment
+        'assignment': assignment,
+        'types': types_list
+
     })
