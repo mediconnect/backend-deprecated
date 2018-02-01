@@ -173,7 +173,7 @@ def assignment_summary(request, id, order_id):
     if translator.get_role() == util.TRANS_E2C:
         origin_documents = Document.objects.filter(order_id = order_id, type = 3)
         pending_documents = Document.objects.filter(order_id = order_id, type = 4)
-        types_list = ['feedback\n']
+        types_list = ['feedback']
     if (request.POST.get('accept')):
         if translator.get_role() == 1:
             assignment.change_status(util.TRANSLATING_ORIGIN)
@@ -207,15 +207,16 @@ def assignment_summary(request, id, order_id):
     if (request.POST.get('upload')):
 
         for type in types_list:
-
+            print 'trans_files_' + type
             if 'trans_files_'+type in request.FILES is not None:
 
                 file = request.FILES['trans_files_'+type]
+
                 if translator.get_role() == util.TRANS_C2E:
                     document = Document(order=assignment, document=file,
-                                        type=util.C2E_PENDING,description = type)  # upload to pending documents
+                                        type=util.C2E_PENDING,description = 'trans_files_'+type)  # upload to pending documents
                 if translator.get_role() == util.TRANS_E2C:
-                    document = Document(order=assignment, document=file, type=util.E2C_PENDING,description=type)
+                    document = Document(order=assignment, document=file, type=util.E2C_PENDING,description= 'trans_files_'+type)
 
                 document.save()
 
