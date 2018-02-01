@@ -166,16 +166,14 @@ def assignment_summary(request, id, order_id):
     hospital = Hospital.objects.get(id = assignment.hospital_id )
     dynamic_form = Dynamic_Form.objects.get(hospital_id = hospital.id,disease_id = assignment.disease_id)
     types = dynamic_form.form
-    if translator.get_role() == 1: #C2E translates customer files
-        types_list = filter(lambda x: x.isalpha(), re.split(r'[ ;|,\s]\s*', str(types)))
-    if translator.get_role() == 2:
-        type_list = ['Feedback']
     if translator.get_role() == util.TRANS_C2E:
         origin_documents = Document.objects.filter(order_id = order_id,type = 0 )
         pending_documents = Document.objects.filter(order_id = order_id, type = 1)
+        types_list = filter(lambda x: x.isalpha(), re.split(r'[ ;|,\s]\s*', str(types)))
     if translator.get_role() == util.TRANS_E2C:
         origin_documents = Document.objects.filter(order_id = order_id, type = 3)
         pending_documents = Document.objects.filter(order_id = order_id, type = 4)
+        types_list = ['feedback\n']
     if (request.POST.get('accept')):
         if translator.get_role() == 1:
             assignment.change_status(util.TRANSLATING_ORIGIN)

@@ -33,7 +33,7 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {% for type in types %}
-            <p>Document Type:{{type}} trans_files_{{type}} </p>
+            <p>Document Type:{{type}} </p>
                 <input type="file" name="trans_files_{{type}}"><br>
             {% endfor %}
             <input type="submit" class="btn" value="上传" name="upload"/><br>
