@@ -67,6 +67,7 @@ def manual_assign(order, assignee):
         assignee.set_sequence(timezone.now())
 
 
+
 class Disease(models.Model):
     name = models.CharField(default='unknown', max_length=50)
     keyword = models.CharField(default='unknown', max_length=150)

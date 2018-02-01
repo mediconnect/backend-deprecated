@@ -21,7 +21,7 @@
         {%endfor%}
     </ul>
 
-    {%if not assignment.get_trans_status == 0 or not assignment.get_trans_status == 6%}
+    {%if not assignment.get_trans_status == 0 and not assignment.get_trans_status == 6%}
         <p>已上传文件</p>
         <ul>
             {%for obj in pending_documents%}
