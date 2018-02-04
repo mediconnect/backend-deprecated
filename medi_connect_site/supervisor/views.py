@@ -128,15 +128,14 @@ class Echo(object):
 
 @login_required
 def force_download(request,document_id):
-    path = Document.objects.get(id = document_id).document.url
-    file_path = urllib.url2pathname(os.path.join(settings.DEBUG_MEDIA_ROOT, path))
-    #file_path = urllib.url2pathname(os.path.join(settings.MEDIA_ROOT, path))
-    if os.path.exists(file_path):
-        with open(file_path,'rb') as fh:
-            response = HttpResponse(fh.read(), content_type="application/liquid",charset = 'utf-8')
-            response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_path.encode('utf-8'))
-            return response
-    raise Http404
+    document = Document.objects.get(id=document_id)
+    path = document.document.url
+    file_path = "http://django-env.enc4mpznbt.us-west-2.elasticbeanstalk.com"+path
+    debug_path = "http://127.0.0.1:8000"+path
+    response = HttpResponse(document.document,content_type="text/csv")
+    response['Content-Disposition'] = 'attachment; filename="{0}"'.format(document.get_name())  # download no need to change
+    return response
+
 
 @login_required
 def export_csv(request):
