@@ -286,10 +286,12 @@ def generate_questionnaire(request,id,questionnaire_id):
     question_form = GenerateQuestionnaireForm()
     choice_form = ChoiceForm()
     translator = Staff.objects.get(user_id = id)
+    origin_pdf = Questionnaire.objects.get(id = questionnaire_id).origin_pdf
 
     return render(request, 'generate_questionnaire.html', {
         'question_form': question_form,
         'choice_form':choice_form,
         'questionnaire_id':questionnaire_id,
-        'translator':translator
+        'translator':translator,
+        'origin_pdf':origin_pdf
     })

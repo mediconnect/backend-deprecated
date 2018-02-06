@@ -767,8 +767,6 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
                           + tmp_access_key[(str.find(tmp_access_key,':')) + 1:]
                 msg = '问卷已创建并翻译，请直接发送链接至客户邮箱'
             else:
-                document = Document(order=order, file=q.questions, type=util.E2C_ORIGIN, description='extra')
-                document.save()
                 msg = '问卷已创建，尚未翻译，已分配至英译汉翻译员'
             exist = True
         except Exception as ex:
