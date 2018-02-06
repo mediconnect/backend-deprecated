@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.files.storage import FileSystemStorage,default_storage
+from django.core.signing import Signer,TimestampSigner
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -13,7 +14,7 @@ from django.contrib.auth.models import User
 from customer.models import Customer
 from django.apps import apps
 from supervisor.forms import (
-    TransSignUpForm,ApproveForm,GenerateQuestionnaireForm,ChoiceForm
+    TransSignUpForm,ApproveForm
 )
 from django.utils.http import urlsafe_base64_encode
 from info import utility as util
@@ -26,11 +27,11 @@ import datetime
 from django.utils import timezone
 from django.http import StreamingHttpResponse
 from django.forms.models import model_to_dict
-from django.core.files.base import ContentFile
 from helper.models import auto_assign,manual_assign
 import os
 from django.conf import settings
 from django.http import HttpResponse,Http404
+
 import urllib
 import urlparse
 
@@ -45,6 +46,7 @@ Staff = apps.get_model('helper','Staff')
 Rank = apps.get_model('helper','Rank')
 Questionnaire = apps.get_model('helper','Questionnaire')
 Slot = apps.get_model('helper','Slot')
+signer = util.signer
 
 """
 Delete Translator Function:
@@ -132,9 +134,14 @@ def force_download(request,document_id):
     path = document.document.url
     file_path = "http://django-env.enc4mpznbt.us-west-2.elasticbeanstalk.com"+path
     debug_path = "http://127.0.0.1:8000"+path
-    response = HttpResponse(document.document,content_type="text/csv")
-    response['Content-Disposition'] = 'attachment; filename="{0}"'.format(document.get_name())  # download no need to change
-    return response
+    try:
+        response = HttpResponse(document.document,content_type="text/csv")
+        response['Content-Disposition'] = 'attachment; filename="{0}"'.format(document.get_name())  # download no need to change
+        return response
+
+    except IOError:
+        raise Http404
+
 
 
 @login_required
@@ -720,55 +727,61 @@ def rank_manage(request,id):
         'disease_detail' : disease_detail
     })
 
-def create_questionnaire(request):
-
-    #TODO: Add error message and output pdf.
-    msg = ""
-    data = request.GET.get('data',None)
-    hospital_id = request.GET.get('hospital',None)
-    disease_id = request.GET.get('disease',None)
-    category = request.GET.get('category',None)
-    q = Questionnaire.objects.get_or_create(hospital_id=hospital_id, disease_id=disease_id,category=category)[0]
-    t = loader.get_template('question_format.txt')
-    json_acceptable_string = data.replace("'", "\"")
-    data = json.loads(json_acceptable_string)
-    data_list = []
-    for each in data:
-        tuple_= ("Question Number: ",each,"Question: ",data[each]["question"],"Question Format: ",data[each]["format"],"Choices: ",)
-        #tuple_+= tuple(data[each]["choices"])
-        data_list.append(tuple(map(lambda k: str(k), tuple_)))
-        data_list.append((map(lambda k: str(k),data[each]["choices"])))
-    c = {
-        'data': data_list,
-    }
-    myFile = default_storage.save(util.questions_path(q, 'questions.txt'), ContentFile(t.render(c)))
-    q.questions = myFile
-    #assignee = Staff.objects.filter(role=2).order_by('sequence')[0]
-    #q.translator = assignee
-    q.save()
-    response = StreamingHttpResponse(myFile)
-    response['Content-Disposition'] = 'attachment; filename="questions.txt"'  # download no need to change
-    return response
-
-def generate_questionnaire(request,hospital_id,disease_id):
+@login_required
+def check_questionnaire(request,order_id): # check to see if a questionnaire is created/translated
+    E2C_assignee_ids = []
+    E2C_assignee_names = []
+    for e in Staff.objects.filter(role=2):
+        E2C_assignee_names.append((e.user_id, e.get_name()))
     supervisor = Staff.objects.get(user = request.user)
-    question_form = GenerateQuestionnaireForm()
-    choice_form = ChoiceForm()
-    return render(request, 'generate_questionnaire.html', {
-        'question_form': question_form,
-        'choice_form':choice_form,
-        'supervisor':supervisor,
-        'hospital':hospital_id,
-        'disease':disease_id,
-        'category':'unknown'
-    })
 
-def render_questionnaire(request,questionnaire_id):
-    q = Questionnaire.objects.get(id = - questionnaire_id)
-    template = q.questions
-    content = default_storage.open(template).read()
-    return render(request,'render_questionnaire.html'),{
-        'questionnaire_id':questionnaire_id
-    }
-
-
+    order = Order.objects.get(id = order_id)
+    exist = False
+    tmp_url=''
+    msg=''
+    if request.method == 'POST':
+        file = request.FILES['origin_pdf']
+        translator = Staff.objects.get(user_id=request.POST['translator_E2C'])
+        q = Questionnaire.objects.get_or_create(hospital_id=order.hospital_id, disease_id=order.disease_id)[0]
+        q.translator = translator
+        q.origin_pdf = file
+        q.save()
+        document = Document(order=order, document=file, type=util.C2E_ORIGIN,description='origin_pdf')  # upload the answer as an extra doc
+        document.save()
+        msg = '已上传pdf文件，请等待翻译员创建问卷'
+        exist = True
+        return render(request, 'check_questionnaire.html', {
+            'supervisor': supervisor,
+            'order_id': order.id,
+            'category': 'unknown',
+            'exist': exist,
+            'tmp_url': tmp_url,
+            'msg': msg
+        })
+    else:
+        try:  # if the questionnaire is already created
+            q = Questionnaire.objects.get(hospital_id=order.hospital_id, disease_id=order.disease_id)
+            if q.is_translated:  # if is already translated, ready to send link to customer
+                tmp_access_key = signer.sign(int(q.id) + int(order_id))
+                tmp_url = get_current_site(request).domain+'/core/questionnaire/' + str(q.id) + '/'\
+                          + tmp_access_key[(str.find(tmp_access_key,':')) + 1:]
+                msg = '问卷已创建并翻译，请直接发送链接至客户邮箱'
+            else:
+                document = Document(order=order, file=q.questions, type=util.E2C_ORIGIN, description='extra')
+                document.save()
+                msg = '问卷已创建，尚未翻译，已分配至英译汉翻译员'
+            exist = True
+        except Exception as ex:
+            exist = False
+            template = "\nAn exception of type {0} occurred. Arguments:\n{1!r}"
+            msg = template.format(type(ex).__name__, ex.args) # debugging info
+        return render(request, 'check_questionnaire.html', {
+            'supervisor': supervisor,
+            'order_id': order.id,
+            'category': 'unknown',
+            'exist': exist,
+            'tmp_url': tmp_url,
+            'msg': msg,
+            'assignee_names': E2C_assignee_names,
+            'assignee_ids': E2C_assignee_ids,
+        })

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}问卷{% endblock %}
+
+{% block body %}
+    <div id="initial">
+        <input id='orderID' type="text" value = '订单号'/>
+        <button onclick = 'decodeHash(this.parentElement)'>提交</button>
+    </div>
+    <div id="forms">
+
+    </div>
+
+
+<script>
+    var questions;
+    var valid;
+    var msg;
+    var answers={};
+    var orderID;
+    function decodeHash(parentElement){
+        orderID = document.getElementById('orderID').value;
+        //console.log(customerID);
+
+        $.getJSON("{% url 'render_questionnaire'%}",{'questionnaire_id':'{{questionnaire_id}}','order_id':orderID,'access':'{{access}}'},function(data){
+               questions = data['questions'];
+               valid = data['valid'];
+               msg = data['msg'];
+               console.log(valid);
+               if(valid){
+                    $("#initial").hide(function(){
+                        alert(msg);
+                        //console.log(data['questions']);
+                    });
+                   //console.log(questions);
+                   $.each(questions,function(i){
+                        var HTML = "<div id=question_"+i.toString()+" type="+questions[i]['format']+">Question "+i.toString()+" : "+questions[i]['question']+"<br>"+" 形式: " +questions[i]['format']+ "<br>";
+                        if(questions[i]['format']=='简答'){
+                            var input = "<input type=text /><br>";
+                        }
+                        else if(questions[i]['format']=='多选'){
+
+                            var choices = questions[i]['choices'];
+                            var input = "<select multiple=true name=question_"+i.toString()+">";
+                            $.each(choices,function(j){
+
+                                var options = "<option value="+"choice_"+j.toString()+">"+choices[j]+"</option>"+"<br>";
+                                input += options;
+                            });
+
+                        }
+                        else{
+                            var choices = questions[i]['choices'];
+                            var input = "<select name=question_"+i.toString()+">";
+                            $.each(choices,function(j){
+                                var options = "<option value="+"choice_"+j.toString()+">"+choices[j]+"</option>"+"<br>";
+                                input += options;
+                            });
+                        }
+
+
+                        HTML+=input;
+                        HTML+="</div>";
+                        //console.log(HTML);
+                        $("#forms").append(HTML);
+
+                    });
+                    var submit = "<button onclick ='submitAnswer(questions)'>提交</button>";
+                    $('body').append(submit);
+               }
+               else{
+                    alert(msg);
+               }
+
+
+        });
+
+
+    }
+    function submitAnswer(questions){
+        $.each(questions,function(i){
+            var answer = [];
+            var div = document.getElementById("question_"+i.toString());
+            //console.log(div.getAttribute('type'));
+            if(div.getAttribute('type') == "简答"){
+                //console.log("简答");
+                var inputs = div.getElementsByTagName("input");
+                console.log(inputs[0].value);
+                answer = [inputs[0].value];
+            }
+            else if(div.getAttribute('type') == "单选"){
+                //console.log("单选");
+                var select = document.getElementsByName("question_"+i.toString())[0];
+                console.log(select.options[select.selectedIndex].value);
+                answer = [select.options[select.selectedIndex].value]
+            }
+            else{
+                //console.log("多选");
+                var select = document.getElementsByName("question_"+i.toString())[0];
+                $.each(select.options,function(i){
+                    if(select.options[i].selected){
+                        console.log(select.options[i].value);
+                        answer.push(select.options[i].value);
+                    }
+                })
+            }
+            answers[i]=answer;
+
+        })
+        console.log(answers);
+
+        $.getJSON("{% url 'submit_answer'%}",{'questionnaire_id':'{{questionnaire_id}}','order_id':parseInt(orderID),'answers':JSON.stringify(answers)},function(data){
+            console.log(data['msg']);
+        })
+    }
+
+</script>
+{% block content %}
+
+{% endblock %}
+{% endblock %}

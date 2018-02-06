@@ -498,6 +498,7 @@ class Questionnaire(models.Model):
     questions = models.FileField(upload_to=util.questions_path, null=True)
     is_translated = models.BooleanField(default=False)
     translator = models.ForeignKey('Staff', on_delete=models.SET(1), null=False)
+    origin_pdf = models.FileField(upload_to=util.questions_path,null=True)
 
     class Meta:
         db_table = 'questionnaire'

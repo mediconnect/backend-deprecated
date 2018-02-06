@@ -11,7 +11,6 @@ from django.utils.http import urlquote
 from django.template.defaultfilters import register
 from dynamic_form.forms import create_form, get_fields
 
-
 # Create your views here.
 @login_required
 def profile(request):
@@ -354,3 +353,4 @@ def hospital_review(request, order_id):
 def order_expire(order_id):
     if len(Order.objects.filter(id=order_id)) <= 0:
         return TemplateView(template_name='order_expire.html')
+

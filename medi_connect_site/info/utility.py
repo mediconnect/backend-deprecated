@@ -4,12 +4,13 @@ import datetime
 import logging
 import urllib
 import urlparse
+from django.core.signing import Signer,TimestampSigner
 
 # Standard instance of a logger with __name__
 stdlogger = logging.getLogger('mediconnect')
 # Custom instance logging with explicit name
 dbalogger = logging.getLogger('dba')
-
+signer = TimestampSigner()
 
 def index():
     stdlogger.debug("Entering index method")
@@ -24,7 +25,7 @@ def hospital_directory_path(instance, filename):
 
 
 def order_directory_path(instance, filename):
-    return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name(), instance.order.id, filename)
+    return 'order_{0}/{1}/{2}'.format(instance.customer.get_name(), instance.id, filename)
 
 
 def questions_path(instance, filename):
@@ -193,3 +194,9 @@ E2C_TRANSLATED = 5
 SUPERVISOR = 0
 TRANS_C2E = 1
 TRANS_E2C = 2
+
+FORMAT_DIC={
+    '0':'单选',
+    '1':'多选',
+    '2':'简答'
+}

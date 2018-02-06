@@ -110,23 +110,3 @@ class TransSignUpForm(forms.ModelForm):
                 ['Passwords don\'t match']
             )
         return self.cleaned_data
-
-
-class GenerateQuestionnaireForm(forms.Form):
-    question=forms.CharField(
-        label='问题内容:',
-        required=True
-    )
-    format=forms.ChoiceField(
-        label='问题形式:',
-        widget=forms.RadioSelect,
-        choices=util.FORMAT_CHOICE,
-        required=True
-    )
-
-class ChoiceForm(forms.Form):
-    choice = forms.CharField(
-        label = '选项内容:',
-        widget=forms.TextInput,
-        required=True
-    )

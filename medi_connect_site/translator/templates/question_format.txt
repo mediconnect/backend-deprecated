@@ -1,0 +1,1 @@
+{% for row in data %}{% for each in row %}{{each}}/{% endfor %}|{% endfor %}

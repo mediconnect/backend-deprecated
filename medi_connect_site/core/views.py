@@ -9,9 +9,16 @@ from customer.models import Customer
 from customer.views import customer
 from translator.views import translator
 from supervisor.views import supervisor
-from helper.models import Hospital, Disease, Staff, Rank, Slot, Price
+from helper.models import Hospital, Disease, Staff, Rank, Slot, Price, Order, Document
 import smtplib
 import json
+from django.apps import apps
+import info.utility as util
+from django.http import JsonResponse
+from django.core.files.storage import FileSystemStorage,default_storage
+from django.core.files.base import ContentFile
+Questionnaire = apps.get_model('helper','Questionnaire')
+signer = util.signer
 
 
 # Create your views here
@@ -305,3 +312,74 @@ def hospital_detail(request, hospital_id):
         'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
         'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
     })
+
+# Questionnaire Portal
+def questionnaire(request, questionnaire_id, access):
+    return render(request, 'questionnaire.html', {
+        'questionnaire_id': questionnaire_id,
+        'access': access
+    })
+
+# Ajax function to render questionnaire and check hash
+def render_questionnaire(request):
+    questionnaire_id = request.GET.get('questionnaire_id',None)
+    order_id = request.GET.get('order_id',None)
+    access = request.GET.get('access',None)
+    #print questionnaire_id, customer_id, access
+    q = Questionnaire.objects.get(id = questionnaire_id)
+    template = q.questions
+    content = default_storage.open(template).read() # read question.txt
+
+    concat = str(int(questionnaire_id)+int(order_id))+":" # restore the origin signature
+    msg = ''
+    valid = False # validate hash
+    question_dic = {}
+    #print concat+access
+    try:
+        value=signer.unsign(concat+access,max_age=24*60*60) # valid for at most one day
+        if int(value) != int(questionnaire_id)+int(order_id):
+            msg='Invalid Link'
+        else:
+            msg = 'Valid Hash'
+            valid = True
+            for each in content.split("|"):
+                if each != "":
+                    str_ = each.split("/")  # split string on | and / to build the dic_
+                    question_dic[int(str_[1])] = {
+                        "question": str_[3],
+                        "format": util.FORMAT_DIC[str_[5]],
+                        "choices": str_[7:-1]
+                    }
+    except:
+        msg = 'Bad Signature'
+    data = { # build JSON
+        'msg': msg,
+        'valid': valid,
+        'questions': question_dic
+    }
+    return JsonResponse(data)
+
+
+def submit_answer(request):
+    answers = request.GET.get('answers',None)
+    order_id = request.GET.get('order_id',None)
+    questionnaire_id = request.GET.get('questionnaire_id',None)
+
+    order = Order.objects.get(id = order_id)
+
+    try:
+        json_acceptable_string = answers.replace("'", "\"")
+        answers = json.loads(json_acceptable_string) # translate JSON to dictionary
+        myFile = default_storage.save(util.order_directory_path(order, 'answers.txt'), ContentFile(json.dumps(answers)))
+        document = Document(order=order, document=myFile, type=util.C2E_ORIGIN, description='extra') #upload the answer as an extra doc
+        document.save()
+
+        msg='提交成功'
+    except Exception as ex:
+        template = "\nAn exception of type {0} occurred. Arguments:\n{1!r}"
+        msg = template.format(type(ex).__name__, ex.args)
+    data={
+        'msg':msg
+    }
+
+    return JsonResponse(data)

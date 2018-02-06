@@ -23,8 +23,8 @@ urlpatterns = [
     url(r'^assign/(?P<id>\d+)/(?P<order_id>\d+)/$',supervisor_views.assign ,name = 'assign'),
     url(r'^approve/(?P<id>\d+)/(?P<order_id>\d+)/$',supervisor_views.approve ,name = 'approve'),
 
-    url(r'^ajax/create_questionnaire/$', supervisor_views.create_questionnaire, name='create_questionnaire'),
-    url(r'^generate_questionnaire/(?P<hospital_id>\d+)/(?P<disease_id>\d+)/$',supervisor_views.generate_questionnaire ,name = 'generate_questionnaire'),
+    url(r'^check_questionnaire/(?P<order_id>\d+)/$',supervisor_views.check_questionnaire,name = 'check_questionnaire'),
+
 
     url(r'^manage_files/(?P<id>\d+)/(?P<order_id>\d+)/$',supervisor_views.manage_files ,name = 'manage_files'),
     url(r'^customer_list/(?P<id>\d+)/$',supervisor_views.customer_list,name = 'customer_list'),

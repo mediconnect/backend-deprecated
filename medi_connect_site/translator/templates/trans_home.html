@@ -8,6 +8,22 @@
     {% for key, value in order_count.items %}
         <li>{{key}} : {{value}}</li>
     {% endfor %}
-</ul>
 
+</ul>
+<ul>
+    问卷
+    {% for each in urls %}
+        <li><a href = '{{each}}' >{{each}}</a></li>
+    {% endfor %}
+</ul>
+<script>
+    function createLink(row,href){
+        var cell = row.insertCell(-1);
+        var a = document.createElement('a');
+        a.innerHTML = '详情';
+        a.href=href;
+        cell.appendChild(a);
+
+    }
+</script>
 {% endblock %}

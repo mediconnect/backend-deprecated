@@ -11,4 +11,8 @@ urlpatterns = [
     url(r'^logout/', auth_views.logout, {'next_page': '/translator/login'}, name='translator_logout'),
     url(r'^ajax/update_result/$', trans_views.update_result, name='trans_update_result'),
     url(r'^force_download/(?P<document_id>\d+)/$', trans_views.force_download, name='trans_force_download'),
+
+    url(r'^ajax/create_questionnaire/$', trans_views.create_questionnaire, name='create_questionnaire'),
+    url(r'^generate_questionnaire/(?P<id>\d+)/(?P<questionnaire_id>\d+)/$', trans_views.generate_questionnaire,
+        name='generate_questionnaire'),
 ]

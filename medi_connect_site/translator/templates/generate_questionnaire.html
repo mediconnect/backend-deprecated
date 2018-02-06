@@ -1,4 +1,4 @@
-{% extends 'supervisor_base.html' %}
+{% extends 'trans_base.html' %}
 {% block title %}Build Questionnaire{% endblock %}
 
 {% block content %}
@@ -20,6 +20,7 @@
 
     <button onclick ='addQuestion()'>添加问题</button><br>
     <button onclick ='submitQuestions()'>创建</button>
+
 
     <!--Use this to append form-->
     <div id = 'emptyForm' class = "question" hidden>
@@ -80,8 +81,10 @@
 
         function submitQuestions(){
             var questions = document.getElementsByClassName("question");
+            //console.log(questions);
             for(i=0;i<questions.length-1;i++){
                 var question = questions[i];
+                //console.log(question);
                 var content = question.getElementsByClassName("content")[0].getElementsByTagName("input")[0].value;
                 data[i]["question"]=content;
                 data[i]["choices"]=[];
@@ -95,7 +98,7 @@
                     data[i]["choices"][j]=choice;
                 }
             }
-            $.getJSON("{% url 'create_questionnaire'%}",{"data":JSON.stringify(data), "hospital":{{hospital}}, "disease":{{disease}}, "category":"{{category}}" },function(data){
+            $.getJSON("{% url 'create_questionnaire'%}",{"data":JSON.stringify(data), "questionnaire_id":"{{questionnaire_id}}" },function(data){
                 console.log(data);
             });
         }

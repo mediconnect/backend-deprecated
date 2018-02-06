@@ -1,0 +1,23 @@
+{% extends 'supervisor_base.html' %}
+{% block title %}Supervisor Home{% endblock %}
+
+{% block content %}
+{% if not exist %}
+    <p>{{msg}}</p>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="origin_pdf">
+
+        <select name = 'translator_E2C'>
+              {% for id, name in assignee_names %}
+                <option value = '{{id}}'> {{name}} </option>
+              {% endfor %}
+        </select>
+        <button onclick = 'upload' type="submit">上传并分配</button>
+    </form>
+{% else %}
+    <p>{{msg}}</p>
+    <p>tmp url: {{tmp_url}}</p>
+{% endif %}
+
+{% endblock %}
