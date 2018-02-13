@@ -14,10 +14,22 @@
               {% endfor %}
         </select>
         <button onclick = 'upload' type="submit">上传并分配</button>
+        <button onclick = 'overwrite' type = "submit"> 覆盖</button>
     </form>
 {% else %}
     <p>{{msg}}</p>
     <p>tmp url: {{tmp_url}}</p>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="origin_pdf">
+
+        <select name = 'translator_E2C'>
+              {% for id, name in assignee_names %}
+                <option value = '{{id}}'> {{name}} </option>
+              {% endfor %}
+        </select>
+        <button onclick = 'overwrite' type = "submit"> 覆盖</button>
+    </form>
 {% endif %}
 
 {% endblock %}
