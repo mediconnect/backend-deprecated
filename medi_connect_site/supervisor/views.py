@@ -1,4 +1,6 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 from __future__ import unicode_literals
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
@@ -14,7 +16,7 @@ from django.contrib.auth.models import User
 from customer.models import Customer
 from django.apps import apps
 from supervisor.forms import (
-    TransSignUpForm,ApproveForm
+    TransSignUpForm,ApproveForm,FileForm
 )
 from django.utils.http import urlsafe_base64_encode
 from info import utility as util
@@ -34,6 +36,10 @@ from django.http import HttpResponse,Http404
 
 import urllib
 import urlparse
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 
 
 Order = apps.get_model('helper', 'Order')
@@ -132,6 +138,7 @@ class Echo(object):
 def force_download(request,document_id):
     document = Document.objects.get(id=document_id)
     path = document.document.url
+    msg = ''
     file_path = "http://django-env.enc4mpznbt.us-west-2.elasticbeanstalk.com"+path
     debug_path = "http://127.0.0.1:8000"+path
     try:
@@ -139,7 +146,7 @@ def force_download(request,document_id):
         response['Content-Disposition'] = 'attachment; filename="{0}"'.format(document.get_name())  # download no need to change
         return response
 
-    except IOError:
+    except:
         raise Http404
 
 
@@ -561,6 +568,7 @@ def manage_files(request, id, order_id):
     supervisor = Staff.objects.get(user_id=id)
     documents = assignment.get_documents()
     try:
+
         if (request.POST.get('delete')):
                 document = Document.objects.get(document=request.POST.get('document'))
                 document_name = document.get_name()
@@ -574,23 +582,33 @@ def manage_files(request, id, order_id):
                     'message':msg
                 })
         elif request.method == 'POST' and request.FILES['feedback_files']:
-            file = request.FILES['feedback_files']
-            document = Document(order=assignment, document=file, type = util.E2C_ORIGIN,description = 'feedback') #create feedback file
-            document_name = document.get_name()
-            document.save()
-            msg = '上传文件'+document_name
+            form = FileForm(request.POST)
+            files = request.FILES.getlist('feedback_files')
+            document_names = ''
+            for file in files:
+
+                document = Document(order=assignment, document=file, type = util.E2C_ORIGIN,description = 'feedback') #create feedback file
+                document_names += document.get_name()+','
+
+                #document.save()
+
+
+            msg = '上传文件'+document_names[:-1]
             if assignment.translator_E2C is None:
                 assignment.change_status(util.RETURN)
                 auto_assign(assignment)
             assignment.save()
             return render(request, 'manage_files.html', {
+                'form':form,
                 'supervisor': supervisor,
                 'assignment': assignment,
                 'documents': documents,
                 'msg':msg,
             })
         else:
+            form = FileForm()
             return render(request, 'manage_files.html', {
+                'form':form,
                 'supervisor': supervisor,
                 'assignment': assignment,
                 'documents': documents,
@@ -599,12 +617,15 @@ def manage_files(request, id, order_id):
     except Exception as ex:
         template = "An exception of type {0} occurred. Arguments:{1!r}"
         msg = template.format(type(ex).__name__, ex.args)
+        form = FileForm()
         return render(request, 'manage_files.html', {
+            'form':form,
             'supervisor': supervisor,
             'assignment': assignment,
             'documents': documents,
             'msg':msg
         })
+
 
 @login_required
 def send_reset_link(request):
@@ -746,7 +767,11 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
         q.translator = translator
         q.origin_pdf = file
         q.save()
-        document = Document(order=order, document=file, type=util.C2E_ORIGIN,description='origin_pdf')  # upload the answer as an extra doc
+        fs = FileSystemStorage()
+
+        filename = fs.save(file.name,file)
+        upload_file_url = fs.url(filename)
+        document = Document(order=order, document=upload_file_url, type=util.C2E_ORIGIN,description='origin_pdf')  # upload the answer as an extra doc
         document.save()
         msg = '已上传pdf文件，请等待翻译员创建问卷'
         exist = True

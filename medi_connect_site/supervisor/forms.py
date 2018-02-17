@@ -16,6 +16,9 @@ class ApproveForm(forms.ModelForm):
         model = Order
         fields = ['approval']
 
+class FileForm(forms.Form):
+    feedback_files = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+
 def forbidden_username_validator(value):
     forbidden_username = ['admin', 'settings', 'news', 'about', 'help',
                           'signin', 'signup', 'signout', 'terms', 'privacy',

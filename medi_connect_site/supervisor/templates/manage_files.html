@@ -14,7 +14,7 @@
 </ul>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <input type="file" name="feedback_files">
+    {{ form }}
     <button onclick = 'upload' type="submit">Upload</button>
   </form>
 

@@ -320,6 +320,7 @@ class Document(models.Model):
 
     def save(self, *args, **kwargs):  # override_save method
         # Override document if this type already exists for this order
+
         if self.description not in ['trans_files_extra', 'extra']:
             for each in Document.objects.filter(order=self.order):
                 if each.description == self.description:
