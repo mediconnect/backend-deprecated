@@ -371,7 +371,7 @@ def submit_answer(request):
         json_acceptable_string = answers.replace("'", "\"")
         answers = json.loads(json_acceptable_string) # translate JSON to dictionary
         myFile = default_storage.save(util.order_directory_path(order, 'answers.txt'), ContentFile(json.dumps(answers)))
-        document = Document(order=order, document=myFile, type=util.C2E_ORIGIN, description='extra') #upload the answer as an extra doc
+        document = Document(order=order, document=myFile, type=util.C2E_ORIGIN, description='extra') # upload the answer as an extra doc
         document.save()
 
         msg='提交成功'

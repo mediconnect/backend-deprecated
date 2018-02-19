@@ -23,6 +23,7 @@ from translator.forms import (
 )
 from django.template import loader, Context
 from django.core.files.base import ContentFile
+from dynamic_form.forms import get_fields
 
 # Create your models here.
 #Get Order and Document Model from helper.models
@@ -183,10 +184,12 @@ def assignment_summary(request, id, order_id):
     hospital = Hospital.objects.get(id = assignment.hospital_id )
     dynamic_form = Dynamic_Form.objects.get(hospital_id = hospital.id,disease_id = assignment.disease_id)
     types = dynamic_form.form
+    types_list=[]
+    reqiured,optional = get_fields(hospital_id = hospital.id, disease_id = assignment.disease_id)
     if translator.get_role() == util.TRANS_C2E:
         origin_documents = Document.objects.filter(order_id = order_id,type = 0 )
         pending_documents = Document.objects.filter(order_id = order_id, type = 1)
-        types_list = filter(lambda x: x.isalpha(), re.split(r'[ ;|,\s]\s*', str(types)))
+        types_list = filter(lambda x: x.isalpha(), re.split(r'[ ;|,\s]\s*', str(types)))+['questionnaire']
     if translator.get_role() == util.TRANS_E2C:
         origin_documents = Document.objects.filter(order_id = order_id, type = 3)
         pending_documents = Document.objects.filter(order_id = order_id, type = 4)
@@ -224,6 +227,7 @@ def assignment_summary(request, id, order_id):
     if (request.POST.get('upload')):
 
         for type in types_list:
+
             #print 'trans_files_' + type
             if 'trans_files_'+type in request.FILES is not None:
 
@@ -232,6 +236,13 @@ def assignment_summary(request, id, order_id):
                 if translator.get_role() == util.TRANS_C2E:
                     document = Document(order=assignment, document=file,
                                         type=util.C2E_PENDING,description = 'trans_files_'+type)  # upload to pending documents
+
+                    if all(Document.objects.filter(description=document, order=assignment, type=0).count() > 0 for document
+                           in
+                           required + optional):
+                        assignment.document_complete = True
+                        assignment.save()
+                    assignment.document_complete = True
                 if translator.get_role() == util.TRANS_E2C:
                     document = Document(order=assignment, document=file, type=util.E2C_PENDING,description= 'trans_files_'+type)
 

@@ -256,13 +256,13 @@ class Order(models.Model):
 
     def get_estimate(self):
         if not self.document_complete:
-            date = (self.submit + datetime.timedelta(weeks=self.week_number_at_submit,
+            date = (self.submit + datetime.timedelta(weeks=int(self.week_number_at_submit),
                                                      days=int(self.hospital.feedback_time),
                                                      hours=8))
         else:
             date = (
-                    self.get_submit() + datetime.timedelta(weeks=self.week_number_at_submit,
-                                                           days=self.hospital.feedback_time,
+                    self.submit + datetime.timedelta(weeks=int(self.week_number_at_submit),
+                                                           days=int(self.hospital.feedback_time),
                                                            hours=8))
         return str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '-' + str(date.year) + '/' + str(
             date.month) + '/' + str(date.day + 3)

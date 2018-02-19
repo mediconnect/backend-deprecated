@@ -3,7 +3,6 @@
 
 {% block content %}
 {% if not exist %}
-    <p>{{msg}}</p>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <input type="file" name="origin_pdf" onchange = "handleName(this.files)"/>
@@ -13,12 +12,10 @@
                 <option value = '{{id}}'> {{name}} </option>
               {% endfor %}
         </select>
-        <button onclick = 'upload' type="submit">上传并分配</button>
-        <button onclick = 'overwrite' type = "submit"> 覆盖</button>
+        <input type="submit" class="btn" value="上传" name="upload"/>
     </form>
 {% else %}
-    <p>{{msg}}</p>
-    <p>tmp url: {{tmp_url}}</p>
+    questions:<a href = '{{questions.url}}'>{{questions}}</a>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <input id="file" type="file"  onchange = "handleName(this.files)" name="origin_pdf"/>
@@ -27,22 +24,17 @@
                 <option value = '{{id}}'> {{name}} </option>
               {% endfor %}
         </select>
-        <button onclick = 'overwrite' type = "submit"> 覆盖</button>
+        <input type="submit" class="btn" value="覆盖" name="upload"/>
+        <input type="submit" class="btn" value="发送" name="send"/>
     </form>
 {% endif %}
 <script>
     function handleName(files){
-        var txt;
-        if (confirm("确定要上传文件么")) {
-            var file = files[0];
-            if (file) {
-              var getExtension = file.name.slice((file.name.lastIndexOf(".") - 1 >>> 0) + 2);
-              var fName = 'origin_pdf' + '.' + getExtension;
-              console.log(file);
-            }
-        }
-
-
     }
+    $( document ).ready(function() {
+        if("{{msg}}"!='None'){
+            alert("{{msg}}");
+        };
+    });
 </script>
 {% endblock %}

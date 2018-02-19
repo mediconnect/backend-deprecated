@@ -125,6 +125,7 @@ def order(request):
         order_dict['hospital'] = order.hospital.name if order.hospital is not None else 'unknown'
         order_dict['status'] = status_dict[order.status] if order.status >= 1 else '客户未提交'
         order_dict['id'] = int(order.id)
+        order_dict['estimate']= order.get_estimate()
         order_list.append(order_dict)
     return render(request, 'info_order.html', {
         'orders': order_list,
@@ -229,10 +230,6 @@ def add_doc(request, order_id):
             for f in request.FILES.getlist(field):
                 doc = Document(document=f, description=field, order=order, type=0)
                 doc.save()
-        if all(Document.objects.filter(description=document, order=order, type=0).count() > 0 for document in
-               required + optional):
-            order.document_complete = True
-            order.save()
         return redirect('info_order_detail', order.id)
     return render(request, 'add_doc.html', {
         'form': create_form(int(order.hospital.id), int(order.disease.id), DocAddForm(), only_optional=True),

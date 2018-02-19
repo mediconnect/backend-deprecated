@@ -4,8 +4,7 @@
 from __future__ import unicode_literals
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
-from django.core.files.storage import FileSystemStorage,default_storage
-from django.core.signing import Signer,TimestampSigner
+from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -25,20 +24,14 @@ from django.template import loader, Context
 from django.urls import reverse,reverse_lazy
 import json
 import csv
-import datetime
 from django.utils import timezone
 from django.http import StreamingHttpResponse
 from django.forms.models import model_to_dict
 from helper.models import auto_assign,manual_assign
-import os
-from django.conf import settings
 from django.http import HttpResponse,Http404
+from django.core.mail import send_mail
 
-import urllib
-import urlparse
-import sys
-reload(sys)
-sys.setdefaultencoding('utf8')
+
 
 
 
@@ -760,38 +753,72 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
     exist = False
     tmp_url=''
     msg=''
+    questions = None
     if request.method == 'POST':
-        file = request.FILES['origin_pdf']
-        translator = Staff.objects.get(user_id=request.POST['translator_E2C'])
-        q = Questionnaire.objects.get_or_create(hospital_id=order.hospital_id, disease_id=order.disease_id)[0]
-        q.translator = translator
-        q.origin_pdf = file
-        q.save()
-        fs = FileSystemStorage()
+        if (request.POST.get('upload')):
+            file = request.FILES['origin_pdf']
+            translator = Staff.objects.get(user_id=request.POST['translator_E2C'])
+            q = Questionnaire.objects.get_or_create(hospital_id=order.hospital_id, disease_id=order.disease_id)[0]
+            q.translator = translator
+            q.origin_pdf = file
+            q.save()
+            fs = FileSystemStorage()
 
-        filename = fs.save(file.name,file)
-        upload_file_url = fs.url(filename)
-        document = Document(order=order, document=upload_file_url, type=util.C2E_ORIGIN,description='origin_pdf')  # upload the answer as an extra doc
-        document.save()
-        msg = '已上传pdf文件，请等待翻译员创建问卷'
-        exist = True
-        return render(request, 'check_questionnaire.html', {
-            'supervisor': supervisor,
-            'order_id': order.id,
-            'category': 'unknown',
-            'exist': exist,
-            'tmp_url': tmp_url,
-            'msg': msg
-        })
+            filename = fs.save(file.name,file)
+            upload_file_url = fs.url(filename)
+            document = Document(order=order, document=upload_file_url, type=util.C2E_ORIGIN,description='origin_pdf')  # upload the answer as an extra doc
+            document.save()
+            msg = '已上传pdf文件，请等待翻译员创建问卷'
+            order.document_complete = False
+            order.save()
+            exist = True
+
+            return render(request, 'check_questionnaire.html', {
+                'supervisor': supervisor,
+                'order_id': order.id,
+                'category': 'unknown',
+                'exist': exist,
+                'tmp_url': tmp_url,
+                'msg': msg,
+                'assignee_names': E2C_assignee_names,
+                'assignee_ids': E2C_assignee_ids,
+            })
+
+        if (request.POST.get('send')):
+            q = Questionnaire.objects.get(hospital_id=order.hospital_id, disease_id=order.disease_id)
+            tmp_access_key = signer.sign(int(q.id) + int(order_id))
+            tmp_url = get_current_site(request).domain + '/core/questionnaire/' + str(q.id) + '/' \
+                      + tmp_access_key[(str.find(tmp_access_key, ':')) + 1:]
+            send_mail(
+                '问卷',
+                '请点击此链接填写医院问卷'+tmp_url,
+                'None',
+                [order.customer.user.email],
+                fail_silently=False,
+            )
+            msg = '已发送'
+            return render(request, 'check_questionnaire.html', {
+                'supervisor': supervisor,
+                'order_id': order.id,
+                'category': 'unknown',
+                'exist': exist,
+                'tmp_url': tmp_url,
+                'msg': msg,
+                'assignee_names': E2C_assignee_names,
+                'assignee_ids': E2C_assignee_ids,
+                'questions': questions
+            })
+
     else:
         try:  # if the questionnaire is already created
             q = Questionnaire.objects.get(hospital_id=order.hospital_id, disease_id=order.disease_id)
             if q.is_translated:  # if is already translated, ready to send link to customer
-                tmp_access_key = signer.sign(int(q.id) + int(order_id))
-                tmp_url = get_current_site(request).domain+'/core/questionnaire/' + str(q.id) + '/'\
-                          + tmp_access_key[(str.find(tmp_access_key,':')) + 1:]
-                msg = '问卷已创建并翻译，请直接发送链接至客户邮箱'
+                order.save()
+                questions = q.questions
+                msg = '问卷已创建并翻译，请确认后直接发送'
             else:
+                order.document_complete = False
+                order.save()
                 msg = '问卷已创建，尚未翻译，已分配至英译汉翻译员'
             exist = True
         except Exception as ex:
@@ -807,4 +834,5 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
             'msg': msg,
             'assignee_names': E2C_assignee_names,
             'assignee_ids': E2C_assignee_ids,
+            'questions':questions
         })

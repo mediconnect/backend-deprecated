@@ -23,25 +23,29 @@
     {% else %}
     <table class="table">
         <tr>
+            <th>Order Id</th>
             <th>Name</th>
             <th>Time</th>
             <th>Disease</th>
             <th>Hospital</th>
             <th>Status</th>
-            <th></th>
+            <th>预计反馈时间</th>
         </tr>
         {% for order in orders %}
         <tr class="clickable-row" data-href="{% url 'info_order_detail' order_id=order.id %}">
+            <td>{{order.id}}</td>
             <td>{{order.patient}}</td>
             <td>{{order.time}}</td>
             <td>{{order.disease}}</td>
             <td>{{order.hospital}}</td>
             <td>{{order.status}}</td>
+            <td>{{order.estimate}}</td>
             <td>
                 {% ifequal order.status 6%}
                 <a href="{% url 'info_hospital_review' order_id=order.id %}">Review</a>
                 {% endifequal %}
             </td>
+
         </tr>
         {% endfor %}
     </table>

@@ -101,6 +101,7 @@
             }
             $.getJSON("{% url 'create_questionnaire'%}",{"data":JSON.stringify(data), "questionnaire_id":"{{questionnaire_id}}" },function(data){
                 console.log(data);
+                alert(data['msg']);
             });
         }
 
