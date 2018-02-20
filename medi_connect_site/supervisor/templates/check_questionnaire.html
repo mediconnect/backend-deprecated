@@ -2,6 +2,10 @@
 {% block title %}Supervisor Home{% endblock %}
 
 {% block content %}
+<p>{{msg}}</p>
+<p>origin_pdf:<a href = '{{document.url}}'>原始pdf</a></p>
+<p>questions:<a href = '{{questions.url}}'>{{questions}}</a></p>
+<p>tmp_url:{{tmp_url}}</p>
 {% if not exist %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -15,7 +19,8 @@
         <input type="submit" class="btn" value="上传" name="upload"/>
     </form>
 {% else %}
-    questions:<a href = '{{questions.url}}'>{{questions}}</a>
+
+
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <input id="file" type="file"  onchange = "handleName(this.files)" name="origin_pdf"/>

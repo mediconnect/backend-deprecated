@@ -110,6 +110,7 @@
 
         $.getJSON("{% url 'submit_answer'%}",{'questionnaire_id':'{{questionnaire_id}}','order_id':parseInt(orderID),'answers':JSON.stringify(answers)},function(data){
             console.log(data['msg']);
+            alert(data['msg']);
         })
     }
 

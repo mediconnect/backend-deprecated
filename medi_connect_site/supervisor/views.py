@@ -53,6 +53,7 @@ Delete Translator Function:
     2. delete user
     3. reassign assignment and mark reassigned
 """
+
 @login_required
 def validate_pwd(request): # validate password for delete translatoe operation
     data = {
@@ -111,9 +112,6 @@ def validate_pwd(request): # validate password for delete translatoe operation
     else:
         data['msg'] = '密码错误'
         return JsonResponse(data)
-
-
-
     return JsonResponse(data)
 """
 Using buffer stream to handle CSV export
@@ -477,17 +475,27 @@ def detail(request, id, order_id):
     assignment = Order.objects.get(id=order_id)
     supervisor = Staff.objects.get(user_id=id)
     documents = assignment.get_documents()
+    status_choices = util.STATUS_CHOICES
     if (request.POST.get('delete')):
         assignment.delete()
         return render(request, 'supervisor_order_status.html', {
             'status': 'All',
             'supervisor': supervisor,
         })
+    if(request.POST.get('update')):
+        assignment.change_status(request.POST['status'])
+        return render(request, 'detail.html', {
+            'assignment': assignment,
+            'supervisor': supervisor,
+            'documents': documents,
+            'status_choices': status_choices
+
+        })
     return render(request, 'detail.html', {
         'assignment': assignment,
         'supervisor': supervisor,
-        'documents': documents
-
+        'documents': documents,
+        'status_choices':status_choices
 
     })
 
@@ -754,6 +762,7 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
     tmp_url=''
     msg=''
     questions = None
+    document = None
     if request.method == 'POST':
         if (request.POST.get('upload')):
             file = request.FILES['origin_pdf']
@@ -782,10 +791,12 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
                 'msg': msg,
                 'assignee_names': E2C_assignee_names,
                 'assignee_ids': E2C_assignee_ids,
+                'origin_pdf':document,
             })
 
         if (request.POST.get('send')):
             q = Questionnaire.objects.get(hospital_id=order.hospital_id, disease_id=order.disease_id)
+            document = q.origin_pdf
             tmp_access_key = signer.sign(int(q.id) + int(order_id))
             tmp_url = get_current_site(request).domain + '/core/questionnaire/' + str(q.id) + '/' \
                       + tmp_access_key[(str.find(tmp_access_key, ':')) + 1:]
@@ -806,12 +817,15 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
                 'msg': msg,
                 'assignee_names': E2C_assignee_names,
                 'assignee_ids': E2C_assignee_ids,
-                'questions': questions
+                'questions': questions,
+                'origin_pdf':document
+
             })
 
     else:
         try:  # if the questionnaire is already created
             q = Questionnaire.objects.get(hospital_id=order.hospital_id, disease_id=order.disease_id)
+            document = q.origin_pdf
             if q.is_translated:  # if is already translated, ready to send link to customer
                 order.save()
                 questions = q.questions
@@ -824,7 +838,9 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
         except Exception as ex:
             exist = False
             template = "\nAn exception of type {0} occurred. Arguments:\n{1!r}"
-            msg = template.format(type(ex).__name__, ex.args) # debugging info
+            error = template.format(type(ex).__name__, ex.args) # debugging info
+            msg = '请上传原始pdf'
+
         return render(request, 'check_questionnaire.html', {
             'supervisor': supervisor,
             'order_id': order.id,
@@ -834,5 +850,6 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
             'msg': msg,
             'assignee_names': E2C_assignee_names,
             'assignee_ids': E2C_assignee_ids,
-            'questions':questions
+            'questions':questions,
+            'origin_pdf':document
         })
