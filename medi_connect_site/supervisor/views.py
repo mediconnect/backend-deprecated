@@ -591,7 +591,7 @@ def manage_files(request, id, order_id):
                 document = Document(order=assignment, document=file, type = util.E2C_ORIGIN,description = 'feedback') #create feedback file
                 document_names += document.get_name()+','
 
-                #document.save()
+                document.save()
 
 
             msg = '上传文件'+document_names[:-1]
