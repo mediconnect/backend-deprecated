@@ -22,7 +22,11 @@ urlpatterns = [
     url(r'^send_response/$', views.send_response, name='send_response'),
     url(r'^hospital/detail/(?P<hospital_id>\d+)/$', views.hospital_detail, name='hospital_detail'),
 
+    # urls to handle questionnaire
     url(r'^questionnaire/(?P<questionnaire_id>\d+)/(?P<access>[a-zA-Z0-9:$&+,:;=?_@#|<>.-^*()%!]+)/$',views.questionnaire,name = 'questionnaire'),
     url(r'^ajax/render_questionnaire/$', views.render_questionnaire, name='render_questionnaire'),
     url(r'^ajax/submit_answer/$', views.submit_answer, name='submit_answer'),
+
+    # urls to handle resubmit documents
+    url(r'^resubmit/(?P<order_id>\d+)/$',views.resubmit,name = 'resubmit'),
 ]

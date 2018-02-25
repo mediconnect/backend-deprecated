@@ -587,13 +587,9 @@ def manage_files(request, id, order_id):
             files = request.FILES.getlist('feedback_files')
             document_names = ''
             for file in files:
-
                 document = Document(order=assignment, document=file, type = util.E2C_ORIGIN,description = 'feedback') #create feedback file
                 document_names += document.get_name()+','
-
                 document.save()
-
-
             msg = '上传文件'+document_names[:-1]
             if assignment.translator_E2C is None:
                 assignment.change_status(util.RETURN)
@@ -753,7 +749,7 @@ def rank_manage(request,id):
 def check_questionnaire(request,order_id): # check to see if a questionnaire is created/translated
     E2C_assignee_ids = []
     E2C_assignee_names = []
-    for e in Staff.objects.filter(role=2):
+    for e in Staff.objects.filter(role=2): # build the assignee choices
         E2C_assignee_names.append((e.user_id, e.get_name()))
     supervisor = Staff.objects.get(user = request.user)
 
@@ -761,8 +757,8 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
     exist = False
     tmp_url=''
     msg=''
-    questions = None
-    document = None
+    origin_question = None
+    translated_question = None
     if request.method == 'POST':
         if (request.POST.get('upload')):
             file = request.FILES['origin_pdf']
@@ -772,13 +768,12 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
             q.origin_pdf = file
             q.save()
             fs = FileSystemStorage()
-
             filename = fs.save(file.name,file)
             upload_file_url = fs.url(filename)
-            document = Document(order=order, document=upload_file_url, type=util.C2E_ORIGIN,description='origin_pdf')  # upload the answer as an extra doc
-            document.save()
             msg = '已上传pdf文件，请等待翻译员创建问卷'
-            order.document_complete = False
+            origin_question = Document(order_id = order_id, description = 'origin_questions')
+            origin_question.save()
+            order.document_complete = False # questions not translated yet
             order.save()
             exist = True
 
@@ -791,7 +786,7 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
                 'msg': msg,
                 'assignee_names': E2C_assignee_names,
                 'assignee_ids': E2C_assignee_ids,
-                'origin_pdf':document,
+                'origin_pdf':origin_question
             })
 
         if (request.POST.get('send')):

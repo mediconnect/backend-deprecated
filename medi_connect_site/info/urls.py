@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^order/checkout/(?P<order_id>\d+)/$', views.process_order, name="info_order_process"),
     url(r'^order/detail/(?P<order_id>\d+)/$', views.order_detail, name="info_order_detail"),
     url(r'^order/extradoc/(?P<order_id>\d+)/$', views.add_doc, name="add_doc"),
+    url(r'^order/pay_remaining/(?P<order_id>\d+)/$', views.pay_remaining, name="pay_remaining"),
     url(r'^bookmark/$', views.bookmark, name="info_bookmark"),
     url(r'^bookmark/compare/(?P<disease_id>\d+)/$', views.bookmark_compare, name="info_bookmark_compare"),
     url(r'^bookmark/detail/(?P<hospital1_id>\d+)/(?P<hospital2_id>\d+)/$', views.bookmark_detail,

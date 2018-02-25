@@ -3,9 +3,9 @@
 
 from django.shortcuts import render, redirect
 from customer.models import Customer
-from helper.models import Order, Patient, Document, LikeHospital, Hospital, Disease, HospitalReview,auto_assign
+from helper.models import Order, Patient, Document, LikeHospital, Hospital, Disease, HospitalReview,auto_assign, Price
 from django.contrib.auth.decorators import login_required
-from forms import ProfileForm, PasswordResetForm, PatientAddForm, DocAddForm
+from forms import ProfileForm, PasswordResetForm, PatientAddForm, DocAddForm,PayRemainingForm
 from django.contrib.auth.hashers import check_password, make_password
 from django.utils.http import urlquote
 from django.template.defaultfilters import register
@@ -208,6 +208,7 @@ def order_detail(request, order_id):
         'pay': int(order.status) < 2,
         'comment': int(order.status) == 6,
         'incomplete': int(order.status) != 7,
+        'full_payment_paid': order.full_payment_paid,
         'comments': comments,
     })
 
@@ -237,7 +238,24 @@ def add_doc(request, order_id):
         'order': order,
     })
 
+@login_required
+def pay_remaining(request,order_id):
+    order = Order.objects.get(id = order_id)
+    price = Price.objects.get(hospital_id = order.hospital_id, disease_id = order.disease_id)
+    if request.method == 'POST':
+        #form = PayRemainingForm(request)
 
+        order.full_payment_paid = True
+        order.save()
+        return redirect('info_order_detail', order.id)
+    else:
+        form = PayRemainingForm()
+        amount = price.full_price - price.deposit
+        return render(request, 'pay_remaining.html', {
+            'order_id': order_id,
+            'form': form,
+            'amount':amount
+        })
 @login_required
 def bookmark(request):
     customer = Customer.objects.get(user=request.user)

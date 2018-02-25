@@ -185,7 +185,7 @@ def assignment_summary(request, id, order_id):
     dynamic_form = Dynamic_Form.objects.get(hospital_id = hospital.id,disease_id = assignment.disease_id)
     types = dynamic_form.form
     types_list=[]
-    reqiured,optional = get_fields(hospital_id = hospital.id, disease_id = assignment.disease_id)
+    required,optional = get_fields(hospital_id = hospital.id, disease_id = assignment.disease_id)
     if translator.get_role() == util.TRANS_C2E:
         origin_documents = Document.objects.filter(order_id = order_id,type = 0 )
         pending_documents = Document.objects.filter(order_id = order_id, type = 1)

@@ -17,6 +17,7 @@
 <p>Birth: {{order.patient.birth}}</p>
 <p>Disease: {{order.disease.name}}</p>
 <p>Hospital: {{order.hospital.name}}</p>
+<p>Full Payment Paid:{{order.get_payment_remaining}}</p>
 
 <p>Origin Documents:</p>
 {% for doc in origin_documents %}
@@ -37,10 +38,20 @@
         </form>
     {% endif %}
 
+    {%if not full_payment_paid %}
+        <form action="{% url 'pay_remaining' order_id=order.id %}">
+            <button type="submit" class="btn btn-default">Pay Remaining</button>
+        </form>
+    {% endif %}
+
     {% if comment %}
         <a href="{% url 'info_hospital_review' order_id=order.id %}">Leave Your Comment</a>
     {% endif %}
+
 {% else %}
+
+
+
     <p>Feedback Documents:</p>
     {% for doc in feedback_documents %}
         <a href={{doc.document.url}}>{{doc.document.url}}</a>

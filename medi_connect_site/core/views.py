@@ -17,6 +17,7 @@ import info.utility as util
 from django.http import JsonResponse
 from django.core.files.storage import FileSystemStorage,default_storage
 from django.core.files.base import ContentFile
+from dynamic_form.forms import get_fields
 Questionnaire = apps.get_model('helper','Questionnaire')
 signer = util.signer
 
@@ -50,6 +51,7 @@ def auth(request):
         email = form.cleaned_data.get('email')
         password = form.cleaned_data.get('password')
         user = authenticate(email=email, password=password)
+        #current_site = request.site
         if user is None:
             form.add_error('email', '邮箱不正确')
             form.add_error('password', '密码不正确')
@@ -64,6 +66,8 @@ def auth(request):
         elif request.session['order_status'] == 'placement':
             request.session['order_status_request'] = 'POST'
             return redirect('hospital_detail')
+        #elif request.session['order_status'] == 'resubmit': # if need to auth for resubmit documents
+            #return redirect(current_site)
     return render(request, 'login.html', {
         'form': LoginForm(),
     })
@@ -312,6 +316,35 @@ def hospital_detail(request, hospital_id):
         'template': 'customer_header.html' if request.user.is_authenticated else 'index.html',
         'customer': Customer.objects.get(user=request.user) if request.user.is_authenticated else None,
     })
+
+# Resubmit document portal
+def resubmit(request,order_id):
+    if request.user.is_authenticated():
+        order = Order.objects.get(id = order_id)
+        required, optional = get_fields(hospital_id=order.hospital.id, disease_id=order.disease_id)
+        type_list = []
+        for document in required+optional:
+            if Document.object.filter(description = document, order = order,type = util.C2E_ORIGIN).count() == 0: # find which document is needed
+                type_list.append(document)
+        if request.method == 'POST':
+            for type in type_list:
+                if type in request.FILES is not None:
+                    file = request.FILES[type]
+                    document = Document(order = order, file = file,type = util.C2E_ORIGIN,descrpition = type)
+                    document.save()
+                    order.save()
+            order.document_complete = True
+            order.save()
+            return redirect('info_order_detail',
+                            {'order_id' : order_id}
+                            )
+        else:
+            return render(request,'extra_doc.html')
+    else:
+        request.session['order_status'] = 'resubmit'
+        return render(request, 'login.html', {
+            'form': LoginForm(),
+        })
 
 # Questionnaire Portal
 def questionnaire(request, questionnaire_id, access):

@@ -299,8 +299,14 @@ class Order(models.Model):
             '英译汉任务文件': Document.objects.filter(order_id=self.id, type=util.E2C_PENDING),
             '英译汉待审核': Document.objects.filter(order_id=self.id, type=util.E2C_TRANSLATED)
         }
-        return documents
+        return
 
+    def get_payment_remaining(self):
+        price = Price.objects.get(hospital_id = self.hospital_id, disease_id = self.disease_id)
+        if self.full_payment_paid:
+            return '已付清全款'
+        else:
+            return '剩余'+str(price.full_price - price.deposit)
 
 def order_directory_path(instance, filename):
     return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name().strip(' '), instance.order.id,
