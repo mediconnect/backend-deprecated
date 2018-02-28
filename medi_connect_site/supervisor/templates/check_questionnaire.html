@@ -20,7 +20,7 @@
     </form>
 {% else %}
 
-    <p>origin_pdf:<a href="{% url 'force_download' document_id=document.id %}">原始pdf</a></p>
+    <p>origin_pdf:<a href="{% url 'force_download' file_path=document.path %}">原始pdf</a></p>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <input id="file" type="file"  onchange = "handleName(this.files)" name="origin_pdf"/>

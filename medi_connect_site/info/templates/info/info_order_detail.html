@@ -21,7 +21,7 @@
 
 <p>Origin Documents:</p>
 {% for doc in origin_documents %}
-    <a href={{doc.document.url}}>{{ doc.description }}</a>
+    <a href={{doc.document.url}}>{{ doc.get_name }}</a>
     <br>
 {% endfor %}
 

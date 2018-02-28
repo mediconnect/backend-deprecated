@@ -4,7 +4,10 @@ import datetime
 import logging
 import urllib
 import urlparse
+import os
 from django.core.signing import Signer,TimestampSigner
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse,Http404
 
 # Standard instance of a logger with __name__
 stdlogger = logging.getLogger('mediconnect')
@@ -31,7 +34,17 @@ def order_directory_path(instance, filename):
 def questions_path(instance, filename):
     return 'hospital_{0}/disease_{1}/{2}'.format(instance.hospital.get_id(), instance.disease.get_id(), filename)
 
+@login_required
+def force_download(request,file_path):
+    try:
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+        return response
 
+    except Exception as e:
+        print(str(e))
+        raise Http404
 def url_fix(s, charset='utf-8'):
     """Sometimes you get an URL by a user that just isn't a real
     URL because it contains unsafe characters like ' ' and so on.  This

@@ -7,9 +7,10 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone, http
-
+from django.http import HttpResponse,Http404
 from customer.models import Customer
 from info import utility as util
+import django.utils.encoding as encode
 
 
 # Function to move the position of a translator in sequence
@@ -273,6 +274,12 @@ class Order(models.Model):
     def get_trans_status(self):
         return int(self.trans_status)
 
+    def get_status_literal(self):
+        return util.status_dict[self.get_status()]
+
+    def get_trans_status_literal(self):
+        return util.trans_status_dict[self.get_trans_status()]
+
     def get_trans_status_for_translator(self, translator):
         if self.get_status() <= util.SUBMITTED:
             return self.get_trans_status()
@@ -299,7 +306,7 @@ class Order(models.Model):
             '英译汉任务文件': Document.objects.filter(order_id=self.id, type=util.E2C_PENDING),
             '英译汉待审核': Document.objects.filter(order_id=self.id, type=util.E2C_TRANSLATED)
         }
-        return
+        return documents
 
     def get_payment_remaining(self):
         price = Price.objects.get(hospital_id = self.hospital_id, disease_id = self.disease_id)
@@ -326,22 +333,22 @@ class Document(models.Model):
 
     def save(self, *args, **kwargs):  # override_save method
         # Override document if this type already exists for this order
-
+        self.document = encode.iri_to_uri(self.document)
         if self.description not in ['trans_files_extra', 'extra']:
             for each in Document.objects.filter(order=self.order):
                 if each.description == self.description:
                     each.delete()
-                    break
-        super(Document, self).save(*args, **kwargs);
+        super(Document, self).save(*args, **kwargs)
 
     def get_upload(self):
         return self.upload_at
 
     def get_name(self):
+        #print(encode.uri_to_iri(self.document))
         if self.description != "":
-            return self.description + ": " + str(self.document)
+            return self.description + ": " + encode.uri_to_iri(self.document)
         else:
-            return '未分类: ' + str(self.document)
+            return '未分类: ' + encode.uri_to_iri(self.document)
 
 
 class Staff(models.Model):

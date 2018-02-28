@@ -17,7 +17,7 @@
     <p>任务文件</p>
     <ul>
         {%for obj in origin_documents%}
-        <li><a href ="{% url 'trans_force_download' document_id=obj.id %}">{{obj.get_name}}</a> {{obj.upload_at}}</li>
+        <li><a href ="{% url 'trans_force_download' file_path=obj.document.path %}">{{obj.get_name}}</a> {{obj.upload_at}}</li>
         {%endfor%}
     </ul>
 

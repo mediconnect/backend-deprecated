@@ -7,14 +7,14 @@
 <p>医院:   {{assignment.hospital.get_name}}</p>
 <p>病人:   {{assignment.patient_order.get_name}}</p>
 <p>疾病:   {{assignment.disease.name}}</p>
-<p>状态：   {{assignment.get_status}}</p>
-<p>翻译状态： {{assignment.get_trans_status}}</p>
+<p>状态：   {{assignment.get_status_literal}}</p>
+<p>翻译状态： {{assignment.get_trans_status_literal}}</p>
 <p>Documents</p>
 <ul>
     {%for key, value in documents.items %}
         <ul>{{key}} :
             {% for each in value %}
-                <li><a href="{% url 'force_download' document_id=each.id %}">{{each.get_name}}</a>{{each.upload_at}}</li>
+                <li><a href="{% url 'force_download' file_path=each.document.path %}">{{each.get_name}}</a>{{each.upload_at}}</li>
             {% endfor %}
         </ul>
     {% endfor %}
@@ -34,7 +34,11 @@
     <input type="submit"  value="删除" class = 'btn' name = 'delete' />
     <select name = 'status'>
           {% for value, status in status_choices %}
+            {% if value == assignment.get_status %}
+                <option value = '{{value}}' selected> {{status}} </option>
+            {% else %}
             <option value = '{{value}}'> {{status}} </option>
+            {% endif %}
           {% endfor %}
     </select>
     <input type="submit" value="更改状态" class = 'btn' name = 'update' />

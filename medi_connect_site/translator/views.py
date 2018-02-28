@@ -60,23 +60,6 @@ def translator_auth(request):
         'form': StaffLoginForm()
     })
 
-
-@login_required
-def force_download(request, document_id):
-    document = Document.objects.get(id=document_id)
-    path = document.document.url
-    file_path = "http://django-env.enc4mpznbt.us-west-2.elasticbeanstalk.com" + path
-    debug_path = "http://127.0.0.1:8000" + path
-    try:
-        response = HttpResponse(document.document, content_type="text/csv")
-        response['Content-Disposition'] = 'attachment; filename="{0}"'.format(
-            document.get_name())  # download no need to change
-        return response
-
-    except IOError:
-        raise Http404
-
-
 @login_required()
 def update_result(request):
     query=request.GET.get('query',None)

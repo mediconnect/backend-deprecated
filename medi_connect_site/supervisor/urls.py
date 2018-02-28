@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from django.contrib.auth import views as auth_views
+import info.utility as util
 import views as supervisor_views
 from core import views as core_views
 
@@ -14,7 +15,7 @@ urlpatterns = [
     url(r'^ajax/update_result/$', supervisor_views.update_result, name='update_result'),
     url(r'^ajax/validate_pwd/$', supervisor_views.validate_pwd, name='validate_pwd'),
     url(r'^export_csv/$', supervisor_views.export_csv, name='export_csv'),
-    url(r'^force_download/(?P<document_id>\d+)/$', supervisor_views.force_download, name='force_download'),
+    url(r'^force_download/(?P<file_path>(.)+)/$', util.force_download, name='force_download'),
 
     url(r'^trans_signup/(?P<id>\d+)/$',supervisor_views.trans_signup ,name = 'trans_signup'),
     url(r'^ajax/send_reset_link/$', supervisor_views.send_reset_link, name='send_reset_link'),

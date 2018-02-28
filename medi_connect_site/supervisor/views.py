@@ -18,17 +18,18 @@ from supervisor.forms import (
     TransSignUpForm,ApproveForm,FileForm
 )
 from django.utils.http import urlsafe_base64_encode
+import django.utils.encoding as encode
 from info import utility as util
 from django.http import JsonResponse
 from django.template import loader, Context
 from django.urls import reverse,reverse_lazy
 import json
 import csv
+import os
 from django.utils import timezone
 from django.http import StreamingHttpResponse
 from django.forms.models import model_to_dict
 from helper.models import auto_assign,manual_assign
-from django.http import HttpResponse,Http404
 from django.core.mail import send_mail
 
 
@@ -61,9 +62,9 @@ def validate_pwd(request): # validate password for delete translatoe operation
         'msg':''
     }
     count = {
-        1:0,  # re_assignment success
-        -1:0,  # re_assignment failed
-        0:0  # re_assignment not needed
+        1: 0,  # re_assignment success
+        -1: 0,  # re_assignment failed
+        0: 0  # re_assignment not needed
     }
     password = request.GET.get('password',None)
     id = request.GET.get('trans_id',None)
@@ -124,21 +125,6 @@ class Echo(object):
     def write(self, value):
         """Write the value by returning it, instead of storing in a buffer."""
         return value
-
-@login_required
-def force_download(request,document_id):
-    document = Document.objects.get(id=document_id)
-    path = document.document.url
-    msg = ''
-    file_path = "http://django-env.enc4mpznbt.us-west-2.elasticbeanstalk.com"+path
-    debug_path = "http://127.0.0.1:8000"+path
-    try:
-        response = HttpResponse(document.document,content_type="text/csv")
-        response['Content-Disposition'] = 'attachment; filename="{0}"'.format(document.get_name())  # download no need to change
-        return response
-
-    except:
-        raise Http404
 
 
 
@@ -583,18 +569,21 @@ def manage_files(request, id, order_id):
                     'message':msg
                 })
         elif request.method == 'POST' and request.FILES['feedback_files']:
+
             form = FileForm(request.POST)
             files = request.FILES.getlist('feedback_files')
             document_names = ''
             for file in files:
-                document = Document(order=assignment, document=file, type = util.E2C_ORIGIN,description = 'feedback') #create feedback file
+                document = Document(order=assignment, document=file, type = util.E2C_ORIGIN,description = 'feedback') # create feedback file
                 document_names += document.get_name()+','
                 document.save()
             msg = '上传文件'+document_names[:-1]
+
             if assignment.translator_E2C is None:
                 assignment.change_status(util.RETURN)
                 auto_assign(assignment)
             assignment.save()
+
             return render(request, 'manage_files.html', {
                 'form':form,
                 'supervisor': supervisor,
@@ -771,7 +760,7 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
             filename = fs.save(file.name,file)
             upload_file_url = fs.url(filename)
             msg = '已上传pdf文件，请等待翻译员创建问卷'
-            origin_question = Document(order_id = order_id, description = 'origin_questions')
+            origin_question = Document(order_id = order_id, document=file, description = 'origin_questions')
             origin_question.save()
             order.document_complete = False # questions not translated yet
             order.save()
@@ -792,6 +781,7 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
         if (request.POST.get('send')):
             q = Questionnaire.objects.get(hospital_id=order.hospital_id, disease_id=order.disease_id)
             document = q.origin_pdf
+            origin_question = Document.objects.get(order_id=order_id, description='origin_questions')
             tmp_access_key = signer.sign(int(q.id) + int(order_id))
             tmp_url = get_current_site(request).domain + '/core/questionnaire/' + str(q.id) + '/' \
                       + tmp_access_key[(str.find(tmp_access_key, ':')) + 1:]
@@ -812,7 +802,7 @@ def check_questionnaire(request,order_id): # check to see if a questionnaire is 
                 'msg': msg,
                 'assignee_names': E2C_assignee_names,
                 'assignee_ids': E2C_assignee_ids,
-                'questions': questions,
+                'questions': origin_question,
                 'origin_pdf':document
 
             })
