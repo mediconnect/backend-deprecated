@@ -10,6 +10,7 @@ from django.contrib.auth.hashers import check_password, make_password
 from django.utils.http import urlquote
 from django.template.defaultfilters import register
 from dynamic_form.forms import create_form, get_fields
+import info.utility as util
 
 # Create your views here.
 @login_required
@@ -114,7 +115,7 @@ def order(request):
     customer = Customer.objects.get(user=request.user)
     orders = Order.objects.filter(customer=customer).order_by('-submit')
     order_list = []
-    status_dict = ['客户未提交', '已付款', '原件翻译中', '提交至医院', '上传反馈', '反馈翻译中', '反馈已上传', '订单完成']
+
     for order in orders:
         if int(order.status) == 7:
             continue
@@ -123,7 +124,7 @@ def order(request):
         order_dict['time'] = str(order.submit)
         order_dict['disease'] = order.disease.name if order.disease is not None else 'unknown'
         order_dict['hospital'] = order.hospital.name if order.hospital is not None else 'unknown'
-        order_dict['status'] = status_dict[order.status] if order.status >= 1 else '客户未提交'
+        order_dict['status'] = util.customer_status_dict[order.status] if order.status >= 1 else '客户未提交'
         order_dict['id'] = int(order.id)
         order_dict['estimate']= order.get_estimate()
         order_list.append(order_dict)
@@ -139,7 +140,6 @@ def order_finished(request):
     customer = Customer.objects.get(user=request.user)
     orders = Order.objects.filter(customer=customer).order_by('-submit')
     order_list = []
-    status_dict = ['客户未提交', '已付款', '原件翻译中', '提交至医院', '上传反馈', '反馈翻译中', '反馈已上传', '订单完成']
     for order in orders:
         if int(order.status) != 7:
             continue
@@ -148,7 +148,7 @@ def order_finished(request):
         order_dict['time'] = str(order.submit)
         order_dict['disease'] = order.disease.name if order.disease is not None else 'unknown'
         order_dict['hospital'] = order.hospital.name if order.hospital is not None else 'unknown'
-        order_dict['status'] = status_dict[order.status]
+        order_dict['status'] = util.customer_status_dict[order.status]
         order_dict['id'] = int(order.id)
         order_list.append(order_dict)
     return render(request, 'info_order_finished.html', {
