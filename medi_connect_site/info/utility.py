@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# ======This file can only contain non-order dependant functions======#
 import datetime
 import logging
 import urllib
@@ -8,6 +7,9 @@ import os
 from django.core.signing import Signer,TimestampSigner
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse,Http404
+from django.http import JsonResponse
+import django.utils.encoding as encode
+from django.utils import http
 
 # Standard instance of a logger with __name__
 stdlogger = logging.getLogger('mediconnect')
@@ -23,28 +25,35 @@ def log(msg):
     stdlogger.debug(msg)
 
 
-def hospital_directory_path(instance, filename):
-    return 'hospital_{0}/{1}'.format(instance.hospital.get_id(), filename)
-
-
 def order_directory_path(instance, filename):
-    return 'order_{0}/{1}/{2}'.format(instance.customer.get_name(), instance.id, filename)
+    return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name().strip(' '), instance.order.id,
+                                      http.urlquote(filename))
+
+
+def hospital_directory_path(instance, filename):
+    return 'hospital_{0}/{1}'.format(instance.hospital.get_id(), http.urlquote(filename))
 
 
 def questions_path(instance, filename):
-    return 'hospital_{0}/disease_{1}/{2}'.format(instance.hospital.get_id(), instance.disease.get_id(), filename)
+    return 'hospital_{0}/disease_{1}/{2}'.format(instance.hospital.get_id(), instance.disease.get_id(), http.urlquote(filename))
 
 @login_required
 def force_download(request,file_path):
+    #print(type(eval(file_path)))
+    name,path=eval(file_path) # break down the unicode to tuple
+    print(name)
     try:
-        with open(file_path, 'rb') as fh:
+        with open(path,'rb') as fh:
+            file_name = urllib.unquote(name) # decode the file path back to the file name
             response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            response['Content-Disposition'] = 'inline; filename=' + file_name
         return response
 
     except Exception as e:
         print(str(e))
+        JsonResponse(str(e),safe=False)
         raise Http404
+
 def url_fix(s, charset='utf-8'):
     """Sometimes you get an URL by a user that just isn't a real
     URL because it contains unsafe characters like ' ' and so on.  This

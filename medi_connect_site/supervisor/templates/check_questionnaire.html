@@ -2,44 +2,72 @@
 {% block title %}Supervisor Home{% endblock %}
 
 {% block content %}
-<p>{{msg}}</p>
+<p>Created and Translated:</p>
+<ul>
+    {% for each in translated_q %}
+    <li>
+        <a href="{% url 'force_download' file_path=each.get_questions_path %}">{{each.get_questions_name}}</a>
+        <a href="{% url 'force_download' file_path=each.get_origin_pdf_path %}">{{each.get_origin_pdf_name}}</a>
+    </li>
+    {% endfor %}
+</ul>
 
-<p>questions:<a href = '{{questions.url}}'>{{questions}}</a></p>
-<p>tmp_url:{{tmp_url}}</p>
-{% if not exist %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input type="file" name="origin_pdf" onchange = "handleName(this.files)"/>
+<p>Created but not Translated:</p>
+<ul>
+    {% for each in untranslated_q %}
+       <li><a href="{% url 'force_download' file_path=each.get_origin_pdf_path %}">{{each.get_origin_pdf_name}}</a></li>
+    {% endfor %}
+</ul>
 
-        <select name = 'translator_E2C'>
-              {% for id, name in assignee_names %}
-                <option value = '{{id}}'> {{name}} </option>
-              {% endfor %}
-        </select>
-        <input type="submit" class="btn" value="上传" name="upload"/>
-    </form>
-{% else %}
-
-    <p>origin_pdf:<a href="{% url 'force_download' file_path=document.path %}">原始pdf</a></p>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <input id="file" type="file"  onchange = "handleName(this.files)" name="origin_pdf"/>
-        <select name = 'translator_E2C'>
-              {% for id, name in assignee_names %}
-                <option value = '{{id}}'> {{name}} </option>
-              {% endfor %}
-        </select>
-        <input type="submit" class="btn" value="覆盖" name="upload"/>
-        <input type="submit" class="btn" value="发送" name="send"/>
-    </form>
-{% endif %}
+上传或覆盖：
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    文件：<input type="file" name="origin_pdf"/><br>
+    类型：<input type="text" name="category"/><br>
+    翻译员:<select name = 'translator_E2C'>
+      {% for id, name in assignee_names %}
+        <option value = '{{id}}'> {{name}} </option>
+      {% endfor %}
+    </select>
+    <input type="submit" class="btn" value="上传" name="upload"/>
+    <input type="submit" class="btn" value="发送" name="send"/>
+</form>
+<p><a href="{% url 'supervisor_home' id=supervisor.user.id %}">Return to home</a></p>
+<p><a href="{% url 'detail' id=supervisor.user.id order_id=order_id %}">Return to detail</a></p>
 <script>
-    function handleName(files){
-    }
     $( document ).ready(function() {
-        if("{{msg}}"!='None'){
+        if("{{msg}}"!=''){
             alert("{{msg}}");
         };
     });
 </script>
 {% endblock %}
+
+
+<!---------
+<p>questions:<a href = '{{questions.url}}'>{{questions}}</a></p>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="origin_pdf"/>
+
+    <select name = 'translator_E2C'>
+          {% for id, name in assignee_names %}
+            <option value = '{{id}}'> {{name}} </option>
+          {% endfor %}
+    </select>
+    <input type="submit" class="btn" value="上传" name="upload"/>
+</form>
+
+<p>origin_pdf:<a href="{% url 'force_download' file_path=document.get_path %}">原始pdf</a></p>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input id="file" type="file"  onchange = "handleName(this.files)" name="origin_pdf"/>
+    <select name = 'translator_E2C'>
+          {% for id, name in assignee_names %}
+            <option value = '{{id}}'> {{name}} </option>
+          {% endfor %}
+    </select>
+    <input type="submit" class="btn" value="覆盖" name="upload"/>
+    <input type="submit" class="btn" value="发送" name="send"/>
+</form>
+-----------!>

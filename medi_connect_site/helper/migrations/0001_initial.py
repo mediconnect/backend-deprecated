@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
                 ('is_feedback', models.BooleanField(default=False)),
                 ('upload_at', models.DateTimeField(default=django.utils.timezone.now)),
                 ('comment', models.CharField(blank=True, max_length=255)),
-                ('document', models.FileField(null=True, upload_to=helper.models.order_directory_path)),
+                ('document', models.FileField(null=True, upload_to=info.utility.order_directory_path)),
             ],
             options={
                 'db_table': 'document',

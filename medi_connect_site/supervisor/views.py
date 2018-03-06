@@ -7,7 +7,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.paginator import Paginator
 from django.core.mail import EmailMultiAlternatives
@@ -575,8 +575,8 @@ def manage_files(request, id, order_id):
             document_names = ''
             for file in files:
                 document = Document(order=assignment, document=file, type = util.E2C_ORIGIN,description = 'feedback') # create feedback file
-                document_names += document.get_name()+','
                 document.save()
+                document_names += document.get_name() + ','
             msg = '上传文件'+document_names[:-1]
 
             if assignment.translator_E2C is None:
@@ -603,6 +603,7 @@ def manage_files(request, id, order_id):
     except Exception as ex:
         template = "An exception of type {0} occurred. Arguments:{1!r}"
         msg = template.format(type(ex).__name__, ex.args)
+        print(msg)
         form = FileForm()
         return render(request, 'manage_files.html', {
             'form':form,
@@ -736,105 +737,101 @@ def rank_manage(request,id):
 
 @login_required
 def check_questionnaire(request,order_id): # check to see if a questionnaire is created/translated
+    """
+    This method does several things:
+        1. Pick a translated questionnaire and send to the customer, this includes:
+            a. List all translated questionnaire
+            b. Generate temporary url to access the questionnaire
+            c. Trigger the send email method
+        2. Upload an origin pdf for this particular hospital-disease combination, this includes:
+            a. Upload an origin pdf
+            b. assign to a E2C translator
+    """
+    # TODO: Seperate this to different services when transfer to RESTful API
+    supervisor = Staff.objects.get(user=request.user)
+    order = Order.objects.get(id = order_id)
+    hospital = Hospital.objects.get(id = order.hospital_id)
+    disease = Disease.objects.get(id = order.disease_id)
+
     E2C_assignee_ids = []
     E2C_assignee_names = []
-    for e in Staff.objects.filter(role=2): # build the assignee choices
-        E2C_assignee_names.append((e.user_id, e.get_name()))
-    supervisor = Staff.objects.get(user = request.user)
+    translated_q = []
+    untranslated_q = []
 
-    order = Order.objects.get(id = order_id)
-    exist = False
-    tmp_url=''
-    msg=''
-    origin_question = None
-    translated_question = None
+    tmp_url = None
+    msg = ''
     if request.method == 'POST':
-        if (request.POST.get('upload')):
+        category = request.POST.get('category') # need category for either update/create or send
+        if request.POST.get('upload'): # Upload origin pdf triggered
+
             file = request.FILES['origin_pdf']
             translator = Staff.objects.get(user_id=request.POST['translator_E2C'])
-            q = Questionnaire.objects.get_or_create(hospital_id=order.hospital_id, disease_id=order.disease_id)[0]
-            q.translator = translator
-            q.origin_pdf = file
+            # ===== update or create a new questionnaire when upload an origin pdf ======#
+            """ # Comment out the update_or_create approach as this doesn't handle the chinese character in 
+                # filename very well or at all
+            print(encode.iri_to_uri(file))
+            q, created = Questionnaire.objects.update_or_create(hospital_id=order.hospital_id,
+                                                                disease_id=order.disease_id,category = category,
+                                                                defaults={'translator': translator,'origin_pdf':encode.iri_to_uri(file)})
             q.save()
-            fs = FileSystemStorage()
-            filename = fs.save(file.name,file)
-            upload_file_url = fs.url(filename)
-            msg = '已上传pdf文件，请等待翻译员创建问卷'
-            origin_question = Document(order_id = order_id, document=file, description = 'origin_questions')
+            # ===== update or create a new document for this order ======#
+            origin_question = Document.objects.update_or_create(order_id=order_id,description='origin_questions',
+                                                                defaults={'document': encode.iri_to_uri(file)},)[0]
             origin_question.save()
-            order.document_complete = False # questions not translated yet
+            order.document_complete = False  # questions not translated yet
             order.save()
-            exist = True
-
-            return render(request, 'check_questionnaire.html', {
-                'supervisor': supervisor,
-                'order_id': order.id,
-                'category': 'unknown',
-                'exist': exist,
-                'tmp_url': tmp_url,
-                'msg': msg,
-                'assignee_names': E2C_assignee_names,
-                'assignee_ids': E2C_assignee_ids,
-                'origin_pdf':origin_question
-            })
-
-        if (request.POST.get('send')):
-            q = Questionnaire.objects.get(hospital_id=order.hospital_id, disease_id=order.disease_id)
-            document = q.origin_pdf
-            origin_question = Document.objects.get(order_id=order_id, description='origin_questions')
-            tmp_access_key = signer.sign(int(q.id) + int(order_id))
-            tmp_url = get_current_site(request).domain + '/core/questionnaire/' + str(q.id) + '/' \
-                      + tmp_access_key[(str.find(tmp_access_key, ':')) + 1:]
-            send_mail(
-                '问卷',
-                '请点击此链接填写医院问卷'+tmp_url,
-                'None',
-                [order.customer.user.email],
-                fail_silently=False,
-            )
-            msg = '已发送'
-            return render(request, 'check_questionnaire.html', {
-                'supervisor': supervisor,
-                'order_id': order.id,
-                'category': 'unknown',
-                'exist': exist,
-                'tmp_url': tmp_url,
-                'msg': msg,
-                'assignee_names': E2C_assignee_names,
-                'assignee_ids': E2C_assignee_ids,
-                'questions': origin_question,
-                'origin_pdf':document
-
-            })
-
-    else:
-        try:  # if the questionnaire is already created
-            q = Questionnaire.objects.get(hospital_id=order.hospital_id, disease_id=order.disease_id)
-            document = q.origin_pdf
-            if q.is_translated:  # if is already translated, ready to send link to customer
-                order.save()
-                questions = q.questions
-                msg = '问卷已创建并翻译，请确认后直接发送'
+            if created:
+                msg = '已上传pdf文件，请等待翻译员翻译'
             else:
-                order.document_complete = False
-                order.save()
-                msg = '问卷已创建，尚未翻译，已分配至英译汉翻译员'
-            exist = True
-        except Exception as ex:
-            exist = False
-            template = "\nAn exception of type {0} occurred. Arguments:\n{1!r}"
-            error = template.format(type(ex).__name__, ex.args) # debugging info
-            msg = '请上传原始pdf'
+                msg = '已更新pdf文件，请等待翻译员翻译'
+            """
+            try:
+                q = Questionnaire.objects.get(hospital_id=order.hospital_id,disease_id=order.disease_id,
+                                              category=category)
+                msg = '已上传pdf文件，请等待翻译员翻译'
+            except Questionnaire.DoesNotExist:
+                q = Questionnaire(hospital_id=order.hospital_id,disease_id=order.disease_id,category=category)
+                msg = '已更新pdf文件，请等待翻译员翻译'
+            origin_question = Document(order_id=order_id, description='origin_question')
+            origin_question.save()
+            order.document_complete = False
+            order.save()
+            q.origin_pdf = file
+            q.translator = translator
+            q.save()
 
-        return render(request, 'check_questionnaire.html', {
-            'supervisor': supervisor,
-            'order_id': order.id,
-            'category': 'unknown',
-            'exist': exist,
-            'tmp_url': tmp_url,
-            'msg': msg,
-            'assignee_names': E2C_assignee_names,
-            'assignee_ids': E2C_assignee_ids,
-            'questions':questions,
-            'origin_pdf':document
-        })
+
+        if request.POST.get('send'):
+            try:
+                q = Questionnaire.objects.get(hospital_id=order.hospital_id, disease_id=order.disease_id, category = category)
+                tmp_access_key = signer.sign(int(q.id) + int(order_id))
+                tmp_url = get_current_site(request).domain + '/core/questionnaire/' + str(q.id) + '/' \
+                          + tmp_access_key[(str.find(tmp_access_key, ':')) + 1:]
+                send_mail(
+                    '问卷',
+                    '请点击此链接填写医院问卷' + tmp_url,
+                    'gabrielwry@gmail.com',
+                    'gabrielwry@gmail.com',
+                    fail_silently=False,
+                )
+                msg = '已发送 '+ str(tmp_url)
+            except Exception as e:
+                msg = '发送失败, '+ str(e)
+    for e in Staff.objects.filter(role=2): # build the assignee choices
+        E2C_assignee_names.append((e.user_id, e.get_name()))
+
+    for q in Questionnaire.objects.filter(hospital = hospital, disease = disease, is_translated = True):
+        translated_q.append(q)
+
+    for q in Questionnaire.objects.filter(hospital = hospital, disease = disease, is_translated = False):
+        untranslated_q.append(q)
+    return render(request, 'check_questionnaire.html', {
+        'supervisor': supervisor,
+        'order_id': order.id,
+        'tmp_url': tmp_url,
+        'msg': msg,
+        'assignee_names': E2C_assignee_names,
+        'assignee_ids': E2C_assignee_ids,
+        'translated_q': translated_q,
+        'untranslated_q': untranslated_q,
+    })

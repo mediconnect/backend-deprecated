@@ -7,10 +7,12 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone, http
-from django.http import HttpResponse,Http404
+import os
 from customer.models import Customer
 from info import utility as util
 import django.utils.encoding as encode
+from django.conf import settings
+
 
 
 # Function to move the position of a translator in sequence
@@ -315,25 +317,30 @@ class Order(models.Model):
         else:
             return '剩余'+str(price.full_price - price.deposit)
 
-def order_directory_path(instance, filename):
-    return 'order_{0}/{1}/{2}'.format(instance.order.customer.get_name().strip(' '), instance.order.id,
-                                      http.urlquote(filename))
-
 
 class Document(models.Model):
     order = models.ForeignKey('Order', on_delete=models.SET_NULL, null=True)
     description = models.CharField(max_length=50, blank=True)
     required = models.BooleanField(default=False)
     upload_at = models.DateTimeField(default=timezone.now)
-    document = models.FileField(upload_to=order_directory_path, null=True)
+    document = models.FileField(upload_to=util.order_directory_path, null=True)
     type = models.IntegerField(default=-1)  # remember to set the document type when upload
+    path = models.CharField(max_length=200)
 
     class Meta:
         db_table = 'document'
 
     def save(self, *args, **kwargs):  # override_save method
         # Override document if this type already exists for this order
-        self.document = encode.iri_to_uri(self.document)
+        """
+
+        :param args:
+        :param kwargs:
+        :return:
+
+        self.path = order_directory_path(self,self.document.name)
+        """
+        self.path = util.order_directory_path(self, self.document)
         if self.description not in ['trans_files_extra', 'extra']:
             for each in Document.objects.filter(order=self.order):
                 if each.description == self.description:
@@ -344,12 +351,15 @@ class Document(models.Model):
         return self.upload_at
 
     def get_name(self):
-        #print(encode.uri_to_iri(self.document))
         if self.description != "":
-            return self.description + ": " + encode.uri_to_iri(self.document)
+            return self.description + ": " + encode.uri_to_iri(self.path)
         else:
-            return '未分类: ' + encode.uri_to_iri(self.document)
+            return '未分类: ' + encode.uri_to_iri(self.path)
 
+    def get_path(self): # return the full path of the file stored in file system
+        #print(type(self.path),self.path)
+        #print(self.path[(str.find(str(self.path), '%')) :])
+        return (self.path[(str.find(str(self.path), '%')) :],str(os.path.join(settings.MEDIA_ROOT, str(self.document))))
 
 class Staff(models.Model):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
@@ -507,13 +517,38 @@ class HospitalReview(models.Model):
 
 
 class Questionnaire(models.Model):
-    hospital = models.ForeignKey('Hospital', on_delete=models.SET_NULL, null=True, unique=False, default=None)
-    disease = models.ForeignKey('Disease', on_delete=models.SET_NULL, null=True, unique=False, default=None)
+    hospital = models.ForeignKey('Hospital', unique=False, default=None)
+    disease = models.ForeignKey('Disease', unique=False, default=None)
     category = models.CharField(max_length=200, blank=True)
     questions = models.FileField(upload_to=util.questions_path, null=True)
+    questions_path = models.CharField(max_length = 200)
     is_translated = models.BooleanField(default=False)
     translator = models.ForeignKey('Staff', on_delete=models.SET(1), null=False)
     origin_pdf = models.FileField(upload_to=util.questions_path,null=True)
+    origin_pdf_path = models.CharField(max_length= 200)
 
     class Meta:
         db_table = 'questionnaire'
+
+    def save(self, *args, **kwargs):  # override_save method
+        """
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        self.questions_path = util.questions_path(self, self.questions)
+        self.origin_pdf_path = util.questions_path(self,self.origin_pdf)
+        super(Questionnaire, self).save(*args, **kwargs)
+
+    def get_questions_name(self):
+        return self.category+' 问题模板: '+ encode.uri_to_iri(self.questions_path)
+
+    def get_origin_pdf_name(self):
+        return self.category+' 原始pdf: '+ encode.uri_to_iri(self.origin_pdf_path)
+
+    def get_questions_path(self):
+        return (self.questions_path[(str.find(str(self.questions_path), '%')):], str(os.path.join(settings.MEDIA_ROOT, str(self.questions))))
+
+    def get_origin_pdf_path(self):
+        return (self.origin_pdf_path[(str.find(str(self.origin_pdf_path), '%')):], str(os.path.join(settings.MEDIA_ROOT, str(self.origin_pdf))))
