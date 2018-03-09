@@ -359,7 +359,7 @@ class Document(models.Model):
     def get_path(self): # return the full path of the file stored in file system
         #print(type(self.path),self.path)
         #print(self.path[(str.find(str(self.path), '%')) :])
-        return (self.path[(str.find(str(self.path), '%')) :],str(os.path.join(settings.MEDIA_ROOT, str(self.document))))
+        return (self.path[(str.find(str(self.path), '%')) :],str(os.path.join(settings.MEDIA_ROOT, self.document)))
 
 class Staff(models.Model):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)

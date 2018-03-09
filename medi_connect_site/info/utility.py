@@ -45,6 +45,7 @@ def force_download(request,file_path):
     try:
         with open(path,'rb') as fh:
             file_name = urllib.unquote(name) # decode the file path back to the file name
+            print(file_name)
             response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
             response['Content-Disposition'] = 'inline; filename=' + file_name
         return response

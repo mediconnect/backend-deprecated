@@ -172,7 +172,9 @@ def assignment_summary(request, id, order_id):
     if translator.get_role() == util.TRANS_C2E:
         origin_documents = Document.objects.filter(order_id = order_id,type = 0 )
         pending_documents = Document.objects.filter(order_id = order_id, type = 1)
-        types_list = filter(lambda x: x.isalpha(), re.split(r'[ ;|,\s]\s*', str(types)))+['questionnaire']
+        types_list = filter(lambda x: x.isalpha(), re.split(r'[ ;|,\s]\s*', str(types)))
+        if Document.objects.filter(order_id=order_id,description='answer').count()>0:
+            types_list.append('questionnaire')
     if translator.get_role() == util.TRANS_E2C:
         origin_documents = Document.objects.filter(order_id = order_id, type = 3)
         pending_documents = Document.objects.filter(order_id = order_id, type = 4)
